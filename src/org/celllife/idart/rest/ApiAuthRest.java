@@ -162,7 +162,7 @@ pool = new PoolingHttpClientConnectionManager();
         BufferedReader reader = null;
         String line = null;
         StringBuilder str = null;
-
+        pool = new PoolingHttpClientConnectionManager();
         pool.setDefaultMaxPerRoute(1);
         pool.setMaxTotal(1);
 
@@ -199,7 +199,7 @@ pool = new PoolingHttpClientConnectionManager();
         BufferedReader reader = null;
         String line = null;
         StringBuilder str = null;
-pool = new PoolingHttpClientConnectionManager();
+        pool = new PoolingHttpClientConnectionManager();
         pool.setDefaultMaxPerRoute(1);
         pool.setMaxTotal(1);
 

@@ -77,7 +77,7 @@ public class DadosPacienteFarmac {
                         tx.rollback();
                         session.close();
                     }
-                   log.trace("Error :" + e);
+                   log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
                 }
             }
         } else
@@ -136,7 +136,11 @@ public class DadosPacienteFarmac {
         patient.setPatientIdentifiers(oldIdentifiers);
         patient.setPatientAttribute(patientAttribute);
 
-        PatientManager.savePatient(sess, patient);
+        try {
+            PatientManager.savePatient(sess, patient);
+        } catch (Exception e) {
+            log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
+        }
 
         return patient;
 
@@ -248,7 +252,7 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-           log.trace("Error :" + e);
+           log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
 
         }
         return prescription;
@@ -343,7 +347,6 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-//            getLog().error(he);
         }
     }
 
@@ -424,7 +427,7 @@ public class DadosPacienteFarmac {
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("TARV");
 
-        PackageManager.savePackageQty0(sess, newPack);
+        PackageManager.savePackageQty0(newPack);
     }
 
     public static boolean setDispenseRestOpenmrs(Session sess, Prescription prescription, SyncTempDispense syncTempDispense) {
@@ -435,7 +438,7 @@ public class DadosPacienteFarmac {
         boolean postOpenMrsEncounterStatus = false;
 
         Packages newPack = PackageManager.getLastPackageOnScript(prescription);
-
+        Doctor doctorProvider = PrescriptionManager.getProvider(sess);
         List<PackagedDrugs> packagedDrugs = newPack.getPackagedDrugs();
 
         Date dtPickUp = syncTempDispense.getPickupdate();
@@ -446,8 +449,8 @@ public class DadosPacienteFarmac {
         // Patient NID
         String nid = prescription.getPatient().getPatientId().trim();
 
-        String strProvider = prescription.getDoctor().getFirstname().trim() + " "
-                + prescription.getDoctor().getLastname().trim();
+        String strProvider = doctorProvider.getFirstname().trim() + " "
+                + doctorProvider.getLastname().trim();
 
         String providerWithNoAccents = org.apache.commons.lang3.StringUtils.stripAccents(strProvider);
 
@@ -575,12 +578,12 @@ public class DadosPacienteFarmac {
 
                 } catch (Exception e) {
                     result = true;
-                    log.trace("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
+                    log.error("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
                     saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + nid + ": " + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: "+ e.getMessage());
         }
 
         return result;

@@ -187,7 +187,7 @@ public class AdministrationManager {
                 linha = lt.get(i);
                 if (linha.getLinhanome().equals(linhat)) {
                     break;
-                }
+                }else linha = lt.get(0);
             }
         }
         return linha;

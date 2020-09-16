@@ -2645,7 +2645,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("ARV");
 
-        PackageManager.savePackageQty0(getHSession(), newPack);
+        PackageManager.savePackageQty0(newPack);
 
     }
 

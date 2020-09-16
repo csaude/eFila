@@ -39,11 +39,11 @@ ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAUL
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where active = false;
--- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
 
--- update clinic set clinicname = 'CS Chabeco' where mainclinic = true;
+-- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
+-- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
 -- update stockcenter set stockcentername = 'CS Chabeco' where stockcentername = 'Unidade Sanitária';
 -- update simpledomain set "value" = 'CS Chabeco' where "value" = 'Unidade Sanitária';
@@ -141,7 +141,8 @@ CREATE TABLE IF NOT EXISTS rolefunction (
 	roleid int4 NOT NULL,
 	functionid int4 NOT NULL,
 	CONSTRAINT rolefunction_fk FOREIGN KEY (roleid) REFERENCES "role"(id) ON DELETE CASCADE,
-	CONSTRAINT rolefunction_fk_1 FOREIGN KEY (functionid) REFERENCES systemfunctionality(id) ON DELETE CASCADE
+	CONSTRAINT rolefunction_fk_1 FOREIGN KEY (functionid) REFERENCES systemfunctionality(id) ON DELETE CASCADE,
+	CONSTRAINT rolefunction_un UNIQUE (roleid,functionid)
 );
 
 CREATE TABLE IF NOT EXISTS user_role (
@@ -345,17 +346,32 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmacy_type','pharmacy_type','Privada');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmacy_type','pharmacy_type','.Outro');
 
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Administrador','ADMIN');
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Técnico de Farmácia','PHARMACIST');
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Administrativo de Farmácia','PHARMACISTADMIN');
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Digitador','CLERK');
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Estagiários','STUDYWORKER');
-INSERT INTO "role" (id, description, code) values ((select max(id)+1 from "role") ,'Monitoria e Avaliação','MEA');
-INSERT INTO user_role (userid, roleid) values (select user.id, role.id
-                                               from user
-                                               inner join "role" on user.role = "role".description
-                                               where not exists (select * from user_role whre userid = user.id));
-ALTER TABLE users DROP COLUMN "role";
-ALTER TABLE users DROP COLUMN "permission";
+INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
+INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');
+INSERT INTO "role" (id, description, code) values (3 ,'Administrativo de Farmácia','PHARMACISTADMIN');
+INSERT INTO "role" (id, description, code) values (4 ,'Digitador','CLERK');
+INSERT INTO "role" (id, description, code) values (5 ,'Estagiários','STUDYWORKER');
+INSERT INTO "role" (id, description, code) values (6 ,'Monitoria e Avaliação','MEA');
 
+INSERT INTO user_role (userid, roleid) values ((select users.id
+                                               from users
+                                               where not exists (select * from user_role where userid = users.id) and users.cl_username not like 'admin'),2);
 
+INSERT INTO user_role (userid, roleid) values ((select users.id
+                                               from users
+                                               where not exists (select * from user_role where userid = users.id) and users.cl_username like 'admin'),1);
+
+INSERT INTO systemfunctionality (id,description,code) VALUES (1,'Relatorios','REPORTS');
+INSERT INTO systemfunctionality (id,description,code) VALUES (2,'Administração geral','ADMINISTRATION');
+INSERT INTO systemfunctionality (id,description,code) VALUES (3,'Gestão de stock','STOCK_ADMINISTRATION');
+INSERT INTO systemfunctionality (id,description,code) VALUES (4,'Administração de Pacientes','PACIENT_ADMINISTRATION');
+
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'ADMIN') from systemfunctionality s2);
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'PHARMACIST') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'PHARMACISTADMIN') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'CLERK') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'STUDYWORKER') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'MEA') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+
+ALTER TABLE users DROP COLUMN IF EXISTS "role";
+ALTER TABLE users DROP COLUMN IF EXISTS "permission";

@@ -181,7 +181,7 @@ public class PrescriptionManager {
 		List<Doctor> doc = null;
 		doc = session.createQuery(
 				"select doctor from Doctor as doctor "
-						+ "where doctor.firstname = 'Provider' OR doctor.firstname = 'Provedor' limit 1").list();
+						+ "where doctor.firstname = 'Provider' OR doctor.firstname = 'Provedor' OR doctor.lastname = 'Provider' OR doctor.lastname = 'Provedor'").list();
 
 		Iterator<Doctor> iter = doc.iterator();
 		if (iter.hasNext()) {

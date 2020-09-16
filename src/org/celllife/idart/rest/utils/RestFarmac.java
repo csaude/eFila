@@ -56,9 +56,10 @@ public class RestFarmac {
 
         String path = url + "/sync_temp_patients?syncstatus=eq.P&clinicuuid=eq." + refClinic.getUuid();
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);;
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+            ;
 
-            response = ApiAuthRest.postgrestRequestGetAll(path,token,pool);
+            response = ApiAuthRest.postgrestRequestGetAll(path, token, pool);
 
             InputStream in = response.getEntity().getContent();
 
@@ -89,13 +90,13 @@ public class RestFarmac {
                         String updateStatus = "{\"syncstatus\":\"I\"}";
                         AdministrationManager.saveSyncTempPatient(sess, syncTempPatient);
 
-                        restPatchPatient(url, syncTempPatient, updateStatus,pool);
-                       log.trace(" Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname() + " carregado com sucesso");
+                        restPatchPatient(url, syncTempPatient, updateStatus, pool);
+                        log.trace(" Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname() + " carregado com sucesso");
                         break;
                     } catch (Exception e) {
                         assert tx != null;
                         tx.rollback();
-                       log.trace(" Ocorreu um erro ao gravar a informacao do Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname());
+                        log.trace(" Ocorreu um erro ao gravar a informacao do Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname());
                     } finally {
 
                         continue;
@@ -114,7 +115,7 @@ public class RestFarmac {
         return response.getStatusLine().toString();
     }
 
-    public static String restGetPatient(SyncTempPatient syncTempPatient, String url,PoolingHttpClientConnectionManager pool) throws Exception {
+    public static String restGetPatient(SyncTempPatient syncTempPatient, String url, PoolingHttpClientConnectionManager pool) throws Exception {
 
         String pathuuid = url + "/sync_temp_patients?uuid=eq." + syncTempPatient.getUuid();
         String pathnidandclinic = url + "/sync_temp_patients?patientid=eq." + syncTempPatient.getPatientid() + "&mainclinic=eq." + syncTempPatient.getMainclinic();
@@ -122,13 +123,13 @@ public class RestFarmac {
         String response = null;
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestGet(pathuuid,token,pool);
+            httpResponse = ApiAuthRest.postgrestRequestGet(pathuuid, token, pool);
 
             if (httpResponse != null) {
                 if (httpResponse.getStatusLine().getStatusCode() != 200)
-                    httpResponse = ApiAuthRest.postgrestRequestGet(pathnidandclinic,token,pool);
+                    httpResponse = ApiAuthRest.postgrestRequestGet(pathnidandclinic, token, pool);
             }
 
             if (httpResponse.getStatusLine().getStatusCode() != 200)
@@ -142,7 +143,7 @@ public class RestFarmac {
         return response;
     }
 
-    public static String restPostPatient(String url, SyncTempPatient syncTempPatient,PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+    public static String restPostPatient(String url, SyncTempPatient syncTempPatient, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
         String path = url + "/sync_temp_patients";
         HttpResponse httpResponse = null;
@@ -153,9 +154,9 @@ public class RestFarmac {
         StringEntity inputAddPatient = new StringEntity(restObject, "UTF-8");
         inputAddPatient.setContentType("application/json");
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddPatient,token,pool);
+            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddPatient, token, pool);
 
             if (httpResponse != null) {
                 if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
@@ -182,9 +183,9 @@ public class RestFarmac {
         inputAddPatient.setContentType("application/json");
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestPut(path, inputAddPatient,token,pool);
+            httpResponse = ApiAuthRest.postgrestRequestPut(path, inputAddPatient, token, pool);
 
             if (httpResponse != null) {
                 if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
@@ -210,9 +211,9 @@ public class RestFarmac {
         inputAddPatient.setContentType("application/json");
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password, pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddPatient,token, pool);
+            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddPatient, token, pool);
 
             if (httpResponse != null) {
                 if (httpResponse.getStatusLine().getStatusCode() != 200)
@@ -242,9 +243,9 @@ public class RestFarmac {
         inputAddDispense.setContentType("application/json");
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password, pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddDispense,token, pool);
+            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddDispense, token, pool);
 
             if (httpResponse != null) {
                 if (httpResponse.getStatusLine().getStatusCode() != 200)
@@ -270,13 +271,13 @@ public class RestFarmac {
         String response = null;
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password, pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestDelete(pathuuid,token, pool);
+            httpResponse = ApiAuthRest.postgrestRequestDelete(pathuuid, token, pool);
 
             if (httpResponse != null) {
                 if (httpResponse.getStatusLine().getStatusCode() != 200)
-                    httpResponse = ApiAuthRest.postgrestRequestDelete(pathnidandclinic,token, pool);
+                    httpResponse = ApiAuthRest.postgrestRequestDelete(pathnidandclinic, token, pool);
             }
 
             if (httpResponse.getStatusLine().getStatusCode() != 200)
@@ -296,9 +297,9 @@ public class RestFarmac {
         Transaction tx = sess.beginTransaction();
         String path = url + "/sync_temp_dispense?syncstatus=eq.P&mainclinicuuid=eq." + mainClinic.getUuid();
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            response = ApiAuthRest.postgrestRequestGetAll(path,token,pool);
+            response = ApiAuthRest.postgrestRequestGetAll(path, token, pool);
             InputStream in = response.getEntity().getContent();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder str = new StringBuilder();
@@ -324,17 +325,17 @@ public class RestFarmac {
                         String updateStatus = "{\"syncstatus\":\"I\"}";
 
                         AdministrationManager.saveSyncTempDispense(sess, syncTempDispense);
-                        restPatchDispense(url, syncTempDispense, updateStatus,pool);
-                       log.trace(" Informacao de Levantamento do Paciente [" + syncTempDispense.getPatientid() + "] referido de " + syncTempDispense.getMainclinicname() + " carregada/actualizado com sucesso");
+                        restPatchDispense(url, syncTempDispense, updateStatus, pool);
+                        log.trace(" Informacao de Levantamento do Paciente [" + syncTempDispense.getPatientid() + "] referido de " + syncTempDispense.getMainclinicname() + " carregada/actualizado com sucesso");
                         break;
                     } catch (Exception e) {
-                       log.trace(" Ocorreu um erro ao carregar a informacao do Paciente [" + syncTempDispense.getPatientid() + "] Refrido de " + syncTempDispense.getMainclinicname() + " ERRO: " + e.getMessage());
+                        log.trace(" Ocorreu um erro ao carregar a informacao do Paciente [" + syncTempDispense.getPatientid() + "] Refrido de " + syncTempDispense.getMainclinicname() + " ERRO: " + e.getMessage());
                     } finally {
 
                         continue;
                     }
                 } else {
-                   log.trace(new Date() + " [FARMAC] INFO - Nenhumm Levantamento do paciente referido foi encontrado");
+                    log.trace(new Date() + " [FARMAC] INFO - Nenhumm Levantamento do paciente referido foi encontrado");
                 }
             }
 
@@ -351,7 +352,7 @@ public class RestFarmac {
         return response.getStatusLine().toString();
     }
 
-    public static String restPostDispense(String url, SyncTempDispense syncTempDispense,  PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+    public static String restPostDispense(String url, SyncTempDispense syncTempDispense, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
         String path = url + "/sync_temp_dispense";
         HttpResponse httpResponse = null;
@@ -364,9 +365,9 @@ public class RestFarmac {
         inputAddDispense.setContentType("application/json");
 
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddDispense,token,pool);
+            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddDispense, token, pool);
 
             if (httpResponse != null) {
                 if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
@@ -386,21 +387,21 @@ public class RestFarmac {
         List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
         String result = "";
         if (syncTempPatients.isEmpty())
-           log.trace(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
+            log.trace(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
         else
             for (SyncTempPatient patientSync : syncTempPatients) {
                 try {
-                    result = restPostPatient(url, patientSync,pool);
+                    result = restPostPatient(url, patientSync, pool);
                     if (result.contains("Falha") && !result.contains("409")) {
-                       log.trace(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + result);
+                        log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + result);
                     } else {
-                       log.trace(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        log.trace(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         patientSync.setSyncstatus('E');
                         AdministrationManager.saveSyncTempPatient(sess, patientSync);
                     }
                     break;
                 } catch (Exception e) {
-                   log.trace(e);
+                    log.error(e);
                 } finally {
                     continue;
                 }
@@ -415,22 +416,22 @@ public class RestFarmac {
         String result = "";
 
         if (syncTempDispenses.isEmpty())
-           log.trace(new Date() + " [FARMAC] INFO - Nenhum Levantamento de ARV de paciente foi encontrado para enviar");
+            log.trace(new Date() + " [FARMAC] INFO - Nenhum Levantamento de ARV de paciente foi encontrado para enviar");
         else
             for (SyncTempDispense dispenseSync : syncTempDispenses) {
 
                 try {
-                    result = restPostDispense(url, dispenseSync,pool);
+                    result = restPostDispense(url, dispenseSync, pool);
                     if (result.contains("Falha")) {
-                       log.trace(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
+                        log.error(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
                     } else {
-                       log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         dispenseSync.setSyncstatus('E');
                         AdministrationManager.saveSyncTempDispense(sess, dispenseSync);
                     }
                     break;
                 } catch (Exception e) {
-
+                    log.error(e.getMessage());
                 } finally {
 
                     continue;
@@ -452,13 +453,13 @@ public class RestFarmac {
                     AdministrationManager.saveSyncTempPatient(sess, patient);
                     break;
                 } catch (Exception e) {
-                   log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "]");
+                    log.error("Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "]");
                 } finally {
                     continue;
                 }
             }
         } else {
-           log.trace(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
+            log.trace(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
         }
     }
 
@@ -474,18 +475,18 @@ public class RestFarmac {
 
                     DadosPacienteFarmac.saveDispenseFarmacQty0(prescription, dispense);
                     DadosPacienteFarmac.setDispenseRestOpenmrs(sess, prescription, dispense);
-                        dispense.setSyncstatus('I');
-                        AdministrationManager.saveSyncTempDispense(sess, dispense);
+                    dispense.setSyncstatus('I');
+                    AdministrationManager.saveSyncTempDispense(sess, dispense);
 
                     break;
                 } catch (Exception e) {
-                   log.trace("Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "]");
+                    log.error("Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "]");
                 } finally {
                     continue;
                 }
             }
         } else {
-           log.trace(new Date() + ": [US] INFO - Nenhumm levantamento enviado para esta US foi encontrado");
+            log.trace(new Date() + ": [US] INFO - Nenhumm levantamento enviado para esta US foi encontrado");
         }
     }
 
@@ -495,9 +496,9 @@ public class RestFarmac {
         List<Clinic> localClinics = AdministrationManager.getClinics(session);
         String path = url + "/clinic?province=eq." + province + "&district=eq." + district + "&facilitytype=eq." + facilitytype;
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password, pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            response = ApiAuthRest.postgrestRequestGetAll(path,token,pool);
+            response = ApiAuthRest.postgrestRequestGetAll(path, token, pool);
             InputStream in = response.getEntity().getContent();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder str = new StringBuilder();
@@ -538,7 +539,7 @@ public class RestFarmac {
                             clinicList.add(clinic);
                         break;
                     } catch (Exception e) {
-                       log.trace(" Ocorreu um erro ao adicionar a clinic [" + clinic.getClinicName() + "]");
+                        log.error(" Ocorreu um erro ao adicionar a clinic [" + clinic.getClinicName() + "]");
                     } finally {
                         if (reader != null)
                             reader.close();
@@ -559,9 +560,9 @@ public class RestFarmac {
         List<Drug> localDrugs = AdministrationManager.getDrugs(session);
         String path = url + "/drug?select=*,form(*)&tipodoenca=eq." + deseaseType + "&active=eq." + status;
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path,token,pool);
+            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path, token, pool);
             Drug drug = new Drug();
             String objectString = null;
             JSONObject jsonObj = null;
@@ -600,7 +601,7 @@ public class RestFarmac {
                         if (!existDrug)
                             drugList.add(drug);
                     } catch (Exception e) {
-                       log.trace(" Ocorreu um erro ao adicionar o Medicamento [" + drug.getName() + "] " + e.getMessage());
+                        log.error(" Ocorreu um erro ao adicionar o Medicamento [" + drug.getName() + "] " + e.getMessage());
                     } finally {
                         continue;
                     }
@@ -608,7 +609,7 @@ public class RestFarmac {
             }
         } catch (Exception e) {
             e.printStackTrace();
-           log.trace(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return drugList;
@@ -620,9 +621,9 @@ public class RestFarmac {
         List<RegimeTerapeutico> localRegimeTerapeutico = AdministrationManager.getRegimeTerapeutico(session);
         String path = url + "/regimeterapeutico?active=eq." + status;
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password,pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path,token, pool);
+            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path, token, pool);
             RegimeTerapeutico regimeTerapeutico = new RegimeTerapeutico();
             String objectString = null;
             JSONObject jsonObj = null;
@@ -657,7 +658,7 @@ public class RestFarmac {
                             regimeTerapeuticoList.add(regimeTerapeutico);
                         break;
                     } catch (Exception e) {
-                       log.trace(" Ocorreu um erro ao adicionar o Medicamento [" + regimeTerapeutico.getRegimeesquema() + "] " + e.getMessage());
+                        log.error(" Ocorreu um erro ao adicionar o Medicamento [" + regimeTerapeutico.getRegimeesquema() + "] " + e.getMessage());
                     } finally {
                         continue;
                     }
@@ -665,7 +666,7 @@ public class RestFarmac {
             }
         } catch (Exception e) {
             e.printStackTrace();
-           log.trace(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return regimeTerapeuticoList;
@@ -674,11 +675,11 @@ public class RestFarmac {
     public static List<RegimenDrugs> restGeAllRegimenDrugsByRegimen(String url, RegimeTerapeutico regimeTerapeutico, Session session, PoolingHttpClientConnectionManager pool) {
         HttpResponse response = null;
         List<RegimenDrugs> regimenDrugsList = new ArrayList<>();
-        String path = url + "/regimendrugs?select=*,drug(*,form(*))&regimen=eq."+regimeTerapeutico.getRegimeid();
+        String path = url + "/regimendrugs?select=*,drug(*,form(*))&regimen=eq." + regimeTerapeutico.getRegimeid();
         try {
-            String token = restGetpermission(url, CentralizationProperties.rest_access_username,CentralizationProperties.rest_access_password, pool);
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
-            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path,token, pool);
+            StringBuilder str = ApiAuthRest.postgrestRequestGetBuffer(path, token, pool);
             RegimenDrugs regimenDrugs = new RegimenDrugs();
             String objectString = null;
             JSONObject jsonObj = null;
@@ -711,7 +712,7 @@ public class RestFarmac {
                         regimenDrugsList.add(regimenDrugs);
                     } catch (Exception e) {
 //                       log.trace(" Ocorreu um erro ao adicionar o Medicamento [" + regimenDrugs.getDrug().getName() + "] do Regime Terapeutico [" +regimeTerapeutico.getRegimeesquema()+" ]"+ e.getMessage());
-                      log.trace(e.getMessage());
+                        log.error(e.getMessage());
                     } finally {
                         continue;
                     }
@@ -719,7 +720,7 @@ public class RestFarmac {
             }
         } catch (Exception e) {
             e.printStackTrace();
-           log.trace(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return regimenDrugsList;
@@ -739,13 +740,13 @@ public class RestFarmac {
                     AdministrationManager.saveSyncTempPatient(sess, patient);
                     break;
                 } catch (Exception e) {
-                   log.trace(new Date() + ": [Central] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + patient.getMainclinicname());
+                    log.error(new Date() + ": [Central] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + patient.getMainclinicname());
                 } finally {
                     continue;
                 }
             }
         } else {
-           log.trace(new Date() + ": [Central] INFO - Nenhumm paciente referido para FARMAC foi encontrado");
+            log.trace(new Date() + ": [Central] INFO - Nenhumm paciente referido para FARMAC foi encontrado");
         }
     }
 
@@ -758,21 +759,21 @@ public class RestFarmac {
             for (SyncTempDispense dispense : syncTempDispenses) {
                 try {
                     Prescription prescription = DadosPacienteFarmac.getPatientPrescritionFarmac(dispense);
-                    if(prescription != null) {
+                    if (prescription != null) {
                         DadosPacienteFarmac.saveDispenseFarmacQty0(prescription, dispense);
                         dispense.setSyncstatus('E');
-                    }else
+                    } else
                         dispense.setSyncstatus('W');
                     AdministrationManager.saveSyncTempDispense(sess, dispense);
                     break;
                 } catch (Exception e) {
-                   log.trace(new Date() + ": [Central] INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "] proveniente de " + dispense.getMainclinicname());
+                    log.error(new Date() + ": [Central] INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "] proveniente de " + dispense.getMainclinicname());
                 } finally {
                     continue;
                 }
             }
         } else {
-           log.trace(new Date() + ": [Central] INFO - Nenhumm levantamento enviado para US foi encontrado");
+            log.trace(new Date() + ": [Central] INFO - Nenhumm levantamento enviado para US foi encontrado");
         }
     }
 
@@ -781,14 +782,14 @@ public class RestFarmac {
         StringBuilder httpResponse = null;
         JSONObject jsonObj = null;
         String result = null;
-        String updateStatus = "{\"username\":\""+username+"\"," +
-                                "\"pass\":\""+pass+"\"}";
+        String updateStatus = "{\"username\":\"" + username + "\"," +
+                "\"pass\":\"" + pass + "\"}";
 
         StringEntity inputCheckAccess = new StringEntity(updateStatus, "UTF-8");
         inputCheckAccess.setContentType("application/json");
 
         try {
-            httpResponse = ApiAuthRest.postgrestRequestPostBuffer(path, inputCheckAccess,pool);
+            httpResponse = ApiAuthRest.postgrestRequestPostBuffer(path, inputCheckAccess, pool);
 
             String[] lines = httpResponse.toString().split("\\n");
 
@@ -803,7 +804,7 @@ public class RestFarmac {
                     try {
                         result = jsonObj.get("token").toString();
                     } catch (Exception e) {
-                       log.trace(e.getMessage());
+                        log.error(e.getMessage());
                     } finally {
                         continue;
                     }

@@ -459,7 +459,7 @@ public class Task6 extends SwingWorker<String, Void> {
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("ARV");
 
-        PackageManager.savePackageQty0(sess, newPack);
+        PackageManager.savePackageQty0(newPack);
 
     }
 
