@@ -289,7 +289,7 @@ public class PharmacyApplication {
 
                 try {
                     if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
-                        RestFarmac.setCentralPatients(sess);
+                        RestFarmac.setCentralPatients();
                         RestFarmac.setCentralDispenses(sess);
                     } else {
                         if (getServerStatus(url).contains("Red"))
@@ -304,7 +304,7 @@ public class PharmacyApplication {
                                 RestFarmac.restPostDispenses(sess, url, pool);
                             }
                         }
-                        RestFarmac.setPatientsFromRest(sess);
+                        RestFarmac.setPatientsFromRest();
                         RestFarmac.setDispensesFromRest(sess);
                     }
                     assert tx != null;

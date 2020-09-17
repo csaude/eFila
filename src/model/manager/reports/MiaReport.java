@@ -119,8 +119,9 @@ public class MiaReport extends AbstractJasperReport {
             int totalDS = totalDSM1 + totalDSM2 + totalDSM3 + totalDSM4 + totalDSM5 + pacientesdispensadosparaDS;
             int totalDT = totalDTM1 + totalDTM2 + pacientesdispensadosparaDT;
 
-            int totalMes = pacientesdispensadosparaDM + pacientesdispensadosparaDT  + pacientesdispensadosparaDS;
-            int totalGeral = totalDS + totalDT + totalMes;
+            int totalMes = pacientesdispensadosparaDM + pacientesdispensadosparaDT + pacientesdispensadosparaDS;
+            int totalGeral = totalDS + totalDT + pacientesdispensadosparaDM;
+
 
             double ajuste = 0;
             double roundedAjuste = 0.0;

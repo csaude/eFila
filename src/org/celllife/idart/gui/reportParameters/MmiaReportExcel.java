@@ -175,7 +175,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
              totalDT = totalDTM1 + totalDTM2 + pacientesdispensadosparaDT;
 
              totalMes = pacientesdispensadosparaDM + pacientesdispensadosparaDT  + pacientesdispensadosparaDS;
-             totalGeral = totalDS + totalDT + totalMes;
+             totalGeral = totalDS + totalDT + pacientesdispensadosparaDM;
 
              ajuste = 0;
              roundedAjuste = 0.0;

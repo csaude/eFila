@@ -440,27 +440,41 @@ public class RestFarmac {
             }
     }
 
-    public static void setPatientsFromRest(Session sess) {
+    public static void setPatientsFromRest() {
 
-        List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        try {
+            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
 
-        if (!syncTempPatients.isEmpty()) {
+            if (!syncTempPatients.isEmpty()) {
 
-            for (SyncTempPatient patient : syncTempPatients) {
-                try {
-                    DadosPacienteFarmac.InserePaciente(sess, patient);
-                    patient.setSyncstatus('I');
-                    AdministrationManager.saveSyncTempPatient(sess, patient);
-                    break;
-                } catch (Exception e) {
-                    log.error("Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "]");
-                } finally {
-                    continue;
+                for (SyncTempPatient patient : syncTempPatients) {
+                    try {
+                        DadosPacienteFarmac.InserePaciente(patient);
+                        patient.setSyncstatus('I');
+                        AdministrationManager.saveSyncTempPatient(sess, patient);
+                        break;
+                    } catch (Exception e) {
+                        log.error("Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "]");
+                    } finally {
+                        continue;
+                    }
                 }
+            } else {
+                log.trace(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
             }
-        } else {
-            log.trace(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace(new Date() + ": [FARMAC] INFO - ERRO GERAL ao gravar pacientes referido para esta FARMAC");
         }
+
     }
 
     public static void setDispensesFromRest(Session sess) {
@@ -727,27 +741,40 @@ public class RestFarmac {
     }
 
 
-    public static void setCentralPatients(Session sess) {
+    public static void setCentralPatients() {
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        try {
+            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSave(sess);
 
-        List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSave(sess);
+            if (!syncTempPatients.isEmpty()) {
 
-        if (!syncTempPatients.isEmpty()) {
-
-            for (SyncTempPatient patient : syncTempPatients) {
-                try {
-                    DadosPacienteFarmac.InserePaciente(sess, patient);
-                    patient.setSyncstatus('E');
-                    AdministrationManager.saveSyncTempPatient(sess, patient);
-                    break;
-                } catch (Exception e) {
-                    log.error(new Date() + ": [Central] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + patient.getMainclinicname());
-                } finally {
-                    continue;
+                for (SyncTempPatient patient : syncTempPatients) {
+                    try {
+                        DadosPacienteFarmac.InserePaciente(patient);
+                        patient.setSyncstatus('E');
+                        AdministrationManager.saveSyncTempPatient(sess, patient);
+                        break;
+                    } catch (Exception e) {
+                        log.error(new Date() + ": [Central] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + patient.getMainclinicname());
+                    } finally {
+                        continue;
+                    }
                 }
+            } else {
+                log.trace(new Date() + ": [Central] INFO - Nenhumm paciente referido para FARMAC foi encontrado");
             }
-        } else {
-            log.trace(new Date() + ": [Central] INFO - Nenhumm paciente referido para FARMAC foi encontrado");
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace(new Date() + ": [Central] INFO - ERRO GERAL ao gravar pacientes referido para esta FARMAC");
         }
+
     }
 
     public static void setCentralDispenses(Session sess) {

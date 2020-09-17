@@ -190,7 +190,7 @@ order by d.name asc]]>
 	<detail>
 		<band height="120" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-9" x="4" y="13" width="253" height="19"/>
+				<reportElement key="textField-9" x="4" y="13" width="515" height="19"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -208,7 +208,9 @@ order by d.name asc]]>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Numero do Lote]]></text>
 			</staticText>
 			<staticText>
@@ -219,52 +221,36 @@ order by d.name asc]]>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[DAta de Ajuste]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Ajuste]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" x="213" y="48" width="44" height="32"/>
+				<reportElement key="staticText-5" x="213" y="48" width="94" height="32"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Frascos Cont.]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Frascos Contados]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" x="261" y="48" width="44" height="32"/>
+				<reportElement key="staticText-7" x="309" y="48" width="94" height="32"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Comp. Cont]]></text>
-			</staticText>
-			<staticText>
-				<reportElement key="staticText-7" x="309" y="48" width="44" height="32"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Saldo Frascos]]></text>
-			</staticText>
-			<staticText>
-				<reportElement key="staticText-8" x="357" y="48" width="44" height="32"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Saldo Compr.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-10" x="405" y="48" width="127" height="32"/>
@@ -274,7 +260,9 @@ order by d.name asc]]>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Nota]]></text>
 			</staticText>
 			<line>
@@ -303,11 +291,11 @@ order by d.name asc]]>
 				<subreportParameter name="stockTake">
 					<subreportParameterExpression><![CDATA[$P{stockTake}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="stockCenterId">
-					<subreportParameterExpression><![CDATA[$P{stockCenterId}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="packsize">
 					<subreportParameterExpression><![CDATA[$F{packsize}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="stockCenterId">
+					<subreportParameterExpression><![CDATA[$P{stockCenterId}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="path">
 					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
@@ -318,14 +306,8 @@ order by d.name asc]]>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[($P{path} + java.io.File.separator+ "stockTakeReport_batch.jasper")]]></subreportExpression>
 			</subreport>
-			<line>
-				<reportElement key="line-13" x="259" y="47" width="1" height="34"/>
-			</line>
 			<line direction="BottomUp">
 				<reportElement key="line-14" x="307" y="47" width="1" height="34"/>
-			</line>
-			<line>
-				<reportElement key="line-15" x="355" y="47" width="1" height="34"/>
 			</line>
 			<line>
 				<reportElement key="line-16" x="403" y="47" width="1" height="34"/>

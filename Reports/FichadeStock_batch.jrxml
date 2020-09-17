@@ -330,10 +330,7 @@ $F{openingpills}.longValue()
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{tipomovimento}.contains(  "Ajuste" ) || $F{tipomovimento}.contains(  "Inventario" ) ?
-    $F{quantidade}.longValue()%$P{packsize} == 0 ?
-        $F{quantidade}.longValue()/$P{packsize}
-        :  $F{quantidade}.longValue()/$P{packsize}
-: $F{quantidade}.longValue()]]></textFieldExpression>
+$F{quantidade}.longValue() * (-1) : $F{quantidade}.longValue()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="454" y="1" width="93" height="18"/>

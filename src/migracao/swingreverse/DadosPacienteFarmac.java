@@ -41,7 +41,7 @@ public class DadosPacienteFarmac {
 
     public final static Logger log = Logger.getLogger(DadosPacienteFarmac.class);
 
-    public static Patient InserePaciente(Session sess, SyncTempPatient patientSync) {
+    public static Patient InserePaciente(SyncTempPatient patientSync) {
 
         Patient patient = null;
         PatientIdentifier patientIdentifier = null;
@@ -49,7 +49,7 @@ public class DadosPacienteFarmac {
         Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
 
         Clinic clinic = null;
-        Session session = HibernateUtil.getNewSession();
+        Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
 
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
@@ -70,12 +70,12 @@ public class DadosPacienteFarmac {
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
                     tx.commit();
-                    session.flush();
-                    session.close();
+                    sess.flush();
+                    sess.close();
                 } catch (Exception e) {
                     if (tx != null) {
                         tx.rollback();
-                        session.close();
+                        sess.close();
                     }
                    log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
                 }

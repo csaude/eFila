@@ -411,7 +411,7 @@ public class SearchManager {
             }
         });
 
-        search.getTableColumn2().setText("Codigo FNM?");
+        search.getTableColumn2().setText("Codigo do Regime");
         search.getTableColumn2().addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -434,7 +434,7 @@ public class SearchManager {
             if (regName.getCodigoregime() != null) {
                 itemText[1] = regName.getCodigoregime();
             } else {
-                itemText[1] = "Actualizar Codigo FNM";
+                itemText[1] = "Actualizar Codigo do Regime";
             }
             t[i].setText(itemText);
             listTableEntries.add(new SearchEntry(itemText[0], itemText[1]));
@@ -463,7 +463,7 @@ public class SearchManager {
             }
         });
 
-        search.getTableColumn2().setText("Codigo FNM?");
+        search.getTableColumn2().setText("Codigo do Regime");
         search.getTableColumn2().addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -486,7 +486,7 @@ public class SearchManager {
             if (regName.getCodigoregime() != null) {
                 itemText[1] = regName.getCodigoregime();
             } else {
-                itemText[1] = "Actualizar Codigo FNM";
+                itemText[1] = "Actualizar Codigo do Regime";
             }
             t[i].setText(itemText);
             listTableEntries.add(new SearchEntry(itemText[0], itemText[1]));
@@ -631,7 +631,7 @@ public class SearchManager {
 
         List<AtcCode> atccodes = null;
         String itemText[];
-        search.getTableColumn1().setText("Nome FNM");
+        search.getTableColumn1().setText("Nome Medicamento");
         search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
