@@ -69,14 +69,8 @@ public class DadosPacienteFarmac {
                     clinic.setFacilityType("Unidade Sanitária");
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
-                    tx.commit();
-                    sess.flush();
-                    sess.close();
                 } catch (Exception e) {
-                    if (tx != null) {
-                        tx.rollback();
-                        sess.close();
-                    }
+
                    log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
                 }
             }
@@ -138,7 +132,14 @@ public class DadosPacienteFarmac {
 
         try {
             PatientManager.savePatient(sess, patient);
+            tx.commit();
+            sess.flush();
+            sess.close();
         } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
             log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
         }
 
