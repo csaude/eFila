@@ -70,7 +70,6 @@ public class DadosPacienteFarmac {
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
                 } catch (Exception e) {
-
                    log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
                 }
             }
