@@ -304,7 +304,7 @@ public class PharmacyApplication {
                                 RestFarmac.restPostDispenses(sess, url, pool);
                             }
                         }
-                        
+
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
                             RestFarmac.setPatientsFromRest();
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U"))
