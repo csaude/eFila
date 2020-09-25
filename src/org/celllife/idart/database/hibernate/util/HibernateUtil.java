@@ -56,11 +56,9 @@ public class HibernateUtil {
 		ac.setProperty("hibernate.hbm2ddl.auto", "validate");
 		ac.setProperty("hibernate.show_sql", "false");
 		ac.setProperty("hibernate.use_outer_join", "false");
-		ac.setProperty("hibernate.cache.provider_class",
-		"org.hibernate.cache.HashtableCacheProvider");
+		ac.setProperty("hibernate.cache.provider_class","org.hibernate.cache.HashtableCacheProvider");
 		ac.setProperty("hibernate.bytecode.use_reflection_optimizer", "false");
-		ac.setProperty("hibernate.transaction.factory_class",
-		"org.hibernate.transaction.JDBCTransactionFactory");
+		ac.setProperty("hibernate.transaction.factory_class","org.hibernate.transaction.JDBCTransactionFactory");
 		ac.setProperty("hibernate.max_fetch_depth", "1");
 		ac.setProperty("hibernate.default_batch_fetch_size", "4");
 		ac.setProperty("hibernate.use_sql_comments", "false");
@@ -70,6 +68,9 @@ public class HibernateUtil {
 		ac.setProperty("hibernate.connection.username", hibernateUsername);
 		ac.setProperty("hibernate.connection.driver_class", hibernateDriver);
 		ac.setProperty("hibernate.dialect", hibernateDialect);
+		ac.setProperty("hibernate.connection.release_mode", "auto");
+		ac.setProperty("hibernate.dbcp.maxActive", "-1");
+
 		// ac.setProperty("hibernate.hbm2ddl.auto", "validate");
 		// deprecated integer return types
 		// ac.addSqlFunction("count", new ClassicCountFunction());

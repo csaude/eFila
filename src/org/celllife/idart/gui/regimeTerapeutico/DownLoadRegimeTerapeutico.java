@@ -172,8 +172,8 @@ public class DownLoadRegimeTerapeutico extends GenericFormGui {
 
         if (tblColumns.getCheckedElements().length <= 0) {
             MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            b.setMessage(" Nenhum medicamento foi seleccionado na lista ");
-            b.setText("Nenhum medicamento foi seleccionado na lista");
+            b.setMessage(" Nenhum Regime Terapêutico foi seleccionado na lista ");
+            b.setText("Nenhum Regime Terapêutico foi seleccionado na lista");
             b.open();
             fieldsOkay = false;
         }
@@ -345,8 +345,8 @@ public class DownLoadRegimeTerapeutico extends GenericFormGui {
         if (restRegimeTerapeutico.isEmpty()) {
             btnSave.setEnabled(false);
             MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            b.setMessage(" Nenhum resultado foi encontrado ");
-            b.setText("Nenhum resultado foi encontrado");
+            b.setMessage(" Nenhuma actualização foi encontrada ");
+            b.setText("Nenhuma actualização foi encontrada");
             b.open();
         } else
             btnSave.setEnabled(true);

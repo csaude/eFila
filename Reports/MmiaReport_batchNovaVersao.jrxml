@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.5937424601000023"/>
-	<property name="ireport.x" value="24"/>
+	<property name="ireport.x" value="753"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -343,7 +343,7 @@ drug.id=stock.drug
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{adjusted}.toString()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{adjusted}.intValue() * (-1)) + ""]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-29" x="526" y="0" width="1" height="21"/>

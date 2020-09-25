@@ -289,7 +289,7 @@ public class PharmacyApplication {
 
                 try {
                     if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
-                        RestFarmac.setCentralPatients(sess);
+                        RestFarmac.setCentralPatients();
                         RestFarmac.setCentralDispenses(sess);
                     } else {
                         if (getServerStatus(url).contains("Red"))
@@ -299,13 +299,16 @@ public class PharmacyApplication {
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
-                                RestFarmac.setDispensesFromRest(sess);
                             } else if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
                                 RestFarmac.restGeAllPatients(url, mainClinic, pool);
-                                RestFarmac.setPatientsFromRest(sess);
                                 RestFarmac.restPostDispenses(sess, url, pool);
                             }
                         }
+
+                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
+                            RestFarmac.setPatientsFromRest();
+                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U"))
+                            RestFarmac.setDispensesFromRest(sess);
                     }
                     assert tx != null;
                     tx.commit();

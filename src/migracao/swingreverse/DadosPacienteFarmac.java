@@ -41,7 +41,7 @@ public class DadosPacienteFarmac {
 
     public final static Logger log = Logger.getLogger(DadosPacienteFarmac.class);
 
-    public static Patient InserePaciente(Session sess, SyncTempPatient patientSync) {
+    public static Patient InserePaciente(SyncTempPatient patientSync) {
 
         Patient patient = null;
         PatientIdentifier patientIdentifier = null;
@@ -49,7 +49,7 @@ public class DadosPacienteFarmac {
         Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
 
         Clinic clinic = null;
-        Session session = HibernateUtil.getNewSession();
+        Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
 
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
@@ -69,15 +69,8 @@ public class DadosPacienteFarmac {
                     clinic.setFacilityType("Unidade Sanitária");
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
-                    tx.commit();
-                    session.flush();
-                    session.close();
                 } catch (Exception e) {
-                    if (tx != null) {
-                        tx.rollback();
-                        session.close();
-                    }
-                   log.trace("Error :" + e);
+                   log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
                 }
             }
         } else
@@ -136,7 +129,18 @@ public class DadosPacienteFarmac {
         patient.setPatientIdentifiers(oldIdentifiers);
         patient.setPatientAttribute(patientAttribute);
 
-        PatientManager.savePatient(sess, patient);
+        try {
+            PatientManager.savePatient(sess, patient);
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
+        }
 
         return patient;
 
@@ -149,6 +153,7 @@ public class DadosPacienteFarmac {
 
         Prescription prescription = null;
         Patient patient = null;
+        Clinic clinic = null;
         try {
 
             if (syncTempDispense.getUuidopenmrs() != null)
@@ -156,7 +161,25 @@ public class DadosPacienteFarmac {
             else
                 patient = PatientManager.getPatient(sess, syncTempDispense.getPatientid());
 
+
+            if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P"))
+                clinic = AdministrationManager.getClinicbyUuid(sess, syncTempDispense.getMainclinicuuid());
+
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
+
+            if(patient.getMostRecentEpisode() == null){
+                Episode episode = new Episode();
+                episode.setPatient(patient);
+                episode.setStartDate(syncTempDispense.getDate());
+                episode.setStartReason("Referido De");
+                episode.setStartNotes("FARMAC");
+                episode.setStopDate(null);
+                episode.setStopReason("");
+                episode.setStopNotes(null);
+                episode.setClinic(clinic);
+                sess.save(episode);
+            }
+
 
             if (prescription == null) {
                 prescription = new Prescription();
@@ -248,7 +271,7 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-           log.trace("Error :" + e);
+           log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
 
         }
         return prescription;
@@ -343,7 +366,6 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-//            getLog().error(he);
         }
     }
 
@@ -424,7 +446,7 @@ public class DadosPacienteFarmac {
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("TARV");
 
-        PackageManager.savePackageQty0(sess, newPack);
+        PackageManager.savePackageQty0(newPack);
     }
 
     public static boolean setDispenseRestOpenmrs(Session sess, Prescription prescription, SyncTempDispense syncTempDispense) {
@@ -435,7 +457,7 @@ public class DadosPacienteFarmac {
         boolean postOpenMrsEncounterStatus = false;
 
         Packages newPack = PackageManager.getLastPackageOnScript(prescription);
-
+        Doctor doctorProvider = PrescriptionManager.getProvider(sess);
         List<PackagedDrugs> packagedDrugs = newPack.getPackagedDrugs();
 
         Date dtPickUp = syncTempDispense.getPickupdate();
@@ -446,8 +468,8 @@ public class DadosPacienteFarmac {
         // Patient NID
         String nid = prescription.getPatient().getPatientId().trim();
 
-        String strProvider = prescription.getDoctor().getFirstname().trim() + " "
-                + prescription.getDoctor().getLastname().trim();
+        String strProvider = doctorProvider.getFirstname().trim() + " "
+                + doctorProvider.getLastname().trim();
 
         String providerWithNoAccents = org.apache.commons.lang3.StringUtils.stripAccents(strProvider);
 
@@ -575,12 +597,12 @@ public class DadosPacienteFarmac {
 
                 } catch (Exception e) {
                     result = true;
-                    log.trace("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
+                    log.error("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
                     saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + nid + ": " + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: "+ e.getMessage());
         }
 
         return result;

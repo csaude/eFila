@@ -187,7 +187,7 @@ public class AdministrationManager {
                 linha = lt.get(i);
                 if (linha.getLinhanome().equals(linhat)) {
                     break;
-                }
+                }else linha = lt.get(0);
             }
         }
         return linha;
@@ -1482,7 +1482,7 @@ public class AdministrationManager {
     public static void saveSyncTempDispense(Session s, SyncTempDispense syncTempDispense)
             throws HibernateException {
 
-        s.save(syncTempDispense);
+        s.saveOrUpdate(syncTempDispense);
     }
 
     // Devolve a lista de todos pacientes referidos

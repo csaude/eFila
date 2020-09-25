@@ -38,19 +38,19 @@
 	<queryString>
 		<![CDATA[select
 
-COALESCE((a.allreceived * $P{packsize} - COALESCE((b.allissued * $P{packsize}) + b.allpill, 0) - COALESCE(f.alladjusted, 0) + COALESCE((h.allreturned * $P{packsize}) + h.allpills, 0)), 0)
+COALESCE((a.allreceived - COALESCE((b.allissued) + b.allpill, 0) - COALESCE(f.alladjusted, 0) + COALESCE((h.allreturned) + h.allpills, 0)), 0)
 
 as openingpills,
 
 COALESCE(c.received,0) as received,
 
-COALESCE(sum(e.issued),0) as destroyed , COALESCE(sum(e.pill),0) as destroyedpills,
+COALESCE(sum(e.issued + e.pill),0) as destroyed,
 
-COALESCE(sum(d.issued),0) as dispensed , COALESCE(sum(d.pill),0) as dispensedpills,
+COALESCE(sum(d.issued + d.pill),0) as dispensed,
 
 COALESCE(g.adjusted,0) as adjusted,
 
-COALESCE(sum(i.returned),0) as returned , COALESCE(sum(i.pills),0) as returnedpills,
+COALESCE(sum(i.returned + i.pill),0) as returned,
 
 pg_catalog.date(drug.searchdate) as movdate,
 
@@ -70,7 +70,7 @@ left join
 ) as a on a.id = drug.id
 
 left join
-(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as allissued, MOD(sum(pd.amount),$P{packsize}) as allpill,d.id
+(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as allissued, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as allpill,d.id
 from drug as d, stock as s, packageddrugs as pd, package as p,prescription as pre
 where d.id = d.id and s.stockCenter = $P{stockCenterId}
 and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id
@@ -80,7 +80,12 @@ and pg_catalog.date(p.packdate) < $P{monthStart}::date
 ) as b on b.id = drug.id
 
 left join
-(select sum(sa.stockcount) as alladjusted, d.id
+(select
+CASE WHEN MOD(sum(sa.adjustedvalue),$P{packsize}) > 0 THEN
+		COALESCE(round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0) + 1,0)
+	ELSE
+		COALESCE(round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0),0)
+END as alladjusted, d.id
 from drug as d, stock as s, stockAdjustment as sa
 where d.id = d.id
 and s.stockCenter = $P{stockCenterId}
@@ -91,7 +96,7 @@ group by 2
 ) as f on f.id = drug.id
 left join
 
-(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as allreturned, MOD(sum(pd.amount),$P{packsize}) as allpills,d.id
+(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as allreturned, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as allpills,d.id
 from drug as d, stock as s, packageddrugs as pd, package as p
 where d.id = d.id
 and s.stockCenter = $P{stockCenterId}
@@ -103,7 +108,6 @@ and pg_catalog.date(p.dateReturned) < $P{monthStart}::date
  GROUP BY 3
 ) as h on h.id = drug.id
 
-
 left join
 
 (select sum(s.unitsreceived) as received, s.datereceived, d.id
@@ -113,7 +117,7 @@ where d.id = d.id and s.stockCenter = $P{stockCenterId} and s.drug = d.id
 ) as c on c.id = drug.id and pg_catalog.date(c.datereceived) = pg_catalog.date(drug.searchdate)
 left join
 
-(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, MOD(sum(pd.amount),$P{packsize}) as pill,p.packdate,d.id
+(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pill, p.packdate,d.id
 from drug as d, stock as s, packageddrugs as pd, package as p,prescription as pre
 where d.id = d.id and s.stockCenter = $P{stockCenterId}
 and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id
@@ -122,7 +126,7 @@ and p.prescription = pre.id
 ) as d on d.id = drug.id and pg_catalog.date(d.packdate) = pg_catalog.date(drug.searchdate)
 left join
 
-(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, MOD(sum(pd.amount),$P{packsize}) as pill,p.packdate,d.id
+(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pill, p.packdate,d.id
 from drug as d, stock as s, packageddrugs as pd, package as p
 where d.id = d.id and s.stockCenter = $P{stockCenterId}
 and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id
@@ -131,7 +135,12 @@ and p.prescription is null
 ) as e on e.id = drug.id and pg_catalog.date(e.packdate) = pg_catalog.date(drug.searchdate)
 left join
 
-(select sum(sa.stockcount) as adjusted, sa.notes,sa.captureDate, d.id
+(select
+	CASE WHEN MOD(sum(sa.adjustedvalue),$P{packsize}) > 0 THEN
+		COALESCE(round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0) + 1,0)
+	ELSE
+		COALESCE(round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0),0)
+END as adjusted, sa.notes,sa.captureDate, d.id
 from drug as d, stock as s, stockAdjustment as sa
 where d.id = d.id
 and s.stockCenter = $P{stockCenterId}
@@ -141,7 +150,7 @@ group by 2,3,4
 ) as g on g.id = drug.id and pg_catalog.date(g.captureDate) = pg_catalog.date(drug.searchdate)
 left join
 
-(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as returned, MOD(sum(pd.amount),$P{packsize}) as pills,p.dateReturned,d.id
+(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pill, p.dateReturned,d.id
 from drug as d, stock as s, packageddrugs as pd, package as p
 where d.id = d.id
 and s.stockCenter = $P{stockCenterId}
@@ -157,39 +166,33 @@ ORDER BY movdate]]>
 	<field name="openingpills" class="java.math.BigDecimal"/>
 	<field name="received" class="java.lang.Long"/>
 	<field name="destroyed" class="java.math.BigDecimal"/>
-	<field name="destroyedpills" class="java.math.BigDecimal"/>
 	<field name="dispensed" class="java.math.BigDecimal"/>
-	<field name="dispensedpills" class="java.math.BigDecimal"/>
 	<field name="adjusted" class="java.lang.Long"/>
 	<field name="returned" class="java.math.BigDecimal"/>
-	<field name="returnedpills" class="java.math.BigDecimal"/>
 	<field name="movdate" class="java.sql.Date"/>
 	<field name="notes" class="java.lang.String"/>
 	<variable name="totalPills" class="java.lang.Long">
-		<variableExpression><![CDATA[new Long($F{openingpills}.longValue()  + $V{somaUnidadesRecebidas}.longValue()
-+ $F{received}.longValue()*$P{packsize}.intValue() + $V{somaUnidadesDevolvidas}.longValue()
-+ $F{returned}.longValue()*$P{packsize}.intValue() + $F{returnedpills}.longValue()
-- $V{somaUnidadesDispensadas}.longValue() - $V{somaUnidadesDestruidas}.longValue()
-- $V{somaUnidadesAjustadas}.longValue() - $F{dispensed}.longValue()*$P{packsize}.intValue()
-- $F{dispensedpills}.longValue() - $F{destroyed}.longValue()*$P{packsize}.intValue()
-- $F{destroyedpills}.longValue() - $F{adjusted}.longValue()
+		<variableExpression><![CDATA[new Long($F{openingpills}.longValue()
++ $V{somaUnidadesRecebidas}.longValue() + $F{received}.longValue()
++ $V{somaUnidadesDevolvidas}.longValue() + $F{returned}.longValue()
+- $V{somaUnidadesDispensadas}.longValue() - $F{dispensed}.longValue()
+- $V{somaUnidadesDestruidas}.longValue() - $F{destroyed}.longValue()
+- $V{somaUnidadesAjustadas}.longValue() - $F{adjusted}.longValue()
 )]]></variableExpression>
 	</variable>
 	<variable name="totalString" class="java.lang.String">
-		<variableExpression><![CDATA[(($V{totalPills}.longValue()%$P{packsize}.intValue())==0)?
-(new Long($V{totalPills}.longValue()/$P{packsize}.intValue())).toString()
-:(new Long(($V{totalPills}.longValue()/$P{packsize}.intValue())+1)).toString()]]></variableExpression>
+		<variableExpression><![CDATA[$V{totalPills}.toString()]]></variableExpression>
 	</variable>
 	<variable name="somaUnidadesRecebidas" class="java.lang.Long" resetType="Column" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{somaUnidadesRecebidas} + $F{received}*$P{packsize}.intValue()]]></variableExpression>
+		<variableExpression><![CDATA[$V{somaUnidadesRecebidas} + $F{received}]]></variableExpression>
 		<initialValueExpression><![CDATA[new Long(0)]]></initialValueExpression>
 	</variable>
 	<variable name="somaUnidadesDispensadas" class="java.lang.Long" resetType="Column" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{somaUnidadesDispensadas} + $F{dispensed}.longValue()*$P{packsize} + $F{dispensedpills}.longValue()]]></variableExpression>
+		<variableExpression><![CDATA[$V{somaUnidadesDispensadas} + $F{dispensed}.longValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new Long(0)]]></initialValueExpression>
 	</variable>
 	<variable name="somaUnidadesDevolvidas" class="java.lang.Long" resetType="Column" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{somaUnidadesDevolvidas}+ $F{returned}.longValue()*$P{packsize} + $F{returnedpills}.longValue()]]></variableExpression>
+		<variableExpression><![CDATA[$V{somaUnidadesDevolvidas}+ $F{returned}.longValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new Long(0)]]></initialValueExpression>
 	</variable>
 	<variable name="somaUnidadesAjustadas" class="java.lang.Long" resetType="Column" incrementType="Column" calculation="Sum">
@@ -197,7 +200,7 @@ ORDER BY movdate]]>
 		<initialValueExpression><![CDATA[new Long(0)]]></initialValueExpression>
 	</variable>
 	<variable name="somaUnidadesDestruidas" class="java.lang.Long" resetType="Column" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{somaUnidadesDestruidas} + $F{destroyed}.longValue()*$P{packsize} + $F{destroyedpills}.longValue()]]></variableExpression>
+		<variableExpression><![CDATA[$V{somaUnidadesDestruidas} + $F{destroyed}.longValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new Long(0)]]></initialValueExpression>
 	</variable>
 	<background>
@@ -231,8 +234,7 @@ ORDER BY movdate]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{dispensedpills}.intValue()%$P{packsize}.intValue()) == 0 ? $F{dispensed}.toString():
-($F{dispensed}.intValue() + 1)]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dispensed}.toString()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-8" mode="Opaque" x="72" y="0" width="1" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -275,8 +277,7 @@ ORDER BY movdate]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{adjusted}.intValue()%$P{packsize}.intValue())==0?new Integer($F{adjusted}.intValue()/$P{packsize}.intValue()).toString():
-(new Integer(($F{adjusted}.intValue()/$P{packsize}.intValue()) + 1)).toString()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{adjusted}.intValue() * (-1))+""]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="1" y="-1" width="547" height="1"/>

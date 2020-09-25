@@ -108,7 +108,9 @@ on d.id = a.id]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[String.valueOf(($F{totalPillsCounted}.intValue()/$P{packSize}.intValue()) + "(" + ($F{totalPillsCounted}.intValue()%$P{packSize}.intValue()) + " loose)")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{totalPillsCounted}.intValue()%$P{packSize}.intValue()) > 0 ?
+String.valueOf(($F{totalPillsCounted}.intValue()/$P{packSize}.intValue()) + 1):
+String.valueOf(($F{totalPillsCounted}.intValue()/$P{packSize}.intValue()))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-3" mode="Opaque" x="102" y="2" width="88" height="16"/>
@@ -119,7 +121,9 @@ on d.id = a.id]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[String.valueOf((($F{totalPillsCounted}.intValue()+$F{totalPillsAdjusted}.intValue())/$P{packSize}.intValue()) + "(" + (($F{totalPillsCounted}.intValue()+$F{totalPillsAdjusted}.intValue())%$P{packSize}.intValue()) + " loose)")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{totalPillsCounted}.intValue()+$F{totalPillsAdjusted}.intValue())%$P{packSize}.intValue()) > 0 ?
+String.valueOf((($F{totalPillsCounted}.intValue()+$F{totalPillsAdjusted}.intValue())/$P{packSize}.intValue()) + 1):
+String.valueOf((($F{totalPillsCounted}.intValue()+$F{totalPillsAdjusted}.intValue())/$P{packSize}.intValue()))]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="0" y="0" width="1" height="20"/>
