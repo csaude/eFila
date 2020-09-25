@@ -153,6 +153,7 @@ public class DadosPacienteFarmac {
 
         Prescription prescription = null;
         Patient patient = null;
+        Clinic clinic = null;
         try {
 
             if (syncTempDispense.getUuidopenmrs() != null)
@@ -160,7 +161,25 @@ public class DadosPacienteFarmac {
             else
                 patient = PatientManager.getPatient(sess, syncTempDispense.getPatientid());
 
+
+            if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P"))
+                clinic = AdministrationManager.getClinicbyUuid(sess, syncTempDispense.getMainclinicuuid());
+
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
+
+            if(patient.getMostRecentEpisode() == null){
+                Episode episode = new Episode();
+                episode.setPatient(patient);
+                episode.setStartDate(syncTempDispense.getDate());
+                episode.setStartReason("Referido De");
+                episode.setStartNotes("FARMAC");
+                episode.setStopDate(null);
+                episode.setStopReason("");
+                episode.setStopNotes(null);
+                episode.setClinic(clinic);
+                sess.save(episode);
+            }
+
 
             if (prescription == null) {
                 prescription = new Prescription();
