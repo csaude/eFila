@@ -1174,7 +1174,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         txtAreaNotes = new Text(grpNotes, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP);
         txtAreaNotes.setBounds(new Rectangle(15, 19, 249, 79));
         txtAreaNotes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        txtAreaNotes.setEditable(false);
+        txtAreaNotes.setEditable(true);
         txtAreaNotes.setEnabled(false);
 
     }
