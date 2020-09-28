@@ -1,6 +1,9 @@
 ALTER TABLE drug DROP CONSTRAINT fk20a3c0633ef5cb;
 ALTER TABLE regimendrugs DROP CONSTRAINT fk281dee12633d3b83;
 ALTER TABLE clinic DROP CONSTRAINT fk78780108c18d4d76;
+ALTER TABLE prescription DROP CONSTRAINT fk253af83a4e29eee7;
+ALTER TABLE prescription DROP CONSTRAINT fk253af83a5e6aa99;
+ALTER TABLE prescription DROP CONSTRAINT fk253af83a8877f9c1;
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS province character varying(255) COLLATE pg_catalog."default" DEFAULT  '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS district character varying(255) COLLATE pg_catalog."default" DEFAULT '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS subDistrict character varying(255) COLLATE pg_catalog."default" DEFAULT '';
@@ -36,6 +39,16 @@ ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescricaoespecial chara
 ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS ctzpickup boolean DEFAULT False;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAULT False;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptiondate timestamp with time zone NULL;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS duration integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionenddate timestamp with time zone NULL;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS regimenome character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS linhanome character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensatrimestral integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensasemestral integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
