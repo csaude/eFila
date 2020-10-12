@@ -36,6 +36,7 @@ public class SyncOpenmrsDispense {
     @ManyToOne
     @JoinColumn(name = "prescription", nullable = false)
     private Prescription prescription;
+    @Column(name = "syncstatus")
     private Character syncstatus;
 
     public Integer getId() {
