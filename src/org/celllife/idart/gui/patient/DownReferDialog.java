@@ -24,7 +24,10 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DownReferDialog extends GenericOthersGui {
 
@@ -323,6 +326,20 @@ public class DownReferDialog extends GenericOthersGui {
             pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
         }
 
+        if(!prescription.getPrescribedDrugs().isEmpty()){
+
+            Map<String,Object> pd = new HashMap<String,Object>();
+            ArrayList listPD = new ArrayList();
+
+            for(PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()){
+                pd.put("drugId",prescribedDrugs.getDrug().getId());
+                pd.put("drugcode",prescribedDrugs.getDrug().getAtccode());
+                pd.put("drugname",prescribedDrugs.getDrug().getName());
+                pd.put("timesperday",prescribedDrugs.getTimesPerDay());
+                listPD.add(pd);
+            }
+            pacienteReferido.setJsonprescribeddrugs(listPD.toString());
+        }
 
         if (patient.getAttributeByName("ARV Start Date") != null)
             pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());

@@ -103,6 +103,8 @@ public class SyncTempPatient {
     private Character prescricaoespecial;
     @Column(name = "motivocriacaoespecial")
     private String motivocriacaoespecial;
+    @Column(name = "jsonprescribeddrugs")
+    private String jsonprescribeddrugs;
 
     public SyncTempPatient() {
         super();
@@ -477,5 +479,13 @@ public class SyncTempPatient {
 
     public void setMotivocriacaoespecial(String motivocriacaoespecial) {
         this.motivocriacaoespecial = motivocriacaoespecial;
+    }
+
+    public String getJsonprescribeddrugs() {
+        return jsonprescribeddrugs;
+    }
+
+    public void setJsonprescribeddrugs(String jsonprescribeddrugs) {
+        this.jsonprescribeddrugs = jsonprescribeddrugs;
     }
 }

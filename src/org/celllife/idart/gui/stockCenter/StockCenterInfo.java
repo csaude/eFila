@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import sun.jvm.hotspot.debugger.cdbg.LoadObject;
 
 /**
  */
@@ -1210,6 +1211,7 @@ public class StockCenterInfo extends GenericFormGui {
 			StockCenter stockCenter = new StockCenter();
 			stockCenter.setStockCenterName(txtStockCenterName.getText().trim());
 			stockCenter.setPreferred(rdBtnPreferredYes.getSelection());
+			stockCenter.setClinicuuid(LocalObjects.currentClinic.getUuid());
 			AdministrationManager.saveStockCenter(getHSession(), stockCenter);
 
 		}
