@@ -511,7 +511,7 @@ public class GeneralAdmin extends GenericAdminGui {
 
         // btnManagePharmUsers
         Button btnManagePharmUsers = new Button(grpPharmacy, SWT.NONE);
-        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 10, 205, 30));
+        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 30, 205, 30));
         btnManagePharmUsers.setToolTipText(Messages.getString("GeneralAdmin.button.pharmacy.tooltip")); //$NON-NLS-1$
         btnManagePharmUsers.setText(Messages.getString("GeneralAdmin.button.pharmacy.title")); //$NON-NLS-1$
         btnManagePharmUsers.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -525,7 +525,7 @@ public class GeneralAdmin extends GenericAdminGui {
 
         // btnUserPasswordStateManage
         Button btnUserPasswordStateManage = new Button(grpPharmacy, SWT.NONE);
-        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 55, 235, 30));
+        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 65, 235, 30));
         btnUserPasswordStateManage.setToolTipText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.tooltip")); //$NON-NLS-1$
         btnUserPasswordStateManage.setText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.title")); //$NON-NLS-1$
         btnUserPasswordStateManage.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
