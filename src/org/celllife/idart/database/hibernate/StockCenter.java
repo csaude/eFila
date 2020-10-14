@@ -51,6 +51,9 @@ public class StockCenter {
 			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 	private Set<Stock> stock;
 
+	@Column(name = "clinicuuid", length = 255)
+	private String clinicuuid;
+
 	/**
 	 * @return the id
 	 */
@@ -111,5 +114,11 @@ public class StockCenter {
 		this.preferred = preferred;
 	}
 
-	
+	public String getClinicuuid() {
+		return clinicuuid;
+	}
+
+	public void setClinicuuid(String clinicuuid) {
+		this.clinicuuid = clinicuuid;
+	}
 }

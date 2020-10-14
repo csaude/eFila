@@ -4,10 +4,7 @@ import model.manager.AdministrationManager;
 import org.apache.log4j.Logger;
 import org.celllife.function.DateRuleFactory;
 import org.celllife.idart.commonobjects.CommonObjects;
-import org.celllife.idart.database.hibernate.Clinic;
-import org.celllife.idart.database.hibernate.Episode;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.SyncTempPatient;
+import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.gui.platform.GenericOthersGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartFont;
@@ -23,7 +20,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DownReferDialog extends GenericOthersGui {
 
@@ -270,13 +274,15 @@ public class DownReferDialog extends GenericOthersGui {
     public void saveReferredPatient(Patient patient, Clinic clinic, Clinic mainClinic, Session session) {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
+        Prescription prescription = patient.getMostRecentPrescription();
+        int prescriptionDuration = 0;
 
         if (patient.getUuidopenmrs() != null)
             pacienteReferido = AdministrationManager.getSyncTempPatienByUuid(getHSession(), patient.getUuidopenmrs());
         else
             pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), mainClinic.getUuid());
 
-        if(pacienteReferido == null)
+        if (pacienteReferido == null)
             pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), mainClinic.getClinicName());
 
         if (pacienteReferido == null)
@@ -307,6 +313,39 @@ public class DownReferDialog extends GenericOthersGui {
         pacienteReferido.setWorkphone(patient.getWorkPhone());
         pacienteReferido.setRace(patient.getRace());
         pacienteReferido.setUuid(patient.getUuidopenmrs());
+
+        if (prescription != null) {
+            prescriptionDuration = prescription.getDuration();
+
+            for (Packages pack : prescription.getPackages()) {
+                prescriptionDuration = prescriptionDuration - pack.getWeekssupply();
+            }
+            pacienteReferido.setPrescriptiondate(prescription.getDate());
+            pacienteReferido.setDuration(prescriptionDuration);
+            pacienteReferido.setPrescriptionenddate(prescription.getEndDate());
+            pacienteReferido.setRegimenome(prescription.getRegimeTerapeutico().getRegimeesquema());
+            pacienteReferido.setLinhanome(prescription.getLinha().getLinhanome());
+            pacienteReferido.setDispensatrimestral(prescription.getDispensaTrimestral());
+            pacienteReferido.setDispensasemestral(prescription.getDispensaSemestral());
+            pacienteReferido.setPrescriptionid(prescription.getPrescriptionId());
+            pacienteReferido.setPrescricaoespecial(prescription.getPrescricaoespecial());
+            pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
+        }
+
+        if (!prescription.getPrescribedDrugs().isEmpty()) {
+
+            Map<String, Object> pd = new HashMap<String, Object>();
+            ArrayList listPD = new ArrayList();
+
+            for (PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()) {
+                pd.put("drugId", prescribedDrugs.getDrug().getId());
+                pd.put("drugcode", prescribedDrugs.getDrug().getAtccode());
+                pd.put("timesperday", prescribedDrugs.getTimesPerDay());
+                listPD.add(pd);
+            }
+            pacienteReferido.setJsonprescribeddrugs(listPD.toString());
+        }
+
         if (patient.getAttributeByName("ARV Start Date") != null)
             pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());
         pacienteReferido.setSyncstatus('P');
