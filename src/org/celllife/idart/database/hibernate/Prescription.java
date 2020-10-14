@@ -65,11 +65,13 @@ public class Prescription {
 	private int duration;
 
 	private char modified;
+
 	@Transient
-	@OneToMany(mappedBy = "prescription")
+	@OneToMany
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
 		org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 		private Set<SyncOpenmrsDispense> syncOpenmrsDispenses;
+
 
 	@OneToMany(mappedBy = "prescription")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
