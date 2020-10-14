@@ -1181,7 +1181,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexão com OpenMRS ou contacte o administrador");
                         title = Messages.getString("Servidor OpenMRS offline"); //$NON-NLS-1$
                         message = Messages.getString("Servidor OpenMRS offline, verifique a conexão com OpenMRS ou contacte o administrador"); //$NON-NLS-1$
-                        result = false;
+                        result = true;
                     } else {
                         restClient = new RestClient();
                         String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + txtOpenmrsuuid.getText());

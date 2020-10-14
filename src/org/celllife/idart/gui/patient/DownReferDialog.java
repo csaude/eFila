@@ -275,13 +275,14 @@ public class DownReferDialog extends GenericOthersGui {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
         Prescription prescription = patient.getMostRecentPrescription();
+        int prescriptionDuration = 0;
 
         if (patient.getUuidopenmrs() != null)
             pacienteReferido = AdministrationManager.getSyncTempPatienByUuid(getHSession(), patient.getUuidopenmrs());
         else
             pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), mainClinic.getUuid());
 
-        if(pacienteReferido == null)
+        if (pacienteReferido == null)
             pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), mainClinic.getClinicName());
 
         if (pacienteReferido == null)
@@ -313,9 +314,14 @@ public class DownReferDialog extends GenericOthersGui {
         pacienteReferido.setRace(patient.getRace());
         pacienteReferido.setUuid(patient.getUuidopenmrs());
 
-        if(prescription != null){
+        if (prescription != null) {
+            prescriptionDuration = prescription.getDuration();
+
+            for (Packages pack : prescription.getPackages()) {
+                prescriptionDuration = prescriptionDuration - pack.getWeekssupply();
+            }
             pacienteReferido.setPrescriptiondate(prescription.getDate());
-            pacienteReferido.setDuration(prescription.getDuration());
+            pacienteReferido.setDuration(prescriptionDuration);
             pacienteReferido.setPrescriptionenddate(prescription.getEndDate());
             pacienteReferido.setRegimenome(prescription.getRegimeTerapeutico().getRegimeesquema());
             pacienteReferido.setLinhanome(prescription.getLinha().getLinhanome());
@@ -326,16 +332,15 @@ public class DownReferDialog extends GenericOthersGui {
             pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
         }
 
-        if(!prescription.getPrescribedDrugs().isEmpty()){
+        if (!prescription.getPrescribedDrugs().isEmpty()) {
 
-            Map<String,Object> pd = new HashMap<String,Object>();
+            Map<String, Object> pd = new HashMap<String, Object>();
             ArrayList listPD = new ArrayList();
 
-            for(PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()){
-                pd.put("drugId",prescribedDrugs.getDrug().getId());
-                pd.put("drugcode",prescribedDrugs.getDrug().getAtccode());
-                pd.put("drugname",prescribedDrugs.getDrug().getName());
-                pd.put("timesperday",prescribedDrugs.getTimesPerDay());
+            for (PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()) {
+                pd.put("drugId", prescribedDrugs.getDrug().getId());
+                pd.put("drugcode", prescribedDrugs.getDrug().getAtccode());
+                pd.put("timesperday", prescribedDrugs.getTimesPerDay());
                 listPD.add(pd);
             }
             pacienteReferido.setJsonprescribeddrugs(listPD.toString());
