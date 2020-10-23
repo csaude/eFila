@@ -299,9 +299,11 @@ public class PharmacyApplication {
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
+                                RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
                             } else if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
                                 RestFarmac.restGeAllPatients(url, mainClinic, pool);
                                 RestFarmac.restPostDispenses(sess, url, pool);
+                                RestFarmac.restPostEpisodes(sess, url, pool);
                             }
                         }
 
