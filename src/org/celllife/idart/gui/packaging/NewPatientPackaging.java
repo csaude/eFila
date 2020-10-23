@@ -2822,9 +2822,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     nidUuid = (String) results.get("uuid");
                 }
 
-                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
-                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
-                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
+//                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
+//                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
+//                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
 
                 String uuid = localPatient.getUuidopenmrs();
                 if (uuid != null && !uuid.isEmpty()) {
@@ -2851,7 +2851,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 }
 
                 if (nidUuid != null && !nidUuid.isEmpty()) {
-                    if (nidUuid != uuid || voided) {
+//                    if (nidUuid != uuid || voided) {
+                    if (nidUuid != uuid) {
 
                         PackageManager.savePackage(getHSession(), newPack);
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
