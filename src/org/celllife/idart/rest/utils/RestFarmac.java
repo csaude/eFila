@@ -359,8 +359,8 @@ public class RestFarmac {
         HttpResponse response = null;
         Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
-        //String path = url + "/sync_temp_episode?syncstatus=eq.S&clinicuuid=eq." + mainClinic.getUuid();
-        String path = url + "/sync_temp_episode";
+        String path = url + "/sync_temp_episode?syncstatus=eq.S&clinicuuid=eq." + mainClinic.getUuid();
+        //String path = url + "/sync_temp_episode?id=eq.596409";
         try {
             String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 

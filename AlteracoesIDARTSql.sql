@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS user_role (
 
 CREATE TABLE IF NOT EXISTS sync_temp_episode (
 	id int4 NOT NULL,
-	startdate timestamptz NOT NULL,
+	startdate timestamptz NULL,
 	stopdate timestamptz NULL,
 	startreason varchar(255) NULL,
 	stopreason varchar(255) NULL,
