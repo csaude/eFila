@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import sun.jvm.hotspot.debugger.cdbg.LoadObject;
 
 /**
  */

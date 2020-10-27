@@ -139,6 +139,7 @@ public class HibernateUtil {
 		ac.addAnnotatedClass(Role.class);
 		ac.addAnnotatedClass(SystemFunctionality.class);
 		ac.addAnnotatedClass(User.class);
+		ac.addAnnotatedClass(SyncEpisode.class);
 		sessionFactory = ac.buildSessionFactory();
 	}
 

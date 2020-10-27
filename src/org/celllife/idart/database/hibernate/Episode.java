@@ -1,5 +1,7 @@
 package org.celllife.idart.database.hibernate;
 
+import model.manager.AdministrationManager;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -324,4 +326,20 @@ public class Episode {
 		return clinic;
 	}
 
+	public static Episode generateFromSyncEpisode(SyncEpisode e, Patient patient, Clinic clinic) {
+		Episode episode = new Episode();
+		episode.setPatient(patient);
+		episode.setStartReason("Voltou da Referencia");
+		episode.setStartDate(e.getStopDate());
+		episode.setStartNotes(e.getStopNotes());
+		episode.setClinic(clinic);
+
+		return episode;
+	}
+
+	public void closeFromSyncEpisode(SyncEpisode syncEpisode) {
+		this.setStopDate(syncEpisode.getStopDate());
+		this.setStopReason("Voltou da Referencia");
+		this.setStopNotes(syncEpisode.getStartNotes());
+	}
 }

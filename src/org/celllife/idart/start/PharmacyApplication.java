@@ -292,18 +292,19 @@ public class PharmacyApplication {
                         RestFarmac.setCentralPatients();
                         RestFarmac.setCentralDispenses(sess);
                     } else {
+                        Clinic mainClinic = AdministrationManager.getMainClinic(sess);
                         if (getServerStatus(url).contains("Red"))
                             log.trace("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
                         else {
-                            Clinic mainClinic = AdministrationManager.getMainClinic(sess);
+
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
+                                RestFarmac.restPostEpisodes(sess, url, pool);
                                 RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
                             } else if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
                                 RestFarmac.restGeAllPatients(url, mainClinic, pool);
                                 RestFarmac.restPostDispenses(sess, url, pool);
-                                RestFarmac.restPostEpisodes(sess, url, pool);
                             }
                         }
 
@@ -311,6 +312,7 @@ public class PharmacyApplication {
                             RestFarmac.setPatientsFromRest();
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U"))
                             RestFarmac.setDispensesFromRest(sess);
+                            RestFarmac.setEpisodesFromRest(sess, mainClinic);
                     }
                     assert tx != null;
                     tx.commit();

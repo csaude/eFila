@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import migracao.swingreverse.DadosPacienteFarmac;
 import model.manager.AdministrationManager;
 import model.manager.EpisodeManager;
+import model.manager.PatientManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -180,6 +181,7 @@ public class RestFarmac {
         String response = null;
 
         Gson g = new Gson();
+
         String restObject = g.toJson(syncEpisode);
         StringEntity inputAddPatient = new StringEntity(restObject, "UTF-8");
         inputAddPatient.setContentType("application/json");
@@ -357,7 +359,8 @@ public class RestFarmac {
         HttpResponse response = null;
         Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
-        String path = url + "/sync_temp_episode?syncstatus=eq.P&clinicuuid=eq." + mainClinic.getUuid();
+        //String path = url + "/sync_temp_episode?syncstatus=eq.S&clinicuuid=eq." + mainClinic.getUuid();
+        String path = url + "/sync_temp_episode";
         try {
             String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
@@ -384,14 +387,14 @@ public class RestFarmac {
                     gson = new Gson();
                     try {
                         syncEpisode = gson.fromJson(jsonObj.toString(), SyncEpisode.class);
-                        String updateStatus = "{\"syncstatus\":\"I\"}";
+                        String updateStatus = "{\"syncstatus\":\"U\"}";
 
                         EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
                         restPatchEpisode(url, syncEpisode, updateStatus, pool);
                         log.trace(" Informacao do episodio do Paciente [" + syncEpisode.getPatientUUID() + "]  carregada/actualizada com sucesso");
                         break;
                     } catch (Exception e) {
-                        log.trace(" Ocorreu um erro ao carregar a informacao do Paciente [" + syncEpisode.getPatientUUID() + "] ERRO: " + e.getMessage());
+                        log.trace(" Ocorreu um erro ao carregar o episodio do Paciente [" + syncEpisode.getPatientUUID() + "] ERRO: " + e.getMessage());
                     } finally {
 
                         continue;
@@ -534,7 +537,7 @@ public class RestFarmac {
 
     public static void restPostEpisodes(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
-        List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(sess);
+        List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncTempEpiReadyToSend(sess);
         String result = "";
         if (!iDARTUtil.arrayHasElements(syncTempEpisodes))
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm episodio foi encontrado para enviar");
@@ -546,7 +549,7 @@ public class RestFarmac {
                         log.error(new Date() + ": Ocorreu um erro ao gravar o episodio do paciente com uuid " + syncEpisode.getPatientUUID() + " Erro: " + result);
                     } else {
                         log.trace(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
-                        syncEpisode.setSyncStatus('E');
+                        syncEpisode.setSyncStatus('S');
                         EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
                     }
                     break;
@@ -651,6 +654,37 @@ public class RestFarmac {
             }
         } else {
             log.trace(new Date() + ": [US] INFO - Nenhumm levantamento enviado para esta US foi encontrado");
+        }
+    }
+
+    public static void setEpisodesFromRest(Session sess, Clinic clinic) {
+
+        List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(sess);
+
+        if (iDARTUtil.arrayHasElements(syncTempEpisodes)) {
+
+            for (SyncEpisode syncEpisode : syncTempEpisodes) {
+                Patient relatedPatient = PatientManager.getPatientfromUuid(sess, syncEpisode.getPatientUUID());
+
+                try {
+                    Episode mostRecentEpisode = relatedPatient.getMostRecentEpisode();
+
+                    if (mostRecentEpisode.isOpen()){
+                        mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
+                        EpisodeManager.saveEpisode(sess, mostRecentEpisode);
+                    }
+
+                    Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
+                    syncEpisode.setSyncStatus('U');
+                    EpisodeManager.saveEpisode(sess, newEpisode);
+                    EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
+
+                } catch (Exception e) {
+                    log.error("Erro ao gravar episodio do Paciente com NID: [" + relatedPatient.getPatientId() + "]");
+                }
+            }
+        } else {
+            log.trace(new Date() + ": [US] INFO - Nenhumm episodio enviado para esta US foi encontrado");
         }
     }
 

@@ -1,5 +1,10 @@
 package org.celllife.idart.database.hibernate;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import org.celllife.idart.misc.iDARTUtil;
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -11,26 +16,47 @@ public class SyncEpisode {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "strpickup")
+    @SerializedName("startdate")
+    @Column(name = "startdate")
     private Date startDate;
+
+    @SerializedName("stopdate")
     @Column(name = "stopdate")
     private Date stopDate;
+
+    @SerializedName("startreason")
     @Column(name = "startreason")
     private String startReason;
+
+    @SerializedName("stopreason")
     @Column(name = "stopreason")
     private String stopReason;
+
+    @SerializedName("startnotes")
     @Column(name = "startnotes")
     private String startNotes;
+
+    @SerializedName("stopnotes")
     @Column(name = "stopnotes")
     private String stopNotes;
+
+    @SerializedName("patientuuid")
     @Column(name = "patientuuid")
     private String patientUUID;
+
+    @SerializedName("syncstatus")
     @Column(name = "syncstatus")
     private char syncStatus;
-    @Column(name = "strpickup")
+
+    @SerializedName("usuuid")
+    @Column(name = "usuuid")
     private String usuuid;
-    @Column(name = "strpickup")
+
+    @SerializedName("clinicuuid")
+    @Column(name = "clinicuuid")
     private String clinicuuid;
+
+
 
     public Integer getId() {
         return id;
@@ -118,5 +144,21 @@ public class SyncEpisode {
 
     public void setClinicuuid(String clinicuuid) {
         this.clinicuuid = clinicuuid;
+    }
+
+    public static SyncEpisode generateFromEpisode(Episode e, String facilityUUID) {
+        SyncEpisode episode = new SyncEpisode();
+        episode.setClinicuuid(e.getClinic().getUuid());
+        episode.setStopReason(iDARTUtil.stringHasValue(e.getStopReason()) ? e.getStopReason() : null);
+        episode.setStartReason(e.getStartReason());
+        episode.setStopDate(e.getStopDate());
+        episode.setStartDate(e.getStartDate());
+        episode.setStartNotes(iDARTUtil.stringHasValue(e.getStartNotes()) ? e.getStartNotes() : null);
+        episode.setStopNotes(iDARTUtil.stringHasValue(e.getStopNotes()) ? e.getStopNotes() : null);
+        episode.setPatientUUID(e.getPatient().getUuidopenmrs());
+        episode.setUsuuid(facilityUUID);
+        episode.setSyncStatus('R');
+
+        return episode;
     }
 }
