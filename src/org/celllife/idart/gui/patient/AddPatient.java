@@ -1669,7 +1669,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         if (localPatient.getMostRecentEpisode() != null) {
             if (localPatient.getMostRecentEpisode().getStartReason().equalsIgnoreCase("Voltou da Referencia")) {
-                SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), AdministrationManager.getMainClinic(getHSession()).getUuid());
+                SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), localPatient.getCurrentClinic(), AdministrationManager.getMainClinic(getHSession()).getUuid());
                 EpisodeManager.saveSyncTempEpisode(syncEpisode);
             }
         }

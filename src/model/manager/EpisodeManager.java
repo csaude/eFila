@@ -49,7 +49,8 @@ public class EpisodeManager {
 
     public static List<SyncEpisode> getAllSyncTempEpiReadyToSend(Session sess) throws HibernateException {
 
-        SQLQuery query = sess.createSQLQuery("select startdate, stopdate, startreason, stopreason, startnotes, stopnotes, patientuuid, syncstatus, usuuid, clinicuuid from sync_temp_episode sync where sync.syncStatus = 'R'");
-        return query.list();
+        List result;
+        result = sess.createQuery("from SyncEpisode sync where sync.syncStatus = 'R'").list();
+        return result;
     }
 }

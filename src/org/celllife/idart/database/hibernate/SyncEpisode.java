@@ -146,9 +146,9 @@ public class SyncEpisode {
         this.clinicuuid = clinicuuid;
     }
 
-    public static SyncEpisode generateFromEpisode(Episode e, String facilityUUID) {
+    public static SyncEpisode generateFromEpisode(Episode e, Clinic currentClinic, String facilityUUID) {
         SyncEpisode episode = new SyncEpisode();
-        episode.setClinicuuid(e.getClinic().getUuid());
+        episode.setClinicuuid(currentClinic.getUuid());
         episode.setStopReason(iDARTUtil.stringHasValue(e.getStopReason()) ? e.getStopReason() : null);
         episode.setStartReason(e.getStartReason());
         episode.setStopDate(e.getStopDate());
