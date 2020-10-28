@@ -357,9 +357,8 @@ public class RestFarmac {
 
     public static String restGeAllEpisodes(String url, Clinic mainClinic, PoolingHttpClientConnectionManager pool) {
         HttpResponse response = null;
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
-        String path = url + "/sync_temp_episode?syncstatus=eq.S&clinicuuid=eq." + mainClinic.getUuid();
+
+        String path = url + "/sync_temp_episode?syncstatus=eq.S&usuuid=eq." + mainClinic.getUuid();
         //String path = url + "/sync_temp_episode?id=eq.596409";
         try {
             String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
@@ -389,7 +388,12 @@ public class RestFarmac {
                         syncEpisode = gson.fromJson(jsonObj.toString(), SyncEpisode.class);
                         String updateStatus = "{\"syncstatus\":\"U\"}";
 
-                        EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
+                        int centralId = syncEpisode.getId();;
+
+                        EpisodeManager.saveSyncTempEpisode(syncEpisode);
+
+                        syncEpisode.setId(centralId);
+
                         restPatchEpisode(url, syncEpisode, updateStatus, pool);
                         log.trace(" Informacao do episodio do Paciente [" + syncEpisode.getPatientUUID() + "]  carregada/actualizada com sucesso");
                         break;
@@ -409,10 +413,7 @@ public class RestFarmac {
             e.printStackTrace();
         }
 
-        assert tx != null;
-        tx.commit();
-        sess.flush();
-        sess.close();
+
 
         return response.getStatusLine().toString();
     }
@@ -550,7 +551,7 @@ public class RestFarmac {
                     } else {
                         log.trace(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
                         syncEpisode.setSyncStatus('S');
-                        EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
+                        EpisodeManager.updateSyncTempEpisode(syncEpisode);
                     }
                     break;
                 } catch (Exception e) {
@@ -657,30 +658,47 @@ public class RestFarmac {
         }
     }
 
-    public static void setEpisodesFromRest(Session sess, Clinic clinic) {
+    public static void setEpisodesFromRest(Clinic clinic) {
+
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
 
         List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(sess);
 
         if (iDARTUtil.arrayHasElements(syncTempEpisodes)) {
 
             for (SyncEpisode syncEpisode : syncTempEpisodes) {
+
                 Patient relatedPatient = PatientManager.getPatientfromUuid(sess, syncEpisode.getPatientUUID());
 
-                try {
-                    Episode mostRecentEpisode = relatedPatient.getMostRecentEpisode();
+                if (relatedPatient != null) {
+                    try {
+                        Episode mostRecentEpisode = relatedPatient.getMostRecentEpisode();
 
                     if (mostRecentEpisode.isOpen()){
                         mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
                         EpisodeManager.saveEpisode(sess, mostRecentEpisode);
                     }
 
-                    Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
-                    syncEpisode.setSyncStatus('U');
-                    EpisodeManager.saveEpisode(sess, newEpisode);
-                    EpisodeManager.saveSyncTempEpisode(sess, syncEpisode);
+                        Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
+                        syncEpisode.setSyncStatus('U');
+                        EpisodeManager.saveEpisode(sess, newEpisode);
+                        EpisodeManager.updateSyncTempEpisode(syncEpisode);
 
-                } catch (Exception e) {
-                    log.error("Erro ao gravar episodio do Paciente com NID: [" + relatedPatient.getPatientId() + "]");
+                        relatedPatient.addEpisode(newEpisode);
+
+                        relatedPatient.updateClinic();
+                        PatientManager.updatePatient(sess, relatedPatient);
+
+                        assert tx != null;
+                        sess.flush();
+                        tx.commit();
+                        sess.close();
+                    } catch (Exception e) {
+                        log.error("Erro ao gravar episodio do Paciente com NID: [" + relatedPatient.getPatientId() + "]");
+                    }
+                }else {
+                    log.error("Erro paciente nao encontrado: [" + syncEpisode.getPatientUUID() + "]");
                 }
             }
         } else {

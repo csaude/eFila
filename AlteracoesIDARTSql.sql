@@ -192,9 +192,7 @@ CREATE TABLE IF NOT EXISTS sync_temp_episode (
 	syncstatus bpchar(1) NULL,
 	usuuid varchar(255) NULL,
 	clinicuuid varchar(255) NULL,
-	CONSTRAINT sync_episode_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_sync_episode_clinic FOREIGN KEY (clinicuuid) REFERENCES clinic(uuid),
-	CONSTRAINT fk_sync_episode_patient FOREIGN KEY (patientuuid) REFERENCES patient(uuidopenmrs)
+	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
 );
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');

@@ -123,8 +123,8 @@ public class MergeDbs implements IdartTask {
 					patient.getAppointments().add(app);
 				}
 
-				List<Episode> episodes = patient.getEpisodes();
-				patient.setEpisodes(new ArrayList<Episode>());
+				List<Episode> episodes = patient.getEpisodeList();
+				patient.setEpisodes(new HashSet<Episode>());
 				for (Episode episode : episodes) {
 					episode.setId(id);
 					patient.getEpisodes().add(episode);

@@ -1667,9 +1667,11 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             localPatient.setAccountStatus((episodeStopDate == null));
         }
 
-        if (localPatient.getMostRecentEpisode().getStartReason().equalsIgnoreCase("Voltou da Referencia")) {
-            SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), AdministrationManager.getMainClinic(getHSession()).getUuid());
-            EpisodeManager.saveSyncTempEpisode(getHSession(), syncEpisode);
+        if (localPatient.getMostRecentEpisode() != null) {
+            if (localPatient.getMostRecentEpisode().getStartReason().equalsIgnoreCase("Voltou da Referencia")) {
+                SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), AdministrationManager.getMainClinic(getHSession()).getUuid());
+                EpisodeManager.saveSyncTempEpisode(syncEpisode);
+            }
         }
 
         if (btnARVStart.getDate() != null) {
@@ -1821,7 +1823,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
     public void loadEpisodeDetails() {
 
         // episodes
-        List<Episode> episodes = localPatient.getEpisodes();
+        List<Episode> episodes = localPatient.getEpisodeList();
         Episode mostRecentEpisode = PatientManager.getMostRecentEpisode(localPatient);
         isPatientActive = mostRecentEpisode.isOpen();
 
@@ -2690,7 +2692,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             // episode start - *** if he has been receiving arv drugs,
             // but only the user knows this so we assume he has.
 
-            Episode epi = localPatient.getEpisodes().get(0);
+            Episode epi = localPatient.getEpisodeList().get(0);
             String episodeStartReason = epi.getStartReason();
             Date dteEpiStartDate = epi.getStartDate();
             Date dte_1 = btnARVStart.getDate();

@@ -310,9 +310,11 @@ public class PharmacyApplication {
 
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
                             RestFarmac.setPatientsFromRest();
-                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U"))
+                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                             RestFarmac.setDispensesFromRest(sess);
-                            RestFarmac.setEpisodesFromRest(sess, mainClinic);
+                            RestFarmac.setEpisodesFromRest(mainClinic);
+                        }
+
                     }
                     assert tx != null;
                     tx.commit();

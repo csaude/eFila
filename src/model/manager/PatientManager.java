@@ -71,10 +71,10 @@ public class PatientManager {
 	 * @param episode
 	 */
 	public static void addEpisodeToPatient(Patient patient, Episode episode) {
-		List<Episode> episodes = patient.getEpisodes();
+		List<Episode> episodeList = patient.getEpisodeList();
 		episode.setPatient(patient);
-		if (!episodes.contains(episode)) {
-			episodes.add(episode);
+		if (!episodeList.contains(episode)) {
+			patient.getEpisodes().add(episode);
 		}
 	}
 
@@ -385,7 +385,7 @@ public class PatientManager {
 	 * @return first Episode for patient p
 	 */
 	public static Episode getFirstEpisode(Patient patient) {
-		List<Episode> episodes = patient.getEpisodes();
+		List<Episode> episodes = patient.getEpisodeList();
 		if (episodes == null || episodes.size() == 0)
 			return new Episode();
 		return episodes.get(0);
@@ -496,7 +496,7 @@ public class PatientManager {
 	 */
 	public static Date getLastReasonOccurrence(Patient patient, String reason,
 			boolean startNotStop) {
-		List<Episode> episodes = patient.getEpisodes();
+		List<Episode> episodes = patient.getEpisodeList();
 		if (episodes == null || episodes.size() == 0)
 			return null;
 		Date d = null;
@@ -698,7 +698,7 @@ public class PatientManager {
 	 */
 
 	public static boolean hasPreviousEpisodes(Patient p) {
-		List<Episode> episodes = p.getEpisodes();
+		List<Episode> episodes = p.getEpisodeList();
 		boolean isMostRecentOpen = getMostRecentEpisode(p).isOpen();
 		return (episodes != null && (!isMostRecentOpen || episodes.size() > 1));
 	}
@@ -738,7 +738,7 @@ public class PatientManager {
 	 */
 	public static void insertPatientEpisodeAccordingToDate(Patient p,
 			Episode insert) {
-		List<Episode> episodes = p.getEpisodes();
+		List<Episode> episodes = p.getEpisodeList();
 		insert.setPatient(p);
 		if (!episodes.contains(insert)) {
 			for (Episode e : episodes) {
@@ -855,6 +855,10 @@ public class PatientManager {
 				}
 			}
 		}
+	}
+
+	public static void updatePatient(Session sess, Patient thePatient) throws HibernateException {
+		sess.update(thePatient);
 	}
 
 	public static void deleteSecondaryPatient(Session session,

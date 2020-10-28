@@ -1702,7 +1702,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
     public void loadEpisodeDetails() {
 
         // episodes
-        List<Episode> episodes = localPatient.getEpisodes();
+        List<Episode> episodes = localPatient.getEpisodeList();
         Episode mostRecentEpisode = PatientManager.getMostRecentEpisode(localPatient);
         isPatientActive = mostRecentEpisode.isOpen();
 
@@ -2548,7 +2548,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
             // episode start - *** if he has been receiving arv drugs,
             // but only the user knows this so we assume he has.
 
-            Episode epi = localPatient.getEpisodes().get(0);
+            Episode epi = localPatient.getEpisodeList().get(0);
             String episodeStartReason = epi.getStartReason();
             Date dteEpiStartDate = epi.getStartDate();
             Date dte_1 = btnARVStart.getDate();
