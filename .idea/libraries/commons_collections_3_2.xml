@@ -2,7 +2,6 @@
   <library name="commons-collections-3.2">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.13.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.eclipse.core.commands_3.3.0.I20070605-0010.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hibernate-commons-annotations.jar!/" />
@@ -48,7 +47,6 @@
       <root url="jar://$PROJECT_DIR$/lib/axon-core-1.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/fluent-hc-4.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jsearch.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/liquibase-slf4j-0.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/barbecue-1.5-beta1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/junit-4.8.1.jar!/" />
@@ -66,7 +64,6 @@
       <root url="jar://$PROJECT_DIR$/lib/dom4j-1.6.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jersey-core-1.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.6.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/ejb3-persistence.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/velocity-dep-1.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/zip4j-1.3.2.jar!/" />
@@ -81,6 +78,9 @@
       <root url="jar://$PROJECT_DIR$/lib/osgi.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/quartz-1.6.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.eclipse.equinox.common_3.3.0.v20070426.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.5.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.4.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.8.6.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -121,7 +121,7 @@ public class Patient {
 	@IndexColumn(name = "index")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
 			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<Episode> episodes;
+	private Set<Episode> episodes;
 
 	@OneToMany(mappedBy = "patient")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
@@ -437,12 +437,24 @@ public class Patient {
 	 * 
 	 * @return List<Episode>
 	 */
-	public List<Episode> getEpisodes() {
-		if (episodes == null) {
+	public Set<Episode> getEpisodes() {
+		/*if (episodes == null) {
 			episodes = new ArrayList<Episode>();
-		}
+		}*/
 
 		return episodes;
+	}
+
+	public List<Episode> getEpisodeList() {
+		List<Episode> episodeList = new ArrayList<>();
+
+		for (Episode episode : episodes){
+			episodeList.add(episode);
+		}
+
+		Collections.sort(episodeList);
+
+		return episodeList;
 	}
 
 	/**
@@ -715,7 +727,7 @@ public class Patient {
 	 * @param episodes
 	 *            List<Episode>
 	 */
-	public void setEpisodes(List<Episode> episodes) {
+	public void setEpisodes(Set<Episode> episodes) {
 		for (Episode episode : episodes) {
 			episode.setPatient(this);
 		}
@@ -881,8 +893,9 @@ public class Patient {
 	 * @return most recent episode or null
 	 */
 	public Episode getMostRecentEpisode() {
-		if (getEpisodes().size() > 0)
-			return episodes.get(episodes.size() - 1);
+
+		if (getEpisodeList().size() > 0)
+			return getEpisodeList().get(getEpisodeList().size() - 1);
 		else
 			return null;
 	}
@@ -1017,5 +1030,11 @@ public class Patient {
 	@Override
 	public String toString() {
 		return getFirstNames() + " " + getLastname();
+	}
+
+	public void addEpisode(Episode newEpisode) {
+		if (this.episodes == null) this.episodes= new HashSet<>();
+
+		episodes.add(newEpisode);
 	}
 }

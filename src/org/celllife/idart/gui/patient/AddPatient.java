@@ -19,10 +19,7 @@
 
 package org.celllife.idart.gui.patient;
 
-import model.manager.AdministrationManager;
-import model.manager.PackageManager;
-import model.manager.PatientManager;
-import model.manager.StudyManager;
+import model.manager.*;
 import model.manager.reports.PatientHistoryReport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1644,11 +1641,13 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 e.setStartDate(episodeStartDate);
                 e.setStartReason(cmbEpisodeStartReason.getText());
                 e.setStartNotes(txtEpisodeStartNotes.getText());
-                e.setClinic(AdministrationManager.getClinic(getHSession(),
-                        cmbClinic.getText()));
+                e.setClinic(AdministrationManager.getClinic(getHSession(), cmbClinic.getText()));
                 e.setStopDate(episodeStopDate);
                 e.setStopReason(cmbEpisodeStopReason.getText());
                 e.setStopNotes(txtEpisodeStopNotes.getText());
+
+
+
             }
             localPatient.setAccountStatus(episodeStopDate == null);
         } else if (!cmbEpisodeStartReason.getText().trim().isEmpty()) {
@@ -1666,6 +1665,13 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             e.setStopNotes(txtEpisodeStopNotes.getText());
             PatientManager.addEpisodeToPatient(localPatient, e);
             localPatient.setAccountStatus((episodeStopDate == null));
+        }
+
+        if (localPatient.getMostRecentEpisode() != null) {
+            if (localPatient.getMostRecentEpisode().getStartReason().equalsIgnoreCase("Voltou da Referencia")) {
+                SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), localPatient.getCurrentClinic(), AdministrationManager.getMainClinic(getHSession()).getUuid());
+                EpisodeManager.saveSyncTempEpisode(syncEpisode);
+            }
         }
 
         if (btnARVStart.getDate() != null) {
@@ -1755,7 +1761,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             // populate the GUI
             txtFirstNames.setText(localPatient.getFirstNames());
             txtSurname.setText(localPatient.getLastname());
-            txtOpenmrsuuid.setText(localPatient.getUuidopenmrs());
+            if (localPatient.getUuidopenmrs() != null) {
+                txtOpenmrsuuid.setText(localPatient.getUuidopenmrs());
+            }
             char sex = localPatient.getSex();
             if (Character.toUpperCase(sex) == 'F') {
                 cmbSex.setText(Messages.getString("patient.sex.female")); //$NON-NLS-1$
@@ -1815,7 +1823,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
     public void loadEpisodeDetails() {
 
         // episodes
-        List<Episode> episodes = localPatient.getEpisodes();
+        List<Episode> episodes = localPatient.getEpisodeList();
         Episode mostRecentEpisode = PatientManager.getMostRecentEpisode(localPatient);
         isPatientActive = mostRecentEpisode.isOpen();
 
@@ -2205,7 +2213,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             return true;
         if (!(localPatient.getLastname().trim().toUpperCase().equals(txtSurname.getText().trim().toUpperCase())))
             return true;
-        if (!(localPatient.getUuidopenmrs().trim().equals(txtOpenmrsuuid.getText().trim())))
+        if (localPatient.getUuidopenmrs() != null && !(localPatient.getUuidopenmrs().trim().equals(txtOpenmrsuuid.getText().trim())))
             return true;
         if (!(Character.toUpperCase(localPatient.getSex()) == Character.toUpperCase(cmbSex.getText().charAt(0))))
             return true;
@@ -2684,7 +2692,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             // episode start - *** if he has been receiving arv drugs,
             // but only the user knows this so we assume he has.
 
-            Episode epi = localPatient.getEpisodes().get(0);
+            Episode epi = localPatient.getEpisodeList().get(0);
             String episodeStartReason = epi.getStartReason();
             Date dteEpiStartDate = epi.getStartDate();
             Date dte_1 = btnARVStart.getDate();

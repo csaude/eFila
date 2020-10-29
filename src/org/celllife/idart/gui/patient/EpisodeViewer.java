@@ -229,7 +229,7 @@ public class EpisodeViewer extends GenericOthersGui {
 		tblEpisodes.removeAll();
 
 		Episode latestEp = PatientManager.getMostRecentEpisode(patient);
-		List<Episode> epList = patient.getEpisodes();
+		List<Episode> epList = patient.getEpisodeList();
 		Collections.reverse(epList);
 		for (Episode ep : epList) {
 

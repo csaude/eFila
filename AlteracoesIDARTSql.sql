@@ -57,6 +57,8 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid)
+ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -176,6 +178,21 @@ CREATE TABLE IF NOT EXISTS user_role (
 	userid int4 NOT NULL,
 	CONSTRAINT user_role_fk FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT user_role_fk_1 FOREIGN KEY (roleid) REFERENCES public."role"(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS sync_temp_episode (
+	id int4 NOT NULL,
+	startdate timestamptz NULL,
+	stopdate timestamptz NULL,
+	startreason varchar(255) NULL,
+	stopreason varchar(255) NULL,
+	startnotes varchar(255) NULL,
+	stopnotes varchar(255) NULL,
+	patientuuid varchar(255) NULL,
+	syncstatus bpchar(1) NULL,
+	usuuid varchar(255) NULL,
+	clinicuuid varchar(255) NULL,
+	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
 );
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');

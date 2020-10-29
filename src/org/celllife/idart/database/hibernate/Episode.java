@@ -1,5 +1,8 @@
 package org.celllife.idart.database.hibernate;
 
+import model.manager.AdministrationManager;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -11,7 +14,7 @@ import javax.persistence.ManyToOne;
 /**
  */
 @Entity
-public class Episode {
+public class Episode implements Comparable< Episode >{
 
 	public static final String REASON_DECEASED = "Deceased";
 
@@ -24,7 +27,7 @@ public class Episode {
 	private Integer id;
 
 	@ManyToOne
-	@JoinColumn(name = "patient", insertable = false, updatable = false)
+	@JoinColumn(name = "patient")
 	private Patient patient;
 
 	@ManyToOne
@@ -87,7 +90,7 @@ public class Episode {
 	 * Method getId.
 	 * @return int
 	 */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -324,4 +327,25 @@ public class Episode {
 		return clinic;
 	}
 
+	public static Episode generateFromSyncEpisode(SyncEpisode e, Patient patient, Clinic clinic) {
+		Episode episode = new Episode();
+		episode.setPatient(patient);
+		episode.setStartReason("Voltou da Referencia");
+		episode.setStartDate(e.getStopDate());
+		episode.setStartNotes(e.getStopNotes());
+		episode.setClinic(clinic);
+
+		return episode;
+	}
+
+	public void closeFromSyncEpisode(SyncEpisode syncEpisode) {
+		this.setStopDate(syncEpisode.getStopDate());
+		this.setStopReason("Voltou da Referencia");
+		this.setStopNotes(syncEpisode.getStartNotes());
+	}
+
+	@Override
+	public int compareTo(@NotNull Episode o) {
+		return this.getId().compareTo(o.getId());
+	}
 }
