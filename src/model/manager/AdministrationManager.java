@@ -607,6 +607,7 @@ public class AdministrationManager {
     public static boolean saveUser(Session session, String userName, String password, Set<Role> roles, Set<Clinic> clinics) {
         if (!userExists(session, userName)) {
             User user = new User(userName, password, 'T', roles, clinics);
+            user.setState(1);
             session.save(user);
 
             // log the transaction
@@ -642,6 +643,20 @@ public class AdministrationManager {
             clinicList = clinicList.delete(clinicList.length() - 2, clinicList.length());
         }
         return clinicList.toString();
+
+    }
+
+    public static String getRoleAccessString(User u) {
+        StringBuffer roleList = new StringBuffer();
+        for (Role r : u.getRoleSet()) {
+            roleList.append(r.getDescription());
+            roleList.append(", ");
+        }
+        // remove last comma and spac
+        if (roleList.length() > 2) {
+            roleList = roleList.delete(roleList.length() - 2, roleList.length());
+        }
+        return roleList.toString();
 
     }
 
@@ -840,6 +855,33 @@ public class AdministrationManager {
         s.save(logging);
 
     }
+
+    public static void updateUserRoles(Session s, User u,
+                                         Set<Role> roleSet) throws HibernateException {
+
+        log.info("Updating Role access for user " + u.getUsername());
+        String oldClinicAccessStr = getClinicAccessString(u);
+
+        u.setRoleSet(roleSet);
+
+        String newClinicAccessStr = getRoleAccessString(u);
+
+        u.setModified('T');
+
+        // log the transaction
+        Logging logging = new Logging();
+        logging.setIDart_User(LocalObjects.getUser(s));
+        logging.setItemId(String.valueOf(u.getId()));
+        logging.setModified('Y');
+        logging.setTransactionDate(new Date());
+        logging.setTransactionType("Updated User");
+        logging.setMessage("Updated User " + u.getUsername()
+                + ": Role access change from " + oldClinicAccessStr + " to "
+                + newClinicAccessStr);
+        s.save(logging);
+
+    }
+
 
     /**
      * @param u

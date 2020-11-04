@@ -15,7 +15,7 @@ ALTER TABLE clinic ADD COLUMN IF NOT EXISTS subDistrict character varying(255) C
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS code character varying(255) COLLATE pg_catalog."default" DEFAULT '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS facilityType character varying(255) COLLATE pg_catalog."default" DEFAULT '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer COLLATE pg_catalog."default" DEFAULT 1;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default";
