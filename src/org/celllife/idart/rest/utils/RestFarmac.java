@@ -542,7 +542,7 @@ public class RestFarmac {
         String result = "";
         if (!iDARTUtil.arrayHasElements(syncTempEpisodes))
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm episodio foi encontrado para enviar");
-        else
+        else {
             for (SyncEpisode syncEpisode : syncTempEpisodes) {
                 try {
                     result = restPostEpisode(url, syncEpisode, pool);
@@ -550,7 +550,7 @@ public class RestFarmac {
                         log.error(new Date() + ": Ocorreu um erro ao gravar o episodio do paciente com uuid " + syncEpisode.getPatientUUID() + " Erro: " + result);
                     } else {
                         log.trace(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
-                        syncEpisode.setSyncStatus('S');
+                        syncEpisode.setSyncStatus('U');
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
                     }
                     break;
@@ -561,6 +561,7 @@ public class RestFarmac {
                 }
 
             }
+        }
     }
 
     public static void restPostDispenses(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
@@ -677,12 +678,12 @@ public class RestFarmac {
 
                     if (mostRecentEpisode.isOpen()){
                         mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
-                        EpisodeManager.saveEpisode(sess, mostRecentEpisode);
+                        EpisodeManager.saveEpisode(mostRecentEpisode);
                     }
 
                         Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
                         syncEpisode.setSyncStatus('U');
-                        EpisodeManager.saveEpisode(sess, newEpisode);
+                        EpisodeManager.saveEpisode(newEpisode);
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
 
                         relatedPatient.addEpisode(newEpisode);
