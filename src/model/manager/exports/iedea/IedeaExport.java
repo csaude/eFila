@@ -58,7 +58,7 @@ public class IedeaExport {
 		pat.setBIRTHM(getMonth(dob));
 		char sex = patient.getSex();
 		pat.setGENDER(convertSex(sex));
-		Episode firstEpisode = patient.getEpisodes().get(0);
+		Episode firstEpisode = patient.getEpisodeList().get(0);
 		pat.setFRSVISDMY(firstEpisode.getStartDate());
 		pat.setENTRY(95);
 		pat.setMODE(95);
@@ -325,7 +325,7 @@ public class IedeaExport {
 	 * pead: first visit at your facility is before their 16th birthday 
 	 */
 	private boolean isPead(Patient patient) {
-		Date startDate = patient.getEpisodes().get(0).getStartDate();
+		Date startDate = patient.getEpisodeList().get(0).getStartDate();
 		int ageAt = patient.getAgeAt(startDate);
 		return ageAt < 16;
 	}

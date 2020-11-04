@@ -53,20 +53,20 @@ public class DadosPacienteFarmac {
         Transaction tx = sess.beginTransaction();
 
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
-            clinic = AdministrationManager.getClinicbyUuid(sess, patientSync.getMainclinicuuid());
+            clinic = AdministrationManager.getClinicbyUuid(sess, patientSync.getClinicuuid());
 
             if (clinic == null) {
                 try {
                     clinic = new Clinic();
-                    clinic.setUuid(patientSync.getMainclinicuuid());
-                    clinic.setClinicName(patientSync.getMainclinicname());
+                    clinic.setUuid(patientSync.getClinicuuid());
+                    clinic.setClinicName(patientSync.getClinicname());
                     clinic.setMainClinic(false);
                     clinic.setDistrict("");
                     clinic.setProvince("");
                     clinic.setSubDistrict("");
                     clinic.setNotes("");
                     clinic.setTelephone("");
-                    clinic.setFacilityType("Unidade Sanitária");
+                    clinic.setFacilityType("Comunitária/Privada");
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
                 } catch (Exception e) {
@@ -514,9 +514,9 @@ public class DadosPacienteFarmac {
                     nidUuid = (String) results.get("uuid");
                 }
 
-                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
-                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
-                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
+//                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
+//                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
+//                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
 
                 String uuid = prescription.getPatient().getUuidopenmrs();
                 if (uuid != null && !uuid.isEmpty()) {
@@ -532,7 +532,8 @@ public class DadosPacienteFarmac {
 
 
                 if (nidUuid != null && !nidUuid.isEmpty()) {
-                    if (nidUuid != uuid || voided) {
+                //    if (nidUuid != uuid || voided) {
+                    if (nidUuid != uuid) {
 
                         log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificação do erro");
                         saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,

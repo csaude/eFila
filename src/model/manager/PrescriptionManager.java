@@ -193,9 +193,7 @@ public class PrescriptionManager {
 	// Devolve a lista de todos FILAS de pacientes prontos para enviar ao OpenMRS (Estado do paciente P- Pronto, E- Exportado)
 	public static List<SyncOpenmrsDispense> getAllSyncOpenmrsDispenseReadyToSave(Session sess) throws HibernateException {
 		List result;
-		result = sess.createQuery(
-				"from SyncOpenmrsDispense sync where sync.syncstatus = 'P'").list();
-
+		result = sess.createQuery("from SyncOpenmrsDispense sync where sync.syncstatus = 'P'").list();
 		return result;
 	}
 

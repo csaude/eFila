@@ -79,6 +79,33 @@ public class SyncTempPatient {
     @Column(name = "syncuuid", length = 255)
     private String syncuuid ;
 
+    @Column(name = "prescriptiondate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date prescriptiondate;
+    @Column(name = "duration")
+    private Integer duration;
+    @Column(name = "prescriptionenddate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date prescriptionenddate;
+    @Column(name = "regimenome")
+    private String regimenome;
+    @Column(name = "linhanome")
+    private String linhanome;
+    @Basic(optional = false)
+    @Column(name = "dispensatrimestral")
+    private int dispensatrimestral;
+    @Basic(optional = false)
+    @Column(name = "dispensasemestral")
+    private int dispensasemestral;
+    @Column(name = "prescriptionid")
+    private String prescriptionid;
+    @Column(name = "prescricaoespecial")
+    private Character prescricaoespecial;
+    @Column(name = "motivocriacaoespecial")
+    private String motivocriacaoespecial;
+    @Column(name = "jsonprescribeddrugs")
+    private String jsonprescribeddrugs;
+
     public SyncTempPatient() {
         super();
         this.id = -1;
@@ -360,5 +387,105 @@ public class SyncTempPatient {
 
     public void setMainclinicuuid(String mainclinicuuid) {
         this.mainclinicuuid = mainclinicuuid;
+    }
+
+    public void setSyncstatus(Character syncstatus) {
+        this.syncstatus = syncstatus;
+    }
+
+    public String getUuidopenmrs() {
+        return uuidopenmrs;
+    }
+
+    public void setUuidopenmrs(String uuidopenmrs) {
+        this.uuidopenmrs = uuidopenmrs;
+    }
+
+    public Date getPrescriptiondate() {
+        return prescriptiondate;
+    }
+
+    public void setPrescriptiondate(Date prescriptiondate) {
+        this.prescriptiondate = prescriptiondate;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public Date getPrescriptionenddate() {
+        return prescriptionenddate;
+    }
+
+    public void setPrescriptionenddate(Date prescriptionenddate) {
+        this.prescriptionenddate = prescriptionenddate;
+    }
+
+    public String getRegimenome() {
+        return regimenome;
+    }
+
+    public void setRegimenome(String regimenome) {
+        this.regimenome = regimenome;
+    }
+
+    public String getLinhanome() {
+        return linhanome;
+    }
+
+    public void setLinhanome(String linhanome) {
+        this.linhanome = linhanome;
+    }
+
+    public int getDispensatrimestral() {
+        return dispensatrimestral;
+    }
+
+    public void setDispensatrimestral(int dispensatrimestral) {
+        this.dispensatrimestral = dispensatrimestral;
+    }
+
+    public int getDispensasemestral() {
+        return dispensasemestral;
+    }
+
+    public void setDispensasemestral(int dispensasemestral) {
+        this.dispensasemestral = dispensasemestral;
+    }
+
+    public String getPrescriptionid() {
+        return prescriptionid;
+    }
+
+    public void setPrescriptionid(String prescriptionid) {
+        this.prescriptionid = prescriptionid;
+    }
+
+    public Character getPrescricaoespecial() {
+        return prescricaoespecial;
+    }
+
+    public void setPrescricaoespecial(Character prescricaoespecial) {
+        this.prescricaoespecial = prescricaoespecial;
+    }
+
+    public String getMotivocriacaoespecial() {
+        return motivocriacaoespecial;
+    }
+
+    public void setMotivocriacaoespecial(String motivocriacaoespecial) {
+        this.motivocriacaoespecial = motivocriacaoespecial;
+    }
+
+    public String getJsonprescribeddrugs() {
+        return jsonprescribeddrugs;
+    }
+
+    public void setJsonprescribeddrugs(String jsonprescribeddrugs) {
+        this.jsonprescribeddrugs = jsonprescribeddrugs;
     }
 }

@@ -18,6 +18,7 @@
  */
 package model.manager;
 
+import migracao.entidades.Users;
 import model.nonPersistent.PatientIdAndName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,6 +44,7 @@ import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.jws.soap.SOAPBinding;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1341,7 +1343,7 @@ public class SearchManager {
             }
         });
 
-        search.getShell().setText("Seleccione um Código FNM...");
+        search.getShell().setText("Seleccione ...");
 
         userList = AdministrationManager.getUsers(hSession);
 

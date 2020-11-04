@@ -1210,6 +1210,7 @@ public class StockCenterInfo extends GenericFormGui {
 			StockCenter stockCenter = new StockCenter();
 			stockCenter.setStockCenterName(txtStockCenterName.getText().trim());
 			stockCenter.setPreferred(rdBtnPreferredYes.getSelection());
+			stockCenter.setClinicuuid(LocalObjects.currentClinic.getUuid());
 			AdministrationManager.saveStockCenter(getHSession(), stockCenter);
 
 		}
