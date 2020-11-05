@@ -152,7 +152,7 @@ public class iDartProperties {
 
 	public static int logoutTime = -1;
 
-	public static String idartVersionNumber = "2.2.x beta For Mobile App";
+	public static String idartVersionNumber = "2.2.1";
 
 	public static boolean nextAppointmentDateOnLabels = true;
 

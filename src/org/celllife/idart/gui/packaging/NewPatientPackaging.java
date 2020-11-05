@@ -2751,7 +2751,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         //
         int patientId = newPack.getPrescription().getPatient().getId();
-
+        boolean aviado = false;
         Set<Episode> episodes = newPack.getClinic().getEpisodes();
 
         Episode patientEpisode = PatientManager.getLastEpisode(getHSession(), newPack.getPrescription().getPatient().getPatientId());
@@ -2767,6 +2767,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || !checkOpenmrs) {
             PackageManager.savePackage(getHSession(), newPack);
+            aviado = true;
         } else {
 
             Date dtPickUp = newPack.getPickupDate();
@@ -2801,7 +2802,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
 
                 PackageManager.savePackage(getHSession(), newPack);
-
+                aviado = true;
                 log.trace("Servidor Rest offline, o aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms a posterior");
                 saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                         facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2832,6 +2833,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 } else {
 
                     PackageManager.savePackage(getHSession(), newPack);
+                    aviado = true;
                     log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2852,9 +2854,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                 if (nidUuid != null && !nidUuid.isEmpty()) {
 //                    if (nidUuid != uuid || voided) {
-                    if (nidUuid != uuid) {
+                    if (!nidUuid.equals(uuid)) {
 
                         PackageManager.savePackage(getHSession(), newPack);
+                        aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
                         saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                                 facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2883,6 +2886,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 if (jsonReportingRestArray.length() < 1) {
 
                     PackageManager.savePackage(getHSession(), newPack);
+                    aviado = true;
                     log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
                     saveOpenmrsPatientFila( newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2908,6 +2912,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 if (strFacility.length() < 50) {
 
                     PackageManager.savePackage(getHSession(), newPack);
+                    aviado = true;
                     log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2924,6 +2929,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 if (response.length() < 50) {
 
                     PackageManager.savePackage(getHSession(), newPack);
+                    aviado = true;
                     log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
@@ -2948,7 +2954,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                     if (postOpenMrsEncounterStatus) {
                         PackageManager.savePackage(getHSession(), newPack);
-
+                        aviado = true;
                         OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(getHSession(), newPack.getPrescription());
                         if (errorLog != null)
                             OpenmrsErrorLogManager.removeErrorLog(getHSession(), errorLog);
@@ -2965,6 +2971,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     m.open();
                 }
             }
+        }
+
+        if(aviado){
+            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_WORKING);
+            m.setText("Aviamento efectuado com sucesso");
+            m.setMessage("O pacote de medicamentos foi aviado para o paciente [ " + newPack.getPrescription().getPatient().getPatientId()+ " ]");
+            m.open();
         }
     }
 
