@@ -556,7 +556,7 @@ public class DadosPacienteFarmac {
                     saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "NID [" + nid + " ] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
+                    saveErroLog(newPack, dtNextPickUp, "NID [" + nid + "com o uuid ( "+syncTempDispense.getUuidopenmrs()+" )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
 
                     return false;
                 }

@@ -1252,7 +1252,7 @@ public class DeleteStockPrescriptionsPackages extends GenericOthersGui {
 			MessageBox deletePillcount = new MessageBox(getShell(), SWT.YES
 					| SWT.NO | SWT.ICON_QUESTION);
 			deletePillcount
-					.setMessage("Estas unidades ja forma gravadas."
+					.setMessage("Estas unidades ja foram gravadas."
 							+ "\n\nPretende remover estas unidades?");
 			deletePillcount.setText("Remover as unidades");
 

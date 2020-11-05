@@ -27,6 +27,7 @@ import org.celllife.function.DateRuleFactory;
 import org.celllife.idart.commonobjects.*;
 import org.celllife.idart.database.dao.ConexaoJDBC;
 import org.celllife.idart.database.hibernate.*;
+import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.misc.iDARTChangeListener;
 import org.celllife.idart.gui.patient.tabs.*;
@@ -1287,14 +1288,14 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
                             JSONObject jsonObject = new org.json.JSONObject(personDemografics);
 
-                            String fullName = jsonObject.getJSONObject("preferredName").getString("display").replace("\r", "").replace("\n","");
+                            String fullName = jsonObject.getJSONObject("preferredName").getString("display").replace("\r", "").replace("\n", "");
 
                             String[] names = fullName.trim().split(" ");
 
 //               log.trace(names[0]);
 //               log.trace(names[names.length - 1]);
 
-                            txtFirstNames.setText(fullName.replace(names[names.length - 1],""));//Primeiros nomes
+                            txtFirstNames.setText(fullName.replace(names[names.length - 1], ""));//Primeiros nomes
                             localPatient.setFirstNames(txtFirstNames.getText());//Primeiros nomes
 
                             txtSurname.setText(names[names.length - 1]);//Apelido
@@ -1450,12 +1451,12 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         }
         enableFields(true);
 
-        if(localPatient.getMostRecentEpisode() != null)
-        if (checkOpenmrs && !(localPatient.getMostRecentEpisode().getStartReason().contains("nsito") ||
-                localPatient.getMostRecentEpisode().getStartReason().contains("nidade"))) {
-            txtOpenmrsuuid.setVisible(true);
-            lblOpenmrsuuid.setVisible(true);
-        }
+        if (localPatient.getMostRecentEpisode() != null)
+            if (checkOpenmrs && !(localPatient.getMostRecentEpisode().getStartReason().contains("nsito") ||
+                    localPatient.getMostRecentEpisode().getStartReason().contains("nidade"))) {
+                txtOpenmrsuuid.setVisible(true);
+                lblOpenmrsuuid.setVisible(true);
+            }
 
 
     }
@@ -1521,7 +1522,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             //insere pacientes no idart
             try {
                 try {
-                    conn2.inserPacienteIdart(localPatient.getPatientId(), localPatient.getFirstNames(), localPatient.getLastname(), new Date());
+                    if (isAddnotUpdate)
+                        conn2.inserPacienteIdart(localPatient.getPatientId(), localPatient.getFirstNames(), localPatient.getLastname(), new Date());
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -1645,7 +1647,6 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 e.setStopDate(episodeStopDate);
                 e.setStopReason(cmbEpisodeStopReason.getText());
                 e.setStopNotes(txtEpisodeStopNotes.getText());
-
 
 
             }
@@ -2516,18 +2517,36 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         //yes - update patient details
         setLocalPatient();
 
-
         if (fieldsOk() && confirmSave()) {
+            Session sess = HibernateUtil.getNewSession();
+            Patient oldPatient = PatientManager.getPatient(sess, localPatient
+                    .getId());
             if (iDartProperties.isCidaStudy) {
-                Session sess = HibernateUtil.getNewSession();
-                Patient oldPatient = PatientManager.getPatient(sess, localPatient
-                        .getId());
                 if (oldPatient != null) { //New Patient
                     if (!oldPatient.getCellphone().equals(localPatient.getCellphone())
                             && StudyManager.patientEverOnStudy(HibernateUtil.getNewSession(), localPatient.getId()))
                         updateMobilisrContactDetails(oldPatient.getCellphone(), LocalObjects.pharmacy.getPharmacyName(),
                                 String.valueOf(localPatient.getId()),
                                 localPatient.getCellphone());
+                }
+            } else {
+                if (oldPatient != null) {
+                    if (!oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
+                        // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
+                        List<PackageDrugInfo> pdiList = TemporaryRecordsManager.getOpenmrsUnsubmittedPackageDrugInfos(getHSession(), oldPatient);
+                        if (!pdiList.isEmpty())
+                            TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, localPatient);
+                    }
+
+                    if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs())) {
+                        // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
+                        List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
+                        if (!syncOpenmrsDispenseList.isEmpty())
+                            for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
+                                stp.setUuid(localPatient.getUuidopenmrs());
+                                PrescriptionManager.setUUIDSyncOpenmrsPatienFila(getHSession(), stp);
+                            }
+                    }
                 }
             }
             return submitForm();
