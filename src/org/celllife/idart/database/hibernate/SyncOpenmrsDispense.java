@@ -38,6 +38,8 @@ public class SyncOpenmrsDispense {
     private Prescription prescription;
     @Column(name = "syncstatus")
     private Character syncstatus;
+    @Column(name = "notas")
+    private String notas;
 
     public Integer getId() {
         return id;
@@ -165,5 +167,13 @@ public class SyncOpenmrsDispense {
 
     public void setNid(String nid) {
         this.nid = nid;
+    }
+
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
     }
 }

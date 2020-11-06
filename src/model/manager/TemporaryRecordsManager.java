@@ -404,13 +404,12 @@ public class TemporaryRecordsManager {
      */
     public static void updateOpenmrsUnsubmittedPackageDrugInfos(Session s,
                                                                 List<PackageDrugInfo> pdList, Patient pat) throws HibernateException {
-
         for (PackageDrugInfo pdi : pdList) {
             log.info("Updating  PackageDrugInfo for patient: " + pdi.getPatientId());
             pdi.setPatientId(pat.getPatientId());
             pdi.setPatientLastName(pat.getLastname());
             pdi.setPatientFirstName(pat.getFirstNames());
-
+            s.update(pdi);
         }
     }
 }

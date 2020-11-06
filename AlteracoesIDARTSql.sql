@@ -59,6 +59,7 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial ch
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid)
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -69,7 +70,7 @@ DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
-
+UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
@@ -148,7 +149,8 @@ CREATE TABLE IF NOT EXISTS sync_openmrs_dispense (
     dosageuuid character varying(255) COLLATE pg_catalog."default",
     returnvisituuid character varying(255) COLLATE pg_catalog."default",
     strnextpickup character varying(255) COLLATE pg_catalog."default",
-    prescription integer NOT NULL
+    prescription integer NOT NULL,
+    notas character varying(255) COLLATE pg_catalog."default",
 );
 
 CREATE TABLE IF NOT EXISTS systemfunctionality (

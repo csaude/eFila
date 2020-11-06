@@ -72,8 +72,13 @@ public class PatientManager {
 	 */
 	public static void addEpisodeToPatient(Patient patient, Episode episode) {
 		List<Episode> episodeList = patient.getEpisodeList();
+		HashSet<Episode> episodeSet = new HashSet<Episode>();
 		episode.setPatient(patient);
 		if (!episodeList.contains(episode)) {
+			if(patient.getEpisodes() == null){
+				episodeSet.add(episode);
+				patient.setEpisodes(episodeSet);
+			}else
 			patient.getEpisodes().add(episode);
 		}
 	}

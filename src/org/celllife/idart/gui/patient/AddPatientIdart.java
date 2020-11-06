@@ -1449,6 +1449,8 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
 
             //ConexaoODBC conn=new ConexaoODBC();
             ConexaoJDBC conn2 = new ConexaoJDBC();
+            getHSession().flush();
+            tx.commit();
 
             //insere pacientes no idart
             try {
@@ -1462,9 +1464,6 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
-            getHSession().flush();
-            tx.commit();
 
             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
             m.setText(Messages.getString("patient.save.confirmation.title")); //$NON-NLS-1$

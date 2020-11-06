@@ -2891,7 +2891,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     saveOpenmrsPatientFila( newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
+                    saveErroLog(newPack, dtNextPickUp, "NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + "com o uuid ( "+localPatient.getUuidopenmrs()+" )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE" +
+                            ". Actualize primeiro o estado do paciente no OpenMRS.");
                     MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                     m.setText("Informação sobre estado do programa");
                     m.setMessage("NID inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS." +
@@ -3525,7 +3526,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
             if (prescription != null) {
 
-                syncOpenmrsDispense = PrescriptionManager.getSyncOpenmrsPatienByPrescription(sess, prescription, encounterDatetime);
+                syncOpenmrsDispense = PrescriptionManager.getSyncOpenmrsDispenseByPrescription(sess, prescription, encounterDatetime);
 
                 if (syncOpenmrsDispense == null)
                     syncOpenmrsDispense = new SyncOpenmrsDispense();

@@ -336,7 +336,6 @@ public class RestClient {
 
         // Add interoperability with OpenMRS through Rest Web Services
         RestClient restClient = new RestClient();
-
         boolean postOpenMrsEncounterStatus = false;
 
         String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(dispense.getNid(), " ", "%20"));
@@ -362,6 +361,11 @@ public class RestClient {
             return;
         }
 
+        Patient patient = PatientManager.getPatient(session,dispense.getNid());
+
+        if(!patient.getUuidopenmrs().equalsIgnoreCase(uuid))
+            uuid = patient.getUuidopenmrs();
+
         String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
 
         JSONObject jsonReportingRest = new JSONObject(openrsMrsReportingRest);
@@ -370,7 +374,7 @@ public class RestClient {
 
         if (jsonReportingRestArray.length() < 1) {
 
-            log.trace(new Date() + ": INFO - O NID [" + dispense.getNid() + "]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
+            log.trace(new Date() + ": INFO - O NID [" + dispense.getNid() + " com o uuid ("+dispense.getUuid()+")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
                     "Actualize primeiro o estado do paciente no OpenMRS..");
 
             return;
@@ -400,6 +404,7 @@ public class RestClient {
             if (postOpenMrsEncounterStatus) {
                 dispense.setSyncstatus('E');
                 dispense.setUuid(uuid);
+                PrescriptionManager.setUUIDSyncOpenmrsPatienFila(session,dispense);
                 OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(session, newPack.getPrescription());
                 if (errorLog != null)
                     OpenmrsErrorLogManager.removeErrorLog(session, errorLog);

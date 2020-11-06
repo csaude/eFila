@@ -1,7 +1,8 @@
 package org.celllife.idart.database.hibernate;
 
+import com.sun.istack.internal.NotNull;
 import model.manager.AdministrationManager;
-import org.jetbrains.annotations.NotNull;
+// import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
