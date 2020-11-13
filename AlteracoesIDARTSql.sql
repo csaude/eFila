@@ -15,7 +15,7 @@ ALTER TABLE clinic ADD COLUMN IF NOT EXISTS subDistrict character varying(255) C
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS code character varying(255) COLLATE pg_catalog."default" DEFAULT '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS facilityType character varying(255) COLLATE pg_catalog."default" DEFAULT '';
 ALTER TABLE clinic ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer COLLATE pg_catalog."default" DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer DEFAULT 1;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default";
@@ -57,7 +57,7 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid)
+ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS sync_openmrs_dispense (
     returnvisituuid character varying(255) COLLATE pg_catalog."default",
     strnextpickup character varying(255) COLLATE pg_catalog."default",
     prescription integer NOT NULL,
-    notas character varying(255) COLLATE pg_catalog."default",
+    notas character varying(255) COLLATE pg_catalog."default"
 );
 
 CREATE TABLE IF NOT EXISTS systemfunctionality (
@@ -196,6 +196,12 @@ CREATE TABLE IF NOT EXISTS sync_temp_episode (
 	clinicuuid varchar(255) NULL,
 	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
 );
+
+CREATE OR REPLACE FUNCTION user_role_pharmacist_loop_update()
+    RETURNS void AS $$ DECLARE idartusersid int!
+    BEGIN FOR idartusersid IN (SELECT * FROM users WHERE NOT EXISTS (SELECT * FROM user_role WHERE userid = users.id) and users.cl_username not like 'admin')
+            LOOP INSERT INTO user_role (userid, roleid) values (idartusersid,2)! END LOOP! END!
+     $$ LANGUAGE plpgsql;
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
@@ -406,9 +412,7 @@ INSERT INTO "role" (id, description, code) values (4 ,'Digitador','CLERK');
 INSERT INTO "role" (id, description, code) values (5 ,'Estagiários','STUDYWORKER');
 INSERT INTO "role" (id, description, code) values (6 ,'Monitoria e Avaliação','MEA');
 
-INSERT INTO user_role (userid, roleid) values ((select users.id
-                                               from users
-                                               where not exists (select * from user_role where userid = users.id) and users.cl_username not like 'admin'),2);
+select user_role_pharmacist_loop_update();
 
 INSERT INTO user_role (userid, roleid) values ((select users.id
                                                from users
