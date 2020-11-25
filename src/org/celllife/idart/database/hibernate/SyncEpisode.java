@@ -3,7 +3,7 @@ package org.celllife.idart.database.hibernate;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.celllife.idart.misc.iDARTUtil;
-import org.jetbrains.annotations.NotNull;
+// import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.Date;

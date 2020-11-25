@@ -1461,4 +1461,52 @@ public class SearchManager {
         redrawTable();
         return functionalities;
     }
+
+    public static List<ClinicSector> getSectorList(Session hSession, Search search) {
+
+        listTableEntries = new ArrayList<SearchEntry>();
+        comparator = new TableComparator();
+
+        List<ClinicSector> clinicSectors = null;
+        String itemText[];
+        search.getTableColumn1().setText("Código");
+        search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                cmdColOneSelected();
+            }
+        });
+        search.getTableColumn2().setText("Parágem Única");
+        search.getTableColumn2().addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                cmdColTwoSelected();
+            }
+        });
+
+        search.getShell().setText("Seleccione ... ");
+
+        clinicSectors = AdministrationManager.getParagemUnica(hSession);
+
+//        Collections.sort(clinicSectors);
+
+        Iterator<ClinicSector> iter = new ArrayList<ClinicSector>(clinicSectors).iterator();
+        TableItem[] t = new TableItem[clinicSectors.size()];
+
+        int i = 0;
+        while (iter.hasNext()) {
+            ClinicSector atc = iter.next();
+            t[i] = new TableItem(search.getTblSearch(), SWT.NONE);
+            itemText = new String[2];
+            itemText[0] = atc.getCode();
+            itemText[1] = atc.getSectorname();
+            t[i].setText(itemText);
+            listTableEntries.add(new SearchEntry(itemText[0], itemText[1]));
+            i++;
+        }
+        comparator.setColumn(TableComparator.COL1_NAME);
+        redrawTable();
+        return clinicSectors;
+    }
+
 }

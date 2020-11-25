@@ -203,6 +203,27 @@ CREATE OR REPLACE FUNCTION user_role_pharmacist_loop_update()
             LOOP INSERT INTO user_role (userid, roleid) values (idartusersid,2)! END LOOP! END!
      $$ LANGUAGE plpgsql;
 
+CREATE TABLE IF NOT EXISTS clinicsector (
+	id int4 NOT NULL,
+	code varchar(255) NULL,
+	sectorname varchar(255) NOT NULL,
+	telephone varchar(255) NULL,
+	uuid varchar(255) NULL,
+	clinic integer NOT NULL,
+	clinicuuid varchar(255) NULL,
+	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS patient_sector (
+	id int4 NOT NULL,
+	startdate timestamptz NULL,
+	stopdate timestamptz NULL,
+	endnotes varchar(255) NULL,
+    clinic integer NOT NULL,
+    patient integer NOT NULL
+	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
+);
+
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
 INSERT INTO country (id, code, name) VALUES (3, '03', 'Africa do Sul');

@@ -626,6 +626,48 @@ public class AdministrationManager {
         return false;
     }
 
+    public static boolean saveSector(Session session, String sectorName, String code, String telefone, Clinic clinic) {
+        if (getSectorByName(session, sectorName) != null) {
+            return false;
+        } else {
+            ClinicSector clinicSector = new ClinicSector(clinic, sectorName,telefone, code);
+            session.save(clinicSector);
+
+            // log the transaction
+            Logging logging = new Logging();
+            logging.setIDart_User(LocalObjects.getUser(session));
+            logging.setItemId(String.valueOf(clinicSector.getId()));
+            logging.setModified('Y');
+            logging.setTransactionDate(new Date());
+            logging.setTransactionType("Added New Clinic Sector");
+            logging.setMessage("Added New Clinic Sector " + clinicSector.getSectorname());
+            session.save(logging);
+
+            return true;
+        }
+    }
+
+    public static void updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone)
+            throws HibernateException {
+        log.info("Updating sector " + clinicSector.getSectorname());
+        clinicSector.setSectorname(sectorname);
+        clinicSector.setCode(code);
+        clinicSector.setTelephone(telefone);
+        s.update(clinicSector);
+
+        // log the transaction
+        Logging logging = new Logging();
+        logging.setIDart_User(LocalObjects.getUser(s));
+        logging.setItemId(String.valueOf(clinicSector.getId()));
+        logging.setModified('Y');
+        logging.setTransactionDate(new Date());
+        logging.setTransactionType("Updated Clinic Sector");
+        logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
+                + ": changed.");
+        s.save(logging);
+
+    }
+
     /**
      * Method getClinicAccessString.
      *
@@ -726,6 +768,17 @@ public class AdministrationManager {
         return result;
     }
 
+    public static ClinicSector getSectorByName(Session sess, String sectorname)
+            throws HibernateException {
+
+        ClinicSector clinicSector = (ClinicSector) sess
+                .createQuery(
+                        "select sector from ClinicSector as sector where sector.sectorname = :sectorname")
+                .setString("sectorname", sectorname).setMaxResults(1)
+                .uniqueResult();
+        return clinicSector;
+    }
+
     /**
      * Method getUserByName.
      *
@@ -789,6 +842,8 @@ public class AdministrationManager {
         u.setPassword(password);
 
         u.setModified('T');
+
+        s.update(u);
 
         // log the transaction
         Logging logging = new Logging();
@@ -1666,6 +1721,12 @@ public class AdministrationManager {
     public static List<SystemFunctionality> getSysFunctionalities(Session sess) {
         String query = "from SystemFunctionality";
         List<SystemFunctionality> result = sess.createQuery(query).list();
+        return result;
+    }
+
+    public static List<ClinicSector> getParagemUnica(Session sess) {
+        String query = "from ClinicSector";
+        List<ClinicSector> result = sess.createQuery(query).list();
         return result;
     }
 
