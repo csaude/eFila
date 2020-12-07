@@ -21,10 +21,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import static org.celllife.idart.gui.packaging.NewPatientPackaging.saveErroLog;
+import static org.celllife.idart.gui.packaging.NewPatientPackaging.saveOpenmrsPatientFila;
 
 
 /**
@@ -201,6 +205,40 @@ public class RestClient {
         return resource;
     }
 
+    public static void saveOpenmrsPatient(Patient patient, Session session) {
+        // Adiciona paciente referido para a sincronizacao.
+        SyncOpenmrsPatient syncOpenmrsPatient = null;
+
+        if (patient.getPatientId() != null)
+            syncOpenmrsPatient = PatientManager.getSyncOpenmrsPatienByNID(session, patient.getPatientId());
+
+
+        if (syncOpenmrsPatient == null)
+            syncOpenmrsPatient = new SyncOpenmrsPatient();
+
+        syncOpenmrsPatient.setAddress1(patient.getAddress1());
+        syncOpenmrsPatient.setAddress2(patient.getAddress2());
+        syncOpenmrsPatient.setAddress3(patient.getAddress3());
+        syncOpenmrsPatient.setCellphone(patient.getCellphone());
+        syncOpenmrsPatient.setDateofbirth(patient.getDateOfBirth());
+        syncOpenmrsPatient.setNextofkinname(patient.getNextOfKinName());
+        syncOpenmrsPatient.setNextofkinphone(patient.getNextOfKinPhone());
+        syncOpenmrsPatient.setFirstnames(patient.getFirstNames());
+        syncOpenmrsPatient.setHomephone(patient.getHomePhone());
+        syncOpenmrsPatient.setLastname(patient.getLastname());
+        syncOpenmrsPatient.setPatientid(patient.getPatientId());
+        syncOpenmrsPatient.setProvince(patient.getProvince());
+        syncOpenmrsPatient.setSex(patient.getSex());
+        syncOpenmrsPatient.setWorkphone(patient.getWorkPhone());
+        syncOpenmrsPatient.setRace(patient.getRace());
+        syncOpenmrsPatient.setUuid(patient.getUuidopenmrs());
+
+        syncOpenmrsPatient.setSyncstatus('P');
+
+        PatientManager.saveSyncOpenmrsPatien(session, syncOpenmrsPatient);
+
+    }
+
     public static void setOpenmrsPatients() {
 
         RestClient restClient = new RestClient();
@@ -229,12 +267,12 @@ public class RestClient {
                             if (uuid == null) {
                                 name = patient.getFirstNames();
 
-                                if(name.contains(" ")){
-                                    middleName = name.substring(name.indexOf(" "), name.length() -1 );
-                                    name = name.substring(0,name.indexOf(" ") -1 );
+                                if (name.contains(" ")) {
+                                    middleName = name.substring(name.indexOf(" "), name.length() - 1);
+                                    name = name.substring(0, name.indexOf(" ") - 1);
                                 }
 
-                                postOpenMrsEncounterStatus = restClient.postOpenMRSPatient(patient.getSex() + "", name , middleName, patient.getLastname(),
+                                postOpenMrsEncounterStatus = restClient.postOpenMRSPatient(patient.getSex() + "", name, middleName, patient.getLastname(),
                                         RestUtils.castDateToString(patient.getDateOfBirth()), patient.getPatientId());
 
                                 if (postOpenMrsEncounterStatus) {
@@ -275,6 +313,11 @@ public class RestClient {
 
         Session session = HibernateUtil.getNewSession();
         Transaction tx = session.beginTransaction();
+        try {
+            System.out.println(">>>>>>>   "+AdministrationManager.getMostUsedDoctor(session));
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         try {
             List<SyncOpenmrsDispense> syncOpenmrsDispenses = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSave(session);
@@ -337,8 +380,16 @@ public class RestClient {
         // Add interoperability with OpenMRS through Rest Web Services
         RestClient restClient = new RestClient();
         boolean postOpenMrsEncounterStatus = false;
+        boolean hasError = false;
+        String msgError = "";
+        String strFacilityUuid = "";
+        String providerUuid = "";
 
         String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(dispense.getNid(), " ", "%20"));
+
+        Packages newPack = PackageManager.getLastPackageOnScript(dispense.getPrescription());
+
+        Patient patient = PatientManager.getPatient(session, dispense.getNid());
 
         JSONObject jsonObject = new JSONObject(nidRest);
         JSONArray _jsonArray = (JSONArray) jsonObject.get("results");
@@ -349,22 +400,29 @@ public class RestClient {
             nidUuid = (String) results.get("uuid");
         }
 
-        if(dispense.getUuid() == null)
+        if (dispense.getUuid() == null)
             dispense.setUuid(nidUuid);
 
         String uuid = dispense.getUuid();
         if (uuid != null && !uuid.isEmpty()) {
             uuid = dispense.getUuid();
         } else {
-            log.trace(new Date() + ": INFO - O NID [" + dispense.getNid() + "] foi alterado no OpenMRS ou não possui UUID."
-                    + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
+            msgError = " O NID [" + dispense.getNid() + "] foi alterado no OpenMRS ou não possui UUID."
+                    + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.";
+            log.trace(new Date() +  msgError);
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
             return;
         }
 
-        Patient patient = PatientManager.getPatient(session,dispense.getNid());
+        if (!patient.getUuidopenmrs().equals(uuid)){
+            msgError = " O paciente [" + patient.getPatientId() + " ] "
+                    + " Tem um UUID [" + patient.getUuidopenmrs() + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .";
+            log.trace(new Date() + msgError);
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            return;
+        }
 
-        if(!patient.getUuidopenmrs().equalsIgnoreCase(uuid))
-            uuid = patient.getUuidopenmrs();
+        uuid = patient.getUuidopenmrs();
 
         String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
 
@@ -374,23 +432,31 @@ public class RestClient {
 
         if (jsonReportingRestArray.length() < 1) {
 
-            log.trace(new Date() + ": INFO - O NID [" + dispense.getNid() + " com o uuid ("+dispense.getUuid()+")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
-                    "Actualize primeiro o estado do paciente no OpenMRS..");
+            msgError =" O NID [" + dispense.getNid() + " com o uuid (" + dispense.getUuid() + ")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
+                    " ou contem o UUID inactivo/inexistente. Actualize primeiro o estado do paciente no OpenMRS..";
+            log.trace(new Date() + msgError);
 
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
             return;
         }
 
         String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(dispense.getProvider(), " ", "%20"));
 
-        String providerUuid = response.substring(21, 57);
-
-        // Location
         String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(dispense.getStrFacility(), " ", "%20"));
 
-        // Health Facility
-        String strFacilityUuid = strFacility.substring(21, 57);
+        if (strFacility.length() < 50) {
+            msgError = " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + dispense.getNid() + " ].";
+            log.trace(new Date() + msgError);
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
+            return;
+        } else strFacilityUuid = strFacility.substring(21, 57);
 
-        Packages newPack = PackageManager.getLastPackageOnScript(dispense.getPrescription());
+        if (response.length() < 50) {
+            msgError = " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" +  dispense.getNid() + " ].";
+            log.trace(new Date() + msgError);
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            return;
+        } else providerUuid = response.substring(21, 57);
 
         try {
 
@@ -404,26 +470,42 @@ public class RestClient {
             if (postOpenMrsEncounterStatus) {
                 dispense.setSyncstatus('E');
                 dispense.setUuid(uuid);
-                PrescriptionManager.setUUIDSyncOpenmrsPatienFila(session,dispense);
+                PrescriptionManager.setUUIDSyncOpenmrsPatienFila(session, dispense);
                 OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(session, newPack.getPrescription());
                 if (errorLog != null)
                     OpenmrsErrorLogManager.removeErrorLog(session, errorLog);
             }
 
         } catch (Exception e) {
+            msgError = "Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + e.getMessage() + "\nHouve um problema ao salvar o pacote de medicamentos para o paciente " + dispense.getNid() + ". " + "Por favor contacte o Administrador.";
             log.trace("Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
-            OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(session, newPack.getPrescription());
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+        }
+    }
+
+    public static void saveErroLog(Packages newPack, Date dtNextPickUp, String error) {
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        try {
+            OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(sess, newPack.getPrescription());
             if (errorLog == null) {
                 errorLog = new OpenmrsErrorLog();
                 errorLog.setPatient(newPack.getPrescription().getPatient());
                 errorLog.setPrescription(newPack.getPrescription());
                 errorLog.setPickupdate(newPack.getPickupDate());
-                errorLog.setReturnpickupdate(RestUtils.castStringToDate(dispense.getStrNextPickUp()));
-                errorLog.setErrordescription(e.getMessage() + "\nHouve um problema ao salvar o pacote de medicamentos para o paciente " + dispense.getNid() + ". " + "Por favor contacte o SIS.");
+                errorLog.setReturnpickupdate(dtNextPickUp);
+                errorLog.setErrordescription(error);
                 errorLog.setDatacreated(new Date());
-                OpenmrsErrorLogManager.saveOpenmrsRestLog(session, errorLog);
+                OpenmrsErrorLogManager.saveOpenmrsRestLog(sess, errorLog);
             }
-
+            sess.flush();
+            tx.commit();
+            sess.close();
+        }catch (Exception e){
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
         }
     }
 

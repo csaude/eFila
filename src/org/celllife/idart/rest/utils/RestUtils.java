@@ -37,6 +37,30 @@ public abstract class RestUtils {
 		return strDate;
 	}
 
+	public static Date castStringToDatePattern (String date ) {
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date strDate = null;
+		try {
+			strDate = dateFormat.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return strDate;
+	}
+
+	public static String castDateToStringPattern (Date date ) {
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+
+		String strDate = null;
+		strDate = dateFormat.format(date);
+
+		return strDate;
+	}
+
 	public static List<String> splitName(String name){
 		
 		String fullName = name;

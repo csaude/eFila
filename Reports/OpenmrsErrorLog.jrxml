@@ -58,7 +58,7 @@
 from openmrserrorlog opl
 inner join prescription pr on pr.id = opl.prescription
 inner join patient pat on pat.id = opl.patient
-where opl.datecreated between $P{date} and $P{endDate}
+where opl.datecreated between $P{date}::date and $P{endDate}::date + INTERVAL '1 day'
 order by 1 asc]]>
 	</queryString>
 	<field name="nid" class="java.lang.String"/>
@@ -455,15 +455,15 @@ order by 1 asc]]>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="28">
+		<band height="100">
 			<line>
-				<reportElement key="line-22" mode="Opaque" x="0" y="27" width="960" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-22" mode="Opaque" x="0" y="99" width="960" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="2" y="2" width="25" height="25">
+				<reportElement x="2" y="2" width="25" height="96">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -473,103 +473,119 @@ order by 1 asc]]>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="523" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="523" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="725" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="725" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="622" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="622" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="315" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="315" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="166" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="166" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="30" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="30" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="0" y="1" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="0" y="1" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="811" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="811" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="426" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="426" y="-1" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="960" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="960" y="0" width="1" height="98" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="32" y="3" width="132" height="20"/>
-				<textElement verticalAlignment="Middle"/>
+				<reportElement x="32" y="3" width="132" height="95"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="168" y="3" width="144" height="20"/>
-				<textElement verticalAlignment="Middle"/>
+				<reportElement x="168" y="3" width="144" height="95"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="318" y="3" width="105" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="318" y="3" width="105" height="95"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{prescriptionid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="432" y="3" width="86" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="432" y="3" width="86" height="95"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).format($F{date})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="527" y="3" width="89" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="527" y="3" width="89" height="95"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).format($F{pickupdate})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="628" y="3" width="94" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="628" y="3" width="94" height="95"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).format($F{returnpickupdate})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="728" y="3" width="79" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="728" y="3" width="79" height="94"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).format($F{datecreated})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="812" y="3" width="148" height="20"/>
-				<textElement verticalAlignment="Middle"/>
+				<reportElement positionType="Float" x="816" y="2" width="138" height="96"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isPdfEmbedded="true"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{errordescription}]]></textFieldExpression>
 			</textField>
 		</band>

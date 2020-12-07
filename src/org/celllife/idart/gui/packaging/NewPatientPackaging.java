@@ -2853,7 +2853,6 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 }
 
                 if (nidUuid != null && !nidUuid.isEmpty()) {
-//                    if (nidUuid != uuid || voided) {
                     if (!nidUuid.equals(uuid)) {
 
                         PackageManager.savePackage(getHSession(), newPack);

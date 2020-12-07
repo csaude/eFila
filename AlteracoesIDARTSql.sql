@@ -211,7 +211,8 @@ CREATE TABLE IF NOT EXISTS clinicsector (
 	uuid varchar(255) NULL,
 	clinic integer NOT NULL,
 	clinicuuid varchar(255) NULL,
-	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id)
+	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id),
+	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS patient_sector (
@@ -219,9 +220,35 @@ CREATE TABLE IF NOT EXISTS patient_sector (
 	startdate timestamptz NULL,
 	stopdate timestamptz NULL,
 	endnotes varchar(255) NULL,
-    clinic integer NOT NULL,
+    clinicsector integer NOT NULL,
     patient integer NOT NULL
 	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS sync_mobile_patient (
+    id integer NOT NULL PRIMARY KEY,
+    cellphone character varying(255) COLLATE pg_catalog."default",
+    dateofbirth timestamp with time zone,
+    firstnames character varying(255) COLLATE pg_catalog."default",
+    homephone character varying(255) COLLATE pg_catalog."default",
+    lastname character varying(255) COLLATE pg_catalog."default",
+    patientid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    province character varying(255) COLLATE pg_catalog."default",
+    sex character(1) COLLATE pg_catalog."default",
+	syncstatus character(1) COLLATE pg_catalog."default",
+    workphone character varying(255) COLLATE pg_catalog."default",
+    address1 character varying(255) COLLATE pg_catalog."default",
+    address2 character varying(255) COLLATE pg_catalog."default",
+    address3 character varying(255) COLLATE pg_catalog."default",
+    nextofkinname character varying(255) COLLATE pg_catalog."default",
+    nextofkinphone character varying(255) COLLATE pg_catalog."default",
+    race character varying(255) COLLATE pg_catalog."default",
+    uuidopenmrs character varying(255) COLLATE pg_catalog."default",
+    syncuuid character varying(255) NOT NULL DEFAULT uuid_generate_v1(),
+    clinicsectoruuid character varying(255) COLLATE pg_catalog."default",
+    clinicuuid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    arvstartdate timestamp with time zone,
+    enrolldate timestamp with time zone
 );
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');

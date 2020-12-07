@@ -20,8 +20,8 @@ public class PatientSector {
     private String endnotes;
 
     @ManyToOne
-    @JoinColumn(name = "clinic")
-    private Clinic clinic;
+    @JoinColumn(name = "clinicsector")
+    private ClinicSector clinicsector;
 
     @ManyToOne
     @JoinColumn(name = "patient")
@@ -31,14 +31,14 @@ public class PatientSector {
         super();
     }
 
-    public PatientSector(Clinic clinic, Patient patient, Date startDate) {
-        this.clinic = clinic;
+    public PatientSector(ClinicSector clinicsector, Patient patient, Date startDate) {
+        this.clinicsector = clinicsector;
         this.patient = patient;
         this.startdate = startDate;
     }
 
-    public PatientSector(Clinic clinic, Patient patient, Date endtDate, String endNotes) {
-        this.clinic = clinic;
+    public PatientSector(ClinicSector clinicsector, Patient patient, Date endtDate, String endNotes) {
+        this.clinicsector = clinicsector;
         this.patient = patient;
         this.enddate = endtDate;
         this.endnotes = endNotes;
@@ -76,12 +76,12 @@ public class PatientSector {
         this.endnotes = endnotes;
     }
 
-    public Clinic getClinic() {
-        return clinic;
+    public ClinicSector getClinicsector() {
+        return clinicsector;
     }
 
-    public void setClinic(Clinic clinic) {
-        this.clinic = clinic;
+    public void setClinicsector(ClinicSector clinicsector) {
+        this.clinicsector = clinicsector;
     }
 
     public Patient getPatient() {

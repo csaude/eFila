@@ -185,7 +185,11 @@ public class DadosPacienteFarmac {
                 prescription = new Prescription();
 
                 SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
-                Doctor doctorProvider = PrescriptionManager.getProvider(sess);
+                Doctor doctorProvider = AdministrationManager.getMostUsedDoctor(sess);
+
+                if(doctorProvider == null)
+                    doctorProvider = PrescriptionManager.getProvider(sess);
+
                 LinhaT linhat = AdministrationManager.getLinha(sess, syncTempDispense.getLinhanome());
                 RegimeTerapeutico regimeTerapeutico = AdministrationManager.getRegimeTerapeutico(sess, syncTempDispense.getRegimenome());
 
@@ -532,8 +536,7 @@ public class DadosPacienteFarmac {
 
 
                 if (nidUuid != null && !nidUuid.isEmpty()) {
-                //    if (nidUuid != uuid || voided) {
-                    if (nidUuid != uuid) {
+                    if (!nidUuid.equals(uuid)) {
 
                         log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificação do erro");
                         saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
@@ -607,6 +610,88 @@ public class DadosPacienteFarmac {
         }
 
         return result;
+    }
+
+    public static Patient setPatientFromClinicSector(SyncMobilePatient patientSync) {
+
+        Patient patient = null;
+        PatientIdentifier patientIdentifier = null;
+        PatientAttribute patientAttribute = null;
+        Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
+
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        Clinic    clinic = AdministrationManager.getMainClinic(sess);
+
+        IdentifierType identifierType = AdministrationManager.getNationalIdentifierType(sess);
+        AttributeType attributeType = PatientManager.getAttributeTypeObject(sess, "ARV Start Date");
+
+        if (patientSync.getUuid() != null)
+            patient = PatientManager.getPatientfromUuid(sess, patientSync.getUuid());
+        else
+            patient = PatientManager.getPatient(sess, patientSync.getPatientid());
+
+        if (patient == null) {
+            patient = new Patient();
+            patientIdentifier = new PatientIdentifier();
+            patientAttribute = new PatientAttribute();
+        } else {
+            patientIdentifier = patient.getIdentifier(identifierType);
+            if (patientIdentifier == null)
+                patientIdentifier = new PatientIdentifier();
+            patientAttribute = patient.getAttributeByName(attributeType.getName());
+            oldIdentifiers = patient.getPatientIdentifiers();
+        }
+
+        patientIdentifier.setPatient(patient);
+        patientIdentifier.setType(identifierType);
+        patientIdentifier.setValue(patientSync.getPatientid());
+
+        oldIdentifiers.add(patientIdentifier);
+
+        if(patientSync.getArvstartdate() != null) {
+            patientAttribute.setPatient(patient);
+            patientAttribute.setValue(RestUtils.castDateToStringPattern(patientSync.getArvstartdate()));
+            patientAttribute.setType(attributeType);
+        }
+        patient.setFirstNames(patientSync.getFirstnames());
+        patient.setAccountStatus(Boolean.FALSE);
+        patient.setAddress1(patientSync.getAddress1());
+        patient.setAddress2(patientSync.getAddress2());
+        patient.setAddress3(patientSync.getAddress3());
+        patient.setCellphone(patientSync.getCellphone());
+        patient.setDateOfBirth(patientSync.getDateofbirth());
+        patient.setClinic(clinic);
+        patient.setNextOfKinName(patientSync.getNextofkinname());
+        patient.setNextOfKinPhone(patientSync.getNextofkinphone());
+        patient.setHomePhone(patientSync.getHomephone());
+        patient.setLastname(patientSync.getLastname());
+        patient.setModified('T');
+        patient.setPatientId(patientSync.getPatientid());
+        patient.setProvince(patientSync.getProvince());
+        patient.setSex(patientSync.getSex());
+        patient.setWorkPhone(null);
+        patient.setRace(patientSync.getRace());
+        patient.setUuidopenmrs(patientSync.getUuid());
+
+        patient.setPatientIdentifiers(oldIdentifiers);
+        patient.setPatientAttribute(patientAttribute);
+
+        try {
+            PatientManager.savePatient(sess, patient);
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace("Erro ao gravar informacao do Paciente  [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
+        }
+
+        return patient;
+
     }
 
 }
