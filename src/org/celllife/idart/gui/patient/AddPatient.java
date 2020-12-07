@@ -1040,7 +1040,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         // Check if openmrs uuid is valid
         if (result && !txtOpenmrsuuid.getText().isEmpty()) {
-            if (!CommonObjects.isUUID(txtOpenmrsuuid.getText())) { //$NON-NLS-1$
+            if (!CommonObjects.isUUID(txtOpenmrsuuid.getText()) && checkOpenmrs) { //$NON-NLS-1$
                 title = Messages.getString("AddressTab.error.invalid-uuid.title"); //$NON-NLS-1$
                 message = Messages.getString("AddressTab.error.invalid-uuid.msg"); //$NON-NLS-1$
                 txtOpenmrsuuid.setFocus();

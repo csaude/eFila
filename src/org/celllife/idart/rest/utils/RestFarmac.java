@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
+import org.celllife.idart.gui.patient.AddPatientOpenMrs;
 import org.celllife.idart.misc.iDARTUtil;
 import org.celllife.idart.rest.ApiAuthRest;
 import org.hibernate.Session;
@@ -1004,6 +1005,63 @@ public class RestFarmac {
         } else {
             log.trace(new Date() + ": [Central] INFO - Nenhumm levantamento enviado para US foi encontrado");
         }
+    }
+
+    public static void setPatientFromClinicSector() {
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        try {
+            List<SyncMobilePatient> mobilePatients = AdministrationManager.getAllSyncMobilePatientReadyToSave(sess);
+
+            if (!mobilePatients.isEmpty()) {
+
+                for (SyncMobilePatient patient : mobilePatients) {
+                    ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicsectoruuid());
+
+                    try {
+                        Patient patientSector = DadosPacienteFarmac.setPatientFromClinicSector(patient);
+                        patient.setSyncstatus('S');
+                        PatientManager.saveSyncMobilePatien(sess, patient);
+                        RestClient.saveOpenmrsPatient(patientSector,sess);
+                        List<ClinicSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess,patientSector.getId());
+
+                        if(patientClinicSector.size() > 0){
+                            log.trace(new Date() + ": [US] INFO - Paciente esta sendo atendido na Paragem Unica"+ patientClinicSector.get(0).getSectorname() );
+                        }else{
+                            setPatientToSector(sess, patientSector, clinicSector, patient.getEnrolldate());
+                        }
+
+                        break;
+                    } catch (Exception e) {
+                        log.error(new Date() + ": [US] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + clinicSector.getSectorname());
+                    } finally {
+                        continue;
+                    }
+                }
+            } else {
+                log.trace(new Date() + ": [US] INFO - Nenhumm paciente enviado da Paragem Unica foi encontrado");
+            }
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace(new Date() + ": [US] INFO - ERRO GERAL ao gravar pacientes enviado da Paragem Unica");
+        }
+
+    }
+
+    private static void setPatientToSector(Session sess, Patient patientToSector, ClinicSector clinicSector, Date enrollDate) {
+
+        PatientSector patientSector = new PatientSector();
+        patientSector.setPatient(patientToSector);
+        patientSector.setClinicsector(clinicSector);
+        patientSector.setStartdate(enrollDate);
+        sess.save(patientSector);
+
     }
 
     public static String restGetpermission(String url, String username, String pass, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {

@@ -780,6 +780,18 @@ public class PatientManager {
 		return result;
 	}
 
+
+	public static List<ClinicSector> patientIsOpenInClinicSector(Session session, Integer id)
+			throws HibernateException {
+		boolean result = false;
+		@SuppressWarnings("unchecked")
+		List<ClinicSector> patient = session
+				.createQuery(
+						"select patient from ClinicSector as patient where patient.stopdate is null and patient.patient = :id")
+				.setParameter("id", id).list();
+		return patient;
+	}
+
 	// ------ METHODS FOR PATIENT PACKAGING MANAGER -------------
 
 	/**
@@ -1194,6 +1206,12 @@ public class PatientManager {
 				"from SyncOpenmrsPatient sync where sync.syncstatus = 'P')").list();
 
 		return result;
+	}
+
+	public static void saveSyncMobilePatien(Session s, SyncMobilePatient syncMobilePatient)
+			throws HibernateException {
+
+		s.saveOrUpdate(syncMobilePatient);
 	}
 
 }

@@ -38,6 +38,8 @@ public class OpenmrsErrorLogReport extends GenericReportGui {
     private SWTCalendar calendarStart;
 
     private SWTCalendar calendarEnd;
+    
+    private final Shell parent;
 
     /**
      * Constructor
@@ -47,6 +49,7 @@ public class OpenmrsErrorLogReport extends GenericReportGui {
      */
     public OpenmrsErrorLogReport(Shell parent, boolean activate) {
         super(parent, REPORTTYPE_MONITORINGANDEVALUATION, activate);
+        this.parent = parent;
     }
 
     /**
@@ -227,8 +230,8 @@ public class OpenmrsErrorLogReport extends GenericReportGui {
 
             String reportNameFile = "Reports/OpenmrsErrorLog.xls";
             try {
-                OpenmrsErrorLogExcel op = new OpenmrsErrorLogExcel(getShell(), reportNameFile, pharm, theStartDate, theEndDate);
-                new ProgressMonitorDialog(getShell()).run(true, true, op);
+                OpenmrsErrorLogExcel op = new OpenmrsErrorLogExcel(parent, reportNameFile, pharm, theStartDate, theEndDate);
+                new ProgressMonitorDialog(parent).run(true, true, op);
 
                 if (op.getList() == null ||
                         op.getList().size() <= 0) {

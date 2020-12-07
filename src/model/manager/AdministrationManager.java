@@ -30,6 +30,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import javax.print.Doc;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,15 @@ public class AdministrationManager {
         return result;
     }
 
+
+    public static Doctor getMostUsedDoctor( Session sess) throws HibernateException, SQLException, ClassNotFoundException {
+
+        ConexaoJDBC conexaoJDBC = new ConexaoJDBC();
+        int doctorId = conexaoJDBC.idMostUsedDoctor();
+        Doctor result = (Doctor) sess.createQuery(
+                 "select d from Doctor as d where d.id = "+ doctorId).uniqueResult();
+        return result;
+    }
     /**
      * Devolve lista de regimes para alimentar o combobox no formulario de
      * prescricao
@@ -398,6 +408,18 @@ public class AdministrationManager {
             log.warn("Default clinic not found");
         }
         return c;
+
+    }
+
+    public static ClinicSector getClinicSectorFromUUID(Session sess, String uuid) throws HibernateException {
+
+        ClinicSector clinicSector = (ClinicSector) sess.createQuery(
+                "select c from ClinicSector as cs where cs.uuid = :uuid")
+                .setString("uuid", uuid).setMaxResults(1).uniqueResult();
+        if (clinicSector == null) {
+            log.warn("Clinic Sector [ "+ uuid +" ] not found");
+        }
+        return clinicSector;
 
     }
 
@@ -1694,6 +1716,15 @@ public class AdministrationManager {
 
         return result;
 
+    }
+
+    // Devolve a lista de todos pacientes enviados das clinicsSectors prontos para ser gravados (Estado do paciente R- Pronto, S- Importado, U-Actualizado)
+    public static List<SyncMobilePatient> getAllSyncMobilePatientReadyToSave(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncMobilePatient sync where sync.syncstatus = 'R')").list();
+
+        return result;
     }
 
     public static Role getRoleByDescription(Session sess, String description) throws HibernateException {

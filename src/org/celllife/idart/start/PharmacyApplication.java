@@ -311,6 +311,7 @@ public class PharmacyApplication {
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
                             RestFarmac.setPatientsFromRest();
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                            RestFarmac.setPatientFromClinicSector();
                             RestFarmac.setDispensesFromRest(sess);
                             RestFarmac.setEpisodesFromRest(mainClinic);
                         }
@@ -345,6 +346,7 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
+
                 try {
                     if (getServerStatus(url).contains("Red"))
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");

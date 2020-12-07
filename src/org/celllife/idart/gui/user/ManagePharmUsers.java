@@ -179,10 +179,10 @@ public class ManagePharmUsers extends GenericFormGui {
         rdBtnAddUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnAddUser.setText("Adicionar novo usuário");
 
-        if (!LocalObjects.getUser(getHSession()).isAdmin())
-            rdBtnAddUser.setSelection(false);
-        else
-            rdBtnAddUser.setSelection(true);
+//        if (!LocalObjects.getUser(getHSession()).isAdmin())
+//            rdBtnAddUser.setSelection(false);
+//        else
+        rdBtnAddUser.setSelection(true);
         rdBtnAddUser
                 .addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
                     @Override
@@ -198,10 +198,7 @@ public class ManagePharmUsers extends GenericFormGui {
         rdBtnUpdateUser.setBounds(new Rectangle(195, 12, 180, 30));
         rdBtnUpdateUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnUpdateUser.setText("Actualizar usuário actual");
-        if (!LocalObjects.getUser(getHSession()).isAdmin())
-            rdBtnAddUser.setSelection(true);
-        else
-            rdBtnAddUser.setSelection(false);
+        rdBtnUpdateUser.setSelection(false);
         rdBtnUpdateUser
                 .addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
                     @Override
@@ -287,8 +284,8 @@ public class ManagePharmUsers extends GenericFormGui {
 
         } else {
 
-        	// se for Admin permitir seleccionar o user.
-			if (LocalObjects.getUser(getHSession()).isAdmin()){
+            // se for Admin permitir seleccionar o user.
+            if (LocalObjects.getUser(getHSession()).isAdmin()) {
                 btnSearch = new Button(grpUserInfo, SWT.NONE);
                 btnSearch.setBounds(new org.eclipse.swt.graphics.Rectangle(320, 17, 90, 30));
                 btnSearch.setToolTipText("Pressione este botão para procurar um utilizador.");
@@ -320,7 +317,7 @@ public class ManagePharmUsers extends GenericFormGui {
                     tipo_user.setData(role);
                 }
                 tipo_user.select(1);
-			}
+            }
 
 
             // lblUser & txtUser
@@ -343,6 +340,7 @@ public class ManagePharmUsers extends GenericFormGui {
             txtPassword = new Text(grpUserInfo, SWT.PASSWORD | SWT.BORDER);
             txtPassword.setBounds(new Rectangle(185, 50, 130, 20));
             txtPassword.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+            txtPassword.setEnabled(false);
 
             // lblPasswordConfirm & txtPassConfirm
             Label lblPasswordConfirm = new Label(grpUserInfo, SWT.NONE);
@@ -353,6 +351,7 @@ public class ManagePharmUsers extends GenericFormGui {
             txtPassConfirm = new Text(grpUserInfo, SWT.PASSWORD | SWT.BORDER);
             txtPassConfirm.setBounds(new Rectangle(185, 80, 130, 20));
             txtPassConfirm.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+            txtPassConfirm.setEnabled(false);
 
 
         }
@@ -607,13 +606,7 @@ public class ManagePharmUsers extends GenericFormGui {
 
                         }
                     } else if (!isAddNotUpdate) {
-
-                        // if new password has been filled in, change password
-                        if (!txtPassword.getText().trim().equals("")) {
-                            AdministrationManager.updateUserPassword(
-                                    getHSession(), localUser, txtPassword
-                                            .getText());
-                        }
+                        
                         if (!sitesSet.equals(localUser.getClinics())) {
                             AdministrationManager.updateUserClinics(
                                     getHSession(), localUser, sitesSet);
@@ -773,7 +766,9 @@ public class ManagePharmUsers extends GenericFormGui {
             enableFields(true);
             txtUser.setText(localUser.getUsername());
             txtUser.setEnabled(false);
-            txtPassword.setFocus();
+            txtPassword.setText(localUser.getPassword());
+            txtPassConfirm.setText(localUser.getPassword());
+            tipo_user.setFocus();
             btnSave.setEnabled(true);
         }
     }

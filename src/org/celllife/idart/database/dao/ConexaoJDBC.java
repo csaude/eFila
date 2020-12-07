@@ -6694,7 +6694,7 @@ public class ConexaoJDBC {
                     "inner join linhat lt on lt.linhaid = pr.linhaid " +
                     "inner join episode e on e.patient = p.id " +
                     "inner join nationalclinics nc on nc.id = c.clinicdetails_id " +
-                    "left join ( " +
+                    "inner join ( " +
                     "select distinct pat.id patient, Max(pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY'))) proxLev, " +
                     "Max(p.date) prescriptiondate " +
                     "from package pa " +
@@ -7053,6 +7053,35 @@ public class ConexaoJDBC {
 
         return prescricoesDuplicadasXLSList;
 
+    }
+
+    public int idMostUsedDoctor()
+            throws SQLException, ClassNotFoundException {
+
+        conecta(iDartProperties.hibernateUsername,
+                iDartProperties.hibernatePassword);
+
+        int id = 0;
+
+        String query = " select p.doctor as id, count(*) as maxData " +
+                " from Prescription p  " +
+                " group by 1 " +
+                " order by maxData desc limit 1";
+
+        ResultSet rs = st.executeQuery(query);
+
+        if (rs != null) {
+
+            while (rs.next()) {
+
+                id = rs.getInt("id");
+
+            }
+            rs.close();
+
+        }
+
+        return id;
     }
 
 }

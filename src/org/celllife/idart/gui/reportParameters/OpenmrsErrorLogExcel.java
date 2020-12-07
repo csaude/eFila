@@ -20,6 +20,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,11 @@ public class OpenmrsErrorLogExcel implements IRunnableWithProgress {
         try {
             Session session = HibernateUtil.getNewSession();
             ConexaoJDBC con=new ConexaoJDBC();
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(theEndDate);
+            c.add(Calendar.DATE, 1);  // number of days to add
+            theEndDate = c.getTime();
 
             monitor.beginTask("Por Favor, aguarde ... ", 1);
 
