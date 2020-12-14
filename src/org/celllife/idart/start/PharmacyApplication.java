@@ -293,9 +293,10 @@ public class PharmacyApplication {
                         RestFarmac.setCentralDispenses(sess);
                     } else {
                         Clinic mainClinic = AdministrationManager.getMainClinic(sess);
-                        if (getServerStatus(url).contains("Red"))
+                        if (getServerStatus(url).contains("Red")) {
                             log.trace("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
-                        else {
+                            log.info("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                        }else {
 
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);

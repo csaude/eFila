@@ -1208,7 +1208,7 @@ public class PatientManager {
 		return result;
 	}
 
-	public static void saveSyncMobilePatien(Session s, SyncMobilePatient syncMobilePatient)
+	public static void saveSyncMobilePatient(Session s, SyncMobilePatient syncMobilePatient)
 			throws HibernateException {
 
 		s.saveOrUpdate(syncMobilePatient);

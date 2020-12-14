@@ -1,16 +1,9 @@
 package org.celllife.idart.database.hibernate;
 
-import com.sun.istack.internal.NotNull;
-import model.manager.AdministrationManager;
-// import org.jetbrains.annotations.NotNull;
-
+import javax.persistence.*;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+// import org.jetbrains.annotations.NotNull;
 
 /**
  */
@@ -346,7 +339,7 @@ public class Episode implements Comparable< Episode >{
 	}
 
 	@Override
-	public int compareTo(@NotNull Episode o) {
+	public int compareTo(Episode o) {
 		return this.getId().compareTo(o.getId());
 	}
 }
