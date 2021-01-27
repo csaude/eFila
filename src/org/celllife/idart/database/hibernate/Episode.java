@@ -18,7 +18,7 @@ public class Episode implements Comparable< Episode >{
 
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Integer id = -1;
 
 	@ManyToOne
 	@JoinColumn(name = "patient")
