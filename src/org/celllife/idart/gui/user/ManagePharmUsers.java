@@ -606,7 +606,7 @@ public class ManagePharmUsers extends GenericFormGui {
 
                         }
                     } else if (!isAddNotUpdate) {
-                        
+
                         if (!sitesSet.equals(localUser.getClinics())) {
                             AdministrationManager.updateUserClinics(
                                     getHSession(), localUser, sitesSet);

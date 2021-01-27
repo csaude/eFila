@@ -1,15 +1,13 @@
 package model.manager;
 
-import org.celllife.idart.database.hibernate.*;
+import org.celllife.idart.database.hibernate.Episode;
+import org.celllife.idart.database.hibernate.SyncEpisode;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
-import org.hibernate.*;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.List;
-
-import static com.sun.javafx.fxml.expression.Expression.add;
 
 public class EpisodeManager {
 

@@ -70,7 +70,7 @@ public class DadosPacienteFarmac {
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
                 } catch (Exception e) {
-                   log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
+                    log.trace("Error create or update clinic for patient :" + patientSync.getPatientid() + " clinic " + patientSync.getMainclinicname() + " error- " + e);
                 }
             }
         } else
@@ -167,7 +167,7 @@ public class DadosPacienteFarmac {
 
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
 
-            if(patient.getMostRecentEpisode() == null){
+            if (patient.getMostRecentEpisode() == null) {
                 Episode episode = new Episode();
                 episode.setPatient(patient);
                 episode.setStartDate(syncTempDispense.getDate());
@@ -187,7 +187,7 @@ public class DadosPacienteFarmac {
                 SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
                 Doctor doctorProvider = AdministrationManager.getMostUsedDoctor(sess);
 
-                if(doctorProvider == null)
+                if (doctorProvider == null)
                     doctorProvider = PrescriptionManager.getProvider(sess);
 
                 LinhaT linhat = AdministrationManager.getLinha(sess, syncTempDispense.getLinhanome());
@@ -266,8 +266,10 @@ public class DadosPacienteFarmac {
                     PackageManager.saveNewPrescription(sess, prescription, true);
                     tx.commit();
                     sess.flush();
-                } else
-                   log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                } else {
+                    log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                    log.info("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                }
                 sess.close();
             }
         } catch (Exception e) {
@@ -275,7 +277,8 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-           log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
+            log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
+            log.error("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
 
         }
         return prescription;
@@ -450,7 +453,14 @@ public class DadosPacienteFarmac {
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("TARV");
 
-        PackageManager.savePackageQty0(newPack);
+
+        List<ClinicSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, prescription.getPatient().getId());
+
+        if (patientClinicSector.size() > 0) {
+            PackageManager.savePackage(sess, newPack);
+        }else{
+            PackageManager.savePackageQty0(newPack);
+        }
     }
 
     public static boolean setDispenseRestOpenmrs(Session sess, Prescription prescription, SyncTempDispense syncTempDispense) {
@@ -502,7 +512,7 @@ public class DadosPacienteFarmac {
                         facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
 
-                return  false;
+                return false;
             } else {
 
                 RestClient restClient = new RestClient();
@@ -559,7 +569,7 @@ public class DadosPacienteFarmac {
                     saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                             facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "NID [" + nid + "com o uuid ( "+syncTempDispense.getUuidopenmrs()+" )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
+                    saveErroLog(newPack, dtNextPickUp, "NID [" + nid + "com o uuid ( " + syncTempDispense.getUuidopenmrs() + " )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
 
                     return false;
                 }
@@ -606,7 +616,7 @@ public class DadosPacienteFarmac {
                 }
             }
         } catch (IOException e) {
-            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: "+ e.getMessage());
+            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: " + e.getMessage());
         }
 
         return result;
@@ -621,35 +631,21 @@ public class DadosPacienteFarmac {
 
         Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
-        Clinic    clinic = AdministrationManager.getMainClinic(sess);
+        Clinic clinic = AdministrationManager.getMainClinic(sess);
 
         IdentifierType identifierType = AdministrationManager.getNationalIdentifierType(sess);
         AttributeType attributeType = PatientManager.getAttributeTypeObject(sess, "ARV Start Date");
 
-        if (patientSync.getUuid() != null)
-            patient = PatientManager.getPatientfromUuid(sess, patientSync.getUuid());
-        else
-            patient = PatientManager.getPatient(sess, patientSync.getPatientid());
-
-        if (patient == null) {
-            patient = new Patient();
-            patientIdentifier = new PatientIdentifier();
-            patientAttribute = new PatientAttribute();
-        } else {
-            patientIdentifier = patient.getIdentifier(identifierType);
-            if (patientIdentifier == null)
-                patientIdentifier = new PatientIdentifier();
-            patientAttribute = patient.getAttributeByName(attributeType.getName());
-            oldIdentifiers = patient.getPatientIdentifiers();
-        }
+        patient = new Patient();
+        patientIdentifier = new PatientIdentifier();
+        patientAttribute = new PatientAttribute();
 
         patientIdentifier.setPatient(patient);
         patientIdentifier.setType(identifierType);
         patientIdentifier.setValue(patientSync.getPatientid());
-
         oldIdentifiers.add(patientIdentifier);
 
-        if(patientSync.getArvstartdate() != null) {
+        if (patientSync.getArvstartdate() != null) {
             patientAttribute.setPatient(patient);
             patientAttribute.setValue(RestUtils.castDateToStringPattern(patientSync.getArvstartdate()));
             patientAttribute.setType(attributeType);
