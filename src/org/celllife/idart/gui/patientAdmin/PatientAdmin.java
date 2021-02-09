@@ -22,8 +22,14 @@ package org.celllife.idart.gui.patientAdmin;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.JdbcProperties;
+import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
-import org.celllife.idart.gui.patient.*;
+import org.celllife.idart.database.hibernate.User;
+import org.celllife.idart.database.hibernate.util.HibernateUtil;
+import org.celllife.idart.gui.patient.AddPatient;
+import org.celllife.idart.gui.patient.AddPatientIdart;
+import org.celllife.idart.gui.patient.AddPatientOpenMrs;
+import org.celllife.idart.gui.patient.MergePatients;
 import org.celllife.idart.gui.platform.GenericAdminGui;
 import org.celllife.idart.gui.platform.GenericFormGui;
 import org.celllife.idart.gui.prescription.AddPrescription;
@@ -33,6 +39,7 @@ import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
 import org.celllife.idart.messages.Messages;
 import org.celllife.idart.misc.Screens;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -487,8 +494,16 @@ public class PatientAdmin extends GenericAdminGui {
                   showMessage(MessageDialog.ERROR, "Servidor OpenMRS Offline", "Por favor, verifique a conexão com OpenMRS ou contacte o administrador.");
                 return;
             } else {
+                User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+                assert currentUser != null;
+                if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                 AddPatientOpenMrs.addInitialisationOption(GenericFormGui.OPTION_isTransitNotNewPatient, false);
                 new AddPatientIdart(getShell(), true, false);
+
+                }else {
+                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

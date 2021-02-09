@@ -50,9 +50,9 @@ import org.celllife.idart.messages.Messages;
 import org.celllife.idart.misc.DateFieldComparator;
 import org.celllife.idart.misc.PatientBarcodeParser;
 import org.celllife.idart.misc.iDARTUtil;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.celllife.idart.rest.utils.RestUtils;
-import org.celllife.idart.start.PharmacyApplication;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -2809,6 +2809,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
             } else {
 
+                User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                assert currentUser != null;
+                if (ApiAuthRest.loginOpenMRS(currentUser)) {
                 // Add interoperability with OpenMRS through Rest Web Services
                 RestClient restClient = new RestClient();
 
@@ -2969,6 +2973,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     m.setMessage("Houve um problema ao salvar o pacote de medicamentos para o paciente " + nid + ". " + "Por favor contacte o SIS.");
 
                     m.open();
+                }
+                }else {
+                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                 }
             }
         }

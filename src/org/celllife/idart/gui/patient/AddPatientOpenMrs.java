@@ -19,25 +19,11 @@
 
 package org.celllife.idart.gui.patient;
 
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import model.manager.AdministrationManager;
 import model.manager.PackageManager;
 import model.manager.PatientManager;
 import model.manager.StudyManager;
 import model.manager.reports.PatientHistoryReport;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.function.DateRuleFactory;
@@ -49,20 +35,12 @@ import org.celllife.idart.database.dao.ConexaoJDBC;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.misc.iDARTChangeListener;
-import org.celllife.idart.gui.patient.tabs.AddressTab;
-import org.celllife.idart.gui.patient.tabs.ClinicInfoTab;
-import org.celllife.idart.gui.patient.tabs.IPatientTab;
-import org.celllife.idart.gui.patient.tabs.TreatmentHistoryTab;
-import org.celllife.idart.gui.patient.tabs.TreatmentManagementTab;
+import org.celllife.idart.gui.patient.tabs.*;
 import org.celllife.idart.gui.platform.GenericFormGui;
 import org.celllife.idart.gui.prescription.AddPrescription;
 import org.celllife.idart.gui.reportParameters.PatientHistory;
 import org.celllife.idart.gui.search.PatientSearch;
-import org.celllife.idart.gui.utils.ComboUtils;
-import org.celllife.idart.gui.utils.ResourceUtils;
-import org.celllife.idart.gui.utils.iDartColor;
-import org.celllife.idart.gui.utils.iDartFont;
-import org.celllife.idart.gui.utils.iDartImage;
+import org.celllife.idart.gui.utils.*;
 import org.celllife.idart.gui.widget.DateButton;
 import org.celllife.idart.gui.widget.DateInputValidator;
 import org.celllife.idart.integration.eKapa.gui.SearchPatientGui;
@@ -74,37 +52,27 @@ import org.celllife.idart.misc.iDARTUtil;
 import org.celllife.idart.print.barcode.Barcode;
 import org.celllife.idart.print.label.PatientInfoLabel;
 import org.celllife.idart.print.label.PrintLabel;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.celllife.idart.rest.utils.RestUtils;
 import org.celllife.mobilisr.client.exception.RestCommandException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
 
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
@@ -1374,53 +1342,63 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                 saveOpenmrsPatient(localPatient, getHSession());
                 log.trace("Servidor Rest offline, a informacao do paciente ["+ localPatient.getPatientId() +" - "+localPatient.getFirstNames()+" "+localPatient.getLastname()+" ] sera armazenada para envio ao Openrms a posterior");
             } else {
-                restClient.postOpenMRSPatient(cmbSex.getText().trim().equals(iDartProperties.MASCULINO) ? "M" : "F", lstFullName.get(0), lstFullName.get(1), lstFullName.get(2),
-                        cmbDOBYear.getText().trim() + "-" + String.valueOf(cal.get(Calendar.MONTH) + 1) + "-" + cmbDOBDay.getText().trim(), txtPatientId.getText().toUpperCase().trim());
 
-                String resource = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(txtPatientId.getText().toUpperCase(), " ", "%20"));
+                User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
 
-                JSONObject _jsonObject = new JSONObject(resource);
+                assert currentUser != null;
+                if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                String personUuid = null;
+                    restClient.postOpenMRSPatient(cmbSex.getText().trim().equals(iDartProperties.MASCULINO) ? "M" : "F", lstFullName.get(0), lstFullName.get(1), lstFullName.get(2),
+                            cmbDOBYear.getText().trim() + "-" + String.valueOf(cal.get(Calendar.MONTH) + 1) + "-" + cmbDOBDay.getText().trim(), txtPatientId.getText().toUpperCase().trim());
 
-                JSONArray _jsonArray = (JSONArray) _jsonObject.get("results");
+                    String resource = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(txtPatientId.getText().toUpperCase(), " ", "%20"));
 
-                for (int i = 0; i < _jsonArray.length(); i++) {
-                    JSONObject results = (JSONObject) _jsonArray.get(i);
-                    personUuid = (String) results.get("uuid");
+                    JSONObject _jsonObject = new JSONObject(resource);
+
+                    String personUuid = null;
+
+                    JSONArray _jsonArray = (JSONArray) _jsonObject.get("results");
+
+                    for (int i = 0; i < _jsonArray.length(); i++) {
+                        JSONObject results = (JSONObject) _jsonArray.get(i);
+                        personUuid = (String) results.get("uuid");
+                    }
+
+                    localPatient.setUuidopenmrs(personUuid);
+
+                    log.trace(" O patient " + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " foi enviado ao Openmrs com Sucesso");
+                    PatientManager.savePatient(getHSession(), localPatient);
+
+                    }else {
+                        log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                    }
                 }
 
-                localPatient.setUuidopenmrs(personUuid);
+                conn2.inserPacienteIdart(localPatient.getPatientId(), localPatient.getFirstNames(), localPatient.getLastname(), new Date());
 
-				log.trace(" O patient " + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " "+ localPatient.getLastname()+" foi enviado ao Openmrs com Sucesso");
-                PatientManager.savePatient(getHSession(), localPatient);
-            }
+                getHSession().flush();
+                tx.commit();
 
-            conn2.inserPacienteIdart(localPatient.getPatientId(), localPatient.getFirstNames(), localPatient.getLastname(), new Date());
+                MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+                m.setText(Messages.getString("patient.save.confirmation.title")); //$NON-NLS-1$
+                m.setMessage(MessageFormat.format(Messages.getString("patient.save.confirmation"), localPatient.getPatientId())); //$NON-NLS-1$
+                m.open();
 
-            getHSession().flush();
-            tx.commit();
-
-            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-            m.setText(Messages.getString("patient.save.confirmation.title")); //$NON-NLS-1$
-            m.setMessage(MessageFormat.format(Messages.getString("patient.save.confirmation"), localPatient.getPatientId())); //$NON-NLS-1$
-            m.open();
-
-            if (isAddnotUpdate || offerToPrintLabel) {
+                if (isAddnotUpdate || offerToPrintLabel) {
 				/*m = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 				m.setText(Messages.getString("patient.dialog.printInfoLable.title"));
 				m.setMessage(Messages.getString("patient.dialog.printInfoLable"));*/
 
-                MessageDialog dialog = new MessageDialog(getShell(), Messages.getString("patient.dialog.printInfoLable.title"), null,
-                        Messages.getString("patient.dialog.printInfoLable"), MessageDialog.QUESTION, new String[]{"Sim",
-                        "Não"}, 0);
+                    MessageDialog dialog = new MessageDialog(getShell(), Messages.getString("patient.dialog.printInfoLable.title"), null,
+                            Messages.getString("patient.dialog.printInfoLable"), MessageDialog.QUESTION, new String[]{"Sim",
+                            "Não"}, 0);
 
-                switch (dialog.open()) {
-                    case 0:
-                        printPatientInfoLabel();
-                        break;
+                    switch (dialog.open()) {
+                        case 0:
+                            printPatientInfoLabel();
+                            break;
+                    }
                 }
-            }
 
             return true;
 
