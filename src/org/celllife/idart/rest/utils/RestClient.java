@@ -1,6 +1,9 @@
 package org.celllife.idart.rest.utils;
 
-import model.manager.*;
+import model.manager.OpenmrsErrorLogManager;
+import model.manager.PackageManager;
+import model.manager.PatientManager;
+import model.manager.PrescriptionManager;
 import model.nonPersistent.Autenticacao;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -10,8 +13,6 @@ import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.rest.ApiAuthRest;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.json.JSONArray;
@@ -21,14 +22,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
-import static org.celllife.idart.gui.packaging.NewPatientPackaging.saveErroLog;
-import static org.celllife.idart.gui.packaging.NewPatientPackaging.saveOpenmrsPatientFila;
 
 
 /**
@@ -239,7 +235,7 @@ public class RestClient {
 
     }
 
-    public static void setOpenmrsPatients() {
+    public static void setOpenmrsPatients( Session sess) {
 
         RestClient restClient = new RestClient();
 
@@ -248,17 +244,19 @@ public class RestClient {
         String name = "";
         String middleName = "";
 
-        Session session = HibernateUtil.getNewSession();
-        Transaction tx = session.beginTransaction();
+
 
         try {
 
-            List<SyncOpenmrsPatient> syncOpenmrsPatients = PatientManager.getAllSyncOpenmrsPatientReadyToSave(session);
+            List<SyncOpenmrsPatient> syncOpenmrsPatients = PatientManager.getAllSyncOpenmrsPatientReadyToSave(sess);
             if (!syncOpenmrsPatients.isEmpty()) {
 
                 for (SyncOpenmrsPatient patientToSave : syncOpenmrsPatients) {
+                    Session session = HibernateUtil.getNewSession();
+
                     try {
                         String uuid = null;
+                        session.beginTransaction();
                         Patient patient = PatientManager.getPatient(session, patientToSave.getPatientid());
 
                         if (patient != null) {
@@ -287,8 +285,14 @@ public class RestClient {
                         patientToSave.setSyncstatus('E');
                         PatientManager.saveSyncOpenmrsPatien(session, patientToSave);
 
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
                         break;
                     } catch (Exception e) {
+                        session.getTransaction().rollback();
+                        session.close();
                         log.trace(new Date() + ": Erro ao gravar informacao do Paciente [" + patientToSave.getFirstnames() + " " + patientToSave.getLastname() + " com NID: " + patientToSave.getPatientid() + "] verifique o acesso do user ao openmrs ou contacte o administrador");
                     } finally {
                         continue;
@@ -297,45 +301,38 @@ public class RestClient {
             } else {
                 log.trace(new Date() + ": INFO - Nenhumm paciente por enviar foi encontrado");
             }
-            tx.commit();
-            session.flush();
-            session.close();
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                session.close();
-            }
             log.trace("Error :" + e);
         }
     }
 
-    public static void setOpenmrsPatientFila() {
-
-        Session session = HibernateUtil.getNewSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            System.out.println(">>>>>>>   "+AdministrationManager.getMostUsedDoctor(session));
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public static void setOpenmrsPatientFila(Session sess) {
 
         try {
-            List<SyncOpenmrsDispense> syncOpenmrsDispenses = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSave(session);
+            List<SyncOpenmrsDispense> syncOpenmrsDispenses = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSave(sess);
             if (!syncOpenmrsDispenses.isEmpty()) {
-
                 for (SyncOpenmrsDispense dispense : syncOpenmrsDispenses) {
+                    Session session = HibernateUtil.getNewSession();
+
                     try {
+                        session.beginTransaction();
                         Prescription prescription = PackageManager.getPrescription(session, dispense.getPrescription().getPrescriptionId());
 
                         if (prescription != null) {
                             restFilaToOpenMRS(session, dispense);
                         } else {
-                            log.trace(new Date() + ": INFO - A Receita com o codigo: [" + dispense.getPrescription().getPrescriptionId() + "] foi removido");
+                            log.trace(new Date() + ": INFO - A Prescrição com o codigo: [" + dispense.getPrescription().getPrescriptionId() + "] foi removido");
                             dispense.setSyncstatus('E');
                         }
                         PrescriptionManager.saveSyncOpenmrsPatienFila(session, dispense);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
                         break;
                     } catch (Exception e) {
+                        session.getTransaction().rollback();
+                        session.close();
                         log.trace(new Date() + ": INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPrescription().getPatient().getPatientId() + "], verifique o acesso do user ao openmrs ou contacte o administrador");
                     } finally {
                         continue;
@@ -344,14 +341,7 @@ public class RestClient {
             } else {
                 log.trace(new Date() + ": INFO - Nenhumm levantamento enviado para Openmrs foi encontrado");
             }
-            tx.commit();
-            session.flush();
-            session.close();
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                session.close();
-            }
             log.trace("Error :" + e);
         }
     }

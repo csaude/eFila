@@ -219,11 +219,11 @@ CREATE TABLE IF NOT EXISTS clinicsector (
 CREATE TABLE IF NOT EXISTS patient_sector (
 	id int4 NOT NULL,
 	startdate timestamptz NULL,
-	stopdate timestamptz NULL,
+	enddate timestamptz NULL,
 	endnotes varchar(255) NULL,
     clinicsector integer NOT NULL,
-    patient integer NOT NULL
-	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
+    patient integer NOT NULL,
+	CONSTRAINT patient_sector_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS sync_mobile_patient (

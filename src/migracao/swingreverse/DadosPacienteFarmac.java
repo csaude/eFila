@@ -14,9 +14,7 @@ import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
-import org.celllife.idart.gui.packaging.NewPatientPackaging;
 import org.celllife.idart.rest.utils.RestClient;
-import org.celllife.idart.rest.utils.RestFarmac;
 import org.celllife.idart.rest.utils.RestUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -41,7 +39,7 @@ public class DadosPacienteFarmac {
 
     public final static Logger log = Logger.getLogger(DadosPacienteFarmac.class);
 
-    public static Patient InserePaciente(SyncTempPatient patientSync) {
+    public static Patient InserePaciente(Session sess, SyncTempPatient patientSync) {
 
         Patient patient = null;
         PatientIdentifier patientIdentifier = null;
@@ -49,8 +47,8 @@ public class DadosPacienteFarmac {
         Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
 
         Clinic clinic = null;
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
+//        Session sess = HibernateUtil.getNewSession();
+//        Transaction tx = sess.beginTransaction();
 
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
             clinic = AdministrationManager.getClinicbyUuid(sess, patientSync.getClinicuuid());
@@ -131,14 +129,14 @@ public class DadosPacienteFarmac {
 
         try {
             PatientManager.savePatient(sess, patient);
-            tx.commit();
-            sess.flush();
-            sess.close();
+//            tx.commit();
+//            sess.flush();
+//            sess.close();
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                sess.close();
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//                sess.close();
+//            }
             log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
         }
 
@@ -454,7 +452,7 @@ public class DadosPacienteFarmac {
         newPack.setDrugTypes("TARV");
 
 
-        List<ClinicSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, prescription.getPatient().getId());
+        List<PatientSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, prescription.getPatient());
 
         if (patientClinicSector.size() > 0) {
             PackageManager.savePackage(sess, newPack);

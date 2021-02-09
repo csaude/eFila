@@ -781,14 +781,16 @@ public class PatientManager {
 	}
 
 
-	public static List<ClinicSector> patientIsOpenInClinicSector(Session session, Integer id)
-			throws HibernateException {
+	public static List<PatientSector> patientIsOpenInClinicSector(Session session, Patient id) {
 		boolean result = false;
-		@SuppressWarnings("unchecked")
-		List<ClinicSector> patient = session
-				.createQuery(
-						"select patient from ClinicSector as patient where patient.stopdate is null and patient.patient = :id")
-				.setParameter("id", id).list();
+		List patient = new ArrayList();
+		try {
+			patient = session
+					.createQuery("select patient from PatientSector as patient where patient.enddate is null and patient.patient = :id")
+					.setParameter("id", id).list();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return patient;
 	}
 

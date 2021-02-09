@@ -289,7 +289,7 @@ public class PharmacyApplication {
 
                 try {
                     if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
-                        RestFarmac.setCentralPatients();
+                        RestFarmac.setCentralPatients(sess);
                         RestFarmac.setCentralDispenses(sess);
                     } else {
                         Clinic mainClinic = AdministrationManager.getMainClinic(sess);
@@ -310,11 +310,11 @@ public class PharmacyApplication {
                         }
 
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
-                            RestFarmac.setPatientsFromRest();
+                            RestFarmac.setPatientsFromRest(sess);
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
-                            RestFarmac.setPatientFromClinicSector();
+                            RestFarmac.setPatientFromClinicSector(sess);
                             RestFarmac.setDispensesFromRest(sess);
-                            RestFarmac.setEpisodesFromRest(mainClinic);
+                            RestFarmac.setEpisodesFromRest(sess,mainClinic);
                         }
 
                     }
@@ -347,17 +347,20 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
+                Session session = HibernateUtil.getNewSession();
 
                 try {
                     if (getServerStatus(url).contains("Red"))
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
                     else {
-                        RestClient.setOpenmrsPatients();
-                        RestClient.setOpenmrsPatientFila();
+                        RestClient.setOpenmrsPatients(session);
+                        RestClient.setOpenmrsPatientFila(session);
                     }
                 } catch (IOException e) {
                     log.trace(new Date() + " : Erro " + e.getMessage());
                 }
+                session.clear();
+                session.close();
 
             }
         }, 0, synctime, TimeUnit.SECONDS);
