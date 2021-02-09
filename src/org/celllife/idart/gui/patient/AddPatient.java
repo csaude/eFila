@@ -47,6 +47,7 @@ import org.celllife.idart.misc.iDARTUtil;
 import org.celllife.idart.print.barcode.Barcode;
 import org.celllife.idart.print.label.PatientInfoLabel;
 import org.celllife.idart.print.label.PrintLabel;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.celllife.mobilisr.client.exception.RestCommandException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1003,17 +1004,25 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         result = false;
                     } else {
                         if (checkOpenmrs) {
+                            User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                            assert currentUser != null;
+                            if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                             restClient = new RestClient();
                             String patientId = txtPatientId.getText().toUpperCase().trim();
 
-                            //Verificar se o NID existe no OpenMRS
-                            String openMrsResource = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(patientId, " ", "%20"));
+                                //Verificar se o NID existe no OpenMRS
+                                String openMrsResource = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(patientId, " ", "%20"));
 
-                            if (openMrsResource.length() == 14) {
-                                title = Messages.getString("Informação não encontrada");
-                                message = Messages.getString("NID inserido não existe no OpenMRS");
-                                txtPatientId.setFocus();
-                                result = false;
+                                if (openMrsResource.length() == 14) {
+                                    title = Messages.getString("Informação não encontrada");
+                                    message = Messages.getString("NID inserido não existe no OpenMRS");
+                                    txtPatientId.setFocus();
+                                    result = false;
+                                }
+                            }else {
+                                log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está em funcionamento.");
                             }
                         }
                     }
@@ -1182,6 +1191,11 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                             message = Messages.getString("Servidor OpenMRS offline, verifique a conexão com OpenMRS ou contacte o administrador"); //$NON-NLS-1$
                             result = true;
                         } else {
+                            User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                            assert currentUser != null;
+                            if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                             restClient = new RestClient();
                             String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + txtOpenmrsuuid.getText());
                             if (nidvoided != null) {
@@ -1198,6 +1212,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                 title = Messages.getString("UUID não existe no OpenMRS"); //$NON-NLS-1$
                                 message = Messages.getString("O UUID introduzido não existe no openmrs, por favor introduza um UUID válido ou contacte o administrador."); //$NON-NLS-1$
                                 result = false;
+                            }
+                            }else {
+                                log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                             }
                         }
                     } catch (IOException e) {
@@ -1278,7 +1295,12 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                 //  showMessage(MessageDialog.WARNING, "Servidor OpenMRS Offline", "Por favor, verifique a conexão com OpenMRS para efectuar esta operação.");
                                 return;
                             } else {
-                                //Preparar Prim.Nomes, Apelido e Data de Nascimento apartir do NID usando REST WEB SERVICES
+                                User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                                assert currentUser != null;
+                                if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
+                                    //Preparar Prim.Nomes, Apelido e Data de Nascimento apartir do NID usando REST WEB SERVICES
 
                                 String nid = txtPatientId.getText().toUpperCase().trim();
 
@@ -1332,6 +1354,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                 cmbDOBMonth.setText(month);
                                 cmbDOBYear.setText(year);
                                 localPatient.setDateOfBirth(theDate);
+                                }else {
+                                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                                }
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -1598,6 +1623,11 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         showMessage(MessageDialog.WARNING, "Servidor OpenMRS Offline", "Por favor, verifique a conexão com OpenMRS para efectuar esta operação.");
                         return;
                     } else {
+                        User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                        assert currentUser != null;
+                        if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                         if (localPatient.getUuidopenmrs() == null) {
                             String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
 
@@ -1612,6 +1642,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                 personUuid = (String) results.get("uuid");
                             }
                             localPatient.setUuidopenmrs(personUuid);
+                        }
+                        }else {
+                            log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                         }
                     }
                 } catch (IOException e) {
@@ -2500,6 +2533,11 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         showMessage(MessageDialog.WARNING, "Servidor OpenMRS Offline", "Por favor, verifique a conexão com OpenMRS para efectuar esta operação ");
                         return false;
                     } else {
+                        User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                        assert currentUser != null;
+                        if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                         String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
 
                         if (openMrsResource.length() == 14) {
@@ -2510,8 +2548,10 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                             txtPatientId.setFocus();
                             return false;
                         }
+                        }else {
+                            log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                        }
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

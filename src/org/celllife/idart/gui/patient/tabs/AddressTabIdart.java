@@ -1,18 +1,15 @@
 package org.celllife.idart.gui.patient.tabs;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
 import org.celllife.idart.commonobjects.JdbcProperties;
+import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Patient;
+import org.celllife.idart.database.hibernate.User;
+import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.misc.GenericTab;
-import org.celllife.idart.gui.patient.PatientIdentifierDialog;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartColor;
 import org.celllife.idart.gui.utils.iDartFont;
@@ -26,13 +23,14 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.hibernate.Session;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
@@ -289,6 +287,12 @@ public class AddressTabIdart extends GenericTab implements IPatientTab {
 				if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
 					log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexão com OpenMRS ou contacte o administrador");
 				} else {
+
+                    User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                    assert currentUser != null;
+                    if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
 					RestClient restClient = new RestClient();
 
 					String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(patient.getPatientId(), " ", "%20"));
@@ -332,7 +336,12 @@ public class AddressTabIdart extends GenericTab implements IPatientTab {
 					patient.setHomePhone(!strCellNumber.isEmpty() ? strCellNumber : "");
 					patient.setProvince(cmbProvince.getText());
 					patient.setWorkPhone(txtPhoneWork.getText());
-				}
+
+                }else {
+                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                }
+
+            }
 
 			} catch (
 					IOException e) {

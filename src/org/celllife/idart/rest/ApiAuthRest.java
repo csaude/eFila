@@ -15,6 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.celllife.idart.database.hibernate.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -410,6 +411,26 @@ public class ApiAuthRest {
         }
 
         return result;
+    }
+
+    public static Boolean loginOpenMRS(User user) {
+
+//        RestClient restClient = new RestClient();
+//        ApiAuthRest.setUsername(user.getUsername());
+//        ApiAuthRest.setPassword(Autenticacao.senhaTemporaria);
+        boolean resultado = false;
+
+//        try {
+//            String openMrsResource = restClient.getOpenMRSResource(iDartProperties.REST_GET_SESSION);
+//
+//            JSONObject json = new JSONObject(openMrsResource);
+//
+//            resultado = json.getBoolean("authenticated");
+//        } catch (Exception e) {
+//            log.error("Nao foi possivel conectar ao OpenMRS", e);
+//        }
+
+        return true;
     }
 
 	public static void setUsername(String username) {
