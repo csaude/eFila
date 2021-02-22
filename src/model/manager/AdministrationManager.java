@@ -30,7 +30,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import javax.print.Doc;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -110,6 +109,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getAllMotivoPrescricao(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.description = 'prescription_reason' order by s.id asc";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getAllModoDispensa(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' order by s.id asc";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -1645,6 +1653,15 @@ public class AdministrationManager {
         List result;
         result = sess.createQuery(
                 "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null").list();
+
+        return result;
+    }
+
+    // Devolve a lista de todos dispensas locais prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado L- Last Local Dispense)
+    public static List<SyncTempDispense> getAllLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncTempDispense sync where sync.syncstatus = 'L'").list();
 
         return result;
     }

@@ -92,6 +92,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Label lblClinic;
     private CCombo cmbSupply;
     private CCombo cmbSelectStockCenter;
+    private CCombo cmbDispenseMode;
     private TableEditor editorTblPrescriptionInfo;
     private boolean fieldsEnabled = false; // has a patient been selected to
     private Label lblDuration;
@@ -502,6 +503,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         txtPrescriptionDate.setText("");
         txtDoctor.setText("");
         txtPrescriptionId.setText("");
+        cmbDispenseMode.setText("");
         txtAreaNotes.setText("");
         btnNextAppDate.setDate(new Date());
         tblPrescriptionInfo.clearAll();
@@ -655,6 +657,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         pdi.setWeeksSupply(getSelectedWeekSupply());
                         pdi.setDispensedForLaterPickup(!dispenseNow);
                         pdi.setPickupDate(dispenseNow ? new Date() : null);
+                        pdi.setModeDispense(cmbDispenseMode.getText());
                         if (rdBtnNoAppointmentDate.getSelection())
                             pdi.setInhPickup(false);
                         else
@@ -1167,12 +1170,32 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private void createGrpNotes(Composite parent) {
 
         Group grpNotes = new Group(parent, SWT.NONE);
-        grpNotes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        grpNotes.setText("Notas da Prescrição");
+//        grpNotes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+//        grpNotes.setText("Notas da Prescrição");
         grpNotes.setBounds(new Rectangle(351, 15, 279, 107));
 
+        Label lblDispenseMode = new Label(grpNotes, SWT.BORDER);
+        lblDispenseMode.setBounds(new Rectangle(15, 7, 170, 20));
+        lblDispenseMode.setText(Messages.getString("patient.prescription.dialog.dispense.mode"));
+        lblDispenseMode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        cmbDispenseMode = new CCombo(grpNotes, SWT.BORDER | SWT.READ_ONLY);
+        cmbDispenseMode.setBounds(new Rectangle(15, 19, 250, 20));
+        cmbDispenseMode.setVisibleItemCount(10);
+        cmbDispenseMode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        cmbDispenseMode.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+        cmbDispenseMode.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
+
+        //popula o ccombo modo de dispensa
+        CommonObjects.populateModoDispensa(getHSession(), cmbDispenseMode);
+
+        Label lblNotes = new Label(grpNotes, SWT.BORDER);
+        lblNotes.setBounds(new Rectangle(15, 44, 190, 25));
+        lblNotes.setText(Messages.getString("patient.prescription.dialog.prescription.notes"));
+        lblNotes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
         txtAreaNotes = new Text(grpNotes, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP);
-        txtAreaNotes.setBounds(new Rectangle(15, 19, 249, 79));
+        txtAreaNotes.setBounds(new Rectangle(15, 58, 250, 35));
         txtAreaNotes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         txtAreaNotes.setEditable(true);
         txtAreaNotes.setEnabled(false);
@@ -1540,6 +1563,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     protected void enableFields(boolean enable) {
         txtAreaNotes.setEnabled(enable);
         cmbSupply.setEnabled(enable);
+        cmbDispenseMode.setEnabled(enable);
         btnDispense.setEnabled(enable);
         btnNextAppDate.setEnabled(enable);
         btnCaptureDate.setEnabled(enable);
