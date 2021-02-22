@@ -627,6 +627,45 @@ public class RestFarmac {
             }
     }
 
+    public static void restPostLocalDispenses(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        List<SyncTempDispense> syncTempDispenses = AdministrationManager.getAllLocalSyncTempDispenseReadyToSend(sess);
+
+        String result = "";
+
+        if (syncTempDispenses.isEmpty())
+            log.trace(new Date() + " [US] INFO - Nenhum último levantamento de ARV de paciente foi encontrado para enviar");
+        else
+            for (SyncTempDispense dispenseSync : syncTempDispenses) {
+                Session session = HibernateUtil.getNewSession();
+                try {
+                    session.beginTransaction();
+                    result = restPostDispense(url, dispenseSync, pool);
+                    if (result.contains("Falha")) {
+                        log.error(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
+                    } else {
+                        log.info(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        dispenseSync.setSyncstatus('M');
+                        AdministrationManager.saveSyncTempDispense(sess, dispenseSync);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
+                    }
+                    break;
+                } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
+                    log.error(e.getMessage());
+                } finally {
+
+                    continue;
+                }
+
+            }
+    }
+
     public static void setPatientsFromRest(Session session) {
 
 

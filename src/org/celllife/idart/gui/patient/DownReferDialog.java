@@ -1,10 +1,13 @@
 package org.celllife.idart.gui.patient;
 
 import model.manager.AdministrationManager;
+import model.manager.PackageManager;
 import org.apache.log4j.Logger;
 import org.celllife.function.DateRuleFactory;
+import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.CommonObjects;
 import org.celllife.idart.database.hibernate.*;
+import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.gui.platform.GenericOthersGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartFont;
@@ -20,14 +23,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static model.manager.TemporaryRecordsManager.savePackageDrugInfosFarmac;
 
 public class DownReferDialog extends GenericOthersGui {
 
@@ -83,7 +84,7 @@ public class DownReferDialog extends GenericOthersGui {
 
     protected void cmdSaveWidgetSelected() {
         if (fieldsOk()) {
-            doSave();
+                doSave();
         }
     }
 
@@ -133,6 +134,8 @@ public class DownReferDialog extends GenericOthersGui {
 
             getHSession().flush();
             tx.commit();
+
+            saveLastDispense(patient,getHSession());
 
             MessageBox m = new MessageBox(getShell(), SWT.OK
                     | SWT.ICON_INFORMATION);
@@ -275,6 +278,11 @@ public class DownReferDialog extends GenericOthersGui {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
         Prescription prescription = patient.getMostRecentPrescription();
+        Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
+
+        java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
+
+
         int prescriptionDuration = 0;
 
         if (patient.getUuidopenmrs() != null)
@@ -352,5 +360,22 @@ public class DownReferDialog extends GenericOthersGui {
 
         AdministrationManager.saveSyncTempPatient(session, pacienteReferido);
 
+    }
+
+    public void saveLastDispense(Patient patient, Session session){
+
+        Prescription prescription = patient.getMostRecentPrescription();
+        Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
+
+        java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
+        // Last dispense status L
+        for (PackageDrugInfo pdi : packagedDrugsList) {
+            if (pdi.getId() != 0) {
+                //Para farmac Insere dispensas para US
+                if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                    savePackageDrugInfosFarmac(pdi, 'L');
+                }
+            }
+        }
     }
 }
