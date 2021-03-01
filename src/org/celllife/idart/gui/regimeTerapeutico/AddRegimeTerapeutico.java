@@ -24,6 +24,7 @@ import org.celllife.idart.gui.utils.iDartImage;
 import org.celllife.idart.messages.Messages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -93,6 +94,8 @@ public class AddRegimeTerapeutico extends GenericFormGui {
     private Text txtRegimeEspecifico;
 
     private Text txtCodigoRegime;
+
+    private CCombo cmbtipoDoenca;
 
     private Text txtRegimeEsquemaIdart;
 
@@ -180,7 +183,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
 
         // grpParticulars
         grpRegimen = new Group(getShell(), SWT.NONE);
-        grpRegimen.setBounds(new Rectangle(100, 100, 600, 150));
+        grpRegimen.setBounds(new Rectangle(100, 100, 600, 170));
         grpRegimen.setText(Messages.getString("adddruggroup.label.regimen.title")); //$NON-NLS-1$
         grpRegimen.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
@@ -261,14 +264,29 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         rdBtnInactive.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnInactive.setSelection(false);
 
+        // Desease Type
+        Label lblSideTreatment = new Label(grpRegimen, SWT.NONE);
+        lblSideTreatment.setBounds(new Rectangle(30, 95, 110, 20));
+        lblSideTreatment.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblSideTreatment.setText("* O Regime é para?:");
+
+        cmbtipoDoenca = new CCombo(grpRegimen, SWT.NONE);
+        cmbtipoDoenca.setBounds(new Rectangle(160, 95, 220, 20));
+        cmbtipoDoenca.setEditable(false);
+        cmbtipoDoenca.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        cmbtipoDoenca.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+        cmbtipoDoenca.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
+        CommonObjects.populateDiseases(getHSession(), cmbtipoDoenca);
+        cmbtipoDoenca.setText(cmbtipoDoenca.getItem(0));
+
         // Mapeamento OpenMRS
         lblRegimeEspecifico = new Label(grpRegimen, SWT.NONE);
-        lblRegimeEspecifico.setBounds(new Rectangle(30, 95, 110, 20));
+        lblRegimeEspecifico.setBounds(new Rectangle(30, 120, 110, 20));
         lblRegimeEspecifico.setText(Messages.getString("adddruggroup.label.regime.especifico.title")); //$NON-NLS-1$
         lblRegimeEspecifico.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         txtRegimeEspecifico = new Text(grpRegimen, SWT.BORDER);
-        txtRegimeEspecifico.setBounds(new Rectangle(160, 95, 220, 20));
+        txtRegimeEspecifico.setBounds(new Rectangle(160, 120, 220, 20));
         txtRegimeEspecifico.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         txtRegimeEspecifico.addKeyListener(new KeyAdapter() {
             @Override
@@ -413,6 +431,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         regToSave.setRegimenomeespecificado(txtRegimeEspecifico.getText());
         regToSave.setCodigoregime(txtCodigoRegime.getText());
         regToSave.setRegimeesquemaidart(txtDrugGroupName.getText().trim());
+        regToSave.setTipoDoenca(cmbtipoDoenca.getText());
 
         List<RegimenDrugs> regimenDrugsList = new ArrayList<RegimenDrugs>();
         // Save the regimen Drugs
@@ -567,6 +586,8 @@ public class AddRegimeTerapeutico extends GenericFormGui {
 
         rdBtnActive.setSelection(true);
         rdBtnInactive.setSelection(false);
+
+        cmbtipoDoenca.getItem(0);
 
         tblDrugs.clearAll();
         tblDrugs.removeAll();
@@ -771,6 +792,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         txtDrugGroupName.setText(localRegimen.getRegimeesquema());
         txtCodigoRegime.setText(localRegimen.getCodigoregime());
         txtRegimeEspecifico.setText(localRegimen.getRegimenomeespecificado());
+        cmbtipoDoenca.setText(localRegimen.getTipoDoenca());
 
         if (localRegimen.isActive()) {
             rdBtnActive.setSelection(true);
@@ -843,6 +865,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         rdBtnInactive.setEnabled(enable);
         txtCodigoRegime.setEnabled(enable);
         txtRegimeEspecifico.setEnabled(enable);
+        cmbtipoDoenca.setEnabled(enable);
 
         if (enable) {
             tblDrugs.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
@@ -901,6 +924,8 @@ public class AddRegimeTerapeutico extends GenericFormGui {
                 return true;
             } else if (!newRegimen.getRegimenDrugs().containsAll(localRegimen.getRegimenDrugs())
                     && newRegimen.getRegimenDrugs().size() != localRegimen.getRegimenDrugs().size()) {
+                return true;
+            }else if (!newRegimen.getTipoDoenca().equalsIgnoreCase(localRegimen.getTipoDoenca())) {
                 return true;
             }
         }

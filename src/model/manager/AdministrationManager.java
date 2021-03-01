@@ -1735,6 +1735,22 @@ public class AdministrationManager {
 
     }
 
+    // Devolve a lista de todos pacientes referidos por uuid
+    public static SyncTempDispense getSyncTempDispenseById(Session sess, int id) throws HibernateException {
+
+        SyncTempDispense result;
+
+        List dispenses = sess.createQuery("from SyncTempDispense sync where sync.id = " + id).list();
+
+        if (dispenses.isEmpty())
+            result = null;
+        else
+            result = (SyncTempDispense) dispenses.get(0);
+
+        return result;
+
+    }
+
     // Devolve a lista de todos pacientes enviados das clinicsSectors prontos para ser gravados (Estado do paciente R- Pronto, S- Importado, U-Actualizado)
     public static List<SyncMobilePatient> getAllSyncMobilePatientReadyToSave(Session sess) throws HibernateException {
         List result;
