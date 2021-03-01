@@ -17,6 +17,7 @@ public class RegimeTerapeutico {
 	private boolean active;
 	private String regimenomeespecificado;
 	private String codigoregime;
+	private String tipoDoenca;
 	private String regimeesquemaidart;        
         /*
         * 
@@ -69,14 +70,15 @@ public class RegimeTerapeutico {
 	}
         
 	public RegimeTerapeutico(int regimeid, String regimeesquema, boolean active,
-                String regimenomeespecificado, String codigoregime,String regimeesquemaidart,String pediatrico) {
+                String regimenomeespecificado, String codigoregime,String regimeesquemaidart,String tipoDoenca) {
 		super();
 		this.regimeid = regimeid;
 		this.regimeesquema = regimeesquema;
 		this.active = active;
-                this.codigoregime = codigoregime;
-                this.regimeesquemaidart = regimeesquemaidart;
-                this.regimenomeespecificado=regimenomeespecificado;
+		this.codigoregime = codigoregime;
+		this.regimeesquemaidart = regimeesquemaidart;
+		this.regimenomeespecificado=regimenomeespecificado;
+		this.tipoDoenca = tipoDoenca;
 	}
 
 	public RegimeTerapeutico() {
@@ -98,14 +100,6 @@ public class RegimeTerapeutico {
 	public void setRegimeesquemaidart(String regimeesquemaidart) {
 		this.regimeesquemaidart = regimeesquemaidart;
 	}
-	
-//    public LinhaT getLinhaT() {
-//        return linhaT;
-//    }
-
-//    public void setLinhaT(LinhaT linhaT) {
-//        this.linhaT = linhaT;
-//    }
 
     /**
 	 * Method getRegimenDrugs.
@@ -122,8 +116,16 @@ public class RegimeTerapeutico {
 	public void setRegimenDrugs(List<RegimenDrugs> regimenDrugs) {
 		this.regimendrugs = regimenDrugs;
 	}
-        
-    	/**
+
+	public String getTipoDoenca() {
+		return tipoDoenca;
+	}
+
+	public void setTipoDoenca(String tipoDoenca) {
+		this.tipoDoenca = tipoDoenca;
+	}
+
+	/**
 	 * Method equals.
          * @param regime
 	 * @return boolean

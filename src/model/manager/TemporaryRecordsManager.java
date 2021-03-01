@@ -63,7 +63,12 @@ public class TemporaryRecordsManager {
             if(patient == null)
                 patient = AdministrationManager.getSyncTempPatienByNID(sess, pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getPatientId());
 
-            SyncTempDispense dispenseFarmac = new SyncTempDispense();
+            SyncTempDispense dispenseFarmac = AdministrationManager.getSyncTempDispenseById(sess, pdi.getId());
+
+            if(dispenseFarmac == null)
+             dispenseFarmac = new SyncTempDispense();
+
+
             dispenseFarmac.setId(pdi.getId());
             dispenseFarmac.setDate(pdi.getPackagedDrug().getParentPackage().getPrescription().getDate());
             dispenseFarmac.setClinicalstage(pdi.getPackagedDrug().getParentPackage().getPrescription().getClinicalStage());

@@ -142,6 +142,7 @@ public class MiaReport extends AbstractJasperReport {
             map.put("date", theStartDate);
             map.put("dateEnd", theEndDate);
             map.put("stockCenterName", stockCenter.getStockCenterName());
+            map.put("stockCenterId", stockCenter.getId());
             map.put("path", getReportPath());
             map.put("facilityName", LocalObjects.currentClinic.getClinicName());
             map.put("pharmacist1", LocalObjects.pharmacy.getPharmacist());

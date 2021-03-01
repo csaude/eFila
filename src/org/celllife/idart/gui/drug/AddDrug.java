@@ -19,21 +19,12 @@
 
 package org.celllife.idart.gui.drug;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import model.manager.AdministrationManager;
 import model.manager.DrugManager;
-
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
 import org.celllife.idart.database.hibernate.AtcCode;
 import org.celllife.idart.database.hibernate.ChemicalCompound;
-import org.celllife.idart.database.hibernate.ChemicalDrugStrength;
 import org.celllife.idart.database.hibernate.Drug;
 import org.celllife.idart.database.hibernate.Form;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
@@ -48,40 +39,18 @@ import org.celllife.idart.misc.iDARTUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import org.jfree.util.Log;
 
-import javax.swing.*;
+import java.util.Set;
 
 /**
  *
@@ -350,7 +319,7 @@ public class AddDrug extends GenericFormGui {
         txtDispensingInstructions2.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
         txtDispensingInstructions2.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
-        // Account Status
+        // Desease Type
         Label lblSideTreatment = new Label(grpDrugInfo, SWT.NONE);
         lblSideTreatment.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
         lblSideTreatment.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -364,7 +333,6 @@ public class AddDrug extends GenericFormGui {
         cmbtipoDoenca.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
         CommonObjects.populateDiseases(getHSession(), cmbtipoDoenca);
         cmbtipoDoenca.setText(cmbtipoDoenca.getItem(0));
-
 
         // Estado do Regime Terapeutico
         lblEstadoDrug = new Label(grpDrugInfo, SWT.NONE);
