@@ -61,7 +61,8 @@ ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(25
 ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;;
+ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
+ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -70,6 +71,7 @@ UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigore
 UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
+DELETE FROM simpledomain WHERE description  = 'dispense_mode';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
 DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
