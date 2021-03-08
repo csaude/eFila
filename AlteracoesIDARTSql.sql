@@ -69,14 +69,17 @@ UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = 
 UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
 UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigoregime = null OR codigoregime = '';
 UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
+UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
+UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+UPDATE identifiertype set name = 'NID CCR' where index = 4;
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_mode';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
+DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
-UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
-UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
@@ -453,6 +456,10 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','ARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','TARV');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Inicio (I)');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Continua (C)');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Fim (F)');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
