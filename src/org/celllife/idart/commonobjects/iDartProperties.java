@@ -86,6 +86,10 @@ public class iDartProperties {
 
 	public final static String randbDataFolder = "randb";
 
+	public final static String SERVICOTARV = "TARV";
+
+	public final static String PNCT = "TB";
+
 	public static boolean allowMultipleUncollectedPackages = false;
 
 	public static String downReferralMode = "offline";
