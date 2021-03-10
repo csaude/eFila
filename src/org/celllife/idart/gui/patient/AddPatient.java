@@ -992,7 +992,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             checkOpenmrs = false;
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))

@@ -3130,14 +3130,14 @@ public class ConexaoJDBC {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public String carregaRegime(int idpaciente) throws ClassNotFoundException,
+    public String carregaRegime(int idpaciente, String tipoPaciente) throws ClassNotFoundException,
             SQLException {
 
         String query = " " + " SELECT " + " regimeterapeutico.regimeesquema "
                 + "  FROM " + "  regimeterapeutico , " + "  prescription "
                 + "  WHERE "
                 + "  prescription.regimeid =regimeterapeutico.regimeid "
-                + "  AND " + "  prescription.patient=" + idpaciente + "  AND "
+                + "  AND " + "  prescription.patient=" + idpaciente + "  AND prescription.tipoDoenca='"+tipoPaciente+ "' AND "
                 + "  prescription.current=\'T\'" + "";
 
         conecta(iDartProperties.hibernateUsername,

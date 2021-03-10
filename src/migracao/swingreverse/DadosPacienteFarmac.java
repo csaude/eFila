@@ -263,7 +263,7 @@ public class DadosPacienteFarmac {
 
                     prescription.setPrescribedDrugs(prescribedDrugsList);
 
-                    PackageManager.saveNewPrescription(sess, prescription, true);
+                    PackageManager.saveNewPrescription(sess, prescription, true,iDartProperties.SERVICOTARV);
                     tx.commit();
                     sess.flush();
                 } else {
