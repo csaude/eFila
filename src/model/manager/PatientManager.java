@@ -23,6 +23,7 @@ import model.manager.exports.iedea.ArtDto;
 import model.nonPersistent.PatientIdAndName;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.LocalObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -457,7 +458,7 @@ public class PatientManager {
 
 		Packages pack = null;
 		// fist, is there a package picked up on the current prescription?
-		pack = getLastPackageOnScript(pat.getCurrentPrescription());
+		pack = getLastPackageOnScript(pat.getCurrentPrescription(iDartProperties.SERVICOTARV));
 
 		// if not, look at all previous prescriptions
 		if (pack == null) {
@@ -863,7 +864,7 @@ public class PatientManager {
 		// else, this patient needs to be updated
 		else {
 			if (thePatient.getAccountStatusWithCheck() == false) {
-				Prescription pre = thePatient.getCurrentPrescription();
+				Prescription pre = thePatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
 				if (pre != null) {
 					pre.setEndDate(getMostRecentEpisode(thePatient)
 							.getStopDate());

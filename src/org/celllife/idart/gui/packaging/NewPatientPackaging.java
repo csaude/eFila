@@ -601,7 +601,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription();
+        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
 
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
@@ -805,7 +805,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 else
                     clearForm();
 
-                if ((patient != null) && (patient.getCurrentPrescription() != null)) {
+                if ((patient != null) && (patient.getCurrentPrescription(iDartProperties.SERVICOTARV) != null)) {
                     populatePatientDetails(patient.getId());
                 } else {
                     clearForm();
@@ -1596,10 +1596,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         int amountperPackage = (int) (allPackagedDrugsList.get(0).getDispensedQty() / (allPackagedDrugsList.get(0).getTimesPerDay() *
                 Double.parseDouble(allPackagedDrugsList.get(0).getAmountPerTime()))) / 7;
 
-        if (localPatient.getCurrentPrescription().getDuration() != newPack.getWeekssupply()) {
+        if (localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV).getDuration() != newPack.getWeekssupply()) {
             MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
             mb.setText("Dispensa Trimestral");
-            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription().getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
+            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV).getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
                     + "PRETENDE MESMO DISPENSAR ESTA PRESCRIÇÃO?");
             int resposta = mb.open();
             if (resposta == SWT.NO) {
@@ -1977,7 +1977,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         searchBar.setSelection(0, localPatient.getPatientId().length());
         lstWaitingPatients.setSelection(new StructuredSelection(new PatientIdAndName(localPatient.getId(),
                 localPatient.getPatientId(), localPatient.getFirstNames() + "," + localPatient.getLastname())));
-        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription() == null) {
+        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV) == null) {
             showMessage(MessageDialog.ERROR, "O Paciente não pode ser dispensado.",
                     "Paciente está inativo ou não tem uma prescrição válida.");
             initialiseSearchList();
@@ -2014,7 +2014,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         }
 
 
-        Prescription pre = localPatient.getCurrentPrescription();
+        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         if (pre == null) {
             MessageBox noScript = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
             noScript.setText("O Paciente não tem uma prescrição válida");
@@ -3113,7 +3113,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription();
+        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
 
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());

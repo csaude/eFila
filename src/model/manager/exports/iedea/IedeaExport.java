@@ -256,7 +256,7 @@ public class IedeaExport {
 	
 	private void populateART(Patient patient) {
 		List<ArtDto> arts = PatientManager.getIedeaArtData(session, patient);
-		Prescription mostRecentScript = patient.getMostRecentPrescription();
+		Prescription mostRecentScript = patient.getMostRecentPrescription("TARV");
 		boolean mostRecentScriptValid = mostRecentScript == null ? false : iDARTUtil.getDaysBetween(mostRecentScript.getDate(), new Date()) < 180;
 		boolean patientIsActive = patient.getMostRecentEpisode().isOpen();
 		

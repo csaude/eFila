@@ -956,7 +956,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         Date episodeStartDate = btnEpisodeStartDate.getDate();
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         if (txtPatientId.getText().trim().isEmpty()) {

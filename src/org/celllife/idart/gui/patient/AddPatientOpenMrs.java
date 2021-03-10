@@ -960,7 +960,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         Date episodeStartDate = btnEpisodeStartDate.getDate();
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         restClient = new RestClient();

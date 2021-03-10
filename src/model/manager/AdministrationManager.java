@@ -84,6 +84,21 @@ public class AdministrationManager {
     }
 
     /**
+     * Devolve lista de regimes para alimentar o combobox no formulario de
+     * prescricao
+     */
+    @SuppressWarnings("unchecked")
+    public static List<RegimeTerapeutico> getAllRegimesByDiseaseType(Session sess, String diseaseType)
+            throws HibernateException {
+
+        List<RegimeTerapeutico> result = sess.createQuery(
+                "select r from RegimeTerapeutico as r where r.tipoDoenca = '"+ diseaseType +"')").list();
+
+        return result;
+    }
+
+
+    /**
      * Devolve lista de linhas terapeuticas para alimentar o combobox no
      * formulario de prescricao
      */
@@ -228,10 +243,10 @@ public class AdministrationManager {
     }
 
     //Previous regime
-    public static String loadRegime(int idPatient) throws ClassNotFoundException, SQLException {
+    public static String loadRegime(int idPatient, String tipoPaciente) throws ClassNotFoundException, SQLException {
         ConexaoJDBC conn = new ConexaoJDBC();
 
-        return conn.carregaRegime(idPatient);
+        return conn.carregaRegime(idPatient, tipoPaciente);
 
     }
 
@@ -1131,6 +1146,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getReasonForUpdate(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.name like 'reason_for_update' order by s.value";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getprofilaxiaINH(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.name like 'inh_prophylaxis' order by s.id";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 

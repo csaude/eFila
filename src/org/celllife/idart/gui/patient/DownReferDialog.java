@@ -277,7 +277,7 @@ public class DownReferDialog extends GenericOthersGui {
     public void saveReferredPatient(Patient patient, Clinic clinic, Clinic mainClinic, Session session) {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
-        Prescription prescription = patient.getMostRecentPrescription();
+        Prescription prescription = patient.getMostRecentPrescription("TARV");
         Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
 
         java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
@@ -364,7 +364,7 @@ public class DownReferDialog extends GenericOthersGui {
 
     public void saveLastDispense(Patient patient, Session session){
 
-        Prescription prescription = patient.getMostRecentPrescription();
+        Prescription prescription = patient.getMostRecentPrescription("TARV");
         Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
 
         java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());

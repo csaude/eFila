@@ -243,13 +243,13 @@ public class PackageManager {
      */
     @SuppressWarnings("unchecked")
     public static void saveNewPrescription(Session sess,
-                                           Prescription preToBeSaved, boolean previousPrescriptionDeleted)
+                                           Prescription preToBeSaved, boolean previousPrescriptionDeleted, String tipoPaciente)
             throws HibernateException, IllegalArgumentException {
 
         if (!previousPrescriptionDeleted) {
             List<Prescription> updatedPrescriptions = sess
                     .createQuery(
-                            "from Prescription as p where p.patient.id = :patid")
+                            "from Prescription as p where p.tipoDoenca = '"+tipoPaciente+"' and p.patient.id = :patid")
                     .setInteger("patid", preToBeSaved.getPatient().getId())
                     .list();
 
