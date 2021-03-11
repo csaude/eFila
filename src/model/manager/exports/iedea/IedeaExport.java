@@ -12,6 +12,7 @@ import model.manager.AdministrationManager;
 import model.manager.PackageManager;
 import model.manager.PatientManager;
 
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.AtcCode;
 import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.Episode;
@@ -184,7 +185,7 @@ public class IedeaExport {
 	}
 	
 	private void populateVIS(Patient patient) {
-		List<Packages> packages = PackageManager.getAllCollectedPackagesForPatient(session, patient);
+		List<Packages> packages = PackageManager.getAllCollectedPackagesForPatient(session, patient, iDartProperties.SERVICOTARV);
 		for (Packages pack : packages) {
 			VIS vis = new VIS();
 			vis.setPATIENT(String.valueOf(patient.getId()));

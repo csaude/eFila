@@ -980,13 +980,17 @@ public class Patient {
 
     public Prescription getCurrentPrescription(String tipoPaciente) {
         Prescription result = null;
-        for (Prescription p : prescriptions) {
-            if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente)) {
-                if (p.getCurrent() == 'T') {
-                    result = p;
-                    break;
+        try {
+            for (Prescription p : prescriptions) {
+                if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente)) {
+                    if (p.getCurrent() == 'T') {
+                        result = p;
+                        break;
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
