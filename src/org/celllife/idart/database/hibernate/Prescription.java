@@ -33,6 +33,8 @@ import java.util.Set;
 @Entity
 public class Prescription {
 
+	public static final String TIPO_DOENCA_TARV = "TARV";
+	public static final String TIPO_DOENCA_TB = "TB";
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -751,5 +753,13 @@ public class Prescription {
 
 	public void setTipoDoenca(String tipoDoenca) {
 		this.tipoDoenca = tipoDoenca;
+	}
+
+	public boolean isTipoDoencaTARV(){
+		return this.tipoDoenca.equalsIgnoreCase(TIPO_DOENCA_TARV);
+	}
+
+	public boolean isTipoDoencaTB(){
+		return this.tipoDoenca.equalsIgnoreCase(TIPO_DOENCA_TB);
 	}
 }

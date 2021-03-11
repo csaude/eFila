@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaReportMISAU" pageWidth="640" pageHeight="842" columnWidth="580" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaTBReportMISAU" pageWidth="640" pageHeight="842" columnWidth="580" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isIgnorePagination="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.1586575189467514"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="127"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -165,26 +165,26 @@ order by atccode_id asc]]>
 					<subreportParameter name="monthEnd">
 						<subreportParameterExpression><![CDATA[$P{monthEnd}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="dateEnd">
-						<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="diseaseType">
 						<subreportParameterExpression><![CDATA[$P{diseaseType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="dateEnd">
+						<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="date">
 						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="dataelaboracao">
-						<subreportParameterExpression><![CDATA[$P{dataelaboracao}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="monthStart">
 						<subreportParameterExpression><![CDATA[$P{monthStart}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="pacientesEmTarv">
-						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
+					<subreportParameter name="dataelaboracao">
+						<subreportParameterExpression><![CDATA[$P{dataelaboracao}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="username">
 						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pacientesEmTarv">
+						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhas2">
 						<subreportParameterExpression><![CDATA[$P{totallinhas2}]]></subreportParameterExpression>
@@ -408,7 +408,7 @@ order by atccode_id asc]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9" isBold="true" isItalic="true"/>
 					</textElement>
-					<text><![CDATA[Tipo de doentes em TARV]]></text>
+					<text><![CDATA[Quantificação dos doentes]]></text>
 				</staticText>
 				<staticText>
 					<reportElement mode="Opaque" x="369" y="60" width="103" height="13" backcolor="#D0D8FC"/>
@@ -442,7 +442,7 @@ order by atccode_id asc]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9" isBold="true" isItalic="true"/>
 					</textElement>
-					<text><![CDATA[Faixa Etária dos Pacientes TARV]]></text>
+					<text><![CDATA[Faixa Etária dos Pacientes TB]]></text>
 				</staticText>
 				<line>
 					<reportElement x="369" y="181" width="207" height="1">
@@ -658,7 +658,7 @@ order by atccode_id asc]]>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Total de pacientes em TARV na US:]]></text>
+					<text><![CDATA[Total de pacientes TB na US:]]></text>
 				</staticText>
 				<line>
 					<reportElement x="369" y="306" width="82" height="1"/>
@@ -1082,7 +1082,7 @@ order by atccode_id asc]]>
 					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[MMIA
-MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
+MAPA MENSAL DE INFORMAÇÃO TB]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="tf_facilityName" mode="Opaque" x="86" y="56" width="292" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -1501,17 +1501,17 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				<subreportParameter name="StockCode">
 					<subreportParameterExpression><![CDATA[$F{stockcode}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="stockCenterId">
-					<subreportParameterExpression><![CDATA[$P{stockCenterId}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="packsize">
 					<subreportParameterExpression><![CDATA[$F{packsize}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="atccode">
-					<subreportParameterExpression><![CDATA[$F{atccode}]]></subreportParameterExpression>
+				<subreportParameter name="stockCenterId">
+					<subreportParameterExpression><![CDATA[$P{stockCenterId}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="name">
 					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="atccode">
+					<subreportParameterExpression><![CDATA[$F{atccode}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="path">
 					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>

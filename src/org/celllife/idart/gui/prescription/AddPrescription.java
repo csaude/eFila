@@ -3323,7 +3323,7 @@ public class AddPrescription extends GenericFormGui implements
 
         if (localPrescription != null) {
             PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPrescription.getPatient());
+                    localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         }
     }

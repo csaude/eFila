@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -130,12 +131,12 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             monitor.worked(1);
 
             //Total de pacientes que levantaram arv 20 a 20
-            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate));
-            Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5));
-            Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4));
-            Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3));
-            Map mapaDoMMIAMes2  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth2), dateFormat.format(endMonth2));
-            Map mapaDoMMIAMes1  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth1), dateFormat.format(endMonth1));
+            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), Prescription.TIPO_DOENCA_TARV);
+            Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5), Prescription.TIPO_DOENCA_TARV);
+            Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4), Prescription.TIPO_DOENCA_TARV);
+            Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3), Prescription.TIPO_DOENCA_TARV);
+            Map mapaDoMMIAMes2  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth2), dateFormat.format(endMonth2), Prescription.TIPO_DOENCA_TARV);
+            Map mapaDoMMIAMes1  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth1), dateFormat.format(endMonth1), Prescription.TIPO_DOENCA_TARV);
 
              totalpacientestransito = Integer.parseInt(mapaDoMMIA.get("totalpacientestransito").toString());
              totalpacientesinicio = Integer.parseInt(mapaDoMMIA.get("totalpacientesinicio").toString());

@@ -14,7 +14,7 @@
 	<queryString language="hql">
 		<![CDATA[select alt.identifier as patientId, alt.dateChanged as dateChanged
 from AlternatePatientIdentifier alt
-where alt.patient.id = $P{id}
+where alt.patient = $P{id}
 order by alt.dateChanged desc]]>
 	</queryString>
 	<field name="patientId" class="java.lang.String"/>

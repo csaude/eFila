@@ -21,7 +21,6 @@ package org.celllife.idart.gui.patient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1151,7 +1150,7 @@ public class MergePatients extends GenericFormGui {
 
 		if (patient != null) {
 			PatientHistoryReport report = new PatientHistoryReport(getShell(),
-					patient);
+					patient, PatientHistoryReport.PATIENT_HISTORY_FILA);
 			viewReport(report);
 		} else {
 			PatientHistory patHistory = new PatientHistory(getShell(), true);
@@ -1723,7 +1722,6 @@ public class MergePatients extends GenericFormGui {
 	 *
 	 * @param table
 	 *            Table
-	 * @param patList
 	 *            List<Patient>
 	 */
 	private void populatePatientHistoryTable(Table table, final Patient patient) {

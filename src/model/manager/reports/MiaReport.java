@@ -21,12 +21,17 @@ public class MiaReport extends AbstractJasperReport {
     private final String month;
     private final String year;
 
+    public static final String TB_MIA_REPORT = "TB";
+    public static final String TARV_MIA_REPORT = "ARV";
 
-    public MiaReport(Shell parent, StockCenter stockCenter, String Month, String Year) {
+    private String diseaseType;
+
+    public MiaReport(Shell parent, StockCenter stockCenter, String Month, String Year, String diseaseType) {
         super(parent);
         this.stockCenter = stockCenter;
         this.month = Month;
         this.year = Year;
+        this.diseaseType = diseaseType;
     }
 
     @Override
@@ -79,12 +84,12 @@ public class MiaReport extends AbstractJasperReport {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             //Total de pacientes que levantaram arv 20 a 20
-            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate));
-            Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5));
-            Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4));
-            Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3));
-            Map mapaDoMMIAMes2  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth2), dateFormat.format(endMonth2));
-            Map mapaDoMMIAMes1  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth1), dateFormat.format(endMonth1));
+            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), diseaseType);
+            Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5), diseaseType);
+            Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4), diseaseType);
+            Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3), diseaseType);
+            Map mapaDoMMIAMes2  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth2), dateFormat.format(endMonth2), diseaseType);
+            Map mapaDoMMIAMes1  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth1), dateFormat.format(endMonth1), diseaseType);
 
             int totalpacientestransito = Integer.parseInt(mapaDoMMIA.get("totalpacientestransito").toString());
             int totalpacientesinicio = Integer.parseInt(mapaDoMMIA.get("totalpacientesinicio").toString());
@@ -186,6 +191,7 @@ public class MiaReport extends AbstractJasperReport {
             map.put("totalMes", String.valueOf(totalMes));
             map.put("totalGeral", String.valueOf(totalGeral));
             map.put("ajuste", roundedAjuste+" %");
+            map.put("diseaseType", this.diseaseType);
 
             map.put("dataelaboracao", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
             map.put("mes", mesPortugues(theStartDate.getMonth()));
@@ -205,7 +211,9 @@ public class MiaReport extends AbstractJasperReport {
 
     @Override
     protected String getReportFileName() {
-        return "MmiaReportActualizado";
+        if (this.diseaseType.equalsIgnoreCase(MiaReport.TARV_MIA_REPORT)) {
+            return "MmiaReportActualizado";
+        }else return "MmiaReportTB";
     }
 
     private int getMes(String mesString) {
