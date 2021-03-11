@@ -1288,8 +1288,7 @@ iDARTChangeListener {
 	 *            Patient
 	 */
 	private void populateLastPackageDetails(Patient pat) {
-		previousPack = PackageManager
-		.getLastPackagePickedUp(getHSession(), pat);
+		previousPack = PackageManager.getLastPackagePickedUp(getHSession(), pat, iDartProperties.SERVICOTARV);
 
 		if (previousPack != null) {
 

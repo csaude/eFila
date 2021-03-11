@@ -111,6 +111,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Button rdBtnYesAppointmentDate;
     private Button rdBtnPrintSummaryLabelNo;
     private Button rdBtnPrintSummaryLabelYes;
+    private Button rdBtnTARVPrescription;
+    private Button rdBtnTBPrescription;
     private ProgressBar pbLoading;
     private Text searchBar;
     private Table tblPrescriptionInfo;
@@ -136,6 +138,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Patient localPatient;
     private int dias = 0;
     private boolean postOpenMrsEncounterStatus;
+    public String tipoPaciente = iDartProperties.SERVICOTARV;
+
 
     ConexaoJDBC conn = new ConexaoJDBC();
     private static Logger log = Logger.getLogger(NewPatientPackaging.class);
@@ -159,6 +163,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
      */
     public NewPatientPackaging(Shell parent, Patient patient) {
         super(parent, HibernateUtil.getNewSession());
+        createScreenForNewPatient(patient);
+    }
+
+    public NewPatientPackaging(Shell parent, Patient patient, String tipoPaciente) {
+        super(parent, HibernateUtil.getNewSession());
+        this.tipoPaciente = tipoPaciente;
         createScreenForNewPatient(patient);
     }
 
@@ -601,8 +611,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
-
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
+        if(pre != null)
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
             if (dateExpected != null) {
@@ -685,7 +695,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     private void initialiseSearchList() {
         java.util.List<PatientIdAndName> patients = null;
-        patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession());
+        patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession(),tipoPaciente);
 
         lstWaitingPatients.setInput(patients);
     }
@@ -805,7 +815,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 else
                     clearForm();
 
-                if ((patient != null) && (patient.getCurrentPrescription(iDartProperties.SERVICOTARV) != null)) {
+                if ((patient != null) && (patient.getCurrentPrescription(tipoPaciente) != null)) {
                     populatePatientDetails(patient.getId());
                 } else {
                     clearForm();
@@ -1070,26 +1080,64 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Group compPatientsWaiting = new Group(getShell(), SWT.NONE);
         compPatientsWaiting.setBounds(new Rectangle(6, 56, 213, 349));
 
+        // rdBtnTARVPrescription
+        rdBtnTARVPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnTARVPrescription.setBounds(new Rectangle(8, 8, 50, 20));
+        rdBtnTARVPrescription.setText("TARV");
+        rdBtnTARVPrescription.setToolTipText("Pressione este botão para prescriçõe de medicamentos TARV.");
+        rdBtnTARVPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.SERVICOTARV;
+                rdBtnTBPrescription.setSelection(false);
+                rdBtnTARVPrescription.setSelection(true);
+
+                initialiseSearchList();
+            }
+        });
+        rdBtnTARVPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+
+        // rdBtnTBPrescription
+        rdBtnTBPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnTBPrescription.setBounds(new Rectangle(160, 8, 50, 20));
+        rdBtnTBPrescription.setText("TPT");
+        rdBtnTBPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
+        rdBtnTBPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.PNCT;
+                rdBtnTBPrescription.setSelection(true);
+                rdBtnTARVPrescription.setSelection(false);
+
+                initialiseSearchList();
+            }
+        });
+
+        rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
         Label lblSearch = new Label(compPatientsWaiting, SWT.NONE);
-        lblSearch.setBounds(new Rectangle(10, 7, 187, 20));
+        lblSearch.setBounds(new Rectangle(10, 37, 187, 20));
         lblSearch.setText("Procurar Paciente:");
         lblSearch.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         searchBar = new Text(compPatientsWaiting, SWT.BORDER);
-        searchBar.setBounds(new Rectangle(10, 28, 187, 20));
+        searchBar.setBounds(new Rectangle(10, 57, 187, 20));
         searchBar.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         searchBar.setFocus();
 
         attachSearchBarListener();
 
         Label lblWaitingPatients = new Label(compPatientsWaiting, SWT.BORDER);
-        lblWaitingPatients.setBounds(new Rectangle(10, 58, 186, 20));
+        lblWaitingPatients.setBounds(new Rectangle(10, 77, 186, 20));
         lblWaitingPatients.setAlignment(SWT.CENTER);
         lblWaitingPatients.setText("1. Resultados da Pesquisa");
         lblWaitingPatients.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8_BOLD));
 
         lstWaitingPatients = new ListViewer(compPatientsWaiting);
-        lstWaitingPatients.getList().setBounds(new Rectangle(9, 77, 187, 199));
+        lstWaitingPatients.getList().setBounds(new Rectangle(9, 97, 187, 179));
         lstWaitingPatients.getList().setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         lstWaitingPatients.setContentProvider(new ArrayContentProvider());
         lstWaitingPatients.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -1596,10 +1644,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         int amountperPackage = (int) (allPackagedDrugsList.get(0).getDispensedQty() / (allPackagedDrugsList.get(0).getTimesPerDay() *
                 Double.parseDouble(allPackagedDrugsList.get(0).getAmountPerTime()))) / 7;
 
-        if (localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV).getDuration() != newPack.getWeekssupply()) {
+        if (localPatient.getCurrentPrescription(tipoPaciente).getDuration() != newPack.getWeekssupply()) {
             MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
             mb.setText("Dispensa Trimestral");
-            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV).getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
+            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription(tipoPaciente).getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
                     + "PRETENDE MESMO DISPENSAR ESTA PRESCRIÇÃO?");
             int resposta = mb.open();
             if (resposta == SWT.NO) {
@@ -1926,7 +1974,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     protected void populatePatientDetails(String patientID, boolean forceSelect) {
         java.util.List<PatientIdAndName> patients = null;
         if (patientID == null || patientID.trim().isEmpty()) {
-            patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession());
+            patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession(),tipoPaciente);
         } else {
             patients = SearchManager.findPatientsWithIdLike(getHSession(), patientID);
         }
@@ -1977,14 +2025,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         searchBar.setSelection(0, localPatient.getPatientId().length());
         lstWaitingPatients.setSelection(new StructuredSelection(new PatientIdAndName(localPatient.getId(),
                 localPatient.getPatientId(), localPatient.getFirstNames() + "," + localPatient.getLastname())));
-        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV) == null) {
+        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription(tipoPaciente) == null) {
             showMessage(MessageDialog.ERROR, "O Paciente não pode ser dispensado.",
                     "Paciente está inativo ou não tem uma prescrição válida.");
             initialiseSearchList();
             clearForm();
             return;
         }
-
 
         Clinic clinic = localPatient.getCurrentClinic();
         setDispenseTypeFromClinic();
@@ -2013,8 +2060,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             rdBtnPrintSummaryLabelNo.setSelection(true);
         }
 
+        if(tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
+            rdBtnTARVPrescription.setSelection(true);
+            rdBtnTBPrescription.setSelection(false);
+        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+            rdBtnTARVPrescription.setSelection(false);
+            rdBtnTBPrescription.setSelection(true);
+        }
 
-        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
         if (pre == null) {
             MessageBox noScript = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
             noScript.setText("O Paciente não tem uma prescrição válida");
@@ -2049,7 +2103,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             btnCaptureDate.setDate(new Date());
             newPack.setPackDate(btnCaptureDate.getDate());
 
-            previousPack = PackageManager.getLastPackagePickedUp(getHSession(), localPatient);
+            previousPack = PackageManager.getLastPackagePickedUp(getHSession(), localPatient, tipoPaciente);
 
             if (patientHasPackageAwaitingPickup()) {
                 MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
@@ -3113,7 +3167,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
 
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());

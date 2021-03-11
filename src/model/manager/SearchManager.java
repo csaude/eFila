@@ -1245,12 +1245,12 @@ public class SearchManager {
 
     @SuppressWarnings("unchecked")
     public static List<PatientIdAndName> getActivePatientWithValidPrescriptionIDsAndNames(
-            Session sess) throws HibernateException {
+            Session sess, String tipoPaciente) throws HibernateException {
         List<PatientIdAndName> returnList = new ArrayList<PatientIdAndName>();
         List<Object[]> result = sess
                 .createQuery(
                         "select distinct pat.id, pat.patientId, pat.firstNames, pat.lastname, pat.clinic.clinicName "
-                                + "from Patient pat,  Prescription pre where pre.endDate is null "
+                                + "from Patient pat,  Prescription pre where pre.endDate is null and pre.tipoDoenca = '"+tipoPaciente+"' "
                                 + "and pat.id = pre.patient and pat.accountStatus = true order by "
                                 + "pat.clinic.clinicName, pat.patientId")
                 .list();

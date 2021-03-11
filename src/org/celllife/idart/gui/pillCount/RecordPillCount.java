@@ -340,7 +340,7 @@ public class RecordPillCount extends GenericFormGui {
 		Prescription prescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
 		if (prescription != null) {
 			previousPack = PackageManager.getLastPackagePickedUp(getHSession(),
-					prescription.getPatient());
+					prescription.getPatient(),prescription.getTipoDoenca());
 			if (previousPack != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
 				txtPatientName.setText(localPatient.getFirstNames() + " "

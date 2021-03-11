@@ -368,11 +368,6 @@ public class AddPrescription extends GenericFormGui implements
         compInstructions = new Composite(getShell(), SWT.NONE);
         compInstructions.setBounds(new Rectangle(200, 54, 500, 40));
 
-        // lblTARVPrescriptio
-        Label lblTARVPrescriptio = new Label(compInstructions, SWT.NONE);
-        lblTARVPrescriptio.setBounds(new Rectangle(70, 2, 40, 34));
-        lblTARVPrescriptio.setImage(ResourceUtils.getImage(iDartImage.DISPENSEPACKAGENOW_40X34));
-
         // lblTBPrescription
         Label lblTBPrescription = new Label(compInstructions, SWT.NONE);
         lblTBPrescription.setBounds(new Rectangle(345, 3, 40, 34));
@@ -400,18 +395,22 @@ public class AddPrescription extends GenericFormGui implements
                             break;
                         }
                     }
-                } else {
-//                    lblNextAppointment.setText("Levantamento Actual:");
                 }
             }
         });
         rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        // lblTARVPrescriptio
+        Label lblTARVPrescriptio = new Label(compInstructions, SWT.NONE);
+        lblTARVPrescriptio.setBounds(new Rectangle(70, 2, 40, 34));
+        lblTARVPrescriptio.setImage(ResourceUtils.getImage(iDartImage.DISPENSEPACKAGENOW_40X34));
 
         // rdBtnTARVPrescription
         rdBtnTARVPrescription = new Button(compInstructions, SWT.RADIO);
         rdBtnTARVPrescription.setBounds(new Rectangle(118, 8, 100, 30));
         rdBtnTARVPrescription.setText("TARV");
         rdBtnTARVPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TARV.");
+        rdBtnTARVPrescription.setSelection(true);
         rdBtnTARVPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
             @Override
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
@@ -427,8 +426,6 @@ public class AddPrescription extends GenericFormGui implements
                             break;
                         }
                     }
-                } else {
-//                    lblNextAppointment.setText("Próximo Levantamento:");
                 }
 
             }
@@ -2422,7 +2419,7 @@ public class AddPrescription extends GenericFormGui implements
     private void cmdDispenseARVDrugsSelected() {
         if (submitForm()) {
             if (!fromShortcut) {
-                new NewPatientPackaging(getParent(), localPrescription.getPatient());
+                new NewPatientPackaging(getParent(), localPrescription.getPatient(),localPrescription.getTipoDoenca());
             }
             closeShell(true);
         }
@@ -2576,7 +2573,9 @@ public class AddPrescription extends GenericFormGui implements
                             // de-normalise table to speed up reports
                             if (localPrescription.containsARVDrug()) {
                                 localPrescription.setDrugTypes("ARV");
-                            }else  if (!localPrescription.containsARVDrug()) {
+                            }
+
+                            if (localPrescription.getTipoDoenca().equalsIgnoreCase("TB")) {
                                 localPrescription.setDrugTypes("TB");
                             }
 
@@ -2704,7 +2703,9 @@ public class AddPrescription extends GenericFormGui implements
                             // de-normalise table to speed up reports
                             if (localPrescription.containsARVDrug()) {
                                 localPrescription.setDrugTypes("ARV");
-                            }else if(!localPrescription.containsARVDrug()){
+                            }
+
+                            if (localPrescription.getTipoDoenca().equalsIgnoreCase("TB")) {
                                 localPrescription.setDrugTypes("TB");
                             }
 
