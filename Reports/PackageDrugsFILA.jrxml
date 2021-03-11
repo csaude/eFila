@@ -21,6 +21,9 @@
 	<parameter name="patientId" class="java.lang.String">
 		<defaultValueExpression><![CDATA["11010601/10/0996"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="desease" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select distinct p.patientid,pre.id as preid,pdit.dispensedate,pdit.dateexpectedstring
 from patient p
@@ -28,7 +31,7 @@ inner join packagedruginfotmp as pdit on pdit.patientid = p.patientid
 inner join packageddrugs as pd on pd.id = pdit.packageddrug
 inner join package pg on pg.id = pd.parentpackage
 inner join prescription as pre on pre.id = pg.prescription
-where pdit.dispensedqty <> 0 and  pdit.patientid = $P{patientId}
+where pdit.dispensedqty <> 0 and  pdit.patientid = $P{patientId} and pre.tipodoenca = $P{desease}
 group by p.patientid,pre.id,pdit.dispensedate,pdit.dateexpectedstring
 order by dispensedate DESC]]>
 	</queryString>

@@ -56,16 +56,38 @@ public class PatientHistory extends GenericReportGui {
 
 	private Text searchBar;
 
+	private String patientHistoryType;
+
+	private Button rdBtnTARVPatient;
+
+	private Button rdBtnTBPatient;
+
+	public static String tipoPaciente = null;
 	/**
 	 * Constructor
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Shell
 	 * @param activate
-	 *            boolean
 	 */
 	public PatientHistory(Shell parent, boolean activate) {
 		super(parent, REPORTTYPE_PATIENT, activate);
+
+		tipoPaciente = iDartProperties.SERVICOTARV;
+
+		this.patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILA;
+	}
+
+	public PatientHistory(Shell parent, boolean activate, String patientHistoryType) {
+		super(parent, REPORTTYPE_PATIENT, activate);
+		this.patientHistoryType = patientHistoryType;
+
+		if (this.patientHistoryType.equalsIgnoreCase(PatientHistoryReport.PATIENT_HISTORY_FILA)){
+
+			tipoPaciente = iDartProperties.SERVICOTARV;
+		}else {
+
+			tipoPaciente = iDartProperties.PNCT;
+		}
 	}
 
 	/**
@@ -75,7 +97,7 @@ public class PatientHistory extends GenericReportGui {
 	protected void createShell() {
 		// The GenericFormsGui class needs
 		// Header text, icon URL, shell bounds
-		Rectangle bounds = new Rectangle(100, 50, 500, 630);
+		Rectangle bounds = new Rectangle(100, 50, 500, 650);
 		// Parent Generic Methods ------
 		buildShell(REPORT_PATIENT_HISTORY, bounds); // generic shell build
 		// create the composites
@@ -115,7 +137,7 @@ public class PatientHistory extends GenericReportGui {
 		grpPatientSelection
 		.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		grpPatientSelection.setText("Seleccione o Paciente");
-		grpPatientSelection.setBounds(new Rectangle(80, 80, 340, 440));
+		grpPatientSelection.setBounds(new Rectangle(80, 80, 340, 470));
 
 		tblWaitingPatients = new Table(grpPatientSelection, SWT.FULL_SELECTION);
 		tblWaitingPatients.setBounds(new Rectangle(20, 35, 306, 365));
@@ -146,6 +168,35 @@ public class PatientHistory extends GenericReportGui {
 				}
 			}
 		});
+
+		// rdBtnTBPrescription
+		rdBtnTBPatient = new Button(grpPatientSelection, SWT.RADIO);
+
+		rdBtnTBPatient.setBounds(new Rectangle(180, 430, 100, 30));
+		rdBtnTBPatient.setText("TPT");
+		rdBtnTBPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
+		rdBtnTBPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				tipoPaciente = "TB";
+				patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILT;
+			}
+		});
+		rdBtnTBPatient.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+		rdBtnTARVPatient = new Button(grpPatientSelection, SWT.RADIO);
+		rdBtnTARVPatient.setSelection(true);
+		rdBtnTARVPatient.setBounds(new Rectangle(80, 430, 100, 30));
+		rdBtnTARVPatient.setText("TARV");
+		rdBtnTARVPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TARV.");
+		rdBtnTARVPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				tipoPaciente = "TARV";
+				patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILA;
+			}
+		});
+		rdBtnTARVPatient.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 	}
 
 	/**
@@ -159,7 +210,7 @@ public class PatientHistory extends GenericReportGui {
 		if ((tblWaitingPatients.getSelectionIndex() != -1)) {
 			String patientId = tblWaitingPatients.getSelection()[0].getText(0);
 			Patient patient = PatientManager.getPatient(getHSession(), patientId);
-			PatientHistoryReport report = new PatientHistoryReport(getShell(),patient);
+			PatientHistoryReport report = new PatientHistoryReport(getShell(),patient, this.patientHistoryType);
 			viewReport(report);
 		}
 		else if(!"".equals(searchBar.getText())) {
@@ -206,7 +257,7 @@ public class PatientHistory extends GenericReportGui {
 
 		Patient patient = PatientManager.getPatient(getHSession(), patientId);
 		if (patient != null) {
-			PatientHistoryReport report = new PatientHistoryReport(getShell(), patient);
+			PatientHistoryReport report = new PatientHistoryReport(getShell(), patient, this.patientHistoryType);
 			viewReport(report);
 		} else {
 			MessageBox mb = new MessageBox(getShell());

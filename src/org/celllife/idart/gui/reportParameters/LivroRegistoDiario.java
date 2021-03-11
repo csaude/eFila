@@ -85,15 +85,18 @@ public class LivroRegistoDiario extends GenericReportGui {
 
     private FileOutputStream out = null;
 
+    private String diseaseType;
+
     /**
      * Constructor
      *
      * @param parent   Shell
      * @param activate boolean
      */
-    public LivroRegistoDiario(Shell parent, boolean activate) {
+    public LivroRegistoDiario(Shell parent, boolean activate, String diseaseType) {
         super(parent, REPORTTYPE_MIA, activate);
         this.parent = parent;
+        this.diseaseType = diseaseType;
     }
 
     /**
@@ -136,7 +139,6 @@ public class LivroRegistoDiario extends GenericReportGui {
     protected void createCompButtons() {
     }
 
-    @SuppressWarnings("unused")
     @Override
     protected void cmdViewReportWidgetSelected() {
 
@@ -170,7 +172,7 @@ public class LivroRegistoDiario extends GenericReportGui {
                 }
 
                 model.manager.reports.LivroRegistoDiario report =
-                        new model.manager.reports.LivroRegistoDiario(getShell(), theStartDate, theEndDate, chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(), chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection());
+                        new model.manager.reports.LivroRegistoDiario(getShell(), theStartDate, theEndDate, chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(), chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), this.diseaseType);
                 viewReport(report);
             } catch (Exception e) {
                 getLog().error("Exception while running Historico levantamento report", e);

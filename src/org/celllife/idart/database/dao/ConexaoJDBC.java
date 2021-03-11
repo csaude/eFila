@@ -272,7 +272,7 @@ public class ConexaoJDBC {
     }
 
 
-    public Map MMIAACTUALIZADO(String startDate, String endDate) throws ClassNotFoundException, SQLException {
+    public Map MMIAACTUALIZADO(String startDate, String endDate, String diseaseType) throws ClassNotFoundException, SQLException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         String query = " SELECT  distinct p.patient, "
@@ -300,7 +300,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "'   "
+                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%' "
                 + " 	GROUP BY 5 order by 5) pack  "
                 + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
@@ -438,7 +438,7 @@ public class ConexaoJDBC {
     }
 
 
-    public Map MMIA_Actualizado_Dispensas(String startDate, String endDate) throws ClassNotFoundException, SQLException {
+    public Map MMIA_Actualizado_Dispensas(String startDate, String endDate, String diseaseType) throws ClassNotFoundException, SQLException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         String query = " SELECT  distinct p.patient, "
@@ -458,7 +458,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "'   "
+                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%'  "
                 + " 	GROUP BY 5 order by 5) pack  "
                 + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
@@ -4235,8 +4235,7 @@ public class ConexaoJDBC {
         return total;
     }
 
-    public String getLivroRegistoDiario(boolean i, boolean m,
-                                        boolean a, boolean t, boolean r, String startDate, String endDate) {
+    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4310,7 +4309,7 @@ public class ConexaoJDBC {
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
-                + "	   ))   "
+                + "	 AND pre.tipodoenca = '" + diseaseType + "'   ))   "
                 + "	GROUP BY 5 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
@@ -4318,7 +4317,7 @@ public class ConexaoJDBC {
                 + "	inner join linhat l on l.linhaid = p.linhaid "
                 + "	inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
                 + " inner join episode ep on ep.id = pack.episode "
-                + "	where p.reasonforupdate IN " + condicao + " ";
+                + "	where p.reasonforupdate IN " + condicao + " AND p.tipodoenca like '%" + diseaseType + "%' ";
 
         return query;
     }

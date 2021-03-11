@@ -2394,7 +2394,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         if (localPatient != null) {
             PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPatient);
+                    localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);

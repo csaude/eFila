@@ -3,6 +3,7 @@ package model.manager.reports;
 import model.manager.excel.conversion.exceptions.ReportException;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.hibernate.Patient;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.eclipse.swt.widgets.Shell;
 
 import java.util.HashMap;
@@ -12,9 +13,15 @@ public class PatientHistoryReport extends AbstractJasperReport {
 
 	private final Patient patient;
 
-	public PatientHistoryReport(Shell parent, Patient patient) {
+	public static final String PATIENT_HISTORY_FILA = "patientHistoryFILA";
+	public static final String PATIENT_HISTORY_FILT = "patientHistoryFILT";
+
+	private String reportType;
+
+	public PatientHistoryReport(Shell parent, Patient patient, String reportType) {
 		super(parent);
 		this.patient = patient;
+		this.reportType = reportType;
 	}
 
 	@Override
@@ -31,12 +38,13 @@ public class PatientHistoryReport extends AbstractJasperReport {
 		map.put("pharmacist1", LocalObjects.pharmacy.getPharmacist());
 		map.put("pharmacist2", LocalObjects.pharmacy.getAssistantPharmacist());
 		map.put("path", getReportPath());
+		map.put("disease", reportType.equalsIgnoreCase(PATIENT_HISTORY_FILA) ? Prescription.TIPO_DOENCA_TARV : Prescription.TIPO_DOENCA_TB);
 		return map;
 	}
 
 	@Override
 	protected String getReportFileName() {
-		return "patientHistoryFILA";
+		return this.reportType;
 	}
 
 }

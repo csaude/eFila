@@ -19,6 +19,7 @@
 
 package org.celllife.idart.gui.patientAdmin;
 
+import model.manager.reports.PatientHistoryReport;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.JdbcProperties;

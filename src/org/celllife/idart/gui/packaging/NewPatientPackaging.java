@@ -699,7 +699,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         getLog().info("New Patient Packaging: User chose 'Patient History Report'");
 
         if (localPatient != null) {
-            PatientHistoryReport report = new PatientHistoryReport(getShell(), localPatient);
+            PatientHistoryReport report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);
