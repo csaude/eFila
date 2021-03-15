@@ -50,7 +50,7 @@
 from package pack
 inner join prescription pr on pr.id = pack.prescription
 inner join regimeterapeutico rt on pr.regimeid = rt.regimeid
-where pr.date between $P{date} and $P{endDate}
+where pr.date between $P{date} and $P{endDate} and pr.tipodoenca like '%ARV'
 group by 1,2,3
 order by 3 asc]]>
 	</queryString>

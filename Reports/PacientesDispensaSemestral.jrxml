@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6963904734899635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="66"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -72,7 +72,7 @@ FROM  (
 	INNER JOIN (SELECT MAX (startdate), patient, id
 				from episode WHERE stopdate is null and startdate <= $P{dateEnd}
 				GROUP BY 2,3) visit on visit.patient = pat.id
-	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{dateStart} and pg_catalog.date(pa.pickupdate) <= $P{dateEnd})
+	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{dateStart} and pg_catalog.date(pa.pickupdate) <= $P{dateEnd})
 	OR (pg_catalog.date(pa.pickupdate) < $P{dateStart} and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > $P{dateEnd}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dateEnd}::timestamp - pa.pickupdate::timestamp))::integer)/30)::date >= $P{dateStart}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dateEnd}::timestamp - pa.pickupdate::timestamp))::integer)/30)::date <= $P{dateEnd}
@@ -84,7 +84,7 @@ FROM  (
 	   inner join linhat l on l.linhaid = p.linhaid
 	   inner join regimeterapeutico reg on reg.regimeid = p.regimeid
 	   inner join episode ep on ep.id = pack.episode
-	   WHERE p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%')
+	   WHERE p.tipodoenca like '%ARV' and p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%')
 order by 8]]>
 	</queryString>
 	<field name="patientid" class="java.lang.String"/>

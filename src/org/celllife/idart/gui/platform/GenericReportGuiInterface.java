@@ -53,6 +53,7 @@ public interface GenericReportGuiInterface {
     static String REPORT_TPC = Messages.getString("reports.idart.tpc");  //$NON-NLS-1$
     static String REPORT_TPI = Messages.getString("reports.idart.tpi");  //$NON-NLS-1$
     static String REPORT_LEVANTAMENTOS_ARV = Messages.getString("reports.idart.levantamentos");  //$NON-NLS-1$
+    static String REPORT_LEVANTAMENTOS_TB = Messages.getString("reports.idart.levantamentostb");
     static String REPORT_REFERIDOS_LEVANTAMENTOS_ARV = Messages.getString("reports.idart.referidos.levantamentos");  //$NON-NLS-1$
     static String REPORT_LINHAS_TERAPEUTICAS = Messages.getString("reports.LinhasTerapeuticas");
     static String REPORT_FARMACIAS_REGISTADAS = Messages.getString("reports.farmacias.registadas");

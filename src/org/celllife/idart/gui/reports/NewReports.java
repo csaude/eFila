@@ -410,7 +410,10 @@ public class NewReports extends GenericAdminGui {
                 new IsoniazidaReport(getShell(), false));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_ARV,
-                new HistoricoLevantamentos(getShell(), false));
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TARV));
+
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_TB,
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TB));
 
         //Dipensa Trimestral
         reportGUIs.put(GenericReportGuiInterface.REPORT_DISPENSA_TRIMESTRAL,

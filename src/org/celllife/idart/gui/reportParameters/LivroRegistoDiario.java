@@ -211,7 +211,7 @@ public class LivroRegistoDiario extends GenericReportGui {
             String reportNameFile = "Reports/LivroRegistoDiarioARV.xls";
             try {
                 LivroRegistoDiarioExcel op = new LivroRegistoDiarioExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
-                        chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate);
+                        chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate, this.diseaseType);
                 new ProgressMonitorDialog(parent).run(true, true, op);
 
                 if (op.getList() == null ||

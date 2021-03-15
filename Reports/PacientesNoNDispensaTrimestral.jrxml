@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6963904734899635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="30"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -89,7 +89,7 @@ inner join packageddrugs packdrug on packdrug.parentPackage = pack.id
 inner join regimeterapeutico rt on rt.regimeid = pr.regimeid
 inner join linhat lt on lt.linhaid = pr.linhaid
 inner join packagedruginfotmp pdit on pdit.packageddrug = packdrug.id
-where  pack.pickupdate >= $P{date}::date
+where  pack.pickupdate >= $P{date}::date and pr.tipodoenca like '%ARV'
 AND pack.pickupdate < ($P{dateEnd}::date + INTERVAL '1 day')
 AND pr.dispensatrimestral = 0 AND packdrug.amount <> 0
 AND ((DATE_PART('year', to_date(pdit.dateexpectedstring,'DD-Mon-YYYY')::date) - DATE_PART('year', pack.pickupdate::date)) * 12 + (DATE_PART('month', to_date(pdit.dateexpectedstring,'DD-Mon-YYYY')::date) - DATE_PART('month', pack.pickupdate::date))) > 2

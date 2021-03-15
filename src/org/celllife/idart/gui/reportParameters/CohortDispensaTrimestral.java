@@ -373,7 +373,7 @@ public class CohortDispensaTrimestral extends GenericReportGui {
 	//	" and e.startReason = :startReason";
                 String patientQuery = "select episode.patient from episode \n" +
                                         "inner join prescription on prescription.patient = episode.patient \n" +
-                                        "where prescription.dispensatrimestral = 1 "+
+                                        "where prescription.dispensatrimestral = 1 and prescription.tipodoenca like '%ARV' "+
                                         "AND episode.startDate between :startDate and :endDate and episode.startReason = :startReason";
 		//Query query = getHSession().createQuery(patientQuery);
                 SQLQuery query = getHSession().createSQLQuery(patientQuery);
