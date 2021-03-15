@@ -63,7 +63,7 @@ FROM  (
 	INNER JOIN (SELECT MAX (startdate), patient, id
 				from episode WHERE stopdate is null and startdate <= $P{dataFinal}
 				GROUP BY 2,3) visit on visit.patient = pat.id
-	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{date} and pg_catalog.date(pa.pickupdate) <= $P{dataFinal})
+	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{date} and pg_catalog.date(pa.pickupdate) <= $P{dataFinal})
 	OR (pg_catalog.date(pa.pickupdate) < $P{date} and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > $P{dataFinal}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dataFinal}::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= $P{date}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dataFinal}::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= $P{dataFinal}
@@ -76,7 +76,7 @@ FROM  (
 	   inner join regimeterapeutico reg on reg.regimeid = p.regimeid
 	   inner join clinic c on c.id = pat.clinic
 	   inner join episode ep on ep.id = pack.episode
-	   where l.linhanome like '%2%' and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%')]]>
+	   where p.tipodoenca like '%ARV' and l.linhanome like '%2%' and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%')]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="patientid" class="java.lang.String"/>

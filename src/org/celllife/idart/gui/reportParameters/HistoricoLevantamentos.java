@@ -84,6 +84,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	
     private FileOutputStream out = null; 
 
+    private String diseaseType;
 	/**
 	 * Constructor
 	 *
@@ -92,9 +93,11 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	 * @param activate
 	 *            boolean
 	 */
-	public HistoricoLevantamentos(Shell parent, boolean activate) {
+	public HistoricoLevantamentos(Shell parent, boolean activate, String diseaseType) {
 		super(parent, REPORTTYPE_MIA, activate);
 		this.parent = parent;
+
+		this.diseaseType = diseaseType;
 	}
 
 	/**
@@ -173,7 +176,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 					theStartDate = c.getTime();
 				}
 				
-				HHistoricoLevantamentos report = new HHistoricoLevantamentos(getShell(), theStartDate, theEndDate,chkBtnInicio.getSelection(),chkBtnManutencao.getSelection(),chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection());
+				HHistoricoLevantamentos report = new HHistoricoLevantamentos(getShell(), theStartDate, theEndDate,chkBtnInicio.getSelection(),chkBtnManutencao.getSelection(),chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), this.diseaseType);
 				viewReport(report);
 			} catch (Exception e) {
 				getLog().error("Exception while running Historico levantamento report",e);
@@ -213,7 +216,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 				String reportNameFile = "Reports/HistoricoLevantamento.xls";
 				try {
 					HistoricoLevantamentosExcel op = new HistoricoLevantamentosExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
-							chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate);
+							chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate, this.diseaseType);
 					new ProgressMonitorDialog(parent).run(true, true, op);
 
 					if (op.getList() == null ||
