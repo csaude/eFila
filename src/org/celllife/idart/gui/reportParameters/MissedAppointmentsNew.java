@@ -306,7 +306,7 @@ public class MissedAppointmentsNew extends GenericReportGui {
 
 		SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
-		ConexaoJDBC con = new ConexaoJDBC();
+	//	ConexaoJDBC con = new ConexaoJDBC();
 
 		int max = 0;
 		int min = 0;

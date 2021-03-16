@@ -25,6 +25,7 @@ import model.manager.excel.conversion.exceptions.ReportException;
 import model.manager.reports.ARVDrugUsageReport;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Drug;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.platform.GenericReportGui;
@@ -180,7 +181,7 @@ public class ARVDrugUsage extends GenericReportGui {
 	}
 
 	private void populateTblDrugs() {
-		List<Drug> drugList = DrugManager.getAllDrugs(getHSession());
+		List<Drug> drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
 
 		Collections.sort(drugList);
 
