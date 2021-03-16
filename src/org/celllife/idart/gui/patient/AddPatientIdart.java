@@ -1608,7 +1608,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false);
+                new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
                 cmdCancelWidgetSelected();
 
             }

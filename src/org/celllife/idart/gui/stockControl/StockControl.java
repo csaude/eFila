@@ -430,7 +430,7 @@ public class StockControl extends GenericAdminGui {
 
 	private void cmdUpdatePrescriptionWidgetSelected() {
 
-		new AddPrescription(null, getShell(), false);
+		new AddPrescription(null, getShell(), false,iDartProperties.SERVICOTARV);
 
 	}
 

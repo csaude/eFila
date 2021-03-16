@@ -532,7 +532,7 @@ public class PatientAdmin extends GenericAdminGui {
     }
 
     private void cmdUpdatePrescriptionWidgetSelected() {
-        new AddPrescription(null, getShell(), false);
+        new AddPrescription(null, getShell(), false, iDartProperties.SERVICOTARV);
     }
 
     private void cmdViewPatientHistoryWidgetSelected() {

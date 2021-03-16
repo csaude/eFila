@@ -1528,7 +1528,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false);
+                new AddPrescription(localPatient, getParent(), false,iDartProperties.SERVICOTARV);
                 // myPrescription.addDisposeListener(new DisposeListener() {
                 // public void widgetDisposed(DisposeEvent e1) {
                 cmdCancelWidgetSelected();
