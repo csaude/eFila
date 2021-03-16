@@ -24,10 +24,11 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 	private boolean trasfereDe;
 	private boolean reInicio;
 	private String diseaseType;
+	private boolean fim;
 
 
 	public HHistoricoLevantamentos(Shell parent, Date theStartDate,
-			Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio, String diseaseType) {
+			Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio, boolean fim, String diseaseType) {
 		super(parent);
 		
 		this.theStartDate=theStartDate;
@@ -38,6 +39,7 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 		this.trasfereDe=trasfereDe;
 		this.reInicio=reInicio;
 		this.diseaseType = diseaseType;
+		this.fim = fim;
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 
 		ConexaoJDBC con=new ConexaoJDBC();
 		
-		String query = con.getQueryHistoricoLevantamentos(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio,dateFormat.format(theStartDate),dateFormat.format(theEndDate), this.diseaseType);
+		String query = con.getQueryHistoricoLevantamentos(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio, this.fim, dateFormat.format(theStartDate),dateFormat.format(theEndDate), this.diseaseType);
 				
 		map.put("query",query);
 		map.put("path", getReportPath());

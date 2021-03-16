@@ -4236,7 +4236,7 @@ public class ConexaoJDBC {
         return total;
     }
 
-    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) {
+    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4250,6 +4250,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim");
 
 
         String condicao = "(\'";
@@ -4324,7 +4326,7 @@ public class ConexaoJDBC {
     }
 
     public String getQueryHistoricoLevantamentos(boolean i, boolean m,
-                                                 boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) {
+                                                 boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4338,6 +4340,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 
@@ -4413,7 +4417,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
+    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4430,6 +4434,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 
@@ -4582,7 +4588,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
+    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4601,6 +4607,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 

@@ -202,7 +202,7 @@ order by atccode_id asc]]>
 						<subreportParameterExpression><![CDATA[$P{totallinhas}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression class="java.lang.String"><![CDATA[($P{path} + java.io.File.separator+ "MmiaRegimesReportActualizado.jasper")]]></subreportExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[($P{path} + java.io.File.separator+ "FasesMmiaTB.jasper")]]></subreportExpression>
 				</subreport>
 				<line>
 					<reportElement x="368" y="424" width="209" height="1">
