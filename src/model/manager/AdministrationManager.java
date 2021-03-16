@@ -1643,7 +1643,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSave(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'I'").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'I' order by sync.date asc").list();
 
         return result;
     }
@@ -1652,7 +1652,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null order by sync.date asc").list();
 
         return result;
     }
@@ -1661,7 +1661,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'L'").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'L' order by sync.date asc").list();
 
         return result;
     }

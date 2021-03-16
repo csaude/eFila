@@ -15,6 +15,10 @@ public class HistoricoLevantamentoXLS {
 	private String regimeTerapeutico;
 	
 	private String tipoDispensa;
+
+	private String modoDispensa;
+
+	private String proveniencia;
 	
 	private String dataLevantamento;
 	
@@ -99,5 +103,21 @@ public class HistoricoLevantamentoXLS {
 
 	public void setTipoPaciente(String tipoPaciente) {
 		this.tipoPaciente = tipoPaciente;
+	}
+
+	public String getModoDispensa() {
+		return modoDispensa;
+	}
+
+	public void setModoDispensa(String modoDispensa) {
+		this.modoDispensa = modoDispensa;
+	}
+
+	public String getProveniencia() {
+		return proveniencia;
+	}
+
+	public void setProveniencia(String proveniencia) {
+		this.proveniencia = proveniencia;
 	}
 }
