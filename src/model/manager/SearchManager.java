@@ -538,7 +538,7 @@ public class SearchManager {
         search.getShell().setText("Seleccione o Medicamento...");
 
         if (includeZeroDrugs) {
-            drugs = DrugManager.getAllDrugs(sess);
+            drugs = DrugManager.getAllDrugs(sess,iDartProperties.SERVICOTARV);
         } else {
             drugs = DrugManager.getDrugsListForStockTake(sess, false);
         }

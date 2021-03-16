@@ -6086,6 +6086,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.dispensatrimestral = 0 " +
                     "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +

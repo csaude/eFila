@@ -44,6 +44,7 @@ import model.nonPersistent.StockLevelInfo;
 
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Drug;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
@@ -276,7 +277,7 @@ public class StockOnHandGui extends GenericOthersGui {
 		}
 
 		final List<DrugDetail> dataList = new ArrayList<DrugDetail>();
-		final List<Drug> drugList = DrugManager.getAllDrugs(getHSession());
+		final List<Drug> drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
 		final String parmacy = cmbPharmacy.getText();
 
 		try {

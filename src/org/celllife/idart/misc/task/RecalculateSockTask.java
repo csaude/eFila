@@ -7,6 +7,7 @@ import model.manager.DrugManager;
 import model.manager.StockManager;
 
 import org.apache.log4j.Logger;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Drug;
 import org.celllife.idart.database.hibernate.Stock;
 import org.celllife.idart.database.hibernate.StockAdjustment;
@@ -51,7 +52,7 @@ public class RecalculateSockTask implements IdartTask {
 			}.run();
 		}
 
-		List<Drug> allDrugs = DrugManager.getAllDrugs(session);
+		List<Drug> allDrugs = DrugManager.getAllDrugs(session, iDartProperties.SERVICOTARV);
 		
 		monitor.beginTask("Updating stock levels for all stock", allDrugs.size());
 		
