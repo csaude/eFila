@@ -314,6 +314,7 @@ public class ConexaoJDBC {
         int totalpacientesmanter = 0;
         int totalpacientesalterar = 0;
         int totalpacientestransferidoDe = 0;
+        int totalfim = 0;
 
         int pacientesdispensadosparaDM = 0;
         int pacientesdispensadosparaDT = 0;
@@ -360,6 +361,8 @@ public class ConexaoJDBC {
                     totalpacientesalterar++;
                 } else if (!nonuspatient && rs.getString("reasonforupdate").contains("ransfer")) {
                     totalpacientestransferidoDe++;
+                }else if (!nonuspatient && rs.getString("reasonforupdate").contains("Fim")) {
+                    totalfim++;
                 }
 
 
@@ -413,6 +416,7 @@ public class ConexaoJDBC {
 
         map.put("totalpacientestransito", totalpacientestransito);
         map.put("totalpacientesinicio", totalpacientesinicio);
+        map.put("totalfim", totalfim);
         map.put("totalpacientesmanter", totalpacientesmanter);
         map.put("totalpacientesalterar", totalpacientesalterar);
         map.put("totalpacientestransferidoDe", totalpacientestransferidoDe);
@@ -4236,7 +4240,7 @@ public class ConexaoJDBC {
         return total;
     }
 
-    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) {
+    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4250,6 +4254,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim");
 
 
         String condicao = "(\'";
@@ -4324,7 +4330,7 @@ public class ConexaoJDBC {
     }
 
     public String getQueryHistoricoLevantamentos(boolean i, boolean m,
-                                                 boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) {
+                                                 boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4338,6 +4344,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 
@@ -4413,7 +4421,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
+    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4430,6 +4438,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 
@@ -4582,7 +4592,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
+    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4601,6 +4611,8 @@ public class ConexaoJDBC {
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (f)
+            v.add("Fim");
 
         String condicao = "(\'";
 

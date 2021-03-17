@@ -62,7 +62,9 @@ public class PatientHistory extends GenericReportGui {
 
 	private Button rdBtnTBPatient;
 
-	public static String tipoPaciente = null;
+	private static String tipoPaciente = null;
+
+	private boolean radioButtosEnabled;
 	/**
 	 * Constructor
 	 *  @param parent
@@ -73,6 +75,8 @@ public class PatientHistory extends GenericReportGui {
 		super(parent, REPORTTYPE_PATIENT, activate);
 
 		tipoPaciente = iDartProperties.SERVICOTARV;
+
+		this.radioButtosEnabled = true;
 
 		this.patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILA;
 	}
@@ -88,6 +92,8 @@ public class PatientHistory extends GenericReportGui {
 
 			tipoPaciente = iDartProperties.PNCT;
 		}
+
+		this.radioButtosEnabled = false;
 	}
 
 	/**
@@ -171,9 +177,13 @@ public class PatientHistory extends GenericReportGui {
 
 		// rdBtnTBPrescription
 		rdBtnTBPatient = new Button(grpPatientSelection, SWT.RADIO);
-
+		//rdBtnTBPatient.setEnabled(this.radioButtosEnabled);
 		rdBtnTBPatient.setBounds(new Rectangle(180, 430, 100, 30));
 		rdBtnTBPatient.setText("TPT");
+		if (patientHistoryType != null && patientHistoryType.equals(PatientHistoryReport.PATIENT_HISTORY_FILT)) {
+			rdBtnTBPatient.setSelection(true);
+		}
+
 		rdBtnTBPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
 		rdBtnTBPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			@Override
@@ -185,9 +195,12 @@ public class PatientHistory extends GenericReportGui {
 		rdBtnTBPatient.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
 		rdBtnTARVPatient = new Button(grpPatientSelection, SWT.RADIO);
-		rdBtnTARVPatient.setSelection(true);
+		if (patientHistoryType == null || patientHistoryType.equals(PatientHistoryReport.PATIENT_HISTORY_FILA)) {
+			rdBtnTARVPatient.setSelection(true);
+		}
 		rdBtnTARVPatient.setBounds(new Rectangle(80, 430, 100, 30));
 		rdBtnTARVPatient.setText("TARV");
+		//rdBtnTARVPatient.setEnabled(this.radioButtosEnabled);
 		rdBtnTARVPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TARV.");
 		rdBtnTARVPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			@Override
