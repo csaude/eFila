@@ -28,6 +28,7 @@ import model.manager.exports.excel.ExcelReportObject;
 import model.manager.exports.excel.RowPerPackageExcelExporter;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Drug;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.platform.GenericReportGui;
@@ -226,7 +227,7 @@ public class DrugsDispensed extends GenericReportGui {
 				ResourceUtils.getFont(iDartFont.VERASANS_8));
 		tblDrugNames.setContentProvider(new ArrayContentProvider());
 		
-		drugList = DrugManager.getAllDrugs(getHSession());
+		drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
 		tblDrugNames.setInput(drugList);
 		tblDrugNames.setLabelProvider(new DrugsDispensedLabelProvider());
 		

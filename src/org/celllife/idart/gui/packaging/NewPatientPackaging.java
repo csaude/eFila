@@ -803,7 +803,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     private void cmdUpdatePrescriptionWidgetSelected() {
 
-        final AddPrescription myPrescription = new AddPrescription(localPatient, getShell(), true);
+        final AddPrescription myPrescription = new AddPrescription(localPatient ,getShell(), true,tipoPaciente);
+
         myPrescription.addDisposeListener(new DisposeListener() {
             @Override
             public void widgetDisposed(DisposeEvent e) {
@@ -1679,11 +1680,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         }
 
         //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
-        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId())) { //$NON-NLS-1$
+        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId(),tipoPaciente)) { //$NON-NLS-1$
 
-            showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
-                    "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
-
+            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH) ",
+                        "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH).");
+            }else {
+                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
+                        "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
+            }
             return false;
         }
 

@@ -183,7 +183,7 @@ public class AdministrationManager {
         if (regimeList != null) {
             for (int i = 0; i < regimeList.size(); i++) {
                 regime = regimeList.get(i);
-                if (regime.getRegimeesquema().equals(regimeesquema)) {
+                if (regime.getRegimeesquema().equalsIgnoreCase(regimeesquema)) {
                     break;
                 }
             }

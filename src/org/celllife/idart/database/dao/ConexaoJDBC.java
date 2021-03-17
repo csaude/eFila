@@ -5190,7 +5190,7 @@ public class ConexaoJDBC {
         return id;
     }
 
-    public boolean jaTemFilaInicio(String nid) {
+    public boolean jaTemFilaInicio(String nid, String tipoPaciente) {
 
         boolean jatemFilaInicio = false;
 
@@ -5198,6 +5198,7 @@ public class ConexaoJDBC {
                 + " prescription.id, "
                 + " package.packageid ,"
                 + " prescription.reasonforupdate as tipotarv, "
+                + " prescription.current as currentprescription, "
                 + " patient.patientid "
                 + " FROM  "
                 + " prescription  "
@@ -5205,8 +5206,8 @@ public class ConexaoJDBC {
                 + " inner join patient on patient.id = prescription.patient"
                 + " WHERE   "
                 + " prescription.ppe=\'F\' "
-                + " AND   "
-                + " prescription.reasonforupdate IN ('Inicia') "
+                + " AND  prescription.tipodoenca = '"+tipoPaciente+"' AND "
+                + " prescription.reasonforupdate like 'Inici%' "
                 + " AND patient.patientid = \'" + nid + "\'";
         try {
             conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
@@ -5220,10 +5221,17 @@ public class ConexaoJDBC {
 
         try {
             ResultSet rs = st.executeQuery(query);
+
             while (rs.next()) {
-                if (rs.getString("patientid").equals(nid)) {
-                    jatemFilaInicio = true;
+                if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+                    if(rs.getString("currentprescription").equals("T"))
+                        jatemFilaInicio = true;
                     break;
+                }else{
+                    if (rs.getString("patientid").equals(nid)) {
+                        jatemFilaInicio = true;
+                        break;
+                    }
                 }
                 log.trace("/*/*//*///*/*//*/*/" + rs.getString("nid"));
             }
@@ -6099,6 +6107,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.dispensatrimestral = 0 " +
                     "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
