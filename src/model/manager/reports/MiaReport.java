@@ -96,6 +96,7 @@ public class MiaReport extends AbstractJasperReport {
             int totalpacientesmanter = Integer.parseInt(mapaDoMMIA.get("totalpacientesmanter").toString());
             int totalpacientesalterar = Integer.parseInt(mapaDoMMIA.get("totalpacientesalterar").toString());
             int totalpacientestransferidoDe = Integer.parseInt(mapaDoMMIA.get("totalpacientestransferidoDe").toString());
+            int totalfim = Integer.parseInt(mapaDoMMIA.get("totalfim").toString());
 
             int pacientesdispensadosparaDM = Integer.parseInt(mapaDoMMIA.get("pacientesdispensadosparaDM").toString());
             int pacientesdispensadosparaDT = Integer.parseInt(mapaDoMMIA.get("pacientesdispensadosparaDT").toString());
@@ -158,6 +159,8 @@ public class MiaReport extends AbstractJasperReport {
             map.put("totalpacientesalterar", String.valueOf(totalpacientesalterar));
             map.put("totalpacientestransito", String.valueOf(totalpacientestransito));
             map.put("totalpacientestransferidoDe", String.valueOf(totalpacientestransferidoDe));
+            map.put("totalpacientesfim", String.valueOf(totalfim));
+
 
             map.put("mesesdispensadosparaDM", String.valueOf(pacientesdispensadosparaDM));
             map.put("mesesdispensadosparaDT", String.valueOf(pacientesdispensadosparaDT));

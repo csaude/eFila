@@ -314,6 +314,7 @@ public class ConexaoJDBC {
         int totalpacientesmanter = 0;
         int totalpacientesalterar = 0;
         int totalpacientestransferidoDe = 0;
+        int totalfim = 0;
 
         int pacientesdispensadosparaDM = 0;
         int pacientesdispensadosparaDT = 0;
@@ -360,6 +361,8 @@ public class ConexaoJDBC {
                     totalpacientesalterar++;
                 } else if (!nonuspatient && rs.getString("reasonforupdate").contains("ransfer")) {
                     totalpacientestransferidoDe++;
+                }else if (!nonuspatient && rs.getString("reasonforupdate").contains("Fim")) {
+                    totalfim++;
                 }
 
 
@@ -413,6 +416,7 @@ public class ConexaoJDBC {
 
         map.put("totalpacientestransito", totalpacientestransito);
         map.put("totalpacientesinicio", totalpacientesinicio);
+        map.put("totalfim", totalfim);
         map.put("totalpacientesmanter", totalpacientesmanter);
         map.put("totalpacientesalterar", totalpacientesalterar);
         map.put("totalpacientestransferidoDe", totalpacientestransferidoDe);
