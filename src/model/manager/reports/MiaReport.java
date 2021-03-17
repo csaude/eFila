@@ -143,6 +143,7 @@ public class MiaReport extends AbstractJasperReport {
 
             User localUser = LocalObjects.getUser(getHSession());
 
+
             map.put("username", localUser.getUsername());
             map.put("monthEnd", dateFormat.format(theEndDate));
             map.put("date", theStartDate);
@@ -154,6 +155,7 @@ public class MiaReport extends AbstractJasperReport {
             map.put("pharmacist1", LocalObjects.pharmacy.getPharmacist());
             map.put("pharmacist2", LocalObjects.pharmacy.getAssistantPharmacist());
 
+            map.put("totalPacinetesProfilaxiaTB", String.valueOf(totalpacientesinicio+totalpacientesmanter+totalfim));
             map.put("totalpacientesinicio", String.valueOf(totalpacientesinicio));
             map.put("totalpacientesmanter", String.valueOf(totalpacientesmanter));
             map.put("totalpacientesalterar", String.valueOf(totalpacientesalterar));
@@ -165,6 +167,7 @@ public class MiaReport extends AbstractJasperReport {
             map.put("mesesdispensadosparaDM", String.valueOf(pacientesdispensadosparaDM));
             map.put("mesesdispensadosparaDT", String.valueOf(pacientesdispensadosparaDT));
             map.put("mesesdispensadosparaDS", String.valueOf(pacientesdispensadosparaDS));
+            map.put("totalDispensaTB", String.valueOf(pacientesdispensadosparaDT+pacientesdispensadosparaDM));
             map.put("pacientesdispensados", String.valueOf(pacientesdispensadosparaDM+pacientesdispensadosparaDT+pacientesdispensadosparaDS));
 
             map.put("totalpacientesadulto", String.valueOf(adultosEmTarv));
