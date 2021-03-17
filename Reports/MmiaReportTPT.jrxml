@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.1586575189467514"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="166"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -101,6 +101,8 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="totalpacientesfim" class="java.lang.String"/>
+	<parameter name="totalDispensaTB" class="java.lang.String"/>
+	<parameter name="totalPacinetesProfilaxiaTB" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
 distinct d.id,
@@ -1216,14 +1218,28 @@ order by atccode_id asc]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesinicio}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalPacinetesProfilaxiaTB}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="528" y="261" width="44" height="10"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesinicio}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{mesesdispensadosparaDM}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="527" y="275" width="44" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{mesesdispensadosparaDT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="528" y="291" width="44" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalDispensaTB}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1782,7 +1798,7 @@ MAPA MENSAL DE MEDICAMENTOS DA TB]]></text>
 				<textElement verticalAlignment="Middle">
 					<font size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Versão nº 8 19 Nov 2019 DS TLD90 MDS e ARVs de nova geração]]></text>
+				<text><![CDATA[Versão 02 Junho 2020]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="61" y="2" width="78" height="15"/>
@@ -1810,7 +1826,7 @@ MAPA MENSAL DE MEDICAMENTOS DA TB]]></text>
 				<textElement verticalAlignment="Middle">
 					<font size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nota: Mapa de Preenchimento Obrigatório Mensal pela Farmácia da Unidade Sanitária]]></text>
+				<text><![CDATA[Nota: Mapa de Preenchimento Obrigatório Mensal]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="368" y="2" width="83" height="15"/>
