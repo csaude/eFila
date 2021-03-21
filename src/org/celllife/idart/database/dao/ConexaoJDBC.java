@@ -4551,23 +4551,26 @@ public class ConexaoJDBC {
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
 
-        String query = "select distinct patientid as nid, " +
-                "patientfirstname ||' '|| patientlastname as nome, " +
-                "reasonforupdate as tipoPaciente, " +
-                "regimenome as regimeTerapeutico, " +
+        String query = "select distinct spt.patientid as nid, " +
+                "spt.patientfirstname as nome, " +
+                "spt.patientlastname as apelido, " +
+                "spt.reasonforupdate as tipotarv, " +
+                "spt.regimenome as regime, " +
                 "CASE " +
-                "WHEN dispensatrimestral = 1 THEN 'DT' " +
-                "WHEN dispensasemestral = 1 THEN 'DS' " +
+                "WHEN spt.dispensatrimestral = 1 THEN 'DT' " +
+                "WHEN spt.dispensasemestral = 1 THEN 'DS' " +
                 "ELSE 'DM' " +
                 "        END AS tipodispensa, " +
-                "pg_catalog.date(pickupdate) as dataLevantamento, " +
-                "to_date(dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, " +
-                "mainclinicname as referencia " +
-                "from sync_temp_dispense " +
-                "where pg_catalog.date(pickupdate) >= '" + startDate + "'::date " +
-                "AND pg_catalog.date(pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') " +
-                "GROUP BY 1,2,3,4,5,6,7,8 " +
-                "order by 6";
+                "pg_catalog.date(spt.pickupdate) as dataLevantamento, " +
+                "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento, " +
+                "c.clinicname as referencia " +
+                "from sync_temp_dispense spt " +
+                "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs " +
+                "inner join clinic c on c.id = p.clinic " +
+                "where pg_catalog.date(spt.pickupdate) >= '"+startDate+"'::date " +
+                "AND pg_catalog.date(spt.pickupdate) < ('"+endDate+"'::date + INTERVAL '1 day') " +
+                "GROUP BY 1,2,3,4,5,6,7,8,9 " +
+                "order by 7 asc";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
         ResultSet rs = st.executeQuery(query);
