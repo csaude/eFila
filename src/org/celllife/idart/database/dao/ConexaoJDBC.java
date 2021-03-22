@@ -4361,6 +4361,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4373,10 +4384,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id, max(visit.id) episode "
+                + " 			pat.id, max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4390,7 +4402,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
@@ -4453,6 +4465,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4465,10 +4488,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason  ,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id , max(visit.id) episode "
+                + " 			pat.id , max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4482,7 +4506,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
@@ -4505,6 +4529,8 @@ public class ConexaoJDBC {
                 levantamentoXLS.setTipoPaciente(rs.getString("startreason"));
                 levantamentoXLS.setRegimeTerapeutico(rs.getString("regime"));
                 levantamentoXLS.setTipoDispensa(rs.getString("tipodispensa"));
+                levantamentoXLS.setProveniencia(rs.getString("proveniencia"));
+                levantamentoXLS.setModoDispensa(rs.getString("modedispense"));
                 levantamentoXLS.setDataLevantamento(rs.getString("datalevantamento"));
                 levantamentoXLS.setDataProximoLevantamento(rs.getString("dataproximolevantamento"));
 
@@ -4525,23 +4551,26 @@ public class ConexaoJDBC {
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
 
-        String query = "select distinct patientid as nid, " +
-                "patientfirstname ||' '|| patientlastname as nome, " +
-                "reasonforupdate as tipoPaciente, " +
-                "regimenome as regimeTerapeutico, " +
+        String query = "select distinct spt.patientid as nid, " +
+                "spt.patientfirstname as nome, " +
+                "spt.patientlastname as apelido, " +
+                "spt.reasonforupdate as tipotarv, " +
+                "spt.regimenome as regime, " +
                 "CASE " +
-                "WHEN dispensatrimestral = 1 THEN 'DT' " +
-                "WHEN dispensasemestral = 1 THEN 'DS' " +
+                "WHEN spt.dispensatrimestral = 1 THEN 'DT' " +
+                "WHEN spt.dispensasemestral = 1 THEN 'DS' " +
                 "ELSE 'DM' " +
                 "        END AS tipodispensa, " +
-                "pg_catalog.date(pickupdate) as dataLevantamento, " +
-                "to_date(dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, " +
-                "mainclinicname as referencia " +
-                "from sync_temp_dispense " +
-                "where pg_catalog.date(pickupdate) >= '" + startDate + "'::date " +
-                "AND pg_catalog.date(pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') " +
-                "GROUP BY 1,2,3,4,5,6,7,8 " +
-                "order by 6";
+                "pg_catalog.date(spt.pickupdate) as dataLevantamento, " +
+                "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento, " +
+                "c.clinicname as referencia " +
+                "from sync_temp_dispense spt " +
+                "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs " +
+                "inner join clinic c on c.id = p.clinic " +
+                "where pg_catalog.date(spt.pickupdate) >= '"+startDate+"'::date " +
+                "AND pg_catalog.date(spt.pickupdate) < ('"+endDate+"'::date + INTERVAL '1 day') " +
+                "GROUP BY 1,2,3,4,5,6,7,8,9 " +
+                "order by 7 asc";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
         ResultSet rs = st.executeQuery(query);
