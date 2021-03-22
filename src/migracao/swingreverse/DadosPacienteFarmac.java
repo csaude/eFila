@@ -10,13 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.JdbcProperties;
+import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
-import org.celllife.idart.gui.packaging.NewPatientPackaging;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
-import org.celllife.idart.rest.utils.RestFarmac;
 import org.celllife.idart.rest.utils.RestUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -41,7 +41,7 @@ public class DadosPacienteFarmac {
 
     public final static Logger log = Logger.getLogger(DadosPacienteFarmac.class);
 
-    public static Patient InserePaciente(SyncTempPatient patientSync) {
+    public static Patient InserePaciente(Session sess, SyncTempPatient patientSync) {
 
         Patient patient = null;
         PatientIdentifier patientIdentifier = null;
@@ -49,8 +49,8 @@ public class DadosPacienteFarmac {
         Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
 
         Clinic clinic = null;
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
+//        Session sess = HibernateUtil.getNewSession();
+//        Transaction tx = sess.beginTransaction();
 
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
             clinic = AdministrationManager.getClinicbyUuid(sess, patientSync.getClinicuuid());
@@ -70,7 +70,7 @@ public class DadosPacienteFarmac {
                     clinic.setCode(patientSync.getPatientid().substring(0, 9));
                     AdministrationManager.saveClinic(sess, clinic);
                 } catch (Exception e) {
-                   log.trace("Error create or update clinic for patient :" +patientSync.getPatientid() +" clinic "+patientSync.getMainclinicname()+" error- "+ e);
+                    log.trace("Error create or update clinic for patient :" + patientSync.getPatientid() + " clinic " + patientSync.getMainclinicname() + " error- " + e);
                 }
             }
         } else
@@ -131,14 +131,14 @@ public class DadosPacienteFarmac {
 
         try {
             PatientManager.savePatient(sess, patient);
-            tx.commit();
-            sess.flush();
-            sess.close();
+//            tx.commit();
+//            sess.flush();
+//            sess.close();
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                sess.close();
-            }
+//            if (tx != null) {
+//                tx.rollback();
+//                sess.close();
+//            }
             log.trace("Erro ao gravar informacao do Paciente [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
         }
 
@@ -167,7 +167,7 @@ public class DadosPacienteFarmac {
 
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
 
-            if(patient.getMostRecentEpisode() == null){
+            if (patient.getMostRecentEpisode() == null) {
                 Episode episode = new Episode();
                 episode.setPatient(patient);
                 episode.setStartDate(syncTempDispense.getDate());
@@ -185,7 +185,11 @@ public class DadosPacienteFarmac {
                 prescription = new Prescription();
 
                 SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
-                Doctor doctorProvider = PrescriptionManager.getProvider(sess);
+                Doctor doctorProvider = AdministrationManager.getMostUsedDoctor(sess);
+
+                if (doctorProvider == null)
+                    doctorProvider = PrescriptionManager.getProvider(sess);
+
                 LinhaT linhat = AdministrationManager.getLinha(sess, syncTempDispense.getLinhanome());
                 RegimeTerapeutico regimeTerapeutico = AdministrationManager.getRegimeTerapeutico(sess, syncTempDispense.getRegimenome());
 
@@ -262,8 +266,10 @@ public class DadosPacienteFarmac {
                     PackageManager.saveNewPrescription(sess, prescription, true);
                     tx.commit();
                     sess.flush();
-                } else
-                   log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                } else {
+                    log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                    log.info("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                }
                 sess.close();
             }
         } catch (Exception e) {
@@ -271,7 +277,8 @@ public class DadosPacienteFarmac {
                 tx.rollback();
                 sess.close();
             }
-           log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
+            log.trace("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
+            log.error("Erro ao gravar O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname() + " Error :" + e);
 
         }
         return prescription;
@@ -446,7 +453,14 @@ public class DadosPacienteFarmac {
         newPack.setPackagedDrugs(packagedDrugsList);
         newPack.setDrugTypes("TARV");
 
-        PackageManager.savePackageQty0(newPack);
+
+        List<PatientSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, prescription.getPatient());
+
+        if (patientClinicSector.size() > 0) {
+            PackageManager.savePackage(sess, newPack);
+        }else{
+            PackageManager.savePackageQty0(newPack);
+        }
     }
 
     public static boolean setDispenseRestOpenmrs(Session sess, Prescription prescription, SyncTempDispense syncTempDispense) {
@@ -498,115 +512,190 @@ public class DadosPacienteFarmac {
                         facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
 
-                return  false;
+                return false;
             } else {
 
-                RestClient restClient = new RestClient();
+                User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
 
-                String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
+                assert currentUser != null;
+                if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                JSONObject jsonObject = new JSONObject(nidRest);
-                JSONArray _jsonArray = (JSONArray) jsonObject.get("results");
-                String nidUuid = null;
+                    RestClient restClient = new RestClient();
 
-                for (int i = 0; i < _jsonArray.length(); i++) {
-                    JSONObject results = (JSONObject) _jsonArray.get(i);
-                    nidUuid = (String) results.get("uuid");
-                }
+                    String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
+
+                    JSONObject jsonObject = new JSONObject(nidRest);
+                    JSONArray _jsonArray = (JSONArray) jsonObject.get("results");
+                    String nidUuid = null;
+
+                    for (int i = 0; i < _jsonArray.length(); i++) {
+                        JSONObject results = (JSONObject) _jsonArray.get(i);
+                        nidUuid = (String) results.get("uuid");
+                    }
 
 //                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
 //                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
 //                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
 
-                String uuid = prescription.getPatient().getUuidopenmrs();
-                if (uuid != null && !uuid.isEmpty()) {
-                    uuid = prescription.getPatient().getUuidopenmrs();
-                } else {
-                    saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "O NID deste paciente [" + nid + " ] foi alterado no OpenMRS ou não possui UUID."
-                            + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
-                    return false;
-                }
-
-
-                if (nidUuid != null && !nidUuid.isEmpty()) {
-                //    if (nidUuid != uuid || voided) {
-                    if (nidUuid != uuid) {
-
-                        log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificação do erro");
+                    String uuid = prescription.getPatient().getUuidopenmrs();
+                    if (uuid != null && !uuid.isEmpty()) {
+                        uuid = prescription.getPatient().getUuidopenmrs();
+                    } else {
                         saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                                 facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
                                 iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                        saveErroLog(newPack, dtNextPickUp, "O paciente [" + nid + " ] "
-                                + " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .");
+                        saveErroLog(newPack, dtNextPickUp, "O NID deste paciente [" + nid + " ] foi alterado no OpenMRS ou não possui UUID."
+                                + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
+                        return false;
+                    }
+
+
+                    if (nidUuid != null && !nidUuid.isEmpty()) {
+                        if (!nidUuid.equals(uuid)) {
+
+                            log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificação do erro");
+                            saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
+                            saveErroLog(newPack, dtNextPickUp, "O paciente [" + nid + " ] "
+                                    + " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .");
+
+                            return false;
+                        }
+                    }
+
+                    String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
+
+                    JSONObject jsonReportingRest = new JSONObject(openrsMrsReportingRest);
+                    JSONArray jsonReportingRestArray = (JSONArray) jsonReportingRest.get("members");
+
+                    if (jsonReportingRestArray.length() < 1) {
+                        log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+                        saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
+                        saveErroLog(newPack, dtNextPickUp, "NID [" + nid + "com o uuid ( " + syncTempDispense.getUuidopenmrs() + " )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
 
                         return false;
                     }
-                }
 
-                String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
+                    String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
 
-                JSONObject jsonReportingRest = new JSONObject(openrsMrsReportingRest);
-                JSONArray jsonReportingRestArray = (JSONArray) jsonReportingRest.get("members");
+                    // Location
+                    String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
 
-                if (jsonReportingRestArray.length() < 1) {
-                    log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "NID [" + nid + " ] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
+                    if (strFacility.length() < 50) {
 
-                    return false;
-                }
+                        log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+                        saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
+                        saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + nid + " ].");
+                        return false;
+                    } else strFacilityUuid = strFacility.substring(21, 57);
 
-                String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
+                    if (response.length() < 50) {
 
-                // Location
-                String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
+                        log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+                        saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
+                        saveErroLog(newPack, dtNextPickUp, " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + nid + " ].");
 
-                if (strFacility.length() < 50) {
+                        return false;
+                    } else providerUuid = response.substring(21, 57);
 
-                    log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + nid + " ].");
-                    return false;
-                } else strFacilityUuid = strFacility.substring(21, 57);
+                    try {
+                        postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, regimenAnswer,
+                                iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
+                                iDartProperties.VISIT_UUID, strNextPickUp);
 
-                if (response.length() < 50) {
+                        result = true;
+                        log.trace("Criou o fila no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
 
-                    log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + nid + " ].");
-
-                    return false;
-                } else providerUuid = response.substring(21, 57);
-
-                try {
-                    postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
-                            iDartProperties.VISIT_UUID, strNextPickUp);
-
-                    result = true;
-                    log.trace("Criou o fila no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
-
-                } catch (Exception e) {
-                    result = true;
-                    log.error("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
-                    saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + nid + ": " + e.getMessage());
+                    } catch (Exception e) {
+                        result = true;
+                        log.error("Nao foi criado o fila no openmrs para o paciente " + nid + ": " + postOpenMrsEncounterStatus);
+                        saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + nid + ": " + e.getMessage());
+                    }
+                }else {
+                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não se encontra em funcionamento.");
                 }
             }
         } catch (IOException e) {
-            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: "+ e.getMessage());
+            log.error("Erro agravar levantamento do paciente : " + syncTempDispense.getPatientid() + " erro: " + e.getMessage());
         }
 
         return result;
+    }
+
+    public static Patient setPatientFromClinicSector(SyncMobilePatient patientSync) {
+
+        Patient patient = null;
+        PatientIdentifier patientIdentifier = null;
+        PatientAttribute patientAttribute = null;
+        Set<PatientIdentifier> oldIdentifiers = new HashSet<>();
+
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+        Clinic clinic = AdministrationManager.getMainClinic(sess);
+
+        IdentifierType identifierType = AdministrationManager.getNationalIdentifierType(sess);
+        AttributeType attributeType = PatientManager.getAttributeTypeObject(sess, "ARV Start Date");
+
+        patient = new Patient();
+        patientIdentifier = new PatientIdentifier();
+        patientAttribute = new PatientAttribute();
+
+        patientIdentifier.setPatient(patient);
+        patientIdentifier.setType(identifierType);
+        patientIdentifier.setValue(patientSync.getPatientid());
+        oldIdentifiers.add(patientIdentifier);
+
+        if (patientSync.getArvstartdate() != null) {
+            patientAttribute.setPatient(patient);
+            patientAttribute.setValue(RestUtils.castDateToStringPattern(patientSync.getArvstartdate()));
+            patientAttribute.setType(attributeType);
+        }
+        patient.setFirstNames(patientSync.getFirstnames());
+        patient.setAccountStatus(Boolean.FALSE);
+        patient.setAddress1(patientSync.getAddress1());
+        patient.setAddress2(patientSync.getAddress2());
+        patient.setAddress3(patientSync.getAddress3());
+        patient.setCellphone(patientSync.getCellphone());
+        patient.setDateOfBirth(patientSync.getDateofbirth());
+        patient.setClinic(clinic);
+        patient.setNextOfKinName(patientSync.getNextofkinname());
+        patient.setNextOfKinPhone(patientSync.getNextofkinphone());
+        patient.setHomePhone(patientSync.getHomephone());
+        patient.setLastname(patientSync.getLastname());
+        patient.setModified('T');
+        patient.setPatientId(patientSync.getPatientid());
+        patient.setProvince(patientSync.getProvince());
+        patient.setSex(patientSync.getSex());
+        patient.setWorkPhone(null);
+        patient.setRace(patientSync.getRace());
+        patient.setUuidopenmrs(patientSync.getUuid());
+
+        patient.setPatientIdentifiers(oldIdentifiers);
+        patient.setPatientAttribute(patientAttribute);
+
+        try {
+            PatientManager.savePatient(sess, patient);
+            tx.commit();
+            sess.flush();
+            sess.close();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+                sess.close();
+            }
+            log.trace("Erro ao gravar informacao do Paciente  [" + patient.getFirstNames() + " " + patient.getLastname() + " com NID: " + patient.getPatientId() + "]");
+        }
+
+        return patient;
+
     }
 
 }

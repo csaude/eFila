@@ -40,14 +40,14 @@ public class TemporaryRecordsManager {
                 }
                 //Para farmac Insere dispensas para US
                 if (CentralizationProperties.centralization.equalsIgnoreCase("on") && CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
-                    savePackageDrugInfosFarmac(pdi);
+                    savePackageDrugInfosFarmac(pdi, 'P');
                 }
             }
         }
         return true;
     }
 
-    public static boolean savePackageDrugInfosFarmac(PackageDrugInfo pdi) throws HibernateException {
+    public static boolean savePackageDrugInfosFarmac(PackageDrugInfo pdi, char syncStatus) throws HibernateException {
         log.info("Saving package drug infos FARMAC");
 
         Session sess = HibernateUtil.getNewSession();
@@ -56,13 +56,19 @@ public class TemporaryRecordsManager {
 
         try {
 
-            if (pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs().isEmpty()
-                    || pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs() == null)
-                patient = AdministrationManager.getSyncTempPatienByNID(sess, pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getPatientId());
-            else
+            if (!pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs().isEmpty()
+                    && pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs() != null)
                 patient = AdministrationManager.getSyncTempPatienByUuid(sess, pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs());
 
-            SyncTempDispense dispenseFarmac = new SyncTempDispense();
+            if(patient == null)
+                patient = AdministrationManager.getSyncTempPatienByNID(sess, pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getPatientId());
+
+            SyncTempDispense dispenseFarmac = AdministrationManager.getSyncTempDispenseById(sess, pdi.getId());
+
+            if(dispenseFarmac == null)
+             dispenseFarmac = new SyncTempDispense();
+
+
             dispenseFarmac.setId(pdi.getId());
             dispenseFarmac.setDate(pdi.getPackagedDrug().getParentPackage().getPrescription().getDate());
             dispenseFarmac.setClinicalstage(pdi.getPackagedDrug().getParentPackage().getPrescription().getClinicalStage());
@@ -109,7 +115,7 @@ public class TemporaryRecordsManager {
             dispenseFarmac.setMainclinic(patient.getMainclinic());
             dispenseFarmac.setMainclinicname(patient.getMainclinicname());
             dispenseFarmac.setMainclinicuuid(patient.getMainclinicuuid());
-            dispenseFarmac.setSyncstatus('P');
+            dispenseFarmac.setSyncstatus(syncStatus);
             dispenseFarmac.setPrescriptionid(pdi.getPackagedDrug().getParentPackage().getPrescription().getPrescriptionId());
             dispenseFarmac.setTipods(pdi.getPackagedDrug().getParentPackage().getPrescription().getTipoDS());
             dispenseFarmac.setDispensasemestral(pdi.getPackagedDrug().getParentPackage().getPrescription().getDispensaSemestral());
@@ -131,7 +137,7 @@ public class TemporaryRecordsManager {
                 tx.rollback();
                 sess.close();
             }
-            log.trace("Error :" + e);
+            log.trace("Error Sync Farmac or FP:" + e);
         }
 
         return true;
@@ -404,13 +410,12 @@ public class TemporaryRecordsManager {
      */
     public static void updateOpenmrsUnsubmittedPackageDrugInfos(Session s,
                                                                 List<PackageDrugInfo> pdList, Patient pat) throws HibernateException {
-
         for (PackageDrugInfo pdi : pdList) {
             log.info("Updating  PackageDrugInfo for patient: " + pdi.getPatientId());
             pdi.setPatientId(pat.getPatientId());
             pdi.setPatientLastName(pat.getLastname());
             pdi.setPatientFirstName(pat.getFirstNames());
-
+            s.update(pdi);
         }
     }
 }

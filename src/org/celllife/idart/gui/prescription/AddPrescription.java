@@ -18,20 +18,8 @@
  */
 package org.celllife.idart.gui.prescription;
 
-import static org.celllife.idart.commonobjects.CommonObjects.enableContentProposal;
-import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import model.manager.*;
+import model.manager.reports.PatientHistoryReport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.function.AndRule;
@@ -39,18 +27,7 @@ import org.celllife.function.DateRuleFactory;
 import org.celllife.function.IRule;
 import org.celllife.idart.commonobjects.*;
 import org.celllife.idart.database.dao.ConexaoJDBC;
-import org.celllife.idart.database.hibernate.Clinic;
-import org.celllife.idart.database.hibernate.Doctor;
-import org.celllife.idart.database.hibernate.Drug;
-import org.celllife.idart.database.hibernate.Episode;
-import org.celllife.idart.database.hibernate.Form;
-import org.celllife.idart.database.hibernate.LinhaT;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.PatientIdentifier;
-import org.celllife.idart.database.hibernate.PrescribedDrugs;
-import org.celllife.idart.database.hibernate.Prescription;
-import org.celllife.idart.database.hibernate.RegimeTerapeutico;
-import org.celllife.idart.database.hibernate.RegimenDrugs;
+import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.doctor.AddDoctor;
 import org.celllife.idart.gui.misc.iDARTChangeListener;
@@ -61,57 +38,36 @@ import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartColor;
 import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
-import org.celllife.idart.gui.widget.DateButton;
-import org.celllife.idart.gui.widget.DateChangedEvent;
-import org.celllife.idart.gui.widget.DateChangedListener;
-import org.celllife.idart.gui.widget.DateException;
-import org.celllife.idart.gui.widget.DateInputValidator;
+import org.celllife.idart.gui.widget.*;
 import org.celllife.idart.integration.eKapa.gui.SearchPatientGui;
 import org.celllife.idart.messages.Messages;
 import org.celllife.idart.misc.FloatValidator;
 import org.celllife.idart.misc.PatientBarcodeParser;
 import org.celllife.idart.misc.iDARTUtil;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 
-import model.manager.AdministrationManager;
-import model.manager.DeletionsManager;
-import model.manager.DrugManager;
-import model.manager.PackageManager;
-import model.manager.PatientManager;
-import model.manager.reports.PatientHistoryReport;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
+
+import static org.celllife.idart.commonobjects.CommonObjects.enableContentProposal;
+import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
 public class AddPrescription extends GenericFormGui implements
         iDARTChangeListener {
@@ -1432,6 +1388,12 @@ public class AddPrescription extends GenericFormGui implements
 
             try {
                 if (!getServerStatus(JdbcProperties.urlBase).contains("Red")) {
+
+                    User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                    assert currentUser != null;
+                    if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
                     String strProvider = cmbDoctor.getText().split(",")[1].trim() + " " + cmbDoctor.getText().split(",")[0].trim();
 
                     String providerWithNoAccents = org.apache.commons.lang3.StringUtils.stripAccents(strProvider);
@@ -1493,6 +1455,9 @@ public class AddPrescription extends GenericFormGui implements
                         m.open();
                         return false;
                     }
+                }else {
+                    getLog().error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                }
 
                 }
             } catch (IOException e) {

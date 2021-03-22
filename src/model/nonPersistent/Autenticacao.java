@@ -26,4 +26,6 @@ public class Autenticacao {
 
 		return new BigInteger(1, m.digest()).toString(16);
 	}
+
+
 }

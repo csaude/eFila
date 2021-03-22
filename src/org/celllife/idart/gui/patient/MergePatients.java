@@ -1444,23 +1444,18 @@ public class MergePatients extends GenericFormGui {
 			PatientManager.logPatientMerge(getHSession(), leftPatient,
 					rightPatient, wasPillcountsremoved);
 
-			// save changes to the right (primary) patient and delete the left
+			// save changes to the left (primary) patient and delete the right
 			// (secondary) patient
 			PatientManager.savePatient(getHSession(), leftPatient);
-			PatientManager.deleteSecondaryPatient(getHSession(), rightPatient);
 
 			// update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
 			List<PackageDrugInfo> pdiList = TemporaryRecordsManager.getOpenmrsUnsubmittedPackageDrugInfos(getHSession(), rightPatient);
 
-			if(!pdiList.isEmpty()){
-
+			if(!pdiList.isEmpty())
 				TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, leftPatient);
 
-			}
-			else{
-				// No records to update in PackagedruginfoTmp
-				// Do nothing
-			}
+			// and delete the right
+			PatientManager.deleteSecondaryPatient(getHSession(), rightPatient);
 
 			getHSession().flush();
 			tx.commit();

@@ -60,6 +60,15 @@ public class AdministrationManager {
         return result;
     }
 
+
+    public static Doctor getMostUsedDoctor( Session sess) throws HibernateException, SQLException, ClassNotFoundException {
+
+        ConexaoJDBC conexaoJDBC = new ConexaoJDBC();
+        int doctorId = conexaoJDBC.idMostUsedDoctor();
+        Doctor result = (Doctor) sess.createQuery(
+                 "select d from Doctor as d where d.id = "+ doctorId).uniqueResult();
+        return result;
+    }
     /**
      * Devolve lista de regimes para alimentar o combobox no formulario de
      * prescricao
@@ -100,6 +109,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getAllMotivoPrescricao(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.description = 'prescription_reason' order by s.id asc";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getAllModoDispensa(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' order by s.id asc";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -401,6 +419,18 @@ public class AdministrationManager {
 
     }
 
+    public static ClinicSector getClinicSectorFromUUID(Session sess, String uuid) throws HibernateException {
+
+        ClinicSector clinicSector = (ClinicSector) sess.createQuery(
+                "select c from ClinicSector as cs where cs.uuid = :uuid")
+                .setString("uuid", uuid).setMaxResults(1).uniqueResult();
+        if (clinicSector == null) {
+            log.warn("Clinic Sector [ "+ uuid +" ] not found");
+        }
+        return clinicSector;
+
+    }
+
     /**
      * Return all Clinic Names
      *
@@ -607,6 +637,7 @@ public class AdministrationManager {
     public static boolean saveUser(Session session, String userName, String password, Set<Role> roles, Set<Clinic> clinics) {
         if (!userExists(session, userName)) {
             User user = new User(userName, password, 'T', roles, clinics);
+            user.setState(1);
             session.save(user);
 
             // log the transaction
@@ -623,6 +654,48 @@ public class AdministrationManager {
             return true;
         }
         return false;
+    }
+
+    public static boolean saveSector(Session session, String sectorName, String code, String telefone, Clinic clinic) {
+        if (getSectorByName(session, sectorName) != null) {
+            return false;
+        } else {
+            ClinicSector clinicSector = new ClinicSector(clinic, sectorName,telefone, code);
+            session.save(clinicSector);
+
+            // log the transaction
+            Logging logging = new Logging();
+            logging.setIDart_User(LocalObjects.getUser(session));
+            logging.setItemId(String.valueOf(clinicSector.getId()));
+            logging.setModified('Y');
+            logging.setTransactionDate(new Date());
+            logging.setTransactionType("Added New Clinic Sector");
+            logging.setMessage("Added New Clinic Sector " + clinicSector.getSectorname());
+            session.save(logging);
+
+            return true;
+        }
+    }
+
+    public static void updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone)
+            throws HibernateException {
+        log.info("Updating sector " + clinicSector.getSectorname());
+        clinicSector.setSectorname(sectorname);
+        clinicSector.setCode(code);
+        clinicSector.setTelephone(telefone);
+        s.update(clinicSector);
+
+        // log the transaction
+        Logging logging = new Logging();
+        logging.setIDart_User(LocalObjects.getUser(s));
+        logging.setItemId(String.valueOf(clinicSector.getId()));
+        logging.setModified('Y');
+        logging.setTransactionDate(new Date());
+        logging.setTransactionType("Updated Clinic Sector");
+        logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
+                + ": changed.");
+        s.save(logging);
+
     }
 
     /**
@@ -642,6 +715,20 @@ public class AdministrationManager {
             clinicList = clinicList.delete(clinicList.length() - 2, clinicList.length());
         }
         return clinicList.toString();
+
+    }
+
+    public static String getRoleAccessString(User u) {
+        StringBuffer roleList = new StringBuffer();
+        for (Role r : u.getRoleSet()) {
+            roleList.append(r.getDescription());
+            roleList.append(", ");
+        }
+        // remove last comma and spac
+        if (roleList.length() > 2) {
+            roleList = roleList.delete(roleList.length() - 2, roleList.length());
+        }
+        return roleList.toString();
 
     }
 
@@ -711,6 +798,17 @@ public class AdministrationManager {
         return result;
     }
 
+    public static ClinicSector getSectorByName(Session sess, String sectorname)
+            throws HibernateException {
+
+        ClinicSector clinicSector = (ClinicSector) sess
+                .createQuery(
+                        "select sector from ClinicSector as sector where sector.sectorname = :sectorname")
+                .setString("sectorname", sectorname).setMaxResults(1)
+                .uniqueResult();
+        return clinicSector;
+    }
+
     /**
      * Method getUserByName.
      *
@@ -774,6 +872,8 @@ public class AdministrationManager {
         u.setPassword(password);
 
         u.setModified('T');
+
+        s.update(u);
 
         // log the transaction
         Logging logging = new Logging();
@@ -840,6 +940,33 @@ public class AdministrationManager {
         s.save(logging);
 
     }
+
+    public static void updateUserRoles(Session s, User u,
+                                         Set<Role> roleSet) throws HibernateException {
+
+        log.info("Updating Role access for user " + u.getUsername());
+        String oldClinicAccessStr = getClinicAccessString(u);
+
+        u.setRoleSet(roleSet);
+
+        String newClinicAccessStr = getRoleAccessString(u);
+
+        u.setModified('T');
+
+        // log the transaction
+        Logging logging = new Logging();
+        logging.setIDart_User(LocalObjects.getUser(s));
+        logging.setItemId(String.valueOf(u.getId()));
+        logging.setModified('Y');
+        logging.setTransactionDate(new Date());
+        logging.setTransactionType("Updated User");
+        logging.setMessage("Updated User " + u.getUsername()
+                + ": Role access change from " + oldClinicAccessStr + " to "
+                + newClinicAccessStr);
+        s.save(logging);
+
+    }
+
 
     /**
      * @param u
@@ -1516,7 +1643,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSave(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'I'").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'I' order by sync.date asc").list();
 
         return result;
     }
@@ -1525,7 +1652,16 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null order by sync.date asc").list();
+
+        return result;
+    }
+
+    // Devolve a lista de todos dispensas locais prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado L- Last Local Dispense)
+    public static List<SyncTempDispense> getAllLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncTempDispense sync where sync.syncstatus = 'L' order by sync.date asc").list();
 
         return result;
     }
@@ -1599,6 +1735,31 @@ public class AdministrationManager {
 
     }
 
+    // Devolve a lista de todos pacientes referidos por uuid
+    public static SyncTempDispense getSyncTempDispenseById(Session sess, int id) throws HibernateException {
+
+        SyncTempDispense result;
+
+        List dispenses = sess.createQuery("from SyncTempDispense sync where sync.id = " + id).list();
+
+        if (dispenses.isEmpty())
+            result = null;
+        else
+            result = (SyncTempDispense) dispenses.get(0);
+
+        return result;
+
+    }
+
+    // Devolve a lista de todos pacientes enviados das clinicsSectors prontos para ser gravados (Estado do paciente R- Pronto, S- Importado, U-Actualizado)
+    public static List<SyncMobilePatient> getAllSyncMobilePatientReadyToSave(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncMobilePatient sync where sync.syncstatus = 'R')").list();
+
+        return result;
+    }
+
     public static Role getRoleByDescription(Session sess, String description) throws HibernateException {
         Role role = (Role) sess
                     .createQuery("select role from Role as role where role.description = :description")
@@ -1624,6 +1785,12 @@ public class AdministrationManager {
     public static List<SystemFunctionality> getSysFunctionalities(Session sess) {
         String query = "from SystemFunctionality";
         List<SystemFunctionality> result = sess.createQuery(query).list();
+        return result;
+    }
+
+    public static List<ClinicSector> getParagemUnica(Session sess) {
+        String query = "from ClinicSector";
+        List<ClinicSector> result = sess.createQuery(query).list();
         return result;
     }
 

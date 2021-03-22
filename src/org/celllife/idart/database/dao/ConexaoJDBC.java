@@ -1,31 +1,25 @@
 
 package org.celllife.idart.database.dao;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import model.manager.reports.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.celllife.idart.commonobjects.iDartProperties;
-import org.celllife.idart.database.hibernate.*;
-import org.celllife.idart.database.hibernate.OpenmrsErrorLog;
+import org.celllife.idart.database.hibernate.Drug;
+import org.celllife.idart.database.hibernate.Patient;
+import org.celllife.idart.database.hibernate.PrescriptionToPatient;
+import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.alert.RiscoRoptura;
 import org.celllife.idart.gui.sync.dispense.SyncLinha;
 import org.celllife.idart.gui.sync.patients.SyncLinhaPatients;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.*;
 
 /**
  * Esta classe efectua conexao com a BD postgres e tem metodo para a manipulacao
@@ -506,51 +500,51 @@ public class ConexaoJDBC {
 
         List<MmiaStock> mmiaStockXLSList = new ArrayList<MmiaStock>();
 
-       Integer drugId = null;
-       String drugFNM = null;
-       String drugName = null;
-       Integer drugPacksize = null;
-       String drugExpireDate = null;
-       String drugpackFrom = null;
+        Integer drugId = null;
+        String drugFNM = null;
+        String drugName = null;
+        Integer drugPacksize = null;
+        String drugExpireDate = null;
+        String drugpackFrom = null;
 
         try {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
 
-            String query =  " SELECT " +
-                            "   distinct " +
-                            "   drug.id, " +
-                            "   drug.atccode_id, " +
-                            "   drug.name , " +
-                            "   drug.packsize , " +
-                            "   drug.packsize || ' ' || form.formlanguage1 as packform , " +
-                            "   MAX(to_char(stock.expirydate,'MM/YYYY')) as mindate " +
-                            " FROM " +
-                            "   drug " +
-                            " INNER JOIN stock ON stock.drug = drug.id" +
-                            " LEFT JOIN form ON form.id = drug.form" +
-                            " WHERE " +
-                            "     drug.sidetreatment = 'F'" +
-                            " AND " +
-                            "     stock.stockcenter = " +stockCenter.getId()+
-                            " AND " +
-                            "   drug.id=stock.drug " +
-                            " GROUP BY 1,2,3,4,5 " +
-                            " ORDER BY drug.atccode_id asc ";
+            String query = " SELECT " +
+                    "   distinct " +
+                    "   drug.id, " +
+                    "   drug.atccode_id, " +
+                    "   drug.name , " +
+                    "   drug.packsize , " +
+                    "   drug.packsize || ' ' || form.formlanguage1 as packform , " +
+                    "   MAX(to_char(stock.expirydate,'MM/YYYY')) as mindate " +
+                    " FROM " +
+                    "   drug " +
+                    " INNER JOIN stock ON stock.drug = drug.id" +
+                    " LEFT JOIN form ON form.id = drug.form" +
+                    " WHERE " +
+                    "     drug.sidetreatment = 'F'" +
+                    " AND " +
+                    "     stock.stockcenter = " + stockCenter.getId() +
+                    " AND " +
+                    "   drug.id=stock.drug " +
+                    " GROUP BY 1,2,3,4,5 " +
+                    " ORDER BY drug.atccode_id asc ";
 
             ResultSet rs = st.executeQuery(query);
 
             if (rs != null) {
 
                 while (rs.next()) {
-                     drugId = rs.getInt("id");
-                     drugFNM = rs.getString("atccode_id");
-                     drugName = rs.getString("name");
-                     drugPacksize = rs.getInt("packsize");
-                     drugExpireDate = rs.getString("mindate");
-                     drugpackFrom = rs.getString("packform");
+                    drugId = rs.getInt("id");
+                    drugFNM = rs.getString("atccode_id");
+                    drugName = rs.getString("name");
+                    drugPacksize = rs.getInt("packsize");
+                    drugExpireDate = rs.getString("mindate");
+                    drugpackFrom = rs.getString("packform");
 
-                    MmiaStock mmiaStock = getStockDetails(dataInicial, dataFinal, stockCenter.getId(), drugId, drugPacksize );
+                    MmiaStock mmiaStock = getStockDetails(dataInicial, dataFinal, stockCenter.getId(), drugId, drugPacksize);
                     mmiaStock.setFnm(drugFNM);
                     mmiaStock.setMedicamento(drugName);
                     mmiaStock.setQuantidadeFrasco(drugpackFrom);
@@ -573,7 +567,7 @@ public class ConexaoJDBC {
     }
 
 
-    public MmiaStock getStockDetails(Date dataInicial, Date dataFinal, Integer stockCenterId, Integer drugId, Integer drugPacksize ) {
+    public MmiaStock getStockDetails(Date dataInicial, Date dataFinal, Integer stockCenterId, Integer drugId, Integer drugPacksize) {
 
         MmiaStock mmiaStockLS = new MmiaStock();
 
@@ -618,91 +612,91 @@ public class ConexaoJDBC {
                     "from ( " +
                     "select sum(s.unitsreceived) as received " +
                     "from drug as d, stock as s " +
-                    "where s.drug = d.id and d.id = "+drugId+" and s.stockCenter = "+stockCenterId+" and s.datereceived::timestamp::date < '"+startDate+"'::timestamp::date " +
+                    "where s.drug = d.id and d.id = " + drugId + " and s.stockCenter = " + stockCenterId + " and s.datereceived::timestamp::date < '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as a, " +
                     " " +
-                    "(select round(floor(sum(pd.amount::real)/"+drugPacksize+")::numeric,0) as issued,  CASE WHEN MOD(sum(pd.amount), "+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(pd.amount::real)/" + drugPacksize + ")::numeric,0) as issued,  CASE WHEN MOD(sum(pd.amount), " + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     " " +
                     "from drug as d, stock as s, packageddrugs as pd, package as p " +
-                    "where d.id =   "+drugId+" " +
-                    "and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " " +
+                    "and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id and pd.stock = s.id " +
                     "and pd.parentpackage = p.id " +
-                    "and p.packdate::timestamp::date <   '"+startDate+"'::timestamp::date " +
+                    "and p.packdate::timestamp::date <   '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as b, " +
                     " " +
                     "( " +
                     "select sum(s.unitsreceived) as received from drug as d, stock as s " +
-                    "where d.id =   "+drugId+" and s.stockCenter =   "+stockCenterId+" and s.drug = d.id " +
-                    "and s.datereceived::timestamp::date  >=   '"+startDate+"'::timestamp::date AND s.datereceived::timestamp::date  <=   '"+endDate+"'::timestamp::date " +
+                    "where d.id =   " + drugId + " and s.stockCenter =   " + stockCenterId + " and s.drug = d.id " +
+                    "and s.datereceived::timestamp::date  >=   '" + startDate + "'::timestamp::date AND s.datereceived::timestamp::date  <=   '" + endDate + "'::timestamp::date " +
                     " " +
                     ") as c, " +
                     " " +
-                    "(select round(floor(sum(pd.amount::real)/"+drugPacksize+")::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),  "+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(pd.amount::real)/" + drugPacksize + ")::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),  " + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     "from drug as d, stock as s, packageddrugs as pd, package as p,prescription as pre " +
-                    "where d.id =   "+drugId+" and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id " +
                     "and p.prescription = pre.id " +
-                    "and p.packdate::timestamp::date >=   '"+startDate+"'::timestamp::date and p.packdate::timestamp::date <=   '"+endDate+"'::timestamp::date " +
+                    "and p.packdate::timestamp::date >=   '" + startDate + "'::timestamp::date and p.packdate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
                     " " +
                     ") as d, " +
                     " " +
-                    "(select round(floor(sum(pd.amount::real)/"+drugPacksize+")::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),  "+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(pd.amount::real)/" + drugPacksize + ")::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),  " + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     "from drug as d, stock as s, packageddrugs as pd, package as p " +
-                    "where d.id =   "+drugId+" and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id " +
                     "and p.prescription is null " +
-                    "and p.packdate::timestamp::date  >=   '"+startDate+"'::timestamp::date AND  p.packdate::timestamp::date <=   '"+endDate+"'::timestamp::date " +
+                    "and p.packdate::timestamp::date  >=   '" + startDate + "'::timestamp::date AND  p.packdate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
                     " " +
                     ") as e, " +
                     " " +
-                    "(select round(floor(sum(sa.adjustedvalue::real)/"+drugPacksize+")::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue),"+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(sa.adjustedvalue::real)/" + drugPacksize + ")::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue)," + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     " " +
                     "from drug as d, stock as s, stockAdjustment as sa " +
-                    "where d.id = "+drugId+" " +
-                    "and s.stockCenter = "+stockCenterId+" " +
+                    "where d.id = " + drugId + " " +
+                    "and s.stockCenter = " + stockCenterId + " " +
                     "and s.drug = d.id " +
                     "and sa.stock = s.id " +
-                    "and sa.captureDate::timestamp::date <   '"+startDate+"'::timestamp::date " +
+                    "and sa.captureDate::timestamp::date <   '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as f, " +
                     " " +
-                    "(select round(floor(sum(sa.adjustedvalue::real)/"+drugPacksize+")::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue),"+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(sa.adjustedvalue::real)/" + drugPacksize + ")::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue)," + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     " " +
                     "from drug as d, stock as s, stockAdjustment as sa " +
-                    "where d.id =   "+drugId+" " +
-                    "and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " " +
+                    "and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id " +
                     "and sa.stock = s.id " +
-                    "and sa.captureDate::timestamp::date  >= '"+startDate+"'::timestamp::date AND sa.captureDate::timestamp::date <=   '"+endDate+"'::timestamp::date " +
+                    "and sa.captureDate::timestamp::date  >= '" + startDate + "'::timestamp::date AND sa.captureDate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
                     " " +
                     ") as g, " +
                     " " +
-                    "(select round(floor(sum(pd.amount::real)/"+drugPacksize+")::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),  "+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(pd.amount::real)/" + drugPacksize + ")::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),  " + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     " " +
                     "from drug as d, stock as s, packageddrugs as pd, package as p " +
-                    "where d.id =   "+drugId+" " +
-                    "and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " " +
+                    "and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id and pd.stock = s.id " +
                     "and pd.parentpackage = p.id " +
                     "and p.stockReturned = true " +
                     "and p.packageReturned = true " +
-                    "and p.dateReturned::timestamp::date <   '"+startDate+"'::timestamp::date " +
+                    "and p.dateReturned::timestamp::date <   '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as h, " +
                     " " +
-                    "(select round(floor(sum(pd.amount::real)/"+drugPacksize+")::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),  "+drugPacksize+") > 0 THEN 1 ELSE 0 END as pills " +
+                    "(select round(floor(sum(pd.amount::real)/" + drugPacksize + ")::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),  " + drugPacksize + ") > 0 THEN 1 ELSE 0 END as pills " +
                     " " +
                     "from drug as d, stock as s, packageddrugs as pd, package as p " +
-                    "where d.id =   "+drugId+" " +
-                    "and s.stockCenter =   "+stockCenterId+" " +
+                    "where d.id =   " + drugId + " " +
+                    "and s.stockCenter =   " + stockCenterId + " " +
                     "and s.drug = d.id and pd.stock = s.id " +
                     "and pd.parentpackage = p.id " +
                     "and p.stockReturned = true " +
                     "and p.packageReturned = true " +
-                    "and p.dateReturned::timestamp::date  >=   '"+startDate+"'::date AND p.dateReturned::timestamp::timestamp::date <=   '"+endDate+"'::timestamp::date " +
+                    "and p.dateReturned::timestamp::date  >=   '" + startDate + "'::date AND p.dateReturned::timestamp::timestamp::date <=   '" + endDate + "'::timestamp::date " +
                     " " +
                     ") as i ";
 
@@ -731,7 +725,7 @@ public class ConexaoJDBC {
             e.printStackTrace();
         }
 
-        int totalpills = openingpills + returned + received - dispensed - destroyed - adjusted ;
+        int totalpills = openingpills + returned + received - dispensed - destroyed - adjusted;
 
         mmiaStockLS.setSaldo(String.valueOf(openingpills));
         mmiaStockLS.setEntrdas(String.valueOf(received));
@@ -757,23 +751,23 @@ public class ConexaoJDBC {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
 
-            String query =  " SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) as totalpacientes " +
+            String query = " SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) as totalpacientes " +
                     "FROM (select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id " +
                     "from package pa " +
                     "inner join packageddrugs pds on pds.parentpackage = pa.id " +
                     "inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id " +
                     "inner join prescription pre on pre.id = pa.prescription " +
                     "inner join patient pat ON pre.patient=pat.id " +
-                    "where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <=   '"+endDate+"') " +
-                    " OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >   '"+endDate+"' " +
-                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '"+endDate+"'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' " +
-                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '"+endDate+"'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <=   '"+endDate+"')) " +
+                    "where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <=   '" + endDate + "') " +
+                    " OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >   '" + endDate + "' " +
+                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' " +
+                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <=   '" + endDate + "')) " +
                     "GROUP BY 3 order by 3) pack " +
                     "inner join prescription p on p.date = pack.predate and p.patient=pack.id " +
                     "inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate " +
                     "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
                     "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
-                    "    from episode WHERE stopdate is null and startdate <=   '"+endDate+"' " +
+                    "    from episode WHERE stopdate is null and startdate <=   '" + endDate + "' " +
                     "    GROUP BY 2,3 " +
                     ") visit on visit.patient = pack.id " +
                     "where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' " +
@@ -819,20 +813,20 @@ public class ConexaoJDBC {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
 
-            String query =  " SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) as totalpacientes " +
+            String query = " SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) as totalpacientes " +
                     "FROM (select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id " +
                     "from package pa " +
                     "inner join packageddrugs pds on pds.parentpackage = pa.id " +
                     "inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id " +
                     "inner join prescription pre on pre.id = pa.prescription " +
                     "inner join patient pat ON pre.patient=pat.id " +
-                    "where pds.amount <> 0 and (pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <=   '"+endDate+"')  " +
+                    "where pds.amount <> 0 and (pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <=   '" + endDate + "')  " +
                     "GROUP BY 3 order by 3) pack " +
                     "inner join prescription p on p.date = pack.predate and p.patient=pack.id " +
                     "inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate " +
                     "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
                     "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
-                    "    from episode WHERE stopdate is null and startdate <=   '"+endDate+"' " +
+                    "    from episode WHERE stopdate is null and startdate <=   '" + endDate + "' " +
                     "    GROUP BY 2,3 " +
                     ") visit on visit.patient = pack.id " +
                     "where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' " +
@@ -1913,7 +1907,7 @@ public class ConexaoJDBC {
                                 - rs.getInt("saldos"));
 
                 riscos.add(rr);
-               log.trace("   ");
+                log.trace("   ");
 
             }
             rs.close(); // � necess�rio fechar o resultado ao terminar
@@ -4242,7 +4236,7 @@ public class ConexaoJDBC {
     }
 
     public String getLivroRegistoDiario(boolean i, boolean m,
-                                        boolean a, boolean t, boolean r,String startDate, String endDate) {
+                                        boolean a, boolean t, boolean r, String startDate, String endDate) {
 
         Vector<String> v = new Vector<String>();
 
@@ -4252,9 +4246,9 @@ public class ConexaoJDBC {
             v.add("Manter");
         if (a)
             v.add("Alterar");
-        if(t)
+        if (t)
             v.add("Transfer de");
-        if(r)
+        if (r)
             v.add("Reiniciar");
 
 
@@ -4340,9 +4334,9 @@ public class ConexaoJDBC {
             v.add("Manter");
         if (a)
             v.add("Alterar");
-        if(t)
+        if (t)
             v.add("Transfer de");
-        if(r)
+        if (r)
             v.add("Reiniciar");
 
         String condicao = "(\'";
@@ -4367,6 +4361,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4379,10 +4384,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id, max(visit.id) episode "
+                + " 			pat.id, max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4396,7 +4402,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
@@ -4419,7 +4425,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a,boolean t, boolean r, String startDate, String endDate) throws SQLException, ClassNotFoundException {
+    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4432,9 +4438,9 @@ public class ConexaoJDBC {
             v.add("Manter");
         if (a)
             v.add("Alterar");
-        if(t)
+        if (t)
             v.add("Transfer de");
-        if(r)
+        if (r)
             v.add("Reiniciar");
 
         String condicao = "(\'";
@@ -4459,6 +4465,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4471,10 +4488,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason  ,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id , max(visit.id) episode "
+                + " 			pat.id , max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4488,7 +4506,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
@@ -4511,6 +4529,8 @@ public class ConexaoJDBC {
                 levantamentoXLS.setTipoPaciente(rs.getString("startreason"));
                 levantamentoXLS.setRegimeTerapeutico(rs.getString("regime"));
                 levantamentoXLS.setTipoDispensa(rs.getString("tipodispensa"));
+                levantamentoXLS.setProveniencia(rs.getString("proveniencia"));
+                levantamentoXLS.setModoDispensa(rs.getString("modedispense"));
                 levantamentoXLS.setDataLevantamento(rs.getString("datalevantamento"));
                 levantamentoXLS.setDataProximoLevantamento(rs.getString("dataproximolevantamento"));
 
@@ -4531,23 +4551,26 @@ public class ConexaoJDBC {
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
 
-        String query = "select distinct patientid as nid, " +
-                "patientfirstname ||' '|| patientlastname as nome, " +
-                "reasonforupdate as tipoPaciente, " +
-                "regimenome as regimeTerapeutico, " +
+        String query = "select distinct spt.patientid as nid, " +
+                "spt.patientfirstname as nome, " +
+                "spt.patientlastname as apelido, " +
+                "spt.reasonforupdate as tipotarv, " +
+                "spt.regimenome as regime, " +
                 "CASE " +
-                "WHEN dispensatrimestral = 1 THEN 'DT' " +
-                "WHEN dispensasemestral = 1 THEN 'DS' " +
+                "WHEN spt.dispensatrimestral = 1 THEN 'DT' " +
+                "WHEN spt.dispensasemestral = 1 THEN 'DS' " +
                 "ELSE 'DM' " +
                 "        END AS tipodispensa, " +
-                "pg_catalog.date(pickupdate) as dataLevantamento, " +
-                "to_date(dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, " +
-                "mainclinicname as referencia " +
-                "from sync_temp_dispense " +
-                "where pg_catalog.date(pickupdate) >= '" + startDate + "'::date " +
-                "AND pg_catalog.date(pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') " +
-                "GROUP BY 1,2,3,4,5,6,7,8 " +
-                "order by 6";
+                "pg_catalog.date(spt.pickupdate) as dataLevantamento, " +
+                "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento, " +
+                "c.clinicname as referencia " +
+                "from sync_temp_dispense spt " +
+                "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs " +
+                "inner join clinic c on c.id = p.clinic " +
+                "where pg_catalog.date(spt.pickupdate) >= '"+startDate+"'::date " +
+                "AND pg_catalog.date(spt.pickupdate) < ('"+endDate+"'::date + INTERVAL '1 day') " +
+                "GROUP BY 1,2,3,4,5,6,7,8,9 " +
+                "order by 7 asc";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
         ResultSet rs = st.executeQuery(query);
@@ -4603,9 +4626,9 @@ public class ConexaoJDBC {
             v.add("Manter");
         if (a)
             v.add("Alterar");
-        if(t)
+        if (t)
             v.add("Transfer de");
-        if(r)
+        if (r)
             v.add("Reiniciar");
 
         String condicao = "(\'";
@@ -4922,7 +4945,7 @@ public class ConexaoJDBC {
                         linhas.getString("d"), linhas.getString("e"),
                         linhas.getString("f"), linhas.getString("g"));
 
-               log.trace(linhas.getString("a") + " "
+                log.trace(linhas.getString("a") + " "
                         + linhas.getString("b") + " " + linhas.getString("c")
                         + " " + linhas.getString("d") + " "
                         + linhas.getString("e") + " " + linhas.getString("f"));
@@ -4935,7 +4958,7 @@ public class ConexaoJDBC {
 
         }
 
-       log.trace(" Vector size " + linha.size());
+        log.trace(" Vector size " + linha.size());
 
         return linha;
 
@@ -5219,7 +5242,7 @@ public class ConexaoJDBC {
                     jatemFilaInicio = true;
                     break;
                 }
-               log.trace("/*/*//*///*/*//*/*/" + rs.getString("nid"));
+                log.trace("/*/*//*///*/*//*/*/" + rs.getString("nid"));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -6245,22 +6268,25 @@ public class ConexaoJDBC {
 
             // here is our splitter ! We use ";" as a delimiter for each request
             // then we are sure to have well formed statements
+
             String[] inst = sb.toString().split(";");
 
             conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
-
 
             for (int i = 0; i < inst.length; i++) {
                 // we ensure that there is no spaces before or after the request string
                 // in order to not execute empty statements
                 try {
                     if (!inst[i].trim().equals("")) {
+                        if (inst[i].startsWith("CREATE OR REPLACE FUNCTION")) {
+                            inst[i] = inst[i].replaceAll("!", ";");
+                        }
                         st.executeUpdate(inst[i]);
-                       log.trace(">>" + inst[i]);
+                        log.trace(">>" + inst[i]);
                     }
                     break;
                 } catch (SQLException e) {
-                   log.trace("### - SQL Error " + e.getMessage());
+                    log.trace("### - SQL Error " + e.getMessage());
                 } finally {
 
                     continue;
@@ -6269,12 +6295,12 @@ public class ConexaoJDBC {
             }
 
         } catch (Exception e) {
-           log.trace("*** Error : " + e.toString());
-           log.trace("*** ");
-           log.trace("*** Error : ");
+            log.trace("*** Error : " + e.toString());
+            log.trace("*** ");
+            log.trace("*** Error : ");
             e.printStackTrace();
-           log.trace("################################################");
-           log.trace(sb.toString());
+            log.trace("################################################");
+            log.trace(sb.toString());
         }
 
     }
@@ -6415,14 +6441,13 @@ public class ConexaoJDBC {
                 somaUnidadesAjustadas = somaUnidadesAjustadas + rs.getInt("adjusted");
 
 
+                //   if (rs.getInt("adjusted") % drug.getPackSize() == 0)
+                lostAdjust = rs.getInt("adjusted") / drug.getPackSize();
 
-             //   if (rs.getInt("adjusted") % drug.getPackSize() == 0)
-                    lostAdjust = rs.getInt("adjusted") / drug.getPackSize();
-
-             //   if (rs.getInt("dispensedpills") % drug.getPackSize() == 0)
-                    dispensed = rs.getInt("dispensed");
-           //     else
-            //        dispensed = rs.getInt("dispensed") + 1;
+                //   if (rs.getInt("dispensedpills") % drug.getPackSize() == 0)
+                dispensed = rs.getInt("dispensed");
+                //     else
+                //        dispensed = rs.getInt("dispensed") + 1;
 
                 if (totalpills % drug.getPackSize() == 0)
                     stock = totalpills / drug.getPackSize();
@@ -6698,7 +6723,7 @@ public class ConexaoJDBC {
                     "inner join linhat lt on lt.linhaid = pr.linhaid " +
                     "inner join episode e on e.patient = p.id " +
                     "inner join nationalclinics nc on nc.id = c.clinicdetails_id " +
-                    "left join ( " +
+                    "inner join ( " +
                     "select distinct pat.id patient, Max(pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY'))) proxLev, " +
                     "Max(p.date) prescriptiondate " +
                     "from package pa " +
@@ -6859,7 +6884,7 @@ public class ConexaoJDBC {
 
     }
 
-    public List<AbsenteeForSupportCall> getLostToFallowUp(Date dataInicial,Date dataFinal, String clinicid) {
+    public List<AbsenteeForSupportCall> getLostToFallowUp(Date dataInicial, Date dataFinal, String clinicid) {
 
         List<AbsenteeForSupportCall> lostToFollowUpXLS = new ArrayList<AbsenteeForSupportCall>();
 
@@ -6881,9 +6906,9 @@ public class ConexaoJDBC {
                     "pat.cellphone as cellno, " +
                     "date_part('year',age(pat.dateofbirth)) as age, " +
                     "app.appointmentDate::date as dateexpected, " +
-                    "('"+startDate+"' ::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
+                    "('" + startDate + "' ::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
                     "CASE " +
-                    "    WHEN ((('"+startDate+"' ::date-app.appointmentDate::date) > 59) OR (('"+endDate+"' ::date-app.appointmentDate::date) <= 90) AND app.visitdate::date IS NULL) THEN (app.appointmentDate::date + INTERVAL '60 days') " +
+                    "    WHEN ((('" + startDate + "' ::date-app.appointmentDate::date) > 59) OR (('" + endDate + "' ::date-app.appointmentDate::date) <= 90) AND app.visitdate::date IS NULL) THEN (app.appointmentDate::date + INTERVAL '60 days') " +
                     "    ELSE " +
                     " CASE " +
                     "     WHEN ((app.appointmentDate::date - app.visitdate::date) > 60) THEN (app.appointmentDate::date + INTERVAL '60 days') " +
@@ -6903,10 +6928,10 @@ public class ConexaoJDBC {
                     "and idt.name = 'NID' " +
                     "and pi.value = pat.patientid " +
                     "and idt.id = pi.type_id " +
-                    "and "+clinicid+" = pat.clinic " +
+                    "and " + clinicid + " = pat.clinic " +
                     "and app.appointmentDate is not null " +
                     "and (app.visitDate is null) " +
-                    "and (((app.appointmentDate::date + INTERVAL '60 days') between '"+startDate+"'  and '"+endDate+"' ) OR ((app.appointmentDate::date + INTERVAL '90 days') between '"+startDate+"'  and '"+endDate+"' )) " +
+                    "and (((app.appointmentDate::date + INTERVAL '60 days') between '" + startDate + "'  and '" + endDate + "' ) OR ((app.appointmentDate::date + INTERVAL '90 days') between '" + startDate + "'  and '" + endDate + "' )) " +
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
@@ -6961,7 +6986,7 @@ public class ConexaoJDBC {
                 " from package pack " +
                 " inner join prescription pr on pr.id = pack.prescription " +
                 " inner join regimeterapeutico rt on pr.regimeid = rt.regimeid " +
-                " where pr.date between '"+ startDate +"' and '"+ endDate+"' " +
+                " where pr.date between '" + startDate + "' and '" + endDate + "' " +
                 " group by 1,2,3 " +
                 " order by 3 asc";
 
@@ -7020,7 +7045,7 @@ public class ConexaoJDBC {
                 " select p.patient, p.date from prescription p " +
                 "  inner join package pack on p.id = pack.prescription " +
                 "  inner join packageddrugs pds on pds.parentpackage = pack.id " +
-                " where p.date between '"+startDate+"' and '"+endDate+"' and pds.amount <> 0 " +
+                " where p.date between '" + startDate + "' and '" + endDate + "' and pds.amount <> 0 " +
                 " group by 1,2 " +
                 ") pr on pr.patient = pat.id " +
                 "group by 1 " +
@@ -7028,7 +7053,7 @@ public class ConexaoJDBC {
                 "order by 1 " +
                 " )pp on pp.id = pe.patient " +
                 " inner join patient pt on pt.id = pe.patient " +
-                " where pe.date between '"+startDate+"' and '"+endDate+"' ";
+                " where pe.date between '" + startDate + "' and '" + endDate + "' ";
 
         List<PrescricoesDuplicadasXLS> prescricoesDuplicadasXLSList = new ArrayList<PrescricoesDuplicadasXLS>();
         ResultSet rs = st.executeQuery(query);
@@ -7057,6 +7082,35 @@ public class ConexaoJDBC {
 
         return prescricoesDuplicadasXLSList;
 
+    }
+
+    public int idMostUsedDoctor()
+            throws SQLException, ClassNotFoundException {
+
+        conecta(iDartProperties.hibernateUsername,
+                iDartProperties.hibernatePassword);
+
+        int id = 0;
+
+        String query = " select p.doctor as id, count(*) as maxData " +
+                " from Prescription p  " +
+                " group by 1 " +
+                " order by maxData desc limit 1";
+
+        ResultSet rs = st.executeQuery(query);
+
+        if (rs != null) {
+
+            while (rs.next()) {
+
+                id = rs.getInt("id");
+
+            }
+            rs.close();
+
+        }
+
+        return id;
     }
 
 }

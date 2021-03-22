@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="685"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -56,23 +56,25 @@
 	<parameter name="parameter1" class="java.lang.String"/>
 	<parameter name="distrito" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select distinct patientid as nid,
-		patientfirstname ||' '|| patientlastname as nome,
-		reasonforupdate as tipoPaciente,
-		regimenome as regimeTerapeutico,
+		<![CDATA[select distinct spt.patientid as nid,
+		spt.patientfirstname ||' '|| spt.patientlastname as nome,
+		spt.reasonforupdate as tipoPaciente,
+		spt.regimenome as regimeTerapeutico,
 		CASE
-			WHEN dispensatrimestral = 1 THEN 'DT'
-			WHEN dispensasemestral = 1 THEN 'DS'
+			WHEN spt.dispensatrimestral = 1 THEN 'DT'
+			WHEN spt.dispensasemestral = 1 THEN 'DS'
 			ELSE 'DM'
         END AS tipodispensa,
-		pg_catalog.date(pickupdate) as dataLevantamento,
-		to_date(dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev,
-		mainclinicname as referencia
-from sync_temp_dispense
-where pg_catalog.date(pickupdate) >= $P{date}::date
-AND pg_catalog.date(pickupdate) < ($P{dateEnd}::date + INTERVAL '1 day')
+		pg_catalog.date(spt.pickupdate) as dataLevantamento,
+		to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev,
+		c.clinicname as referencia
+from sync_temp_dispense spt
+inner join patient p on p.uuidopenmrs = spt.uuidopenmrs
+inner join clinic c on c.id = p.clinic
+where pg_catalog.date(spt.pickupdate) >= $P{date}::date
+AND pg_catalog.date(spt.pickupdate) < ($P{dateEnd}::date + INTERVAL '1 day')
 GROUP BY 1,2,3,4,5,6,7,8
-order by 6]]>
+order by 6 asc]]>
 	</queryString>
 	<field name="nid" class="java.lang.String"/>
 	<field name="nome" class="java.lang.String"/>

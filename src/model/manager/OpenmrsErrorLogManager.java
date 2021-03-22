@@ -38,7 +38,7 @@ public class OpenmrsErrorLogManager {
 
 	public static List<OpenmrsErrorLog> getOpenmrsErrorList(Session sess,String startDate, String endDate, StockCenter clinic) throws SQLException, ClassNotFoundException {
 
-		String query = "from OpenmrsErrorLog where datecreated between '"+startDate+"' and '"+endDate+"' ";
+		String query = "select opl from OpenmrsErrorLog opl, Prescription pr where pr.id = opl.prescription and opl.datecreated >= '"+startDate+"' and opl.datecreated <='"+endDate+"' ";
 
 		return (List<OpenmrsErrorLog>) sess.createQuery(query).list();
 	}

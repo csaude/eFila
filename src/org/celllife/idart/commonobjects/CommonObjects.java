@@ -19,24 +19,8 @@
 
 package org.celllife.idart.commonobjects;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
-
 import model.manager.AdministrationManager;
-
-import org.celllife.idart.database.hibernate.Clinic;
-import org.celllife.idart.database.hibernate.Doctor;
-import org.celllife.idart.database.hibernate.Episode;
-import org.celllife.idart.database.hibernate.Form;
-import org.celllife.idart.database.hibernate.LinhaT;
-import org.celllife.idart.database.hibernate.Motivomudanca;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.RegimeTerapeutico;
-import org.celllife.idart.database.hibernate.Regimen;
-import org.celllife.idart.database.hibernate.SimpleDomain;
-import org.celllife.idart.database.hibernate.StockCenter;
+import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.messages.Messages;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -49,6 +33,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.hibernate.Session;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.UUID;
 
 /**
  */
@@ -83,6 +72,8 @@ public class CommonObjects {
 	public static final int ROLE = 14;
 
 	public static final int FUNCTIONALITY = 15;
+
+	public static final int SECTOR = 16;
 
 	public static String timesPerDayLanguage1 = "times per day";
 
@@ -500,6 +491,22 @@ public class CommonObjects {
 
 	}
 
+	public static void populateModoDispensa(Session sess, CCombo combo) {
+
+		List<SimpleDomain> sdList = AdministrationManager
+				.getAllModoDispensa(sess);
+
+		if (sdList != null) {
+			for (SimpleDomain s : sdList) {
+				combo.add(s.getValue());
+			}
+		}
+		combo.add("");
+
+		combo.setVisibleItemCount(combo.getItemCount());
+		combo.setEditable(false);
+
+	}
 
 	/**
 	 *

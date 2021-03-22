@@ -140,6 +140,9 @@ public class HibernateUtil {
 		ac.addAnnotatedClass(SystemFunctionality.class);
 		ac.addAnnotatedClass(User.class);
 		ac.addAnnotatedClass(SyncEpisode.class);
+		ac.addAnnotatedClass(ClinicSector.class);
+		ac.addAnnotatedClass(PatientSector.class);
+		ac.addAnnotatedClass(SyncMobilePatient.class);
 		sessionFactory = ac.buildSessionFactory();
 	}
 

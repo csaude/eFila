@@ -7,8 +7,6 @@ import model.manager.EpisodeManager;
 import model.manager.PatientManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
@@ -95,10 +93,12 @@ public class RestFarmac {
 
                         restPatchPatient(url, syncTempPatient, updateStatus, pool);
                         log.trace(" Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname() + " carregado com sucesso");
+                        log.info(" Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname() + " carregado com sucesso");
                         break;
                     } catch (Exception e) {
                         assert tx != null;
                         tx.rollback();
+                        log.error(" Ocorreu um erro ao gravar a informacao do Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname());
                         log.trace(" Ocorreu um erro ao gravar a informacao do Paciente [" + syncTempPatient + "] Refrido de " + syncTempPatient.getMainclinicname());
                     } finally {
 
@@ -388,7 +388,8 @@ public class RestFarmac {
                         syncEpisode = gson.fromJson(jsonObj.toString(), SyncEpisode.class);
                         String updateStatus = "{\"syncstatus\":\"U\"}";
 
-                        int centralId = syncEpisode.getId();;
+                        int centralId = syncEpisode.getId();
+                        ;
 
                         EpisodeManager.saveSyncTempEpisode(syncEpisode);
 
@@ -396,15 +397,18 @@ public class RestFarmac {
 
                         restPatchEpisode(url, syncEpisode, updateStatus, pool);
                         log.trace(" Informacao do episodio do Paciente [" + syncEpisode.getPatientUUID() + "]  carregada/actualizada com sucesso");
+                        log.info(" Informacao do episodio do Paciente [" + syncEpisode.getPatientUUID() + "]  carregada/actualizada com sucesso");
                         break;
                     } catch (Exception e) {
                         log.trace(" Ocorreu um erro ao carregar o episodio do Paciente [" + syncEpisode.getPatientUUID() + "] ERRO: " + e.getMessage());
+                        log.error(" Ocorreu um erro ao carregar o episodio do Paciente [" + syncEpisode.getPatientUUID() + "] ERRO: " + e.getMessage());
                     } finally {
 
                         continue;
                     }
                 } else {
                     log.trace(new Date() + " [FARMAC] INFO - Nenhumm Episodio do paciente referido foi encontrado");
+                    log.info(new Date() + " [FARMAC] INFO - Nenhumm Episodio do paciente referido foi encontrado");
                 }
             }
 
@@ -412,7 +416,6 @@ public class RestFarmac {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
 
         return response.getStatusLine().toString();
@@ -454,15 +457,18 @@ public class RestFarmac {
                         AdministrationManager.saveSyncTempDispense(sess, syncTempDispense);
                         restPatchDispense(url, syncTempDispense, updateStatus, pool);
                         log.trace(" Informacao de Levantamento do Paciente [" + syncTempDispense.getPatientid() + "] referido de " + syncTempDispense.getMainclinicname() + " carregada/actualizado com sucesso");
+                        log.info(" Informacao de Levantamento do Paciente [" + syncTempDispense.getPatientid() + "] referido de " + syncTempDispense.getMainclinicname() + " carregada/actualizado com sucesso");
                         break;
                     } catch (Exception e) {
                         log.trace(" Ocorreu um erro ao carregar a informacao do Paciente [" + syncTempDispense.getPatientid() + "] Refrido de " + syncTempDispense.getMainclinicname() + " ERRO: " + e.getMessage());
+                        log.error(" Ocorreu um erro ao carregar a informacao do Paciente [" + syncTempDispense.getPatientid() + "] Refrido de " + syncTempDispense.getMainclinicname() + " ERRO: " + e.getMessage());
                     } finally {
 
                         continue;
                     }
                 } else {
                     log.trace(new Date() + " [FARMAC] INFO - Nenhumm Levantamento do paciente referido foi encontrado");
+                    log.info(new Date() + " [FARMAC] INFO - Nenhumm Levantamento do paciente referido foi encontrado");
                 }
             }
 
@@ -513,21 +519,31 @@ public class RestFarmac {
 
         List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
         String result = "";
-        if (syncTempPatients.isEmpty())
+        if (syncTempPatients.isEmpty()) {
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
-        else
+            log.info(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
+        } else
             for (SyncTempPatient patientSync : syncTempPatients) {
+                Session session = HibernateUtil.getNewSession();
                 try {
+                    session.beginTransaction();
                     result = restPostPatient(url, patientSync, pool);
                     if (result.contains("Falha") && !result.contains("409")) {
                         log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + result);
                     } else {
+                        log.info(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         log.trace(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         patientSync.setSyncstatus('E');
                         AdministrationManager.saveSyncTempPatient(sess, patientSync);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
                     }
                     break;
                 } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
                     log.error(e);
                 } finally {
                     continue;
@@ -544,17 +560,26 @@ public class RestFarmac {
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm episodio foi encontrado para enviar");
         else {
             for (SyncEpisode syncEpisode : syncTempEpisodes) {
+                Session session = HibernateUtil.getNewSession();
                 try {
+                    session.beginTransaction();
                     result = restPostEpisode(url, syncEpisode, pool);
                     if (result.contains("Falha") && !result.contains("409")) {
                         log.error(new Date() + ": Ocorreu um erro ao gravar o episodio do paciente com uuid " + syncEpisode.getPatientUUID() + " Erro: " + result);
                     } else {
+                        log.info(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
                         log.trace(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
                         syncEpisode.setSyncStatus('U');
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
                     }
                     break;
                 } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
                     log.error(e);
                 } finally {
                     continue;
@@ -574,18 +599,26 @@ public class RestFarmac {
             log.trace(new Date() + " [FARMAC] INFO - Nenhum Levantamento de ARV de paciente foi encontrado para enviar");
         else
             for (SyncTempDispense dispenseSync : syncTempDispenses) {
-
+                Session session = HibernateUtil.getNewSession();
                 try {
+                    session.beginTransaction();
                     result = restPostDispense(url, dispenseSync, pool);
                     if (result.contains("Falha")) {
                         log.error(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
                     } else {
+                        log.info(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
                         dispenseSync.setSyncstatus('E');
                         AdministrationManager.saveSyncTempDispense(sess, dispenseSync);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
                     }
                     break;
                 } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
                     log.error(e.getMessage());
                 } finally {
 
@@ -595,80 +628,124 @@ public class RestFarmac {
             }
     }
 
-    public static void setPatientsFromRest() {
+    public static void restPostLocalDispenses(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
-        try {
-            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
+        List<SyncTempDispense> syncTempDispenses = AdministrationManager.getAllLocalSyncTempDispenseReadyToSend(sess);
+
+        String result = "";
+
+        if (syncTempDispenses.isEmpty())
+            log.trace(new Date() + " [US] INFO - Nenhum último levantamento de ARV de paciente foi encontrado para enviar");
+        else
+            for (SyncTempDispense dispenseSync : syncTempDispenses) {
+                Session session = HibernateUtil.getNewSession();
+                try {
+                    session.beginTransaction();
+                    result = restPostDispense(url, dispenseSync, pool);
+                    if (result.contains("Falha")) {
+                        log.error(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
+                    } else {
+                        log.info(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                        dispenseSync.setSyncstatus('M');
+                        AdministrationManager.saveSyncTempDispense(sess, dispenseSync);
+                        session.getTransaction().commit();
+                        session.flush();
+                        session.clear();
+                        session.close();
+                    }
+                    break;
+                } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
+                    log.error(e.getMessage());
+                } finally {
+
+                    continue;
+                }
+
+            }
+    }
+
+    public static void setPatientsFromRest(Session session) {
+
+
+            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(session);
 
             if (!syncTempPatients.isEmpty()) {
 
                 for (SyncTempPatient patient : syncTempPatients) {
+                    Session sess = HibernateUtil.getNewSession();
                     try {
-                        DadosPacienteFarmac.InserePaciente(patient);
+                        sess.beginTransaction();
+                        DadosPacienteFarmac.InserePaciente(sess, patient);
                         patient.setSyncstatus('I');
                         AdministrationManager.saveSyncTempPatient(sess, patient);
+                        sess.getTransaction().commit();
+                        sess.flush();
+                        sess.clear(); // Clearing the session object
+                        sess.close();
                         break;
                     } catch (Exception e) {
+                        sess.getTransaction().rollback();
+                        sess.close();
                         log.error("Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "]");
                     } finally {
                         continue;
                     }
                 }
             } else {
+                log.info(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
                 log.trace(new Date() + ": [FARMAC] INFO - Nenhumm paciente referido para esta FARMAC foi encontrado");
             }
-            tx.commit();
-            sess.flush();
-            sess.close();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                sess.close();
-            }
-            log.trace(new Date() + ": [FARMAC] INFO - ERRO GERAL ao gravar pacientes referido para esta FARMAC");
-        }
-
     }
 
-    public static void setDispensesFromRest(Session sess) {
+    public static void setDispensesFromRest(Session session) {
 
-        List<SyncTempDispense> syncTempDispenses = AdministrationManager.getAllSyncTempDispenseReadyToSend(sess);
+        List<SyncTempDispense> syncTempDispenses = AdministrationManager.getAllSyncTempDispenseReadyToSend(session);
 
         if (!syncTempDispenses.isEmpty()) {
 
             for (SyncTempDispense dispense : syncTempDispenses) {
+                Session sess = HibernateUtil.getNewSession();
                 try {
+                    sess.beginTransaction();
                     Prescription prescription = DadosPacienteFarmac.getPatientPrescritionFarmac(dispense);
 
                     DadosPacienteFarmac.saveDispenseFarmacQty0(prescription, dispense);
                     DadosPacienteFarmac.setDispenseRestOpenmrs(sess, prescription, dispense);
                     dispense.setSyncstatus('I');
                     AdministrationManager.saveSyncTempDispense(sess, dispense);
-
+                    sess.getTransaction().commit();
+                    sess.flush();
+                    sess.clear(); // Clearing the session object
+                    sess.close();
                     break;
                 } catch (Exception e) {
+                    sess.getTransaction().rollback();
+                    sess.close();
                     log.error("Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "]");
                 } finally {
                     continue;
                 }
             }
         } else {
+            log.info(new Date() + ": [US] INFO - Nenhumm levantamento enviado para esta US foi encontrado");
             log.trace(new Date() + ": [US] INFO - Nenhumm levantamento enviado para esta US foi encontrado");
         }
     }
 
-    public static void setEpisodesFromRest(Clinic clinic) {
+    public static void setEpisodesFromRest(Session session, Clinic clinic) {
 
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
 
-        List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(sess);
+
+        List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(session);
 
         if (iDARTUtil.arrayHasElements(syncTempEpisodes)) {
 
             for (SyncEpisode syncEpisode : syncTempEpisodes) {
+                Session sess = HibernateUtil.getNewSession();
+                sess.beginTransaction();
 
                 Patient relatedPatient = PatientManager.getPatientfromUuid(sess, syncEpisode.getPatientUUID());
 
@@ -676,10 +753,10 @@ public class RestFarmac {
                     try {
                         Episode mostRecentEpisode = relatedPatient.getMostRecentEpisode();
 
-                    if (mostRecentEpisode.isOpen()){
-                        mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
-                        EpisodeManager.saveEpisode(mostRecentEpisode);
-                    }
+                        if (mostRecentEpisode.isOpen()) {
+                            mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
+                            EpisodeManager.saveEpisode(sess, mostRecentEpisode);
+                        }
 
                         Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
                         syncEpisode.setSyncStatus('U');
@@ -687,22 +764,24 @@ public class RestFarmac {
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
 
                         relatedPatient.addEpisode(newEpisode);
-
                         relatedPatient.updateClinic();
                         PatientManager.updatePatient(sess, relatedPatient);
 
-                        assert tx != null;
+                        sess.getTransaction().commit();
                         sess.flush();
-                        tx.commit();
+                        sess.clear();
                         sess.close();
                     } catch (Exception e) {
+                        sess.getTransaction().rollback();
+                        sess.close();
                         log.error("Erro ao gravar episodio do Paciente com NID: [" + relatedPatient.getPatientId() + "]");
                     }
-                }else {
+                } else {
                     log.error("Erro paciente nao encontrado: [" + syncEpisode.getPatientUUID() + "]");
                 }
             }
         } else {
+            log.info(new Date() + ": [US] INFO - Nenhumm episodio enviado para esta US foi encontrado");
             log.trace(new Date() + ": [US] INFO - Nenhumm episodio enviado para esta US foi encontrado");
         }
     }
@@ -944,21 +1023,27 @@ public class RestFarmac {
     }
 
 
-    public static void setCentralPatients() {
-        Session sess = HibernateUtil.getNewSession();
-        Transaction tx = sess.beginTransaction();
-        try {
-            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSave(sess);
+    public static void setCentralPatients(Session session) {
+
+            List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSave(session);
 
             if (!syncTempPatients.isEmpty()) {
 
                 for (SyncTempPatient patient : syncTempPatients) {
+                    Session sess = HibernateUtil.getNewSession();
                     try {
-                        DadosPacienteFarmac.InserePaciente(patient);
+                        sess.beginTransaction();
+                        DadosPacienteFarmac.InserePaciente(sess, patient);
                         patient.setSyncstatus('E');
                         AdministrationManager.saveSyncTempPatient(sess, patient);
+                        sess.getTransaction().commit();
+                        sess.flush();
+                        sess.clear();
+                        sess.close();
                         break;
                     } catch (Exception e) {
+                        sess.getTransaction().rollback();
+                        sess.close();
                         log.error(new Date() + ": [Central] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + patient.getMainclinicname());
                     } finally {
                         continue;
@@ -967,17 +1052,6 @@ public class RestFarmac {
             } else {
                 log.trace(new Date() + ": [Central] INFO - Nenhumm paciente referido para FARMAC foi encontrado");
             }
-            tx.commit();
-            sess.flush();
-            sess.close();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-                sess.close();
-            }
-            log.trace(new Date() + ": [Central] INFO - ERRO GERAL ao gravar pacientes referido para esta FARMAC");
-        }
-
     }
 
     public static void setCentralDispenses(Session sess) {
@@ -987,16 +1061,25 @@ public class RestFarmac {
         if (!syncTempDispenses.isEmpty()) {
 
             for (SyncTempDispense dispense : syncTempDispenses) {
+                Session session = HibernateUtil.getNewSession();
+
                 try {
+                    session.beginTransaction();
                     Prescription prescription = DadosPacienteFarmac.getPatientPrescritionFarmac(dispense);
                     if (prescription != null) {
                         DadosPacienteFarmac.saveDispenseFarmacQty0(prescription, dispense);
                         dispense.setSyncstatus('E');
                     } else
                         dispense.setSyncstatus('W');
-                    AdministrationManager.saveSyncTempDispense(sess, dispense);
+                    AdministrationManager.saveSyncTempDispense(session, dispense);
+                    session.getTransaction().commit();
+                    session.flush();
+                    session.clear();
+                    session.close();
                     break;
                 } catch (Exception e) {
+                    session.getTransaction().rollback();
+                    session.close();
                     log.error(new Date() + ": [Central] INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "] proveniente de " + dispense.getMainclinicname());
                 } finally {
                     continue;
@@ -1005,6 +1088,88 @@ public class RestFarmac {
         } else {
             log.trace(new Date() + ": [Central] INFO - Nenhumm levantamento enviado para US foi encontrado");
         }
+    }
+
+    public static void setPatientFromClinicSector(Session session) {
+        Patient localPatient = null;
+        try {
+            List<SyncMobilePatient> mobilePatients = AdministrationManager.getAllSyncMobilePatientReadyToSave(session);
+
+            if (!mobilePatients.isEmpty()) {
+
+                for (SyncMobilePatient patient : mobilePatients) {
+                    Session sess = HibernateUtil.getNewSession();
+
+                    ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicsectoruuid());
+
+                    if (patient.getUuid() != null)
+                        localPatient = PatientManager.getPatientfromUuid(sess, patient.getUuid());
+                    else
+                        localPatient = PatientManager.getPatient(sess, patient.getPatientid());
+
+                    try {
+                        sess.beginTransaction();
+
+                        if (localPatient == null) {
+                            localPatient = DadosPacienteFarmac.setPatientFromClinicSector(patient);
+                            RestClient.saveOpenmrsPatient(localPatient, sess);
+                        }
+
+                        List<PatientSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, localPatient);
+
+                        if (patientClinicSector.size() > 0) {
+                            log.trace(new Date() + ": [US] INFO - Paciente esta sendo atendido na Paragem Unica" + patientClinicSector.get(0).getClinicsector().getSectorname());
+                            log.error(new Date() + ": [US] INFO - Paciente esta sendo atendido na Paragem Unica" + patientClinicSector.get(0).getClinicsector().getSectorname());
+                        } else {
+                            setPatientToSector(sess, localPatient, clinicSector, patient.getEnrolldate());
+                            setEpisodeToPatientSector(sess, localPatient, clinicSector, patient.getEnrolldate());
+                            patient.setSyncstatus('S');
+                            PatientManager.saveSyncMobilePatient(sess, patient);
+                        }
+                        sess.getTransaction().commit();
+                        sess.flush();
+                        sess.clear();
+                        sess.close();
+                        break;
+                    } catch (Exception e) {
+                        sess.getTransaction().rollback();
+                        sess.close();
+                        log.info(new Date() + ": [US] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + clinicSector.getSectorname());
+                        log.error(new Date() + ": [US] INFO - Erro ao gravar informacao do Paciente [" + patient.getFirstnames() + " " + patient.getLastname() + " com NID: " + patient.getPatientid() + "] provrniente de " + clinicSector.getSectorname());
+                    } finally {
+                        continue;
+                    }
+                }
+            } else {
+                log.info(new Date() + ": [US] INFO - Nenhumm paciente enviado da Paragem Unica foi encontrado");
+                log.trace(new Date() + ": [US] INFO - Nenhumm paciente enviado da Paragem Unica foi encontrado");
+            }
+        } catch (Exception e) {
+            log.error(new Date() + ": [US] INFO - ERRO GERAL ao gravar pacientes enviado da Paragem Unica");
+            log.trace(new Date() + ": [US] INFO - ERRO GERAL ao gravar pacientes enviado da Paragem Unica");
+        }
+
+    }
+
+    private static void setPatientToSector(Session sess, Patient patientToSector, ClinicSector clinicSector, Date enrollDate) {
+
+        PatientSector patientSector = new PatientSector();
+        patientSector.setPatient(patientToSector);
+        patientSector.setClinicsector(clinicSector);
+        patientSector.setStartdate(enrollDate);
+        sess.save(patientSector);
+
+    }
+
+    private static void setEpisodeToPatientSector(Session sess, Patient patientToSector, ClinicSector clinicSector, Date enrollDate){
+        Clinic clinic = AdministrationManager.getMainClinic(sess);
+        Episode episode = new Episode();
+        episode.setPatient(patientToSector);
+        episode.setClinic(clinic);
+        episode.setStartReason("Referrido para P.U");
+        episode.setStartNotes("Referrido para Paragem Unica: ["+ clinicSector.getSectorname()+"]");
+        episode.setStartDate(enrollDate);
+        sess.save(episode);
     }
 
     public static String restGetpermission(String url, String username, String pass, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {

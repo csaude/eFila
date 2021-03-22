@@ -360,7 +360,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 		// btnSave
 		btnSave = new Button(getCompButtons(), SWT.NONE);
-		btnSave.setText("Save"); //$NON-NLS-1$
+		btnSave.setText("Gravar"); //$NON-NLS-1$
 		btnSave.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		btnSave.setToolTipText(Messages.getString("genericformgui.button.save.tooltip")); //$NON-NLS-1$
 
@@ -372,7 +372,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 		btnClear.setToolTipText(Messages.getString("genericformgui.button.clear.tooltip")); //$NON-NLS-1$
 
 		btnCancel = new Button(getCompButtons(), SWT.NONE);
-		btnCancel.setText( "Fechar"); //$NON-NLS-1$
+		btnCancel.setText( "Cancelar"); //$NON-NLS-1$
 		btnCancel.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		btnCancel.setToolTipText(Messages.getString("Clique para fechar a tela")); //$NON-NLS-1$
 				

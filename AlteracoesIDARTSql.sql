@@ -46,6 +46,7 @@ ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescricaoespecial chara
 ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS ctzpickup boolean DEFAULT False;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAULT False;
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS modedispense character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptiondate timestamp with time zone NULL;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS duration integer DEFAULT 0;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionenddate timestamp with time zone NULL;
@@ -57,8 +58,10 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid)
+ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -68,8 +71,10 @@ UPDATE regimeterapeutico set active = false where codigoregime = null OR codigor
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
+DELETE FROM simpledomain WHERE description  = 'Disease';
+DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
-
+UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
@@ -148,7 +153,8 @@ CREATE TABLE IF NOT EXISTS sync_openmrs_dispense (
     dosageuuid character varying(255) COLLATE pg_catalog."default",
     returnvisituuid character varying(255) COLLATE pg_catalog."default",
     strnextpickup character varying(255) COLLATE pg_catalog."default",
-    prescription integer NOT NULL
+    prescription integer NOT NULL,
+    notas character varying(255) COLLATE pg_catalog."default"
 );
 
 CREATE TABLE IF NOT EXISTS systemfunctionality (
@@ -193,6 +199,60 @@ CREATE TABLE IF NOT EXISTS sync_temp_episode (
 	usuuid varchar(255) NULL,
 	clinicuuid varchar(255) NULL,
 	CONSTRAINT sync_episode_pkey PRIMARY KEY (id)
+);
+
+CREATE OR REPLACE FUNCTION user_role_pharmacist_loop_update()
+    RETURNS void AS $$ DECLARE idartusersid int!
+    BEGIN FOR idartusersid IN (SELECT * FROM users WHERE NOT EXISTS (SELECT * FROM user_role WHERE userid = users.id) and users.cl_username not like 'admin')
+            LOOP INSERT INTO user_role (userid, roleid) values (idartusersid,2)! END LOOP! END!
+     $$ LANGUAGE plpgsql;
+
+CREATE TABLE IF NOT EXISTS clinicsector (
+	id int4 NOT NULL,
+	code varchar(255) NULL,
+	sectorname varchar(255) NOT NULL,
+	telephone varchar(255) NULL,
+	uuid varchar(255) NULL,
+	clinic integer NOT NULL,
+	clinicuuid varchar(255) NULL,
+	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id),
+	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS patient_sector (
+	id int4 NOT NULL,
+	startdate timestamptz NULL,
+	enddate timestamptz NULL,
+	endnotes varchar(255) NULL,
+    clinicsector integer NOT NULL,
+    patient integer NOT NULL,
+	CONSTRAINT patient_sector_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS sync_mobile_patient (
+    id integer NOT NULL PRIMARY KEY,
+    cellphone character varying(255) COLLATE pg_catalog."default",
+    dateofbirth timestamp with time zone,
+    firstnames character varying(255) COLLATE pg_catalog."default",
+    homephone character varying(255) COLLATE pg_catalog."default",
+    lastname character varying(255) COLLATE pg_catalog."default",
+    patientid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    province character varying(255) COLLATE pg_catalog."default",
+    sex character(1) COLLATE pg_catalog."default",
+	syncstatus character(1) COLLATE pg_catalog."default",
+    workphone character varying(255) COLLATE pg_catalog."default",
+    address1 character varying(255) COLLATE pg_catalog."default",
+    address2 character varying(255) COLLATE pg_catalog."default",
+    address3 character varying(255) COLLATE pg_catalog."default",
+    nextofkinname character varying(255) COLLATE pg_catalog."default",
+    nextofkinphone character varying(255) COLLATE pg_catalog."default",
+    race character varying(255) COLLATE pg_catalog."default",
+    uuidopenmrs character varying(255) COLLATE pg_catalog."default",
+    syncuuid character varying(255) NOT NULL DEFAULT uuid_generate_v1(),
+    clinicsectoruuid character varying(255) COLLATE pg_catalog."default",
+    clinicuuid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    arvstartdate timestamp with time zone,
+    enrolldate timestamp with time zone
 );
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
@@ -392,10 +452,25 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','ARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','TARV');
 
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
+
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Mensal (DM)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Trimestral (DT)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa MensSemestral (DS)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Outro');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Farmácia Pública - Hora Normal');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Farmácia Pública - Fora Hora Normal');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','FARMAC/Farmácia Privada');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Distribuição Comunitária pelo Provedor de Saúde');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','APEs');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Brigadas Móveis - Distribuição durante o dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Brigadas Móveis - Distribuição durante o final do dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o final do dia');
 
 INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
 INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');
@@ -404,9 +479,7 @@ INSERT INTO "role" (id, description, code) values (4 ,'Digitador','CLERK');
 INSERT INTO "role" (id, description, code) values (5 ,'Estagiários','STUDYWORKER');
 INSERT INTO "role" (id, description, code) values (6 ,'Monitoria e Avaliação','MEA');
 
-INSERT INTO user_role (userid, roleid) values ((select users.id
-                                               from users
-                                               where not exists (select * from user_role where userid = users.id) and users.cl_username not like 'admin'),2);
+select user_role_pharmacist_loop_update();
 
 INSERT INTO user_role (userid, roleid) values ((select users.id
                                                from users

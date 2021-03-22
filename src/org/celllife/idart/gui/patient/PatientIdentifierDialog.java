@@ -19,39 +19,24 @@
 
 package org.celllife.idart.gui.patient;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import model.manager.PatientManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.JdbcProperties;
+import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
-import org.celllife.idart.database.hibernate.AlternatePatientIdentifier;
-import org.celllife.idart.database.hibernate.IdentifierType;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.PatientIdentifier;
+import org.celllife.idart.database.hibernate.*;
+import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.platform.GenericOthersGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
 import org.celllife.idart.messages.Messages;
 import org.celllife.idart.misc.iDARTUtil;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -59,6 +44,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.hibernate.Session;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
@@ -305,20 +297,27 @@ public class PatientIdentifierDialog extends GenericOthersGui {
 						newId.getType().getName(), newId.getValueEdit()));
 				return false;
 			}
-			
-			//Validate NID format against OpenMRS
-			if (!(newId.getValueEdit().matches("[0-9]{8,10}/[0-9]{2,4}/[0-9]{4,5}"))) {
-				showMessage(MessageDialog.ERROR, "Formato de NID incorrecto", "O valor introduzido não obedece a estrutura de um NID");
-				return false;
+
+			if(newId.getType().getName().equalsIgnoreCase("NID")) {
+				//Validate NID format against OpenMRS
+				if (!(newId.getValueEdit().matches("[0-9]{8,10}/[0-9]{2,4}/[0-9]{4,5}"))) {
+					showMessage(MessageDialog.ERROR, "Formato de NID incorrecto", "O valor introduzido não obedece a estrutura de um NID");
+					return false;
+				}
 			}
 
 			try {
-				if(!localPatient.getIsPatientEmTransito()) {
+				if(!localPatient.getIsPatientEmTransito() && newId.getType().getName().equalsIgnoreCase("NID")) {
 					if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
 						log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexão com OpenMRS ou contacte o administrador");
 						showMessage(MessageDialog.WARNING, "Servidor OpenMRS Offline", "Por favor, verifique a conexão com OpenMRS para efectuar esta operação.");
 						return false;
 					} else {
+						User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+						assert currentUser != null;
+						if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
 						restClient = new RestClient();
 
 						//Verificar se o NID existe no OpenMRS
@@ -330,6 +329,9 @@ public class PatientIdentifierDialog extends GenericOthersGui {
 							localPatient.setPatientId(null);
 							return false;
 						}
+					}else {
+						log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+					}
 					}
 				}
 

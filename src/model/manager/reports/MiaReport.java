@@ -10,7 +10,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MiaReport extends AbstractJasperReport {
 
@@ -48,7 +51,7 @@ public class MiaReport extends AbstractJasperReport {
             endDayStr = year + "-0" + getMes(month) + "-20";
 
         if (getMes(month) == 1)
-            startDayStr = year + "-12" + "-21";
+            startDayStr = (Integer.parseInt(year) - 1) + "-12" + "-21";
         else if (getMes(month) < 11)
             startDayStr = year + "-0" + (getMes(month) - 1) + "-21";
         else
@@ -139,6 +142,7 @@ public class MiaReport extends AbstractJasperReport {
             map.put("date", theStartDate);
             map.put("dateEnd", theEndDate);
             map.put("stockCenterName", stockCenter.getStockCenterName());
+            map.put("stockCenterId", stockCenter.getId());
             map.put("path", getReportPath());
             map.put("facilityName", LocalObjects.currentClinic.getClinicName());
             map.put("pharmacist1", LocalObjects.pharmacy.getPharmacist());

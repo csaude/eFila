@@ -31,6 +31,7 @@ import org.celllife.idart.database.*;
 import org.celllife.idart.database.dao.ConexaoJDBC;
 import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.Role;
+import org.celllife.idart.database.hibernate.User;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.events.EventManager;
 import org.celllife.idart.gui.login.Login;
@@ -40,6 +41,7 @@ import org.celllife.idart.integration.eKapa.EkapaSubmitJob;
 import org.celllife.idart.integration.eKapa.JobScheduler;
 import org.celllife.idart.misc.MessageUtil;
 import org.celllife.idart.misc.task.TaskManager;
+import org.celllife.idart.rest.ApiAuthRest;
 import org.celllife.idart.rest.utils.RestClient;
 import org.celllife.idart.rest.utils.RestFarmac;
 import org.celllife.idart.rest.utils.RestUtils;
@@ -289,16 +291,18 @@ public class PharmacyApplication {
 
                 try {
                     if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("P")) {
-                        RestFarmac.setCentralPatients();
+                        RestFarmac.setCentralPatients(sess);
                         RestFarmac.setCentralDispenses(sess);
                     } else {
                         Clinic mainClinic = AdministrationManager.getMainClinic(sess);
-                        if (getServerStatus(url).contains("Red"))
+                        if (getServerStatus(url).contains("Red")) {
                             log.trace("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
-                        else {
+                            log.info("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                        } else {
 
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);
+                                RestFarmac.restPostLocalDispenses(sess, url, pool);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
                                 RestFarmac.restPostEpisodes(sess, url, pool);
                                 RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
@@ -309,10 +313,11 @@ public class PharmacyApplication {
                         }
 
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F"))
-                            RestFarmac.setPatientsFromRest();
+                            RestFarmac.setPatientsFromRest(sess);
                         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                            RestFarmac.setPatientFromClinicSector(sess);
                             RestFarmac.setDispensesFromRest(sess);
-                            RestFarmac.setEpisodesFromRest(mainClinic);
+                            RestFarmac.setEpisodesFromRest(sess, mainClinic);
                         }
 
                     }
@@ -345,16 +350,27 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
+                Session session = HibernateUtil.getNewSession();
+
                 try {
                     if (getServerStatus(url).contains("Red"))
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
                     else {
-                        RestClient.setOpenmrsPatients();
-                        RestClient.setOpenmrsPatientFila();
+                        User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                        assert currentUser != null;
+                        if (ApiAuthRest.loginOpenMRS(currentUser)) {
+                            RestClient.setOpenmrsPatients(session);
+                            RestClient.setOpenmrsPatientFila(session);
+                        } else {
+                            log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                        }
                     }
                 } catch (IOException e) {
                     log.trace(new Date() + " : Erro " + e.getMessage());
                 }
+                session.clear();
+                session.close();
 
             }
         }, 0, synctime, TimeUnit.SECONDS);

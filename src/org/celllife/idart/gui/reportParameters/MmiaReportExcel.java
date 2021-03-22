@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
 import org.celllife.idart.database.hibernate.StockCenter;
-import org.celllife.idart.database.hibernate.User;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
@@ -18,8 +17,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class MmiaReportExcel implements IRunnableWithProgress {
     private List<MmiaStock> mmiaStocks;
@@ -99,7 +98,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 endDayStr = year + "-0" + getMes(month) + "-20";
 
             if (getMes(month) == 1)
-                startDayStr = year + "-12" + "-21";
+                startDayStr = (Integer.parseInt(year) - 1) + "-12" + "-21";
             else if (getMes(month) < 11)
                 startDayStr = year + "-0" + (getMes(month) - 1) + "-21";
             else

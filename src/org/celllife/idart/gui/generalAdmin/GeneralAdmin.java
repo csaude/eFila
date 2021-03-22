@@ -28,6 +28,7 @@ import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.gui.SystemFunctionalityManager;
 import org.celllife.idart.gui.clinic.AddClinic;
 import org.celllife.idart.gui.clinic.DownloadClinic;
+import org.celllife.idart.gui.clinicSector.ManagePharmSector;
 import org.celllife.idart.gui.doctor.AddDoctor;
 import org.celllife.idart.gui.drug.AddDrug;
 import org.celllife.idart.gui.drug.DownloadDrugs;
@@ -509,23 +510,25 @@ public class GeneralAdmin extends GenericAdminGui {
         lblPicPharmacy.setText(EMPTY);
         lblPicPharmacy.setImage(ResourceUtils.getImage(iDartImage.PHARMACYUSER));
 
-        // btnManagePharmUsers
-        Button btnManagePharmUsers = new Button(grpPharmacy, SWT.NONE);
-        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 30, 205, 30));
-        btnManagePharmUsers.setToolTipText(Messages.getString("GeneralAdmin.button.pharmacy.tooltip")); //$NON-NLS-1$
-        btnManagePharmUsers.setText(Messages.getString("GeneralAdmin.button.pharmacy.title")); //$NON-NLS-1$
-        btnManagePharmUsers.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        btnManagePharmUsers.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
-            @Override
-            public void widgetSelected(
-                    org.eclipse.swt.events.SelectionEvent e) {
-                cmd_managePharmUsers();
-            }
-        });
+        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+            // btnPharmSector
+            Button btnPharmSector = new Button(grpPharmacy, SWT.NONE);
+            btnPharmSector.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 10, 210, 25));
+            btnPharmSector.setToolTipText(Messages.getString("GeneralAdmin.button.pharmsector.tooltip")); //$NON-NLS-1$
+            btnPharmSector.setText(Messages.getString("GeneralAdmin.button.pharmsector.title")); //$NON-NLS-1$
+            btnPharmSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+            btnPharmSector.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+                @Override
+                public void widgetSelected(
+                        org.eclipse.swt.events.SelectionEvent e) {
+                    cmd_pharmSector();
+                }
+            });
+        }
 
         // btnUserPasswordStateManage
         Button btnUserPasswordStateManage = new Button(grpPharmacy, SWT.NONE);
-        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 65, 235, 30));
+        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 40, 210, 25));
         btnUserPasswordStateManage.setToolTipText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.tooltip")); //$NON-NLS-1$
         btnUserPasswordStateManage.setText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.title")); //$NON-NLS-1$
         btnUserPasswordStateManage.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -537,9 +540,23 @@ public class GeneralAdmin extends GenericAdminGui {
             }
         });
 
+        // btnManagePharmUsers
+        Button btnManagePharmUsers = new Button(grpPharmacy, SWT.NONE);
+        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 70, 210, 25));
+        btnManagePharmUsers.setToolTipText(Messages.getString("GeneralAdmin.button.pharmacy.tooltip")); //$NON-NLS-1$
+        btnManagePharmUsers.setText(Messages.getString("GeneralAdmin.button.pharmacy.title")); //$NON-NLS-1$
+        btnManagePharmUsers.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        btnManagePharmUsers.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(
+                    org.eclipse.swt.events.SelectionEvent e) {
+                cmd_managePharmUsers();
+            }
+        });
+
         // btnPharmDetailsUpdate
         Button btnPharmDetailsUpdate = new Button(grpPharmacy, SWT.NONE);
-        btnPharmDetailsUpdate.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 100, 235, 30));
+        btnPharmDetailsUpdate.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 100, 210, 25));
         btnPharmDetailsUpdate.setToolTipText(Messages.getString("GeneralAdmin.button.pharmdetails.tooltip")); //$NON-NLS-1$
         btnPharmDetailsUpdate.setText(Messages.getString("GeneralAdmin.button.pharmdetails.title")); //$NON-NLS-1$
         btnPharmDetailsUpdate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -550,7 +567,6 @@ public class GeneralAdmin extends GenericAdminGui {
                 cmd_pharmStockCenter();
             }
         });
-
     }
 
     public void cmd_clinicsAdd() {
@@ -643,6 +659,12 @@ public class GeneralAdmin extends GenericAdminGui {
 
     public void cmd_pharmStockCenter() {
         new StockCenterInfo(getShell());
+    }
+
+    public void cmd_pharmSector() {
+        ManagePharmSector.addInitialisationOption(
+                GenericFormGui.OPTION_isAddNotUpdate, true);
+        new ManagePharmSector(getShell());
     }
 
     public void cmd_passStateReset() {

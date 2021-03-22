@@ -19,19 +19,12 @@
 
 package org.celllife.idart.database.hibernate.tmp;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.celllife.idart.database.hibernate.PackagedDrugs;
 import org.celllife.idart.database.hibernate.User;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  */
@@ -72,6 +65,8 @@ public class PackageDrugInfo {
 	private Date expiryDate;
 
 	private String notes;
+
+	private String modeDispense;
 
 	private String patientId;
 
@@ -937,5 +932,13 @@ public class PackageDrugInfo {
 
 	public void setInhPickup(boolean inhPickup) {
 		this.inhpickup = inhPickup;
+	}
+
+	public String getModeDispense() {
+		return modeDispense;
+	}
+
+	public void setModeDispense(String modeDispense) {
+		this.modeDispense = modeDispense;
 	}
 }

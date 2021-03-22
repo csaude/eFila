@@ -11,20 +11,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.LocalObjects;
-import org.celllife.idart.database.hibernate.AccumulatedDrugs;
-import org.celllife.idart.database.hibernate.Appointment;
-import org.celllife.idart.database.hibernate.Episode;
-import org.celllife.idart.database.hibernate.Logging;
-import org.celllife.idart.database.hibernate.PackagedDrugs;
-import org.celllife.idart.database.hibernate.Packages;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.PillCount;
-import org.celllife.idart.database.hibernate.Prescription;
-import org.celllife.idart.database.hibernate.RegimeTerapeutico;
-import org.celllife.idart.database.hibernate.Regimen;
-import org.celllife.idart.database.hibernate.RegimenDrugs;
-import org.celllife.idart.database.hibernate.Stock;
-import org.celllife.idart.database.hibernate.StockLevel;
+import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.AdherenceRecord;
 import org.celllife.idart.database.hibernate.tmp.DeletedItem;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
@@ -85,6 +72,19 @@ public class DeletionsManager {
 
         int prescriptionId = packageToRemove.getPrescription().getId();
         List<DeletedItem> delList = new ArrayList<DeletedItem>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        SyncOpenmrsDispense syncOpenmrsDispense = PrescriptionManager.getSyncOpenmrsDispenseByPrescription(session, packageToRemove.getPrescription(),dateFormat.format(packageToRemove.getPickupDate()));
+
+        if(syncOpenmrsDispense != null){
+            if(syncOpenmrsDispense.getSyncstatus().equals('P')){
+                session.delete(syncOpenmrsDispense);
+            }else{
+                syncOpenmrsDispense.setNotas("Removido do iDART");
+                syncOpenmrsDispense.setSyncstatus('W');
+                session.update(syncOpenmrsDispense);
+            }
+        }
 
         // get stock batches to check units remaining for, once package has
         // been removed

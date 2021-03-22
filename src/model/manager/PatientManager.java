@@ -72,8 +72,13 @@ public class PatientManager {
 	 */
 	public static void addEpisodeToPatient(Patient patient, Episode episode) {
 		List<Episode> episodeList = patient.getEpisodeList();
+		HashSet<Episode> episodeSet = new HashSet<Episode>();
 		episode.setPatient(patient);
 		if (!episodeList.contains(episode)) {
+			if(patient.getEpisodes() == null){
+				episodeSet.add(episode);
+				patient.setEpisodes(episodeSet);
+			}else
 			patient.getEpisodes().add(episode);
 		}
 	}
@@ -775,6 +780,20 @@ public class PatientManager {
 		return result;
 	}
 
+
+	public static List<PatientSector> patientIsOpenInClinicSector(Session session, Patient id) {
+		boolean result = false;
+		List patient = new ArrayList();
+		try {
+			patient = session
+					.createQuery("select patient from PatientSector as patient where patient.enddate is null and patient.patient = :id")
+					.setParameter("id", id).list();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return patient;
+	}
+
 	// ------ METHODS FOR PATIENT PACKAGING MANAGER -------------
 
 	/**
@@ -1189,6 +1208,12 @@ public class PatientManager {
 				"from SyncOpenmrsPatient sync where sync.syncstatus = 'P')").list();
 
 		return result;
+	}
+
+	public static void saveSyncMobilePatient(Session s, SyncMobilePatient syncMobilePatient)
+			throws HibernateException {
+
+		s.saveOrUpdate(syncMobilePatient);
 	}
 
 }
