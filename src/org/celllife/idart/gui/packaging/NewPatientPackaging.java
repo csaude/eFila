@@ -1645,6 +1645,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         int amountperPackage = (int) (allPackagedDrugsList.get(0).getDispensedQty() / (allPackagedDrugsList.get(0).getTimesPerDay() *
                 Double.parseDouble(allPackagedDrugsList.get(0).getAmountPerTime()))) / 7;
 
+        if(Integer.parseInt(lblIndex.getText()) > Integer.parseInt(lblDuration.getText())){
+            showMessage(MessageDialog.ERROR, "Dispensa efectuada usando uma prescrição expirada ",
+                    "Dispensa N. "+Integer.parseInt(lblIndex.getText())+" de "+Integer.parseInt(lblDuration.getText())+" válida(s). \n" +
+                             "A prescrição usada nesta dispensa é inválida. Por favor adicione outra prescrição.");
+            return false;
+        }
+
         if (localPatient.getCurrentPrescription(tipoPaciente).getDuration() != newPack.getWeekssupply()) {
             MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
             mb.setText("Dispensa Trimestral");

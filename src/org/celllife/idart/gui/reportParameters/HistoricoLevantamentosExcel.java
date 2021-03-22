@@ -137,11 +137,20 @@ public class HistoricoLevantamentosExcel implements IRunnableWithProgress {
                     createCellTipoDispensa.setCellValue(xls.getTipoDispensa());
                     createCellTipoDispensa.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataLevantamento = row.createCell(7);
+
+                    HSSFCell createCellProveniencia = row.createCell(7);
+                    createCellProveniencia.setCellValue(xls.getProveniencia());
+                    createCellProveniencia.setCellStyle(cellStyle);
+
+                    HSSFCell createCellModoDispensa = row.createCell(8);
+                    createCellModoDispensa.setCellValue(xls.getModoDispensa());
+                    createCellModoDispensa.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDataLevantamento = row.createCell(9);
                     createCellDataLevantamento.setCellValue(xls.getDataLevantamento());
                     createCellDataLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataProximoLevantamento = row.createCell(8);
+                    HSSFCell createCellDataProximoLevantamento = row.createCell(10);
                     createCellDataProximoLevantamento.setCellValue(xls.getDataProximoLevantamento());
                     createCellDataProximoLevantamento.setCellStyle(cellStyle);
 

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.celllife.function.DateRuleFactory;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.gui.platform.GenericOthersGui;
@@ -364,7 +365,7 @@ public class DownReferDialog extends GenericOthersGui {
 
     public void saveLastDispense(Patient patient, Session session){
 
-        Prescription prescription = patient.getMostRecentPrescription("TARV");
+        Prescription prescription = patient.getMostRecentPrescription(iDartProperties.SERVICOTARV);
         Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
 
         java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
