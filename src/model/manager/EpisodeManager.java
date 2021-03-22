@@ -41,8 +41,20 @@ public class EpisodeManager {
         sess.close();
     }
 
-    public static void saveEpisode(Session s, Episode episode) throws HibernateException {
-        s.saveOrUpdate(episode);
+    public static void updateEpisode(Session s, Episode episode) throws HibernateException {
+        s.update(episode);
+    }
+
+    public static void saveEpisode(Episode episode) throws HibernateException {
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+
+        sess.save(episode);
+
+        assert tx != null;
+        sess.flush();
+        tx.commit();
+        sess.close();
     }
 
     public static List<SyncEpisode> getAllSyncTempEpiReadyToSend(Session sess) throws HibernateException {

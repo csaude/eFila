@@ -558,7 +558,7 @@ public class RestFarmac {
         String result = "";
         if (!iDARTUtil.arrayHasElements(syncTempEpisodes))
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm episodio foi encontrado para enviar");
-        else
+        else {
             for (SyncEpisode syncEpisode : syncTempEpisodes) {
                 Session session = HibernateUtil.getNewSession();
                 try {
@@ -569,7 +569,7 @@ public class RestFarmac {
                     } else {
                         log.info(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
                         log.trace(new Date() + ":Episodio do Paciente com uuid " + syncEpisode.getPatientUUID() + " enviado com sucesso (" + result + ")");
-                        syncEpisode.setSyncStatus('S');
+                        syncEpisode.setSyncStatus('U');
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
                         session.getTransaction().commit();
                         session.flush();
@@ -586,6 +586,7 @@ public class RestFarmac {
                 }
 
             }
+        }
     }
 
     public static void restPostDispenses(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
@@ -759,7 +760,7 @@ public class RestFarmac {
 
                         Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
                         syncEpisode.setSyncStatus('U');
-                        EpisodeManager.saveEpisode(sess, newEpisode);
+                        EpisodeManager.saveEpisode(newEpisode);
                         EpisodeManager.updateSyncTempEpisode(syncEpisode);
 
                         relatedPatient.addEpisode(newEpisode);
