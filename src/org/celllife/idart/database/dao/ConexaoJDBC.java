@@ -353,9 +353,9 @@ public class ConexaoJDBC {
                 }
 
                 // Tipo de Pacinte
-                if (!nonuspatient && rs.getString("reasonforupdate").contains("Inicia")) {
+                if (!nonuspatient && (rs.getString("reasonforupdate").contains("Inicia") || rs.getString("reasonforupdate").contains("Inicio"))) {
                     totalpacientesinicio++;
-                } else if (!nonuspatient && (rs.getString("reasonforupdate").contains("Manter") || rs.getString("reasonforupdate").contains("Reiniciar"))) {
+                } else if (!nonuspatient && (rs.getString("reasonforupdate").contains("Manter") || rs.getString("reasonforupdate").contains("Reiniciar") || rs.getString("reasonforupdate").contains("Continua"))) {
                     totalpacientesmanter++;
                 } else if (!nonuspatient && rs.getString("reasonforupdate").contains("Alterar")) {
                     totalpacientesalterar++;
@@ -4245,9 +4245,11 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
@@ -4255,7 +4257,7 @@ public class ConexaoJDBC {
         if (r)
             v.add("Reiniciar");
         if (r)
-            v.add("Fim");
+            v.add("Fim (F)");
 
 
         String condicao = "(\'";
@@ -4335,17 +4337,19 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+            {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+            {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
-        if (f)
-            v.add("Fim");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 
@@ -4441,17 +4445,19 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
-        if (f)
-            v.add("Fim");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 
@@ -4631,17 +4637,19 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
-        if (f)
-            v.add("Fim");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 

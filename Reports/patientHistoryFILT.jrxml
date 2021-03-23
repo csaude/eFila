@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.610510000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="245"/>
+	<property name="ireport.y" value="62"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -69,7 +69,7 @@ where patientid  = $P{patientId}]]>
 					<font fontName="Arial" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Bold" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Ficha Individual de
-Levantamento de TB (FILT)]]></text>
+Levantamento de TPT (FILT)]]></text>
 			</staticText>
 			<image scaleImage="FillFrame" hAlign="Left" vAlign="Top" isUsingCache="false">
 				<reportElement key="image-1" mode="Opaque" x="18" y="1" width="103" height="72" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -349,14 +349,14 @@ Levantamento]]></text>
 					<font fontName="Arial" isBold="true" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
 				<text><![CDATA[Data de Levantamento
-TB]]></text>
+TPT]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="textField-3" mode="Opaque" x="129" y="107" width="166" height="66"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="true" isItalic="false" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<text><![CDATA[Medicamentos TB]]></text>
+				<text><![CDATA[Medicamentos TPT]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="textField-3" mode="Opaque" x="319" y="107" width="71" height="30"/>
@@ -390,11 +390,11 @@ Aviada]]></text>
 				<subreportParameter name="parentpackid">
 					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="path">
-					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="desease">
 					<subreportParameterExpression><![CDATA[$P{disease}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="path">
+					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="pickdate">
 					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
