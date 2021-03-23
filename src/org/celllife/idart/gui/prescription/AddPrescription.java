@@ -256,19 +256,19 @@ public class AddPrescription extends GenericFormGui implements
         localPrescription = new Prescription();
         tipoPaciente = tPaciente;
 
-        if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
             rdBtnTBPrescription.setSelection(true);
             rdBtnTARVPrescription.setSelection(false);
-        }else{
+        } else {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(true);
         }
 
-        if(rdBtnTBPrescription.getSelection()){
+        if (rdBtnTBPrescription.getSelection()) {
             tipoPaciente = iDartProperties.PNCT;
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
             cmbLinha.setText("0-N/A");
-        }else {
+        } else {
             tipoPaciente = iDartProperties.SERVICOTARV;
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
         }
@@ -308,8 +308,8 @@ public class AddPrescription extends GenericFormGui implements
                     Prescription script = thePatient.getMostRecentPrescription(tipoPaciente);
                     if (script != null) {
 
-                        if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
-                            if(script.getReasonForUpdate().contains("Fim")){
+                        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                            if (script.getReasonForUpdate().contains("Fim")) {
                                 setFormToInitialPrescription();
                             }
                         }
@@ -406,7 +406,7 @@ public class AddPrescription extends GenericFormGui implements
                     loadPrescription(tipoPaciente);
                     localPrescription.setTipoDoenca(tipoPaciente);
                     for (PatientIdentifier pi : localPrescription.getPatient().getPatientIdentifiers()) {
-                        if ((pi.getType().getName().equalsIgnoreCase("NIT") || pi.getType().getName().equalsIgnoreCase("NID CCR") ) && !rdBtnTARVPrescription.getSelection()) {
+                        if ((pi.getType().getName().equalsIgnoreCase("NIT") || pi.getType().getName().equalsIgnoreCase("NID CCR")) && !rdBtnTARVPrescription.getSelection()) {
                             rdBtnTARVPrescription.setEnabled(false);
                             rdBtnTBPrescription.setEnabled(true);
                             break;
@@ -495,12 +495,12 @@ public class AddPrescription extends GenericFormGui implements
         btnSearch.setText("Procurar Paciente");
         btnSearch.setToolTipText("Pressione este botão para procurar um paciente existente");
         btnSearch.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(
-                            org.eclipse.swt.events.SelectionEvent e) {
-                        cmdSearchWidgetSelected();
-                    }
-                });
+            @Override
+            public void widgetSelected(
+                    org.eclipse.swt.events.SelectionEvent e) {
+                cmdSearchWidgetSelected();
+            }
+        });
 
         btnEkapaSearch = new Button(grpPatientID, SWT.NONE);
         btnEkapaSearch.setBounds(new Rectangle(310, 36, 105, 30));
@@ -1024,7 +1024,7 @@ public class AddPrescription extends GenericFormGui implements
         cmbRegime.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
         cmbRegime.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
 
-         enableContentProposal(cmbRegime);
+        enableContentProposal(cmbRegime);
 
         // Linha Terapeutica
         lblLinha = new Label(grpParticulars, SWT.NONE);
@@ -1555,21 +1555,21 @@ public class AddPrescription extends GenericFormGui implements
             cmbMotivoMudanca.setFocus();
 
             return false;
-        } else if (cmbUpdateReason.getText().contains("Inici") && conexao.jaTemFilaInicio(localPrescription.getPatient().getPatientId(),tipoPaciente)) {
+        } else if (cmbUpdateReason.getText().contains("Inici") && conexao.jaTemFilaInicio(localPrescription.getPatient().getPatientId(), tipoPaciente)) {
 
             if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
-                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR| SWT.OK);
+                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
                 dataNoutroServico.setText("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
                 dataNoutroServico.setMessage("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
                 dataNoutroServico.open();
                 cmbMotivoMudanca.setFocus();
             } else {
-                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR| SWT.OK);
+                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
                 dataNoutroServico.setText("Paciente ja iniciou tarv");
                 dataNoutroServico.setMessage("Este paciente já iniciou o tarv....mude o TIPO TARV para Manter");
                 dataNoutroServico.open();
                 cmbMotivoMudanca.setFocus();
-        }
+            }
             return false;
         } else if (lblUpdateReason.isVisible()
                 && cmbUpdateReason.getText().trim().equals("")) {
@@ -1652,8 +1652,8 @@ public class AddPrescription extends GenericFormGui implements
     private void setFormToInitialPrescription() {
         getShell().redraw();
 
-        if(rdBtnTBPrescription.getSelection())
-        cmbUpdateReason.setText("Inicio (I)");
+        if (rdBtnTBPrescription.getSelection())
+            cmbUpdateReason.setText("Inicio (I)");
         else
             cmbUpdateReason.setText("Inicia");
 
@@ -1714,7 +1714,7 @@ public class AddPrescription extends GenericFormGui implements
         cmbDoctor.setText("" + AdministrationManager.getDoctor(getHSession(), localPrescription.getDoctor().getFullname()).getFullname());
 
         try {
-            cmbRegime.setText("" + AdministrationManager.loadRegime(localPrescription.getPatient().getId(),localPrescription.getTipoDoenca()));
+            cmbRegime.setText("" + AdministrationManager.loadRegime(localPrescription.getPatient().getId(), localPrescription.getTipoDoenca()));
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -2231,8 +2231,8 @@ public class AddPrescription extends GenericFormGui implements
     private void cmdAddAssociatedDrugWidgetSelected() {
         if (fieldsOk()) {
             try {
-                String regimeFixed =  cmbRegime.getText();
-             // Add a new table item
+                String regimeFixed = cmbRegime.getText();
+                // Add a new table item
                 TableItem ti = new TableItem(tblDrugs, SWT.NONE);
                 ti.setText(0, (Integer.toString(tblDrugs.getItemCount())));
                 new PrescriptionObjectAssociated(getHSession(), ti, false, cmbRegime.getText(), getShell());
@@ -2246,12 +2246,12 @@ public class AddPrescription extends GenericFormGui implements
     private void loadPrescription(String tipoPaciente) {
         enableFields(true);
 
-      Set<Prescription>  localPatientsPrescriptions = thePatient.getPrescriptions();
+        Set<Prescription> localPatientsPrescriptions = thePatient.getPrescriptions();
 
-      for(Prescription p : localPatientsPrescriptions){
-          if(p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
-              patientsPrescriptions.add(p);
-      }
+        for (Prescription p : localPatientsPrescriptions) {
+            if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
+                patientsPrescriptions.add(p);
+        }
 
 //        patientsPrescriptions = thePatient.getPrescriptions();
 
@@ -2285,8 +2285,8 @@ public class AddPrescription extends GenericFormGui implements
                 btnDispenseDrugs.setEnabled(true);
                 lblPicDispenseDrugs.setEnabled(true);
 
-                if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
-                    if(localPrescription.getReasonForUpdate().contains("Fim")){
+                if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                    if (localPrescription.getReasonForUpdate().contains("Fim")) {
                         setFormToInitialPrescription();
                     }
                 }
@@ -2302,7 +2302,7 @@ public class AddPrescription extends GenericFormGui implements
             cmdUpdatePrescriptionId();
         }
 
-        if(rdBtnTBPrescription.getSelection())
+        if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
@@ -2318,10 +2318,10 @@ public class AddPrescription extends GenericFormGui implements
 
         loadPatientDetails();
 
-        Set<Prescription>  localPatientsPrescriptions = thePatient.getPrescriptions();
+        Set<Prescription> localPatientsPrescriptions = thePatient.getPrescriptions();
 
-        for(Prescription p : localPatientsPrescriptions){
-            if(p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
+        for (Prescription p : localPatientsPrescriptions) {
+            if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
                 patientsPrescriptions.add(p);
         }
 
@@ -2362,7 +2362,7 @@ public class AddPrescription extends GenericFormGui implements
 
         loadPatientDetails();
 
-        if(rdBtnTBPrescription.getSelection())
+        if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
@@ -2449,7 +2449,7 @@ public class AddPrescription extends GenericFormGui implements
     private void cmdDispenseARVDrugsSelected() {
         if (submitForm()) {
             if (!fromShortcut) {
-                new NewPatientPackaging(getParent(), localPrescription.getPatient(),localPrescription.getTipoDoenca());
+                new NewPatientPackaging(getParent(), localPrescription.getPatient(), localPrescription.getTipoDoenca());
             }
             closeShell(true);
         }
@@ -2462,10 +2462,10 @@ public class AddPrescription extends GenericFormGui implements
      */
     private void checkFirstPrescription() {
 
-        Set<Prescription>  localPatientsPrescriptions = thePatient.getPrescriptions();
+        Set<Prescription> localPatientsPrescriptions = thePatient.getPrescriptions();
 
-        for(Prescription p : localPatientsPrescriptions){
-            if(p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
+        for (Prescription p : localPatientsPrescriptions) {
+            if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente))
                 patientsPrescriptions.add(p);
         }
 
@@ -2525,16 +2525,16 @@ public class AddPrescription extends GenericFormGui implements
             MessageDialog mSaveInicia = new MessageDialog(getShell(), isInitialPrescription ? "Registar a Prescrição inicial do paciente "
                     .concat(txtPatientId.getText())
                     : "Registar Nova Prescrição do paciente "
-                    .concat(txtPatientId.getText()), null, isInitialPrescription ? "ATENÇÃO: SELECCIONOU "+
+                    .concat(txtPatientId.getText()), null, isInitialPrescription ? "ATENÇÃO: SELECCIONOU " +
                     (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : " O TIPO TARV ") +
                     "INICIAL\nTEM A CERTEZA "
                     + ("DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") +"? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat("?")
                     : ("ATENÇÃO: SELECCIONOU " +
                     (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : " O TIPO TARV ") +
                     "INICIAL\nTEM A CERTEZA DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") +"? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat(""), MessageDialog.QUESTION, new String[]{"Sim", "Não"}, 0);
 
             if (cmbUpdateReason.getText().trim().equals("Inicia") || cmbUpdateReason.getText().trim().equals("Inicio (I)")) {
@@ -2609,27 +2609,27 @@ public class AddPrescription extends GenericFormGui implements
                                 localPrescription.setDrugTypes("TB");
                             }
 
-                            if (patientsPrescriptions.size() > 0) {
-                                if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime())) {
-                                    MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                                    errorBox.setText("Não foi possível salvar a prescrição, má alteração da linha terapêutica");
-                                    errorBox.setMessage("Não é possível mudar o regime terapeutico do paciente de " + oldPrescription.getRegimeTerapeutico().getRegimeesquema()
-                                            + " para " + localPrescription.getRegimeTerapeutico().getRegimeesquema());
-                                    errorBox.open();
-                                    saveSuccessful = false;
-                                } else {
-                                    PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription, tipoPaciente);
-                                    getHSession().flush();
-                                    tx.commit();
-                                    getLog().info("Saved Prescription for Patient: " + localPrescription.getPatient().getId());
-                                    MessageBox done = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-                                    done.setText("Base de dados actualizada");
-                                    done.setMessage("Prescrição '".concat(localPrescription.getPrescriptionId()).concat("' foi adicionado ao paciente '").concat(localPrescription.getPatient().getPatientId()).concat("'."));
-                                    done.open();
-                                    saveSuccessful = true;
-                                }
+                            if (patientsPrescriptions.size() > 0 && oldPrescription != null) {
+                                    if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime())) {
+                                        MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                                        errorBox.setText("Não foi possível salvar a prescrição, má alteração da linha terapêutica");
+                                        errorBox.setMessage("Não é possível mudar o regime terapeutico do paciente de " + oldPrescription.getRegimeTerapeutico().getRegimeesquema()
+                                                + " para " + localPrescription.getRegimeTerapeutico().getRegimeesquema());
+                                        errorBox.open();
+                                        saveSuccessful = false;
+                                    } else {
+                                        PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription, tipoPaciente);
+                                        getHSession().flush();
+                                        tx.commit();
+                                        getLog().info("Saved Prescription for Patient: " + localPrescription.getPatient().getId());
+                                        MessageBox done = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+                                        done.setText("Base de dados actualizada");
+                                        done.setMessage("Prescrição '".concat(localPrescription.getPrescriptionId()).concat("' foi adicionado ao paciente '").concat(localPrescription.getPatient().getPatientId()).concat("'."));
+                                        done.open();
+                                        saveSuccessful = true;
+                                    }
                             } else if (patientsPrescriptions.size() == 0) {
-                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription,tipoPaciente);
+                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription, tipoPaciente);
                                 getHSession().flush();
                                 tx.commit();
                                 getLog().info("Saved Prescription for Patient: " + localPrescription.getPatient().getId());
@@ -2740,7 +2740,7 @@ public class AddPrescription extends GenericFormGui implements
                             }
 
                             if (patientsPrescriptions.size() > 0) {
-                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription,tipoPaciente);
+                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription, tipoPaciente);
                                 getHSession().flush();
                                 tx.commit();
                                 getLog().info("Saved Prescription for Patient: " + localPrescription.getPatient().getId());
@@ -2750,7 +2750,7 @@ public class AddPrescription extends GenericFormGui implements
                                 done.open();
                                 saveSuccessful = true;
                             } else if (patientsPrescriptions.size() == 0) {
-                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription,tipoPaciente);
+                                PackageManager.saveNewPrescription(getHSession(), localPrescription, deletedPrescription, tipoPaciente);
                                 getHSession().flush();
                                 tx.commit();
                                 getLog().info("Saved Prescription for Patient: " + localPrescription.getPatient().getId());
@@ -2832,7 +2832,7 @@ public class AddPrescription extends GenericFormGui implements
         localPrescription.setDurationSentence(cmbDuration.getText());
         localPrescription.setMotivocriacaoespecial(cmbMotivoCriacao.getText());
 
-        if(rdBtnTBPrescription.getSelection())
+        if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
@@ -3448,7 +3448,7 @@ public class AddPrescription extends GenericFormGui implements
             cmbUpdateReason.setVisibleItemCount(cmbUpdateReason.getItemCount());
 
             setSelectedField(false);
-        }else {
+        } else {
             grpPatientID.setBounds(new Rectangle(40, 95, 480, 152));
             grpPatientMDS.setBounds(new Rectangle(530, 95, 220, 140));
 
