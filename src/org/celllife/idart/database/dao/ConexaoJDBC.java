@@ -5404,6 +5404,7 @@ public class ConexaoJDBC {
                     "from prescription  " +
                     "where prescription.patient = pat.id  " +
                     "and prescription.dispensatrimestral = 1  " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + dataInicial + "'::date between prescription.date and prescription.endDate)or(('" + dataInicial + "'::date > prescription.date)) and (prescription.endDate is null)))  " +
                     "and exists (select id from episode where episode.patient = pat.id  " +
                     "and (('" + dataInicial + "'::date between episode.startdate and episode.stopdate)or(('" + dataInicial + "'::date > episode.startdate)) and (episode.stopdate is null)))  " +
@@ -5488,6 +5489,7 @@ public class ConexaoJDBC {
                     "from prescription  " +
                     "where prescription.patient = pat.id  " +
                     "and prescription.dispensatrimestral = 0  " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.reasonforupdate = 'Inicia'  " +
                     "and (('" + dataInicial + "'::date between prescription.date and prescription.endDate)or(('" + dataInicial + "'::date > prescription.date)) and (prescription.endDate is null)))  " +
                     "and exists (select id from episode where episode.patient = pat.id  " +
@@ -5587,6 +5589,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
@@ -5681,6 +5684,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
@@ -5816,6 +5820,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "'::date > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "'::date between episode.startdate and episode.stopdate)or(('" + data + "'::date > episode.startdate)) and (episode.stopdate is null)))" +
@@ -5935,6 +5940,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
@@ -6054,6 +6060,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
@@ -6964,6 +6971,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.endDate is null) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and episode.stopdate is null) " +
