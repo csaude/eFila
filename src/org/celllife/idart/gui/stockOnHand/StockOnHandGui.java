@@ -277,7 +277,7 @@ public class StockOnHandGui extends GenericOthersGui {
 		}
 
 		final List<DrugDetail> dataList = new ArrayList<DrugDetail>();
-		final List<Drug> drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
+		final List<Drug> drugList = DrugManager.getAllDrugsByTipoDoenca(getHSession(), iDartProperties.SERVICOTARV);
 		final String parmacy = cmbPharmacy.getText();
 
 		try {
