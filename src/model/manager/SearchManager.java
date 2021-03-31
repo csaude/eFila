@@ -18,7 +18,6 @@
  */
 package model.manager;
 
-import migracao.entidades.Users;
 import model.nonPersistent.PatientIdAndName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,7 +43,6 @@ import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.jws.soap.SOAPBinding;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -538,7 +536,7 @@ public class SearchManager {
         search.getShell().setText("Seleccione o Medicamento...");
 
         if (includeZeroDrugs) {
-            drugs = DrugManager.getAllDrugs(sess,iDartProperties.SERVICOTARV);
+            drugs = DrugManager.getAllDrugs(sess);
         } else {
             drugs = DrugManager.getDrugsListForStockTake(sess, false);
         }
