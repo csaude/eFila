@@ -344,6 +344,14 @@ public class DrugManager {
         return result;
     }
 
+    public static List<Drug> getDrugs(Session sess)
+            throws HibernateException {
+        List<Drug> result = sess.createQuery(
+                "select d from Drug as d order by d.name").list();
+
+        return result;
+    }
+
     public static List<Drug> getAllAssociatedDrugs(Session sess, String regimeTerapeutico)
             throws HibernateException {
         List<Drug> result = new ArrayList<>();

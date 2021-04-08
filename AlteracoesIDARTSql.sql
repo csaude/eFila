@@ -63,6 +63,7 @@ ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
+ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -77,6 +78,7 @@ DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_mode';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
+DELETE FROM simpledomain WHERE description  = 'Period';
 DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
 
@@ -463,6 +465,10 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_pro
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Dia','Dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Semana','Semana');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Mes','Mes');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Mensal (DM)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Trimestral (DT)');

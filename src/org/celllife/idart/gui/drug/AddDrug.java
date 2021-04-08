@@ -99,6 +99,8 @@ public class AddDrug extends GenericFormGui {
 
     private CCombo cmbtipoDoenca;
 
+    private CCombo cmbPeriodoToma;
+
     /**
      * Use true if you want to add a new drug, use false if you are updating an
      * existing drug
@@ -431,8 +433,17 @@ public class AddDrug extends GenericFormGui {
         // lblTimesPerDay
         Label lblTimesPerDay = new Label(grpStandadDosages, SWT.CENTER);
         lblTimesPerDay.setBounds(new Rectangle(298, 28, 126, 22));
-        lblTimesPerDay.setText("vezes por dia");
+        lblTimesPerDay.setText("vezes por ");
         lblTimesPerDay.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        cmbPeriodoToma = new CCombo(grpStandadDosages, SWT.BORDER);
+        cmbPeriodoToma.setBounds(new Rectangle(398, 28, 60, 22));
+        cmbPeriodoToma.setEditable(false);
+        cmbPeriodoToma.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        cmbPeriodoToma.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+        cmbPeriodoToma.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
+        CommonObjects.populateTakePeriod(getHSession(), cmbPeriodoToma);
+        cmbPeriodoToma.setText(cmbPeriodoToma.getItem(0));
     }
 
     /**
@@ -523,6 +534,7 @@ public class AddDrug extends GenericFormGui {
             txtAmountPerTime.setText("");
             rdBtnActive.setSelection(true);
             rdBtnInactive.setSelection(false);
+            cmbPeriodoToma.setText("");
             localDrug = null;
             enableFields(isAddnotUpdate);
 
@@ -573,8 +585,7 @@ public class AddDrug extends GenericFormGui {
 
     private void cmdSearchWidgetSelected() {
 
-        Search drugSearch = new Search(getHSession(), getShell(),
-                CommonObjects.DRUG);
+        Search drugSearch = new Search(getHSession(), getShell(), CommonObjects.DRUG);
 
         if (drugSearch.getValueSelected() != null) {
 
@@ -630,6 +641,8 @@ public class AddDrug extends GenericFormGui {
         txtAmountPerTime.setText(tmp);
 
         txtTimesPerDay.setText(String.valueOf(localDrug.getDefaultTimes()));
+
+        cmbPeriodoToma.setText(localDrug.getDefaultTakePeriod());
 
         btnSearch.setEnabled(false);
         cmbtipoDoenca.setText(localDrug.getTipoDoenca());
@@ -732,6 +745,12 @@ public class AddDrug extends GenericFormGui {
             return false;
         }
 
+        if (cmbPeriodoToma.getText().trim().isEmpty()) {
+            showMessage(MessageDialog.ERROR, "Período de Toma vazio", "Não foi indicado o período de toma do Medicamento.");
+            cmbPeriodoToma.setFocus();
+            return false;
+        }
+
         if (!txtTimesPerDay.getText().trim().equals("")) {
             try {
                 Integer.parseInt(txtTimesPerDay.getText());
@@ -762,6 +781,7 @@ public class AddDrug extends GenericFormGui {
             localDrug.setModified('T');
             localDrug.setForm(AdministrationManager.getForm(getHSession(), cmbForm.getText()));
             localDrug.setTipoDoenca(cmbtipoDoenca.getText());
+            localDrug.setDefaultTakePeriod(cmbPeriodoToma.getText());
             if (rdBtnActive.getSelection())
                 localDrug.setActive(true);
             else
@@ -809,6 +829,7 @@ public class AddDrug extends GenericFormGui {
         txtDispensingInstructions1.setEnabled(enable);
         txtDispensingInstructions2.setEnabled(enable);
         cmbtipoDoenca.setEnabled(enable);
+        cmbPeriodoToma.setEnabled(enable);
         txtAmountPerTime.setEnabled(enable);
         txtTimesPerDay.setEnabled(enable);
         txtAtc.setEnabled(enable);

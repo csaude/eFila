@@ -57,6 +57,8 @@ public class PrescriptionObject extends GenericOthersGui {
 
     private Label lblDescription;
 
+    private Label lblTakePeriod;
+
     private Label lblTimes;
 
     private TableItem tableItem;
@@ -216,7 +218,7 @@ public class PrescriptionObject extends GenericOthersGui {
 
         lblTimes = new Label(grpDrugInformation, SWT.NONE);
         lblTimes.setBounds(new Rectangle(14, 89, 90, 20));
-        lblTimes.setText("Vezes por dia:");
+        lblTimes.setText("Vez(es) :");
         lblTimes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         txtTimes = new Text(grpDrugInformation, SWT.NONE);
         txtTimes.setBounds(new Rectangle(149, 89, 60, 20));
@@ -238,6 +240,10 @@ public class PrescriptionObject extends GenericOthersGui {
             }
 
         });
+
+        lblTakePeriod = new Label(grpDrugInformation, SWT.NONE);
+        lblTakePeriod.setBounds(new Rectangle(219, 89, 120, 20));
+        lblTakePeriod.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
     }
 
     /**
@@ -246,10 +252,12 @@ public class PrescriptionObject extends GenericOthersGui {
     public void clearForm() {
         txtTake.setVisible(true);
         lblDescription.setVisible(true);
+        lblTakePeriod.setVisible(true);
         lblTake.setVisible(true);
 
         lblTake.setText("Tomar:");
         lblDescription.setText("");
+        lblTakePeriod.setText("");
 
         txtTake.setText("");
         txtTimes.setText("");
@@ -299,6 +307,7 @@ public class PrescriptionObject extends GenericOthersGui {
         if (newDrug != null) {
             txtDrugName.setText(newDrug.getName());
             lblDescription.setText(newDrug.getForm().getFormLanguage1());
+            lblTakePeriod.setText(" por "+newDrug.getDefaultTakePeriod());
             lblTake.setText(newDrug.getForm().getActionLanguage1());
             txtTake.setFocus();
             int[] standardDosage = new int[2];
@@ -307,10 +316,12 @@ public class PrescriptionObject extends GenericOthersGui {
             if (newDrug.getForm().getFormLanguage1().equals("")) {
                 txtTake.setVisible(false);
                 lblDescription.setVisible(false);
+                lblTakePeriod.setVisible(false);
                 lblTake.setVisible(false);
             } else {
                 txtTake.setVisible(true);
                 lblDescription.setVisible(true);
+                lblTakePeriod.setVisible(true);
                 lblTake.setVisible(true);
                 double takeAmount = newDrug.getDefaultAmnt();
                 String takeAmountStr = String.valueOf(takeAmount);
@@ -394,7 +405,7 @@ public class PrescriptionObject extends GenericOthersGui {
         }
         if (txtTimes.getText().trim().equals("")) {
             MessageBox times = new MessageBox(getShell(), SWT.ICON_ERROR);
-            times.setMessage("Por favor preencher o Campo 'Vezes por dia'.");
+            times.setMessage("Por favor preencher o Campo 'Vezes de Toma'.");
             times.setText("Campos não Preenchidos");
             times.open();
             result = false;
@@ -406,7 +417,7 @@ public class PrescriptionObject extends GenericOthersGui {
                     MessageBox notANumber = new MessageBox(getShell(),
                             SWT.ICON_ERROR);
                     notANumber
-                            .setMessage("A quantidade a ser inserida no campo 'Vezes por dia' deve ser maior que Zero.");
+                            .setMessage("A quantidade a ser inserida no campo 'Vezes de Toma' deve ser maior que Zero.");
                     notANumber.setText("Informação Incorrecta");
                     notANumber.open();
                     result = false;
@@ -416,7 +427,7 @@ public class PrescriptionObject extends GenericOthersGui {
                 MessageBox notANumber = new MessageBox(getShell(),
                         SWT.ICON_ERROR);
                 notANumber
-                        .setMessage("A informção inserida no campo 'Vezes por dia' não é número.");
+                        .setMessage("A informção inserida no campo 'Vezes de Toma' não é número.");
                 notANumber.setText("Informação Incorrecta");
                 notANumber.open();
                 result = false;
@@ -456,7 +467,7 @@ public class PrescriptionObject extends GenericOthersGui {
             temp[3] = (txtTake.isVisible() ? txtTake.getText() : "");
             temp[4] = f.getFormLanguage1();
             temp[5] = txtTimes.getText();
-            temp[6] = "vezes por dia";
+            temp[6] = "vezes por "+ newDrug.getDefaultTakePeriod();
             temp[7] = String.valueOf(newDrug.getPackSize());
             tableItem.setText(temp);
             txtTimes.selectAll();

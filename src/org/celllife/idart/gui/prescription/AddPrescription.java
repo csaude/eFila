@@ -1557,20 +1557,29 @@ public class AddPrescription extends GenericFormGui implements
             return false;
         } else if (cmbUpdateReason.getText().contains("Inici") && conexao.jaTemFilaInicio(localPrescription.getPatient().getPatientId(), tipoPaciente)) {
 
-            if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
-                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-                dataNoutroServico.setText("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
-                dataNoutroServico.setMessage("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
-                dataNoutroServico.open();
-                cmbMotivoMudanca.setFocus();
-            } else {
-                MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-                dataNoutroServico.setText("Paciente ja iniciou tarv");
-                dataNoutroServico.setMessage("Este paciente já iniciou o tarv....mude o TIPO TARV para Manter");
-                dataNoutroServico.open();
-                cmbMotivoMudanca.setFocus();
+            if (oldPrescription != null) {
+
+                long difference = btnCaptureDate.getDate().getTime() - oldPrescription.getDate().getTime();
+                float daysBetween =  (difference / (1000*60*60*24));
+
+                if(daysBetween > 28) {
+                    if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                        MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+                        dataNoutroServico.setText("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
+                        dataNoutroServico.setMessage("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
+                        dataNoutroServico.open();
+                        cmbMotivoMudanca.setFocus();
+                    } else {
+                        MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+                        dataNoutroServico.setText("Paciente ja iniciou tarv");
+                        dataNoutroServico.setMessage("Este paciente já iniciou o tarv....mude o TIPO TARV para Manter");
+                        dataNoutroServico.open();
+                        cmbMotivoMudanca.setFocus();
+                    }
+
+                    return false;
+                }
             }
-            return false;
         } else if (lblUpdateReason.isVisible()
                 && cmbUpdateReason.getText().trim().equals("")) {
             MessageBox missingUpdateReason = new MessageBox(getShell(),
@@ -2066,7 +2075,7 @@ public class AddPrescription extends GenericFormGui implements
             temp[3] = tempAmtPerTime;
             temp[4] = theForm.getFormLanguage1();
             temp[5] = "" + pd.getTimesPerDay();
-            temp[6] = "Vezes por dia";
+            temp[6] = "Vezes por "+theDrug.getDefaultTakePeriod();
 
             ti.setText(temp);
             ti.setData(pd);
@@ -3114,7 +3123,7 @@ public class AddPrescription extends GenericFormGui implements
                 temp[3] = tempAmtPerTime;
                 temp[4] = f.getFormLanguage1();
                 temp[5] = (new Integer(rd.getTimesPerDay())).toString();
-                temp[6] = "vezes por dia";
+                temp[6] = "vezes por "+d.getDefaultTakePeriod();
                 temp[7] = String.valueOf(d.getPackSize());
                 ti.setText(temp);
 
