@@ -52,7 +52,7 @@ public class RecalculateSockTask implements IdartTask {
 			}.run();
 		}
 
-		List<Drug> allDrugs = DrugManager.getAllDrugs(session, iDartProperties.SERVICOTARV);
+		List<Drug> allDrugs = DrugManager.getAllDrugsByTipoDoenca(session, iDartProperties.SERVICOTARV);
 		
 		monitor.beginTask("Updating stock levels for all stock", allDrugs.size());
 		

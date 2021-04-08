@@ -328,14 +328,14 @@ public class DrugManager {
     }
 
     /**
-     * Returns all drugs
+     * Returns all drugsdependindOnTipoDoenca
      *
      * @param sess
      * @return List<Drug>
      * @throws HibernateException
      */
     @SuppressWarnings("unchecked")
-    public static List<Drug> getAllDrugs(Session sess,String tipoDoenca)
+    public static List<Drug> getAllDrugsByTipoDoenca(Session sess, String tipoDoenca)
             throws HibernateException {
         List<Drug> result = sess.createQuery(
                 "select d from Drug as d where d.tipoDoenca = :tipoDoenca order by d.name").setString("tipoDoenca",
@@ -344,7 +344,23 @@ public class DrugManager {
         return result;
     }
 
+
     public static List<Drug> getDrugs(Session sess)
+                throws HibernateException {
+        List<Drug> result = sess.createQuery(
+                "select d from Drug as d order by d.name").list();
+
+        return result;
+    }
+    /**
+     * Returns all drugs
+     *
+     * @param sess
+     * @return List<Drug>
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Drug> getAllDrugs(Session sess)
             throws HibernateException {
         List<Drug> result = sess.createQuery(
                 "select d from Drug as d order by d.name").list();
@@ -443,7 +459,7 @@ public class DrugManager {
             throws HibernateException {
 
         // get a list of all the drugs in the database
-        List<Drug> existingDrugs = getAllDrugs(s, iDartProperties.SERVICOTARV);
+        List<Drug> existingDrugs = getAllDrugsByTipoDoenca(s, iDartProperties.SERVICOTARV);
 
         for (Drug drug : existingDrugs) {
             if (drug.getChemicalDrugStrengths().size() == toCompare.size()) {
@@ -460,7 +476,7 @@ public class DrugManager {
             throws HibernateException {
 
         // get a list of all the drugs in the database
-        List<Drug> existingDrugs = getAllDrugs(s,iDartProperties.SERVICOTARV);
+        List<Drug> existingDrugs = getAllDrugsByTipoDoenca(s,iDartProperties.SERVICOTARV);
         for (Drug drug : existingDrugs) {
 
             if (drug.getChemicalDrugStrengths().size() == toCompare.size()) {
