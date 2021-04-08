@@ -1686,18 +1686,18 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             return false;
         }
 
-        //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
-        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId(),tipoPaciente)) { //$NON-NLS-1$
-
-            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
-                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH) ",
-                        "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH).");
-            }else {
-                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
-                        "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
-            }
-            return false;
-        }
+//        //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
+//        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId(),tipoPaciente)) { //$NON-NLS-1$
+//
+//            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+//                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH) ",
+//                        "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH).");
+//            }else {
+//                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
+//                        "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
+//            }
+//            return false;
+//        }
 
         if (btnCaptureDate.getDate().before(newPack.getPrescription().getDate())
                 && !(sdf.format(btnCaptureDate.getDate()).equals(sdf.format(newPack.getPrescription().getDate())))) {
@@ -2470,33 +2470,28 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             int units = 0;
             int numlabels = 1;
             int weeksperUnits = 0;
+            int takePeriod = 1;
 
-            double unitsPerMonth;
+
+            if(theDrug.getDefaultTakePeriod().startsWith("S")){
+                takePeriod = 7;
+            }else
+                if(theDrug.getDefaultTakePeriod().startsWith("M")){
+                    takePeriod = 30;
+            }
 
             // for most items, which have an amountpertime, work out the
             // quanitity to prepopulates
             int packSize = theDrug.getPackSize();
             if (pd.getAmtPerTime() != 0.0) {
 
-                if ((packSize % 28) == 0) {
-                    unitsPerMonth = pd.getAmtPerTime() * pd.getTimesPerDay() * 28;
-                } else {
-                    unitsPerMonth = pd.getAmtPerTime() * pd.getTimesPerDay() * 30;
-                }
-
-                // round units up to multiple of packSize
-                if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())
-                        && unitsPerMonth % packSize != 0) {
-                    unitsPerMonth = (Math.floor(unitsPerMonth / packSize) + 1) * packSize;
-                }
-
                 switch (newPack.getWeekssupply()) {
 
-                    case 1: // 1 week supply
+                    case 1: // 1 week supply 7 days
 
                         // First, calculate the number of units required for the
                         // total supply
-                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 7);
+                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 7)/takePeriod;
 
                         // round units up to multiple of packSize
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
@@ -2514,14 +2509,16 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         // First, calculate the number of units required for the
                         // total supply
-                        units = (int) Math.ceil(unitsPerMonth / 2);
+
+                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 14 )/takePeriod;
+
+                      //  units = (int) Math.ceil(unitsPerMonth / 2);
 
                         // round units up to multiple of packSize
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
                             if (units % packSize != 0) {
                                 int noOfPacks = units / packSize;
                                 units = (noOfPacks + 1) * packSize;
-
                             }
                         }
 
@@ -2530,14 +2527,25 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     default:
                         // First, calculate the number of units required for the
                         // total supply
+                        int unitsPerMonth;
+
                         if ((packSize % 28) == 0) {
-                            units = (int) ((newPack.getWeekssupply() / 4) * (pd.getAmtPerTime() * pd.getTimesPerDay() * 28));
+                            unitsPerMonth = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 28 )/takePeriod;
+                            units = (int) ((newPack.getWeekssupply() / 4) * unitsPerMonth);
                         } else {
-                            units = (int) ((newPack.getWeekssupply() / 4) * (pd.getAmtPerTime() * pd.getTimesPerDay() * 30));
+                            unitsPerMonth = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 30 )/takePeriod;
+                            units = (int) ((newPack.getWeekssupply() / 4) * unitsPerMonth);
                         }
 
                         if (packSize > units)
                             units = packSize;
+
+//                        else
+//                            if(packSize < units)
+//                                units = packSize * 2;
+
+
+
 
                         // Next round up syrup if required.
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
