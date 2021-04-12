@@ -814,6 +814,18 @@ public class CommonObjects {
 
 	}
 
+	public static void populateTakePeriod (Session session, CCombo cmbPeriodoToma) {
+		List<SimpleDomain> sdList = AdministrationManager
+				.getAllTakePeriod(session);
+
+		if (sdList != null) {
+			for (SimpleDomain s : sdList) {
+				cmbPeriodoToma.add(s.getValue());
+			}
+		}
+
+	}
+
 	public static void populateComboRegimenStatus(Session session, CCombo cmbLine) {
 		String[] items = new String[2];
 		items[0] =Messages.getString("addRegimen.field.active");

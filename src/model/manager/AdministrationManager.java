@@ -121,6 +121,15 @@ public class AdministrationManager {
         return result;
     }
 
+    public static List<SimpleDomain> getAllTakePeriod(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.description = 'Period' order by s.id asc";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
     public static List<SimpleDomain> getAllMotivoPrescricao(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.description = 'prescription_reason' order by s.id asc";

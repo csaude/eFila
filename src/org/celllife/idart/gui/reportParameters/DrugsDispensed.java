@@ -227,7 +227,7 @@ public class DrugsDispensed extends GenericReportGui {
 				ResourceUtils.getFont(iDartFont.VERASANS_8));
 		tblDrugNames.setContentProvider(new ArrayContentProvider());
 		
-		drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
+		drugList = DrugManager.getAllDrugsByTipoDoenca(getHSession(), iDartProperties.SERVICOTARV);
 		tblDrugNames.setInput(drugList);
 		tblDrugNames.setLabelProvider(new DrugsDispensedLabelProvider());
 		
