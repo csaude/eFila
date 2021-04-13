@@ -90,6 +90,8 @@ public class iDartProperties {
 
 	public final static String PNCT = "TB";
 
+	public final static String PREP = "PREP";
+
 	public static boolean allowMultipleUncollectedPackages = false;
 
 	public static String downReferralMode = "offline";
