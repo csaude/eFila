@@ -83,6 +83,7 @@ public class AddPrescription extends GenericFormGui implements
     private Button rdBtnTARVPrescription;
 
     private Button rdBtnTBPrescription;
+    private Button rdBtnPrEPPrescription;
 
     private TableColumn clmAmt;
 
@@ -259,14 +260,24 @@ public class AddPrescription extends GenericFormGui implements
         if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
             rdBtnTBPrescription.setSelection(true);
             rdBtnTARVPrescription.setSelection(false);
+            rdBtnPrEPPrescription.setSelection(false);
+        } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
+            rdBtnTBPrescription.setSelection(false);
+            rdBtnTARVPrescription.setSelection(false);
+            rdBtnPrEPPrescription.setSelection(true);
         } else {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(true);
+            rdBtnPrEPPrescription.setSelection(false);
         }
 
         if (rdBtnTBPrescription.getSelection()) {
             tipoPaciente = iDartProperties.PNCT;
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
+            cmbLinha.setText("0-N/A");
+        } else if (rdBtnPrEPPrescription.getSelection()) {
+            tipoPaciente = iDartProperties.PREP;
+            localPrescription.setTipoDoenca(iDartProperties.PREP);
             cmbLinha.setText("0-N/A");
         } else {
             tipoPaciente = iDartProperties.SERVICOTARV;
@@ -392,7 +403,7 @@ public class AddPrescription extends GenericFormGui implements
 
         // rdBtnTBPrescription
         rdBtnTBPrescription = new Button(compInstructions, SWT.RADIO);
-        rdBtnTBPrescription.setBounds(new Rectangle(390, 8, 100, 30));
+        rdBtnTBPrescription.setBounds(new Rectangle(220, 8, 100, 30));
         rdBtnTBPrescription.setText("TPT");
         rdBtnTBPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
         rdBtnTBPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -417,6 +428,35 @@ public class AddPrescription extends GenericFormGui implements
         });
         rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
+        // rdBtnPrEPPrescription
+        rdBtnPrEPPrescription = new Button(compInstructions, SWT.RADIO);
+        rdBtnPrEPPrescription.setBounds(new Rectangle(400, 8, 100, 30));
+        rdBtnPrEPPrescription.setText("PrEP");
+        rdBtnPrEPPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos PrEP.");
+        rdBtnPrEPPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                resetGUIforPrescriptionType();
+                tipoPaciente = "PrEP";
+                cmbLinha.setText("0-N/A");
+                if (fieldsEnabled) {
+                    loadPrescription(tipoPaciente);
+                    localPrescription.setTipoDoenca(tipoPaciente);
+                    for (PatientIdentifier pi : localPrescription.getPatient().getPatientIdentifiers()) {
+                        if ((pi.getType().getName().equalsIgnoreCase("NIT") || pi.getType().getName().equalsIgnoreCase("NID CCR")) && !rdBtnTARVPrescription.getSelection()) {
+                            rdBtnTARVPrescription.setEnabled(false);
+                            rdBtnTBPrescription.setEnabled(false);
+                            rdBtnPrEPPrescription.setEnabled(true);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        rdBtnPrEPPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+
         // lblTARVPrescriptio
         Label lblTARVPrescriptio = new Label(compInstructions, SWT.NONE);
         lblTARVPrescriptio.setBounds(new Rectangle(70, 2, 40, 34));
@@ -424,7 +464,7 @@ public class AddPrescription extends GenericFormGui implements
 
         // rdBtnTARVPrescription
         rdBtnTARVPrescription = new Button(compInstructions, SWT.RADIO);
-        rdBtnTARVPrescription.setBounds(new Rectangle(118, 8, 100, 30));
+        rdBtnTARVPrescription.setBounds(new Rectangle(60, 8, 100, 30));
         rdBtnTARVPrescription.setText("TARV");
         rdBtnTARVPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TARV.");
         rdBtnTARVPrescription.setSelection(true);
@@ -1661,7 +1701,7 @@ public class AddPrescription extends GenericFormGui implements
     private void setFormToInitialPrescription() {
         getShell().redraw();
 
-        if (rdBtnTBPrescription.getSelection())
+        if (rdBtnTBPrescription.getSelection() || rdBtnPrEPPrescription.getSelection())
             cmbUpdateReason.setText("Inicio (I)");
         else
             cmbUpdateReason.setText("Inicia");
@@ -2313,6 +2353,8 @@ public class AddPrescription extends GenericFormGui implements
 
         if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
+        else if (rdBtnPrEPPrescription.getSelection())
+            localPrescription.setTipoDoenca(iDartProperties.PREP);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
 
@@ -2373,6 +2415,8 @@ public class AddPrescription extends GenericFormGui implements
 
         if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
+        else if (rdBtnPrEPPrescription.getSelection())
+            localPrescription.setTipoDoenca(iDartProperties.PREP);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
 
@@ -2843,6 +2887,8 @@ public class AddPrescription extends GenericFormGui implements
 
         if (rdBtnTBPrescription.getSelection())
             localPrescription.setTipoDoenca(iDartProperties.PNCT);
+        else if (rdBtnPrEPPrescription.getSelection())
+            localPrescription.setTipoDoenca(iDartProperties.PREP);
         else
             localPrescription.setTipoDoenca(iDartProperties.SERVICOTARV);
 
@@ -3422,7 +3468,7 @@ public class AddPrescription extends GenericFormGui implements
      */
     private void resetGUIforPrescriptionType() {
 
-        if (rdBtnTBPrescription.getSelection()) {
+        if (rdBtnTBPrescription.getSelection() || rdBtnPrEPPrescription.getSelection()) {
             grpPatientID.setBounds(new Rectangle(200, 95, 480, 132));
 
             lblDispensaTrimestral.setBounds(new Rectangle(10, 62, 150, 20));
@@ -3437,16 +3483,18 @@ public class AddPrescription extends GenericFormGui implements
             lblTipoDispensaSemestral.setBounds(new Rectangle(320, 82, 50, 20));
             cmbTipoDispensaSemestral.setBounds(new Rectangle(370, 79, 100, 20));
 
-            lblRegime.setText("*  Regime TPT:");
+            final String diseaseType = rdBtnTBPrescription.getSelection() ? "TB" : "PrEP";
 
-            // POPULA OS REGIMES TPT
+            lblRegime.setText(rdBtnTBPrescription.getSelection() ? "*  Regime TPT:" : "*  Regime PrEP:");
+
+            // POPULA OS REGIMES TPT ou PrEP
             cmbRegime.removeAll();
-            CommonObjects.populateRegimesTerapeuticosTPTCombo(getHSession(), cmbRegime, false);
+            CommonObjects.populateRegimesTerapeuticosTPTCombo(getHSession(), cmbRegime, false, diseaseType);
             cmbRegime.addFocusListener(new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
                     cmbRegime.removeAll();
-                    CommonObjects.populateRegimesTerapeuticosTPTCombo(getHSession(), cmbRegime, false);
+                    CommonObjects.populateRegimesTerapeuticosTPTCombo(getHSession(), cmbRegime, false, diseaseType);
                     cmbRegime.setVisibleItemCount(Math.min(cmbRegime.getItemCount(), 25));
                 }
             });

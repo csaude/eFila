@@ -181,7 +181,7 @@ public class ARVDrugUsage extends GenericReportGui {
 	}
 
 	private void populateTblDrugs() {
-		List<Drug> drugList = DrugManager.getAllDrugs(getHSession(), iDartProperties.SERVICOTARV);
+		List<Drug> drugList = DrugManager.getAllDrugs(getHSession());
 
 		Collections.sort(drugList);
 
