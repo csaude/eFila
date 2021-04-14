@@ -113,6 +113,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Button rdBtnPrintSummaryLabelYes;
     private Button rdBtnTARVPrescription;
     private Button rdBtnTBPrescription;
+    private Button rdBtnPREPPrescription;
     private ProgressBar pbLoading;
     private Text searchBar;
     private Table tblPrescriptionInfo;
@@ -1083,7 +1084,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         // rdBtnTARVPrescription
         rdBtnTARVPrescription = new Button(compPatientsWaiting, SWT.RADIO);
-        rdBtnTARVPrescription.setBounds(new Rectangle(8, 8, 50, 20));
+        rdBtnTARVPrescription.setBounds(new Rectangle(8, 8, 55, 20));
         rdBtnTARVPrescription.setText("TARV");
         rdBtnTARVPrescription.setToolTipText("Pressione este botão para prescriçõe de medicamentos TARV.");
         rdBtnTARVPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -1102,7 +1103,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         // rdBtnTBPrescription
         rdBtnTBPrescription = new Button(compPatientsWaiting, SWT.RADIO);
-        rdBtnTBPrescription.setBounds(new Rectangle(160, 8, 50, 20));
+        rdBtnTBPrescription.setBounds(new Rectangle(80, 8, 50, 20));
         rdBtnTBPrescription.setText("TPT");
         rdBtnTBPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
         rdBtnTBPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -1118,6 +1119,26 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         });
 
         rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        // rdBtnTBPrescription
+        rdBtnPREPPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnPREPPrescription.setBounds(new Rectangle(140, 8, 50, 20));
+        rdBtnPREPPrescription.setText("PrEP");
+        rdBtnPREPPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos PrEP.");
+        rdBtnPREPPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.PREP;
+                rdBtnTBPrescription.setSelection(false);
+                rdBtnTARVPrescription.setSelection(false);
+                rdBtnPREPPrescription.setSelection(true);
+
+                initialiseSearchList();
+            }
+        });
+
+        rdBtnPREPPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         Label lblSearch = new Label(compPatientsWaiting, SWT.NONE);
         lblSearch.setBounds(new Rectangle(10, 37, 187, 20));
@@ -2075,9 +2096,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         if(tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
             rdBtnTARVPrescription.setSelection(true);
             rdBtnTBPrescription.setSelection(false);
+            rdBtnPREPPrescription.setSelection(false);
+        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
+            rdBtnTARVPrescription.setSelection(false);
+            rdBtnTBPrescription.setSelection(false);
+            rdBtnPREPPrescription.setSelection(true);
         } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
             rdBtnTARVPrescription.setSelection(false);
             rdBtnTBPrescription.setSelection(true);
+            rdBtnPREPPrescription.setSelection(false);
         }
 
         Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);

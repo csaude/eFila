@@ -458,6 +458,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','ARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','TARV');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'disease_type', 'disease_type', 'PREP');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Inicio (I)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Continua (C)');
@@ -465,6 +466,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_pro
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'Disease','PREP','PREP');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Dia','Dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Semana','Semana');
@@ -486,6 +488,9 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Brigadas Móveis - Distribuição durante o final do dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o final do dia');
+
+
+
 
 INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
 INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');

@@ -2579,15 +2579,15 @@ public class AddPrescription extends GenericFormGui implements
                     .concat(txtPatientId.getText())
                     : "Registar Nova Prescrição do paciente "
                     .concat(txtPatientId.getText()), null, isInitialPrescription ? "ATENÇÃO: SELECCIONOU " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : " O TIPO TARV ") +
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
                     "INICIAL\nTEM A CERTEZA "
                     + ("DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") + "? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat("?")
                     : ("ATENÇÃO: SELECCIONOU " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : " O TIPO TARV ") +
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
                     "INICIAL\nTEM A CERTEZA DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : " TARV ") + "? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat(""), MessageDialog.QUESTION, new String[]{"Sim", "Não"}, 0);
 
             if (cmbUpdateReason.getText().trim().equals("Inicia") || cmbUpdateReason.getText().trim().equals("Inicio (I)")) {
@@ -2660,6 +2660,10 @@ public class AddPrescription extends GenericFormGui implements
 
                             if (localPrescription.getTipoDoenca().equalsIgnoreCase("TB")) {
                                 localPrescription.setDrugTypes("TB");
+                            }
+
+                            if (localPrescription.getTipoDoenca().equalsIgnoreCase("PREP")) {
+                                localPrescription.setDrugTypes("PREP");
                             }
 
                             if (patientsPrescriptions.size() > 0 && oldPrescription != null) {
@@ -2790,6 +2794,10 @@ public class AddPrescription extends GenericFormGui implements
 
                             if (localPrescription.getTipoDoenca().equalsIgnoreCase("TB")) {
                                 localPrescription.setDrugTypes("TB");
+                            }
+
+                            if (localPrescription.getTipoDoenca().equalsIgnoreCase("PREP")) {
+                                localPrescription.setDrugTypes("PREP");
                             }
 
                             if (patientsPrescriptions.size() > 0) {
