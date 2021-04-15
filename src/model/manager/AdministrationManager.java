@@ -1093,6 +1093,15 @@ public class AdministrationManager {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    public static String dispenseModUUID(Session session, String value) throws HibernateException {
+        List<SimpleDomain> domainList = session.createQuery("from SimpleDomain sd where upper(sd.value) =:value").setString("value",value.toUpperCase()).list();
+        if (domainList.size() > 0) {
+            return domainList.get(0).getName();
+        }
+        return " ";
+    }
+
     /**
      * Method addSimpleDomain.
      *

@@ -33,6 +33,8 @@ public class SyncOpenmrsDispense {
     private String returnVisitUuid;
     @Column(name = "strnextpickup")
     private String strNextPickUp;
+    @Column(name = "dispensemodeanswer")
+    private String dispenseModeAnswer;
     @ManyToOne
     @JoinColumn(name = "prescription", nullable = false)
     private Prescription prescription;
@@ -175,5 +177,13 @@ public class SyncOpenmrsDispense {
 
     public void setNotas(String notas) {
         this.notas = notas;
+    }
+
+    public String getDispenseModeAnswer() {
+        return dispenseModeAnswer;
+    }
+
+    public void setDispenseModeAnswer(String dispenseModeAnswer) {
+        this.dispenseModeAnswer = dispenseModeAnswer;
     }
 }
