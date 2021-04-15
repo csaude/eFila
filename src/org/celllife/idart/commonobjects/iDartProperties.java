@@ -53,7 +53,9 @@ public class iDartProperties {
 	public static final String DOSAGE = "e1de28ae-1d5f-11e0-b929-000c29ad1d07";
 	
 	public static final String VISIT_UUID = "e1e2efd8-1d5f-11e0-b929-000c29ad1d07";
-	
+
+	public static final String DISPENSEMODE_UUID = "40a9a12b-1205-4a55-bb93-caf15452bf61";
+
 	public static final String CONCEPT_CONFIDENT_NAME = "e1de46a4-1d5f-11e0-b929-000c29ad1d07";
 	
 	public static final String CONCEPT_CONFIDENT_TELEPHONE_NUMBER = "e1dcb3ca-1d5f-11e0-b929-000c29ad1d07";
@@ -152,7 +154,7 @@ public class iDartProperties {
 
 	public static int logoutTime = -1;
 
-	public static String idartVersionNumber = "2.3.0";
+	public static String idartVersionNumber = "2.3.1";
 
 	public static boolean nextAppointmentDateOnLabels = true;
 

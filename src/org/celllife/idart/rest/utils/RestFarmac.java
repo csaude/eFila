@@ -755,7 +755,7 @@ public class RestFarmac {
 
                         if (mostRecentEpisode.isOpen()) {
                             mostRecentEpisode.closeFromSyncEpisode(syncEpisode);
-                            EpisodeManager.saveEpisode(sess, mostRecentEpisode);
+                            EpisodeManager.saveEpisode(mostRecentEpisode);
                         }
 
                         Episode newEpisode = Episode.generateFromSyncEpisode(syncEpisode, relatedPatient, clinic);
