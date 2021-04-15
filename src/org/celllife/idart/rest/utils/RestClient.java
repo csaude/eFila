@@ -66,7 +66,7 @@ public class RestClient {
     public boolean postOpenMRSEncounter(String encounterDatetime, String nidUuid, String encounterType, String strFacilityUuid,
                                         String filaUuid, String providerUuid, String regimeUuid,
                                         String strRegimenAnswerUuid, String dispensedAmountUuid, List<PrescribedDrugs> prescribedDrugs,
-                                        List<PackagedDrugs> packagedDrugs, String dosageUuid, String returnVisitUuid, String strNextPickUp) throws Exception {
+                                        List<PackagedDrugs> packagedDrugs, String dosageUuid, String returnVisitUuid, String strNextPickUp, String dispenseModeUuid, String answerDispenseModeUuid) throws Exception {
 
         StringEntity inputAddPerson = null;
 
@@ -92,12 +92,19 @@ public class RestClient {
             inputAddPerson = new StringEntity(
                     "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
                             + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
-                            + "\"obs\":[{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},{\"person\":"
-                            + "\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\","
-                            + "\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}]}"
+                            + "\"obs\":["
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\",\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                            + "]"
+                            +"}"
                     , "UTF-8");
 
             System.out.println(IOUtils.toString(inputAddPerson.getContent()));
@@ -125,7 +132,11 @@ public class RestClient {
                             + "\"value\":\"" + String.valueOf(packagedDrugs.get(0).getAmount()) + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
                             + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage_0 + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
                             + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage_1 + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}]}"
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                            + "]"
+                            +"}"
                     , "UTF-8");
         }
 
@@ -453,7 +464,7 @@ public class RestClient {
             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                     strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispense.getRegimenAnswer(),
                     iDartProperties.DISPENSED_AMOUNT, dispense.getPrescription().getPrescribedDrugs(), newPack.getPackagedDrugs(), iDartProperties.DOSAGE,
-                    iDartProperties.VISIT_UUID, dispense.getStrNextPickUp());
+                    iDartProperties.VISIT_UUID, dispense.getStrNextPickUp(), iDartProperties.DISPENSEMODE_UUID,dispense.getDispenseModeAnswer());
 
             log.trace("Criou o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
 
