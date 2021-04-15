@@ -1646,6 +1646,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 //            return false;
 //        }
 
+        //Se nao tiver Modo de dispensa nao pode dispensar
+        if (cmbDispenseMode.getText().trim().isEmpty()) { //$NON-NLS-1$
+            showMessage(MessageDialog.ERROR, "O Modo de Dispensa esta vazio ",
+                    "O campo Modo de Dispensa esta vazio, por favor seleccione o Modo de dispensa.");
+            return false;
+        }
+
         if (btnCaptureDate.getDate().before(newPack.getPrescription().getDate())
                 && !(sdf.format(btnCaptureDate.getDate()).equals(sdf.format(newPack.getPrescription().getDate())))) {
             showMessage(MessageDialog.ERROR, "Data de Dispensa Inválida!",
@@ -2805,9 +2812,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
             Clinic clinic = AdministrationManager.getMainClinic(hSession);
 
-            String dispenseModeAnswer =  AdministrationManager.dispenseModUUID(hSession, cmbDispenseMode.getText());
+            String dispenseModeAnswer = "";
 
-            // EncounterDatetimeh
+            if(!cmbDispenseMode.getText().trim().isEmpty())
+                dispenseModeAnswer =  AdministrationManager.dispenseModUUID(hSession, cmbDispenseMode.getText());
+
+            // EncounterDatetime
             String strPickUp = RestUtils.castDateToString(dtPickUp);
 
             // Patient NID
