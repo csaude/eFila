@@ -319,7 +319,6 @@ public class PharmacyApplication {
                             RestFarmac.setDispensesFromRest(sess);
                             RestFarmac.setEpisodesFromRest(sess, mainClinic);
                         }
-
                     }
                     assert tx != null;
                     tx.commit();

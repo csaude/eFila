@@ -1093,6 +1093,22 @@ public class AdministrationManager {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    public static String dispenseModUUID(Session session, String value) throws HibernateException {
+        List<SimpleDomain> domainList = session.createQuery("from SimpleDomain sd where sd.description = 'dispense_mode' order by sd.id asc").list();
+
+
+        if (domainList.size() > 0) {
+            for(SimpleDomain sd : domainList){
+
+                if(sd.getValue().equalsIgnoreCase(value)){
+                    return sd.getName();
+                }
+            }
+        }
+        return " ";
+    }
+
     /**
      * Method addSimpleDomain.
      *
@@ -1100,6 +1116,7 @@ public class AdministrationManager {
      * @param sDomain SimpleDomain
      * @throws HibernateException
      */
+
     public static void addSimpleDomain(Session session, SimpleDomain sDomain)
             throws HibernateException {
 
