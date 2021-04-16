@@ -1095,9 +1095,16 @@ public class AdministrationManager {
 
     @SuppressWarnings("unchecked")
     public static String dispenseModUUID(Session session, String value) throws HibernateException {
-        List<SimpleDomain> domainList = session.createQuery("from SimpleDomain sd where upper(sd.value) =:value").setString("value",value.toUpperCase()).list();
+        List<SimpleDomain> domainList = session.createQuery("from SimpleDomain sd where sd.description = 'dispense_mode' order by sd.id asc").list();
+
+
         if (domainList.size() > 0) {
-            return domainList.get(0).getName();
+            for(SimpleDomain sd : domainList){
+
+                if(sd.getValue().equalsIgnoreCase(value)){
+                    return sd.getName();
+                }
+            }
         }
         return " ";
     }
@@ -1109,6 +1116,7 @@ public class AdministrationManager {
      * @param sDomain SimpleDomain
      * @throws HibernateException
      */
+
     public static void addSimpleDomain(Session session, SimpleDomain sDomain)
             throws HibernateException {
 
