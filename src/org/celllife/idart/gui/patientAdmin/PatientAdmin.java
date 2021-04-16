@@ -321,6 +321,7 @@ public class PatientAdmin extends GenericAdminGui {
             btnPatientHistoryReport.setData(iDartProperties.SWTBOT_KEY, Screens.PATIENT_HISTORY_REPORT.getAccessButtonId());
             btnPatientHistoryReport.setLayoutData(gdBtn);
             btnPatientHistoryReport.setText(Messages.getString("PatientAdmin.button.viewPatientHistory")); //$NON-NLS-1$
+            btnPatientHistoryReport.setEnabled(false);
             btnPatientHistoryReport
                     .setToolTipText(Messages.getString("PatientAdmin.button.viewPatientHistory.tooltip")); //$NON-NLS-1$
             btnPatientHistoryReport.setFont(ResourceUtils

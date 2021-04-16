@@ -623,7 +623,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         btnPatientHistoryReport = new Button(grpParticulars, SWT.NONE);
         btnPatientHistoryReport.setBounds(new Rectangle(260, 115, 40, 40));
-        btnPatientHistoryReport
+        btnPatientHistoryReport.setEnabled(false);
+                btnPatientHistoryReport
                 .setToolTipText(Messages.getString("patient.button.report.tooltip")); //$NON-NLS-1$
         btnPatientHistoryReport.setImage(ResourceUtils
                 .getImage(iDartImage.REPORT_PATIENTHISTORY_30X26));

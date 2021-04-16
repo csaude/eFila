@@ -641,9 +641,9 @@ public class CommonObjects {
 
 	}
 
-	public static void populateRegimesTerapeuticosTPTCombo(Session sess, Combo combo, boolean inclueTodosRegimes) {
+	public static void populateRegimesTerapeuticosTPTCombo(Session sess, Combo combo, boolean inclueTodosRegimes, String diseaseType) {
 
-		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimesByDiseaseType(sess,"TB");
+		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimesByDiseaseType(sess,diseaseType);
 
 		for (RegimeTerapeutico r : regimes) {
 

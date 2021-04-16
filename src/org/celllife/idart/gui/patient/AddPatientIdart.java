@@ -602,6 +602,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
 
         btnPatientHistoryReport = new Button(grpParticulars, SWT.NONE);
         btnPatientHistoryReport.setBounds(new Rectangle(310, 140, 40, 40));
+        btnPatientHistoryReport.setEnabled(false);
         btnPatientHistoryReport
                 .setToolTipText(Messages.getString("patient.button.report.tooltip")); //$NON-NLS-1$
         btnPatientHistoryReport.setImage(ResourceUtils

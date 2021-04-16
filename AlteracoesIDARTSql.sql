@@ -460,6 +460,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','ARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','TARV');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'disease_type', 'disease_type', 'PREP');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Inicio (I)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Continua (C)');
@@ -467,6 +468,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_pro
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'Disease','PREP','PREP');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Dia','Dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Semana','Semana');
@@ -488,6 +490,9 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','d6ad74a1-ff67-4b81-afa1-a0d906462623','Brigadas Móveis - Distribuição durante o final do dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','467718bc-1756-4b3f-b1ee-98d01910153a','Clínicas Móveis - Distribuição durante o dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','091737af-d6bf-4830-8e87-82572ffac9ea','Clínicas Móveis - Distribuição durante o final do dia');
+
+
+
 
 INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
 INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');
