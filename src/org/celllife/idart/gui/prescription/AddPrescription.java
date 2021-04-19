@@ -3491,7 +3491,7 @@ public class AddPrescription extends GenericFormGui implements
             lblTipoDispensaSemestral.setBounds(new Rectangle(320, 82, 50, 20));
             cmbTipoDispensaSemestral.setBounds(new Rectangle(370, 79, 100, 20));
 
-            final String diseaseType = rdBtnTBPrescription.getSelection() ? "TB" : "PrEP";
+            final String diseaseType = rdBtnTBPrescription.getSelection() ? "TB" : "PREP";
 
             lblRegime.setText(rdBtnTBPrescription.getSelection() ? "*  Regime TPT:" : "*  Regime PrEP:");
 

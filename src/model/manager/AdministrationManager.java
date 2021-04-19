@@ -92,7 +92,7 @@ public class AdministrationManager {
             throws HibernateException {
 
         List<RegimeTerapeutico> result = sess.createQuery(
-                "select r from RegimeTerapeutico as r where r.tipoDoenca = '"+ diseaseType +"')").list();
+                "select r from RegimeTerapeutico as r where r.tipoDoenca = '"+ diseaseType +"'").list();
 
         return result;
     }
