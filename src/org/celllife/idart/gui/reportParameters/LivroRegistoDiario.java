@@ -108,7 +108,9 @@ public class LivroRegistoDiario extends GenericReportGui {
     @Override
     protected void createShell() {
         Rectangle bounds = new Rectangle(100, 50, 600, 510);
-        buildShell( (this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : REPORT_LIVRO_ELETRONICO_ARV), bounds);
+        buildShell( (this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LIVRO_ELETRONICO_PREP:  REPORT_LIVRO_ELETRONICO_ARV), bounds);
+
+
         // create the composites
         createMyGroups();
     }
@@ -125,7 +127,7 @@ public class LivroRegistoDiario extends GenericReportGui {
     @Override
     protected void createCompHeader() {
         iDartImage icoImage = iDartImage.REPORT_STOCKCONTROLPERCLINIC;
-        buildCompdHeader((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : REPORT_LIVRO_ELETRONICO_ARV), icoImage);
+        buildCompdHeader(((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LIVRO_ELETRONICO_PREP:  REPORT_LIVRO_ELETRONICO_ARV)), icoImage);
     }
 
     /**
@@ -150,16 +152,23 @@ public class LivroRegistoDiario extends GenericReportGui {
             return;
         }
 
-        if (!this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)){
+        if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
             if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
                     !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
                 showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
                 return;
 
             }
-        }else {
-            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnFim.getSelection()) {
+        }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection()  &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
                 showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                return;
+
+            }
+        }
+        else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
                 return;
 
             }
@@ -199,16 +208,23 @@ public class LivroRegistoDiario extends GenericReportGui {
             return;
         }
 
-        if (!this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)){
+        if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
             if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
                     !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
                 showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
                 return;
 
             }
-        }else {
-            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnFim.getSelection()) {
+        }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
                 showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                return;
+
+            }
+        }
+        else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
                 return;
 
             }
@@ -227,7 +243,7 @@ public class LivroRegistoDiario extends GenericReportGui {
             theStartDate = c.getTime();
         }
 
-        String reportNameFile = this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Reports/LivroRegistoDiarioTB.xls" : "Reports/LivroRegistoDiarioARV.xls";
+        String reportNameFile = this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Reports/LivroRegistoDiarioTB.xls" : this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ? "Reports/LivroRegistoDiarioPREP.xls" :"Reports/LivroRegistoDiarioARV.xls";
 
         try {
             LivroRegistoDiarioExcel op = new LivroRegistoDiarioExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
@@ -276,7 +292,7 @@ public class LivroRegistoDiario extends GenericReportGui {
 
         //Group tipo tarv
         grpTipoTarv = new Group(getShell(), SWT.NONE);
-        grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" : "Tipo Tarv:"));
+        grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" :  (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ?  "Tipo PREP" : "Tipo Tarv:")));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpTipoTarv.setBounds(new Rectangle(55, 90, 520, 50));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -296,7 +312,7 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnAlteraccao.setText("Alteração");
         chkBtnAlteraccao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnAlteraccao.setSelection(false);
-        chkBtnAlteraccao.setVisible(!this.diseaseType.equals(Prescription.TIPO_DOENCA_TB));
+        chkBtnAlteraccao.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
 
         //chk button  Manter
         chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
@@ -313,7 +329,7 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnReinicio.setText("Re-Inicio");
         chkBtnReinicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnReinicio.setSelection(false);
-        chkBtnReinicio.setVisible(!this.diseaseType.equals(Prescription.TIPO_DOENCA_TB));
+
 
         //chk button  Transfere de
         chkBtnTransfereDe = new Button(grpTipoTarv, SWT.CHECK);
@@ -322,16 +338,16 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnTransfereDe.setText("Transferido De");
         chkBtnTransfereDe.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnTransfereDe.setSelection(false);
-        chkBtnTransfereDe.setVisible(!this.diseaseType.equals(Prescription.TIPO_DOENCA_TB));
+        chkBtnTransfereDe.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
 
         //chk button  FIm
         chkBtnFim = new Button(grpTipoTarv, SWT.CHECK);
         chkBtnFim.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-        chkBtnFim.setBounds(new Rectangle(410, 20, 100, 20));
+        chkBtnFim.setBounds(new Rectangle(440, 20, 100, 20));
         chkBtnFim.setText("Fim");
         chkBtnFim.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnFim.setSelection(false);
-        chkBtnFim.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TB));
+        chkBtnFim.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) || this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP));
 
 
         grpDateRange = new Group(getShell(), SWT.NONE);

@@ -15,6 +15,7 @@ public class PatientHistoryReport extends AbstractJasperReport {
 
 	public static final String PATIENT_HISTORY_FILA = "patientHistoryFILA";
 	public static final String PATIENT_HISTORY_FILT = "patientHistoryFILT";
+	public static final String PATIENT_HISTORY_PREP = "patientHistoryPrep";
 
 	private String reportType;
 
@@ -38,7 +39,7 @@ public class PatientHistoryReport extends AbstractJasperReport {
 		map.put("pharmacist1", LocalObjects.pharmacy.getPharmacist());
 		map.put("pharmacist2", LocalObjects.pharmacy.getAssistantPharmacist());
 		map.put("path", getReportPath());
-		map.put("disease", reportType.equalsIgnoreCase(PATIENT_HISTORY_FILA) ? Prescription.TIPO_DOENCA_TARV : Prescription.TIPO_DOENCA_TB);
+		map.put("disease", reportType.equalsIgnoreCase(PATIENT_HISTORY_FILA) ? Prescription.TIPO_DOENCA_TARV : reportType.equalsIgnoreCase(PATIENT_HISTORY_FILT) ?Prescription.TIPO_DOENCA_TB:Prescription.TIPO_DOENCA_PREP);
 		return map;
 	}
 

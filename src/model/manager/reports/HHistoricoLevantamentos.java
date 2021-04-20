@@ -83,7 +83,10 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 	protected String getReportFileName() {
 		if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
 			return "HistoricoLevantamentos";
-		}else return "HistoricoLevantamentosTB";
+		}else  if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+			return "HistoricoLevantamentosTB";
+		}
+		else return "HistoricoLevantamentosPREP";
 
 	}
 	
