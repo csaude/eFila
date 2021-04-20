@@ -16,6 +16,7 @@ public interface GenericReportGuiInterface {
 
     static String REPORT_PATIENT_HISTORY = Messages.getString("reports.patientHistory");  //$NON-NLS-1$
     static String REPORT_PATIENT_TB_HISTORY = Messages.getString("reports.patientTBHistory");  //$NON-NLS-1$
+    static String REPORT_PATIENT_PREP_HISTORY = Messages.getString("reports.patientPREPHistory");  //$NON-NLS-1$
     static String REPORT_PEPFAR = Messages.getString("reports.pepfar"); //$NON-NLS-1$
     static String REPORT_MISSED_APPOINTMENTS = Messages.getString("reports.missedAppointments");  //$NON-NLS-1$
     static String REPORT_DAILY_DISPENSING_TOTALS = Messages.getString("reports.dailyDispensingTotals");  //$NON-NLS-1$
@@ -54,6 +55,7 @@ public interface GenericReportGuiInterface {
     static String REPORT_TPI = Messages.getString("reports.idart.tpi");  //$NON-NLS-1$
     static String REPORT_LEVANTAMENTOS_ARV = Messages.getString("reports.idart.levantamentos");  //$NON-NLS-1$
     static String REPORT_LEVANTAMENTOS_TB = Messages.getString("reports.idart.levantamentostb");
+    static String REPORT_LEVANTAMENTOS_PREP = Messages.getString("reports.idart.levantamentosprep");
     static String REPORT_REFERIDOS_LEVANTAMENTOS_ARV = Messages.getString("reports.idart.referidos.levantamentos");  //$NON-NLS-1$
     static String REPORT_LINHAS_TERAPEUTICAS = Messages.getString("reports.LinhasTerapeuticas");
     static String REPORT_FARMACIAS_REGISTADAS = Messages.getString("reports.farmacias.registadas");
@@ -68,6 +70,7 @@ public interface GenericReportGuiInterface {
     static String REPORT_SEGUNDA_LINHA_AVALIACAO = Messages.getString("reports.segundaslinhasavaliacao");
     static String REPORT_LIVRO_ELETRONICO_ARV = Messages.getString("reports.idart.lrda");
     static String REPORT_LIVRO_ELETRONICO_TB = Messages.getString("reports.idart.lrdt");
+    static String REPORT_LIVRO_ELETRONICO_PREP = Messages.getString("reports.idart.lrdprep");
     static String REPORT_CONFIRMACA_ABANDONOS_OPENMRS = Messages.getString("reports.confirmaabandonos");
     static String REPORT_INDICADORES_MENSAIS = Messages.getString("reports.indicadoresmensais");
     static String REPORT_LISTA_PACIENTES_SEMDT = Messages.getString("reports.pacientesSemDT");

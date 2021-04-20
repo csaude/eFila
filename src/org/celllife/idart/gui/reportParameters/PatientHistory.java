@@ -58,13 +58,15 @@ public class PatientHistory extends GenericReportGui {
 
 	private String patientHistoryType;
 
-	/*private Button rdBtnTARVPatient;
+	private Button rdBtnTARVPatient;
 
-	private Button rdBtnTBPatient;*/
+	private Button rdBtnTBPatient;
+
+	private Button rdBtnPREPPatient;
 
 	private static String tipoPaciente = null;
 
-	//private boolean radioButtosEnabled;
+	private boolean radioButtosEnabled;
 	/**
 	 * Constructor
 	 *  @param parent
@@ -76,6 +78,8 @@ public class PatientHistory extends GenericReportGui {
 
 		tipoPaciente = iDartProperties.SERVICOTARV;
 
+		this.radioButtosEnabled = true;
+
 		this.patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILA;
 	}
 
@@ -86,10 +90,15 @@ public class PatientHistory extends GenericReportGui {
 		if (this.patientHistoryType.equalsIgnoreCase(PatientHistoryReport.PATIENT_HISTORY_FILA)){
 
 			tipoPaciente = iDartProperties.SERVICOTARV;
-		}else {
+		}else 	if (this.patientHistoryType.equalsIgnoreCase(PatientHistoryReport.PATIENT_HISTORY_FILT)) {
 
 			tipoPaciente = iDartProperties.PNCT;
 		}
+		else {
+			tipoPaciente=iDartProperties.PREP;
+		}
+
+		this.radioButtosEnabled = false;
 	}
 
 	/**
@@ -139,23 +148,23 @@ public class PatientHistory extends GenericReportGui {
 		grpPatientSelection
 		.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		grpPatientSelection.setText("Seleccione o Paciente");
-		grpPatientSelection.setBounds(new Rectangle(80, 80, 340, 470));
+		grpPatientSelection.setBounds(new Rectangle(80, 80, 400, 470));
 
 		tblWaitingPatients = new Table(grpPatientSelection, SWT.FULL_SELECTION);
-		tblWaitingPatients.setBounds(new Rectangle(20, 35, 306, 365));
+		tblWaitingPatients.setBounds(new Rectangle(20, 35, 356, 365));
 		tblWaitingPatients.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		tblWaitingPatients.setHeaderVisible(true);
 
 		tblColPatId = new TableColumn(tblWaitingPatients, SWT.NONE);
-		tblColPatId.setWidth(100);
+		tblColPatId.setWidth(120);
 		tblColPatId.setText("NID");
 
 		tblColPatName = new TableColumn(tblWaitingPatients, SWT.NONE);
-		tblColPatName.setWidth(150);
+		tblColPatName.setWidth(160);
 		tblColPatName.setText("Nome do Paciente");
 
 		searchBar = new Text(grpPatientSelection, SWT.BORDER);
-		searchBar.setBounds(new Rectangle(17, 409, 311, 20));
+		searchBar.setBounds(new Rectangle(17, 409, 362, 20));
 		searchBar.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		searchBar.setFocus();
 		searchBar.addKeyListener(new KeyAdapter() {
@@ -168,6 +177,58 @@ public class PatientHistory extends GenericReportGui {
 						|| (e.character == (char) iDartProperties.intValueOfAlternativeBarcodeEndChar)) {
 					enterPressedInPatientSearchBar();
 				}
+			}
+		});
+
+		// rdBtnTBPrescription
+		rdBtnTBPatient = new Button(grpPatientSelection, SWT.RADIO);
+		//rdBtnTBPatient.setEnabled(this.radioButtosEnabled);
+		rdBtnTBPatient.setBounds(new Rectangle(180, 430, 100, 30));
+		rdBtnTBPatient.setText("TPT");
+		if (patientHistoryType != null && patientHistoryType.equals(PatientHistoryReport.PATIENT_HISTORY_FILT)) {
+			rdBtnTBPatient.setSelection(true);
+		}
+
+		rdBtnTBPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
+		rdBtnTBPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				tipoPaciente = "TB";
+				patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILT;
+			}
+		});
+		rdBtnTBPatient.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+		rdBtnTARVPatient = new Button(grpPatientSelection, SWT.RADIO);
+		if (patientHistoryType == null || patientHistoryType.equals(PatientHistoryReport.PATIENT_HISTORY_FILA)) {
+			rdBtnTARVPatient.setSelection(true);
+		}
+		rdBtnTARVPatient.setBounds(new Rectangle(80, 430, 100, 30));
+		rdBtnTARVPatient.setText("TARV");
+		//rdBtnTARVPatient.setEnabled(this.radioButtosEnabled);
+		rdBtnTARVPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TARV.");
+		rdBtnTARVPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				tipoPaciente = "TARV";
+				patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_FILA;
+			}
+		});
+
+		rdBtnPREPPatient = new Button(grpPatientSelection, SWT.RADIO);
+		rdBtnPREPPatient.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+		rdBtnPREPPatient.setBounds(new Rectangle(280, 430, 100, 30));
+		rdBtnPREPPatient.setText("PREP");
+		if (patientHistoryType != null && patientHistoryType.equals(PatientHistoryReport.PATIENT_HISTORY_PREP)) {
+			rdBtnPREPPatient.setSelection(true);
+		}
+
+		rdBtnPREPPatient.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos PREP.");
+		rdBtnPREPPatient.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			@Override
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				tipoPaciente = "PREP";
+				patientHistoryType = PatientHistoryReport.PATIENT_HISTORY_PREP;
 			}
 		});
 	}

@@ -400,6 +400,9 @@ public class NewReports extends GenericAdminGui {
         reportGUIs.put(GenericReportGuiInterface.REPORT_LIVRO_ELETRONICO_TB,
                 new LivroRegistoDiario(getShell(), false, Prescription.TIPO_DOENCA_TB));
 
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LIVRO_ELETRONICO_PREP,
+                new LivroRegistoDiario(getShell(), false, Prescription.TIPO_DOENCA_PREP));
+
         reportGUIs.put(GenericReportGuiInterface.REPORT_IDART,
                 new RegisteredIdart(getShell(), false));
 
@@ -415,6 +418,8 @@ public class NewReports extends GenericAdminGui {
         reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_TB,
                 new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TB));
 
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_PREP,
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_PREP));
         //Dipensa Trimestral
         reportGUIs.put(GenericReportGuiInterface.REPORT_DISPENSA_TRIMESTRAL,
                 new DispensaTrimestralReport(getShell(), false));
@@ -446,6 +451,8 @@ public class NewReports extends GenericAdminGui {
                 new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_FILA));
         reportGUIs.put(GenericReportGuiInterface.REPORT_PATIENT_TB_HISTORY,
                 new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_FILT));
+        reportGUIs.put(GenericReportGuiInterface.REPORT_PATIENT_PREP_HISTORY,
+                new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_PREP));
         reportGUIs.put(
                 GenericReportGuiInterface.REPORT_EPISODES_STARTED_OR_ENDED,
                 new EpisodesStartedOrEndedReportGUI(getShell(), false));
