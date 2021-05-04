@@ -71,7 +71,6 @@ and (((app.appointmentDate::date + INTERVAL '60 days') between $P{startDate} and
 and exists (select prescription.id
 from prescription
 where prescription.patient = pat.id
-and prescription.tipodoenca like '%ARV'
 and prescription.endDate is null)
 and exists (select id from episode where episode.patient = pat.id
 and episode.stopdate is null)
