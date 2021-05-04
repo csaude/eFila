@@ -59,7 +59,7 @@ and idt.name = 'NID'
 and pi.value = pat.patientid
 and idt.id = pi.type_id
 and $P{clinicid} = pat.clinic
-and (app.visitDate > app.appointmentDate OR app.visitDate is null )
+and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null )
 and ($P{date}::date - app.appointmentDate::date) between $P{minDays} and $P{maxDays}
 and exists (select prescription.id
 from prescription
