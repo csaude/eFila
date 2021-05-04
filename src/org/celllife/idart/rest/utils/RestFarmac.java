@@ -833,15 +833,16 @@ public class RestFarmac {
 
                         if (!existClinic)
                             clinicList.add(clinic);
-                        break;
+                        // break;
                     } catch (Exception e) {
                         log.error(" Ocorreu um erro ao adicionar a clinic [" + clinic.getClinicName() + "]");
                     } finally {
-                        if (reader != null)
-                            reader.close();
+                        continue;
                     }
                 }
+
             }
+            reader.close();
             in.close();
         } catch (Exception e) {
             e.printStackTrace();
