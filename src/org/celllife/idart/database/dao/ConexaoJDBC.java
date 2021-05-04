@@ -6146,7 +6146,7 @@ public class ConexaoJDBC {
                     "and pi.value = pat.patientid " +
                     "and idt.id = pi.type_id " +
                     "and " + clinicid + " = pat.clinic " +
-                    "and (app.visitDate > app.appointmentDate OR app.visitDate is null ) " +
+                    "and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null ) " +
                     "and ('" + data + "'::date - app.appointmentDate::date) between " + minDays + " and " + maxDays + " " +
                     "and exists (select prescription.id " +
                     "from prescription " +
