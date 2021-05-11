@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6963904734899635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="304"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -58,8 +58,8 @@
 		pg_catalog.date(to_date(pack.dateexpectedstring,'DD Mon YYYY')) proximoLevantamento ,
 		reg.regimeesquema,
 		CASE
-			WHEN p.dispensatrimestral = 1 AND pack.pickupdate >= $P{dateStart} AND (select count(id) = 1 from package where prescription = p.id and pickupdate <= $P{dateEnd} ) THEN p.tipodt
-			WHEN p.dispensatrimestral = 1 AND pack.pickupdate >= $P{dateStart} AND (select count(id) > 1 from package where prescription = p.id and pickupdate <= $P{dateEnd} ) THEN 'Manuntencao'
+			WHEN p.dispensatrimestral = 1 AND pack.pickupdate::date >= $P{dateStart} AND (select count(id) = 1 from package where prescription = p.id and pickupdate::date <= $P{dateEnd} ) THEN p.tipodt
+			WHEN p.dispensatrimestral = 1 AND pack.pickupdate::date >= $P{dateStart} AND (select count(id) > 1 from package where prescription = p.id and pickupdate::date <= $P{dateEnd} ) THEN 'Manuntencao'
 			ELSE 'Transporte'
 		END  tipodt
 FROM  (

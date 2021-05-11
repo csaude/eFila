@@ -32,8 +32,9 @@ from packageddrugs as packdrug
 inner join package pack on packdrug.parentPackage = pack.id
 inner join prescription pre on pack.prescription = pre.id
 inner join patient on patient.id = pre.patient
-inner join prescribedDrugs preDrugs on preDrugs.prescription = pre.id
-inner join drug d on d.id = preDrugs.drug
+inner join stock on stock.id = packdrug.stock
+inner join drug d on d.id = stock.drug
+inner join prescribedDrugs preDrugs on preDrugs.prescription = pre.id and preDrugs.drug = d.id
 inner join form f on f.id = d.form
 where
 patient.patientid = $P{patientId}
