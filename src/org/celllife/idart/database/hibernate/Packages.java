@@ -454,7 +454,7 @@ public class Packages {
 	 */
 	public boolean hasARVDrug() {
 		for (PackagedDrugs pd : getPackagedDrugs()) {
-			if (pd.getStock().getDrug().getSideTreatment() == 'F')
+			if (pd!=null && pd.getStock().getDrug().getSideTreatment() == 'F')
 				return true;
 		}
 
