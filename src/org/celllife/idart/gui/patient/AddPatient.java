@@ -1684,8 +1684,6 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 e.setStopDate(episodeStopDate);
                 e.setStopReason(cmbEpisodeStopReason.getText());
                 e.setStopNotes(txtEpisodeStopNotes.getText());
-
-
             }
             localPatient.setAccountStatus(episodeStopDate == null);
         } else if (!cmbEpisodeStartReason.getText().trim().isEmpty()) {
@@ -1706,9 +1704,21 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         }
 
         if (localPatient.getMostRecentEpisode() != null) {
-            if (localPatient.getMostRecentEpisode().getStartReason().equalsIgnoreCase("Voltou da Referencia")) {
-                SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), localPatient.getCurrentClinic(), AdministrationManager.getMainClinic(getHSession()).getUuid());
-                EpisodeManager.saveSyncTempEpisode(syncEpisode);
+            if (localPatient.getMostRecentEpisode().getStartReason().contains("Voltou da Refer")) {
+
+                List<SyncEpisode> syncEpisodeList = EpisodeManager.getAllSyncTempEpiReadyToSendForPacient(getHSession(),localPatient);
+
+                if(syncEpisodeList.isEmpty()) {
+                    SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), localPatient.getCurrentClinic(), AdministrationManager.getMainClinic(getHSession()).getUuid());
+                    EpisodeManager.saveSyncTempEpisode(syncEpisode);
+                }else{
+                    MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
+                            | SWT.OK);
+                    missing.setText("Este paciente ja voltou da referência.");
+                    missing
+                            .setMessage("Ja existe um episódio de volta registado para este paciente na mesma Farmacia que não foi enviada.");
+                    missing.open();
+                }
             }
         }
 
