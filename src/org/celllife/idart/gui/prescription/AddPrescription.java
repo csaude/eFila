@@ -69,7 +69,7 @@ import java.util.List;
 import static org.celllife.idart.commonobjects.CommonObjects.enableContentProposal;
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
-public class AddPrescription extends GenericFormGui implements
+public class  AddPrescription extends GenericFormGui implements
         iDARTChangeListener {
 
     private Button btnAddDrug;
@@ -83,6 +83,7 @@ public class AddPrescription extends GenericFormGui implements
     private Button rdBtnTARVPrescription;
 
     private Button rdBtnTBPrescription;
+
     private Button rdBtnPrEPPrescription;
 
     private TableColumn clmAmt;
@@ -398,12 +399,12 @@ public class AddPrescription extends GenericFormGui implements
 
         // lblTBPrescription
         Label lblTBPrescription = new Label(compInstructions, SWT.NONE);
-        lblTBPrescription.setBounds(new Rectangle(345, 3, 40, 34));
-        lblTBPrescription.setImage(ResourceUtils.getImage(iDartImage.PACKAGESAWAITINGPICKUP_40X34));
+        lblTBPrescription.setBounds(new Rectangle(180, 3, 40, 34));
+        lblTBPrescription.setImage(ResourceUtils.getImage(iDartImage.DRUG));
 
         // rdBtnTBPrescription
         rdBtnTBPrescription = new Button(compInstructions, SWT.RADIO);
-        rdBtnTBPrescription.setBounds(new Rectangle(220, 8, 100, 30));
+        rdBtnTBPrescription.setBounds(new Rectangle(230, 8, 100, 30));
         rdBtnTBPrescription.setText("TPT");
         rdBtnTBPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
         rdBtnTBPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -419,6 +420,7 @@ public class AddPrescription extends GenericFormGui implements
                     for (PatientIdentifier pi : localPrescription.getPatient().getPatientIdentifiers()) {
                         if ((pi.getType().getName().equalsIgnoreCase("NIT") || pi.getType().getName().equalsIgnoreCase("NID CCR")) && !rdBtnTARVPrescription.getSelection()) {
                             rdBtnTARVPrescription.setEnabled(false);
+                            rdBtnPrEPPrescription.setEnabled(false);
                             rdBtnTBPrescription.setEnabled(true);
                             break;
                         }
@@ -427,6 +429,11 @@ public class AddPrescription extends GenericFormGui implements
             }
         });
         rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        // lblPrEPPrescription
+        Label lblPrEPPrescription = new Label(compInstructions, SWT.NONE);
+        lblPrEPPrescription.setBounds(new Rectangle(350, 2, 40, 34));
+        lblPrEPPrescription.setImage(ResourceUtils.getImage(iDartImage.DRUGGROUP));
 
         // rdBtnPrEPPrescription
         rdBtnPrEPPrescription = new Button(compInstructions, SWT.RADIO);
@@ -444,7 +451,7 @@ public class AddPrescription extends GenericFormGui implements
                     loadPrescription(tipoPaciente);
                     localPrescription.setTipoDoenca(tipoPaciente);
                     for (PatientIdentifier pi : localPrescription.getPatient().getPatientIdentifiers()) {
-                        if ((pi.getType().getName().equalsIgnoreCase("NIT") || pi.getType().getName().equalsIgnoreCase("NID CCR")) && !rdBtnTARVPrescription.getSelection()) {
+                        if ((pi.getType().getName().equalsIgnoreCase("PrEP") && !rdBtnTARVPrescription.getSelection() && !rdBtnTBPrescription.getSelection())) {
                             rdBtnTARVPrescription.setEnabled(false);
                             rdBtnTBPrescription.setEnabled(false);
                             rdBtnPrEPPrescription.setEnabled(true);
@@ -457,10 +464,10 @@ public class AddPrescription extends GenericFormGui implements
         rdBtnPrEPPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
 
-        // lblTARVPrescriptio
-        Label lblTARVPrescriptio = new Label(compInstructions, SWT.NONE);
-        lblTARVPrescriptio.setBounds(new Rectangle(70, 2, 40, 34));
-        lblTARVPrescriptio.setImage(ResourceUtils.getImage(iDartImage.DISPENSEPACKAGENOW_40X34));
+        // lblTARVPrescription
+        Label lblTARVPrescription = new Label(compInstructions, SWT.NONE);
+        lblTARVPrescription.setBounds(new Rectangle(10, 2, 40, 34));
+        lblTARVPrescription.setImage(ResourceUtils.getImage(iDartImage.PRESCRIPTIONADDDRUG));
 
         // rdBtnTARVPrescription
         rdBtnTARVPrescription = new Button(compInstructions, SWT.RADIO);

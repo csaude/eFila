@@ -77,7 +77,6 @@ and (app.appointmentDate::date < $P{date}::date and ($P{date}::date - app.appoin
 and exists (select prescription.id
 from prescription
 where prescription.patient = pat.id
-and prescription.tipodoenca like '%ARV'
 and (($P{date} between prescription.date and prescription.endDate)or(($P{date} > prescription.date)) and (prescription.endDate is null)))
 and exists (select id from episode where episode.patient = pat.id
 and (($P{date} between episode.startdate and episode.stopdate)or(($P{date} > episode.startdate)) and (episode.stopdate is null)))
