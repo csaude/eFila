@@ -101,6 +101,10 @@ public class AddDrug extends GenericFormGui {
 
     private CCombo cmbPeriodoToma;
 
+    private Label lblOpenmrsUuid;
+
+    private Text txtOpenmrsUuid;
+
     /**
      * Use true if you want to add a new drug, use false if you are updating an
      * existing drug
@@ -121,7 +125,7 @@ public class AddDrug extends GenericFormGui {
         // Header text, icon URL, shell bounds
         String shellTxt = isAddnotUpdate ? "Registar Novo Medicamento"
                 : "Actualizar um Medicamento";
-        Rectangle bounds = new Rectangle(25, 0, 800, 600);
+        Rectangle bounds = new Rectangle(25, 0, 800, 650);
         // Parent Generic Methods ------
         buildShell(shellTxt, bounds); // generic shell build
     }
@@ -168,7 +172,7 @@ public class AddDrug extends GenericFormGui {
         grpDrugInfo = new Group(getShell(), SWT.NONE);
         grpDrugInfo.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpDrugInfo.setText("Detalhes do Medicamento");
-        grpDrugInfo.setBounds(new Rectangle(150, 115, 485, 330));
+        grpDrugInfo.setBounds(new Rectangle(150, 115, 485, 370));
         //16, 423, 485, 61));
         GridLayout layout = new GridLayout(3, false);
         layout.verticalSpacing = 10;
@@ -337,11 +341,14 @@ public class AddDrug extends GenericFormGui {
         cmbtipoDoenca.setText(cmbtipoDoenca.getItem(0));
 
         // Estado do Regime Terapeutico
+        //$NON-NLS-1$
+
+
         lblEstadoDrug = new Label(grpDrugInfo, SWT.NONE);
         lblEstadoDrug.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
 //        lblEstadoDrug.setBounds(new org.eclipse.swt.graphics.Rectangle(30, 70, 110, 20));
         lblEstadoDrug.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        lblEstadoDrug.setText(Messages.getString("adddruggroup.estado.medicamento.title")); //$NON-NLS-1$
+        lblEstadoDrug.setText(Messages.getString("adddruggroup.estado.medicamento.title"));
 
         rdBtnActive = new Button(grpDrugInfo, SWT.RADIO);
         rdBtnActive.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
@@ -356,6 +363,26 @@ public class AddDrug extends GenericFormGui {
         rdBtnInactive.setText("Inactivo");
         rdBtnInactive.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnInactive.setSelection(false);
+
+        // Mapeamento OpenMRS
+        lblOpenmrsUuid = new Label(grpDrugInfo, SWT.NONE);
+        lblOpenmrsUuid.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
+        lblOpenmrsUuid.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblOpenmrsUuid.setText(Messages.getString("adddruggroup.label.regime.especifico.title")); //$NON-NLS-1$
+
+        txtOpenmrsUuid = new Text(grpDrugInfo, SWT.BORDER);
+        txtOpenmrsUuid.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
+        txtOpenmrsUuid.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        txtOpenmrsUuid.setEditable(true);
+        txtOpenmrsUuid.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.character == SWT.CR) {
+                    //	cmdSearchWidgetSelected();
+                }
+            }
+        });
+
 
         grpDrugInfo.layout();
     }
@@ -401,7 +428,7 @@ public class AddDrug extends GenericFormGui {
 
         // grpStandadDosages
         Group grpStandadDosages = new Group(getShell(), SWT.NONE);
-        Rectangle bounds = new Rectangle(150, 450, 485, 61);
+        Rectangle bounds = new Rectangle(150, 500, 485, 61);
         grpStandadDosages.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpStandadDosages.setText("Posologia ");
         grpStandadDosages.setLayout(null);
@@ -623,6 +650,7 @@ public class AddDrug extends GenericFormGui {
             rdBtnInactive.setSelection(true);
         }
 
+        txtOpenmrsUuid.setText(localDrug.getUuidopenmrs());
         Form theForm = localDrug.getForm();
         lblPackDescription
                 .setText(theForm.getFormLanguage1().equals("drops") ? "ml"
@@ -782,6 +810,7 @@ public class AddDrug extends GenericFormGui {
             localDrug.setForm(AdministrationManager.getForm(getHSession(), cmbForm.getText()));
             localDrug.setTipoDoenca(cmbtipoDoenca.getText());
             localDrug.setDefaultTakePeriod(cmbPeriodoToma.getText());
+            localDrug.setUuidopenmrs(txtOpenmrsUuid.getText());
             if (rdBtnActive.getSelection())
                 localDrug.setActive(true);
             else
@@ -834,6 +863,7 @@ public class AddDrug extends GenericFormGui {
         txtTimesPerDay.setEnabled(enable);
         txtAtc.setEnabled(enable);
         btnSave.setEnabled(enable);
+        txtOpenmrsUuid.setEnabled(enable);
 
         if (enable) {
             cmbForm.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
