@@ -51,8 +51,6 @@ import org.celllife.idart.database.hibernate.Patient;
 import org.celllife.idart.database.hibernate.PatientAttribute;
 import org.celllife.idart.database.hibernate.PillCount;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
-import org.celllife.idart.events.AdherenceEvent;
-import org.celllife.idart.events.PackageEvent;
 import org.celllife.idart.gui.misc.iDARTChangeListener;
 import org.celllife.idart.gui.platform.GenericFormGui;
 import org.celllife.idart.gui.reportParameters.PatientHistory;
@@ -1145,8 +1143,7 @@ iDARTChangeListener {
 
 	/**
 	 * Method populateTblLastPackage.
-	 * 
-	 * @param previousPack
+	 *
 	 *            Packages
 	 */
 	private void populateTblLastPackage() {
@@ -1249,8 +1246,7 @@ iDARTChangeListener {
 	/**
 	 * This method updates the two lists: - packages waiting to be dispatched,
 	 * and - packages that have been scanned out of the pharmacy
-	 * 
-	 * @param index
+	 *
 	 *            int
 	 */
 	private void updateLists() {
@@ -1288,8 +1284,7 @@ iDARTChangeListener {
 	 *            Patient
 	 */
 	private void populateLastPackageDetails(Patient pat) {
-		previousPack = PackageManager
-		.getLastPackagePickedUp(getHSession(), pat);
+		previousPack = PackageManager.getLastPackagePickedUp(getHSession(), pat, iDartProperties.SERVICOTARV);
 
 		if (previousPack != null) {
 
@@ -1677,9 +1672,10 @@ iDARTChangeListener {
 		getLog().info(
 		"New Patient Packaging: User chose 'Patient History Report'");
 
+
+
 		if (scannedPack != null) {
-			PatientHistoryReport report = new PatientHistoryReport(getShell(),
-					scannedPack.getPrescription().getPatient());
+			PatientHistoryReport report = new PatientHistoryReport(getShell(), scannedPack.getPrescription().getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
 			viewReport(report);
 		} else {
 			PatientHistory patHistory = new PatientHistory(getShell(), true);

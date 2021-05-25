@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.610510000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="286"/>
+	<property name="ireport.y" value="62"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -19,6 +19,7 @@
 	<parameter name="facilityName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="age" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="dsd" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="disease" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select p.id as id,p.patientId as patientid, p.dateOfBirth AS dob,
 p.firstnames as nome,
@@ -388,6 +389,9 @@ Aviada]]></text>
 				</subreportParameter>
 				<subreportParameter name="parentpackid">
 					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="desease">
+					<subreportParameterExpression><![CDATA[$P{disease}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="path">
 					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>

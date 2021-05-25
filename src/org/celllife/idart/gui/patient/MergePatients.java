@@ -21,7 +21,6 @@ package org.celllife.idart.gui.patient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1151,7 +1150,7 @@ public class MergePatients extends GenericFormGui {
 
 		if (patient != null) {
 			PatientHistoryReport report = new PatientHistoryReport(getShell(),
-					patient);
+					patient, PatientHistoryReport.PATIENT_HISTORY_FILA);
 			viewReport(report);
 		} else {
 			PatientHistory patHistory = new PatientHistory(getShell(), true);
@@ -1447,13 +1446,15 @@ public class MergePatients extends GenericFormGui {
 			// save changes to the left (primary) patient and delete the right
 			// (secondary) patient
 			PatientManager.savePatient(getHSession(), leftPatient);
-			PatientManager.deleteSecondaryPatient(getHSession(), rightPatient);
 
 			// update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
 			List<PackageDrugInfo> pdiList = TemporaryRecordsManager.getOpenmrsUnsubmittedPackageDrugInfos(getHSession(), rightPatient);
 
 			if(!pdiList.isEmpty())
 				TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, leftPatient);
+
+			// and delete the right
+			PatientManager.deleteSecondaryPatient(getHSession(), rightPatient);
 
 			getHSession().flush();
 			tx.commit();
@@ -1723,7 +1724,6 @@ public class MergePatients extends GenericFormGui {
 	 *
 	 * @param table
 	 *            Table
-	 * @param patList
 	 *            List<Patient>
 	 */
 	private void populatePatientHistoryTable(Table table, final Patient patient) {

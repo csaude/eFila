@@ -381,7 +381,7 @@ public class Task6 extends SwingWorker<String, Void> {
                 prescribedDrugsList.add(newPD);
             }
 
-            PackageManager.saveNewPrescription(sess, prescription, true);
+            PackageManager.saveNewPrescription(sess, prescription, true,iDartProperties.SERVICOTARV);
         }
 
         return prescription;

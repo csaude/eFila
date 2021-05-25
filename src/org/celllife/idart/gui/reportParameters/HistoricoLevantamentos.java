@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.celllife.idart.gui.platform.GenericReportGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartFont;
@@ -77,6 +78,8 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	private Button chkBtnTransfereDe;
 
 	private Button chkBtnReinicio;
+
+	private Button chkBtnFim;
 	
 	private List<HistoricoLevantamentoXLS> historicoLevantamentoXLS;
 	
@@ -84,6 +87,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	
     private FileOutputStream out = null; 
 
+    private String diseaseType;
 	/**
 	 * Constructor
 	 *
@@ -92,9 +96,11 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	 * @param activate
 	 *            boolean
 	 */
-	public HistoricoLevantamentos(Shell parent, boolean activate) {
+	public HistoricoLevantamentos(Shell parent, boolean activate, String diseaseType) {
 		super(parent, REPORTTYPE_MIA, activate);
 		this.parent = parent;
+
+		this.diseaseType = diseaseType;
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	@Override
 	protected void createShell() {
 		Rectangle bounds = new Rectangle(100, 50, 600, 510);
-		buildShell(REPORT_LEVANTAMENTOS_ARV, bounds);
+		buildShell((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LEVANTAMENTOS_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LEVANTAMENTOS_PREP:  REPORT_LEVANTAMENTOS_ARV), bounds);
 		// create the composites
 		createMyGroups();
 	}
@@ -121,7 +127,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 	@Override
 	protected void createCompHeader() {
 		iDartImage icoImage = iDartImage.REPORT_STOCKCONTROLPERCLINIC;
-		buildCompdHeader(REPORT_LEVANTAMENTOS_ARV, icoImage);
+		buildCompdHeader((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LEVANTAMENTOS_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LEVANTAMENTOS_PREP:  REPORT_LEVANTAMENTOS_ARV), icoImage);
 	}
 
 	/**
@@ -149,36 +155,50 @@ public class HistoricoLevantamentos extends GenericReportGui {
 			return;
 		}
 
-		if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
-				!chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
-			showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
-			return;
-			
-		} else {
-			
-			try {
+		if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
+					!chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
+				return;
 
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
-				 
-				Date theStartDate = calendarStart.getCalendar().getTime(); 
-			
-				Date theEndDate=  calendarEnd.getCalendar().getTime();
+			}
+		}else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection()  &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+				return;
 
-				Calendar c = Calendar.getInstance(Locale.US);
-				c.setLenient(true);
-				c.setTime(theStartDate);
-
-				if(Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)){
-					c.add(Calendar.DAY_OF_WEEK, -2);
-					theStartDate = c.getTime();
-				}
-				
-				HHistoricoLevantamentos report = new HHistoricoLevantamentos(getShell(), theStartDate, theEndDate,chkBtnInicio.getSelection(),chkBtnManutencao.getSelection(),chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection());
-				viewReport(report);
-			} catch (Exception e) {
-				getLog().error("Exception while running Historico levantamento report",e);
 			}
 		}
+		else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
+				return;
+
+			}
+		}
+
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+
+			Date theStartDate = calendarStart.getCalendar().getTime();
+
+			Date theEndDate=  calendarEnd.getCalendar().getTime();
+
+			Calendar c = Calendar.getInstance(Locale.US);
+			c.setLenient(true);
+			c.setTime(theStartDate);
+
+			if(Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)){
+				c.add(Calendar.DAY_OF_WEEK, -2);
+				theStartDate = c.getTime();
+			}
+
+			HHistoricoLevantamentos report = new HHistoricoLevantamentos(getShell(), theStartDate, theEndDate,chkBtnInicio.getSelection(),chkBtnManutencao.getSelection(),chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), chkBtnFim.getSelection(),this.diseaseType);
+			viewReport(report);
+		} catch (Exception e) {
+			getLog().error("Exception while running Historico levantamento report",e);
+		}
+
 
 	}
 	
@@ -190,13 +210,28 @@ public class HistoricoLevantamentos extends GenericReportGui {
 			return;
 		}
 
-		if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
-				!chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
-			showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
-			return;
-			
-		} else
-			{
+		if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
+					!chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
+				return;
+
+			}
+		}else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+				return;
+
+			}
+		}
+		else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
+				return;
+
+			}
+		}
+
 				Date theStartDate = calendarStart.getCalendar().getTime();
 
 				Date theEndDate = calendarEnd.getCalendar().getTime();
@@ -210,10 +245,10 @@ public class HistoricoLevantamentos extends GenericReportGui {
 					theStartDate = c.getTime();
 				}
 
-				String reportNameFile = "Reports/HistoricoLevantamento.xls";
+				String reportNameFile = (this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Reports/HistoricoLevantamentoTB.xls" : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? "Reports/HistoricoLevantamentoPREP.xls":  "Reports/HistoricoLevantamento.xls");
 				try {
 					HistoricoLevantamentosExcel op = new HistoricoLevantamentosExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
-							chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate);
+							chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), chkBtnFim.getSelection(), parent, reportNameFile, theStartDate, theEndDate, this.diseaseType);
 					new ProgressMonitorDialog(parent).run(true, true, op);
 
 					if (op.getList() == null ||
@@ -230,7 +265,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 					ex.printStackTrace();
 				}
 
-			}
+
 
 		}
 
@@ -262,7 +297,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		
 		//Group tipo tarv
 		grpTipoTarv = new Group(getShell(), SWT.NONE);
-		grpTipoTarv.setText("Tipo Tarv:");
+		grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" : "Tipo Tarv:"));
 		grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		grpTipoTarv.setBounds(new Rectangle(55, 90, 520, 50));
 		grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -282,6 +317,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		chkBtnAlteraccao.setText("Alteração");
 		chkBtnAlteraccao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnAlteraccao.setSelection(false);
+		chkBtnAlteraccao.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
 
 		//chk button  Manter
 		chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
@@ -290,6 +326,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		chkBtnManutencao.setText("Manutenção");
 		chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnManutencao.setSelection(false);
+
 		//chk button Re-Inicio
 		chkBtnReinicio = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnReinicio.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
@@ -298,6 +335,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		chkBtnReinicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnReinicio.setSelection(false);
 
+
 		//chk button  Transfere de
 		chkBtnTransfereDe = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnTransfereDe.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
@@ -305,6 +343,16 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		chkBtnTransfereDe.setText("Transferido De");
 		chkBtnTransfereDe.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnTransfereDe.setSelection(false);
+		chkBtnTransfereDe.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
+
+		//chk button  FIm
+		chkBtnFim = new Button(grpTipoTarv, SWT.CHECK);
+		chkBtnFim.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
+		chkBtnFim.setBounds(new Rectangle(440 , 20, 100, 20));
+		chkBtnFim.setText("Fim");
+		chkBtnFim.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+		chkBtnFim.setSelection(false);
+		chkBtnFim.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) || this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP));
 
 		grpDateRange = new Group(getShell(), SWT.NONE);
 		grpDateRange.setText("Período:");

@@ -37,10 +37,12 @@ public class LivroRegistoDiarioExcel implements IRunnableWithProgress {
     private boolean alterar;
     private boolean transfereDe;
     private boolean reInicio;
+    private boolean fim;
+    private String diseaseType;
 
     SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
-    public LivroRegistoDiarioExcel(boolean inicio, boolean manter, boolean alterar, boolean transfereDe, boolean reInicio, Shell parent, String reportFileName, Date theStartDate, Date theEndDate) {
+    public LivroRegistoDiarioExcel(boolean inicio, boolean manter, boolean alterar, boolean transfereDe, boolean reInicio, boolean fim, Shell parent, String reportFileName, Date theStartDate, Date theEndDate, String diseaseType) {
         this.inicio = inicio;
         this.manter = manter;
         this.alterar = alterar;
@@ -52,6 +54,8 @@ public class LivroRegistoDiarioExcel implements IRunnableWithProgress {
         this.reportFileName = reportFileName;
         this.theStartDate = theStartDate;
         this.theEndDate = theEndDate;
+        this.diseaseType =diseaseType;
+        this.fim = fim;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class LivroRegistoDiarioExcel implements IRunnableWithProgress {
 
             monitor.beginTask("Por Favor, aguarde ... ", 1);
 
-            livroRegistoDiarios = con.getLivroRegistoDiarioXLS(this.inicio, this.manter, this.alterar, this.transfereDe, this.reInicio, sdf.format(theStartDate), sdf.format(theEndDate));
+            livroRegistoDiarios = con.getLivroRegistoDiarioXLS(this.inicio, this.manter, this.alterar, this.transfereDe, this.reInicio, this.fim, sdf.format(theStartDate), sdf.format(theEndDate), this.diseaseType);
 
             if (livroRegistoDiarios.size() > 0) {
                 // Tell the user what you are doing

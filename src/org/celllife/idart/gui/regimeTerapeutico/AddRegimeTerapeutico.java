@@ -313,7 +313,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         lblPicAddDrug.setImage(ResourceUtils.getImage(iDartImage.PRESCRIPTIONADDDRUG));
 
         btnAddDrug = new Button(compButtonsMiddle, SWT.NONE);
-        btnAddDrug.setBounds(new Rectangle(60, 12, 185, 27));
+        btnAddDrug.setBounds(new Rectangle(60, 12, 195, 27));
         btnAddDrug.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         btnAddDrug.setText(Messages.getString("adddruggroup.button.adddruggroup.title")); //$NON-NLS-1$
         btnAddDrug

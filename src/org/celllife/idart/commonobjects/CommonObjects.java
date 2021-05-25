@@ -364,6 +364,23 @@ public class CommonObjects {
 
 	}
 
+	public static void populatePrescriptionUpdateReasonsTPT(Session sess, CCombo combo) {
+
+		List<SimpleDomain> sdList = AdministrationManager.getprofilaxiaINH(sess);
+		if (sdList != null) {
+			for (SimpleDomain s : sdList) {
+				combo.add(s.getValue());
+			}
+		}
+
+		if (combo.getItemCount() > 0) {
+			// Set the default to the first item in the combo box
+			System.out.println(combo.getItem(2));
+		}
+
+	}
+
+
 	/**
 	 * This method is used whenever a combo box of the activationReasons is
 	 * shown on a GUI. It first checks if the LocalObjects.activationReasons
@@ -600,10 +617,33 @@ public class CommonObjects {
 
 	}
 
-	public static void populateRegimesTerapeuticosCombo(Session sess, Combo combo,
-														boolean inclueTodosRegimes) {
+	public static void populateRegimesTerapeuticosCombo(Session sess, Combo combo, boolean inclueTodosRegimes) {
 
-		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimes(sess);
+//		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimes(sess);
+		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimesByDiseaseType(sess, "TARV");
+
+		for (RegimeTerapeutico r : regimes) {
+
+			if (inclueTodosRegimes) {
+				combo.add(r.getRegimeesquema());
+			} else {
+				if (r.isActive()) {
+					combo.add(r.getRegimeesquema());
+				}
+			}
+		}
+
+		if (combo.getItemCount() > 0) {
+			// Set the combo box to blank -> ensures that user
+			// is forced to enter the information
+			combo.setText("");
+		}
+
+	}
+
+	public static void populateRegimesTerapeuticosTPTCombo(Session sess, Combo combo, boolean inclueTodosRegimes, String diseaseType) {
+
+		List<RegimeTerapeutico> regimes = AdministrationManager.getAllRegimesByDiseaseType(sess,diseaseType);
 
 		for (RegimeTerapeutico r : regimes) {
 
@@ -769,6 +809,18 @@ public class CommonObjects {
 		if (sdList != null) {
 			for (SimpleDomain s : sdList) {
 				cmbDisease.add(s.getValue());
+			}
+		}
+
+	}
+
+	public static void populateTakePeriod (Session session, CCombo cmbPeriodoToma) {
+		List<SimpleDomain> sdList = AdministrationManager
+				.getAllTakePeriod(session);
+
+		if (sdList != null) {
+			for (SimpleDomain s : sdList) {
+				cmbPeriodoToma.add(s.getValue());
 			}
 		}
 

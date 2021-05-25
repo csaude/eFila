@@ -63,20 +63,26 @@ ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
+ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
 UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
 UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigoregime = null OR codigoregime = '';
 UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
+UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
+UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+UPDATE identifiertype set name = 'NID CCR' where index = 4;
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_mode';
 DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
+DELETE FROM simpledomain WHERE description  = 'Period';
+DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
-UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
-UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
@@ -151,6 +157,7 @@ CREATE TABLE IF NOT EXISTS sync_openmrs_dispense (
     regimeuuid character varying(255) COLLATE pg_catalog."default",
 	syncstatus character(1) COLLATE pg_catalog."default",
     regimenanswer character varying(255) COLLATE pg_catalog."default",
+    dispensemodeanswer character varying(255) COLLATE pg_catalog."default",
     dispensedamountuuid character varying(255) COLLATE pg_catalog."default",
     dosageuuid character varying(255) COLLATE pg_catalog."default",
     returnvisituuid character varying(255) COLLATE pg_catalog."default",
@@ -453,9 +460,19 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'pharmac
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','ARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'disease_type','disease_type','TARV');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'disease_type', 'disease_type', 'PREP');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Inicio (I)');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Continua (C)');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Fim (F)');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'Disease','PREP','PREP');
+
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Dia','Dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Semana','Semana');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Mes','Mes');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Mensal (DM)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa Trimestral (DT)');
@@ -464,15 +481,18 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
 
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Farmácia Pública - Hora Normal');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Farmácia Pública - Fora Hora Normal');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','FARMAC/Farmácia Privada');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Distribuição Comunitária pelo Provedor de Saúde');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','APEs');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Brigadas Móveis - Distribuição durante o dia');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Brigadas Móveis - Distribuição durante o final do dia');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o dia');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','dispense_mode','Clínicas Móveis - Distribuição durante o final do dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','4b51ace2-f778-4f54-bdaa-be2b350b7499','Farmácia Pública - Hora Normal');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','1309d08a-5c73-4429-8f4b-43a551952858','Farmácia Pública - Fora Hora Normal');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','d2eaec39-9c48-443b-a8d5-b2b163d42c53','FARMAC/Farmácia Privada');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','870e2d25-c5ef-4e36-89db-0a4a37af214e','Distribuição Comunitária pelo Provedor de Saúde');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','0843c71b-be47-4de2-ba16-a08db52c1136','Distribuição Comunitária pelos APEs');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','3ab58d0e-f831-4966-97bd-209738f5e4df','Brigadas Móveis - Distribuição durante o dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','d6ad74a1-ff67-4b81-afa1-a0d906462623','Brigadas Móveis - Distribuição durante o final do dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','467718bc-1756-4b3f-b1ee-98d01910153a','Clínicas Móveis - Distribuição durante o dia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','091737af-d6bf-4830-8e87-82572ffac9ea','Clínicas Móveis - Distribuição durante o final do dia');
+
+
+
 
 INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
 INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');

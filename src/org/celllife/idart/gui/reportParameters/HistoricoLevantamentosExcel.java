@@ -36,10 +36,12 @@ public class HistoricoLevantamentosExcel implements IRunnableWithProgress {
     private boolean alterar;
     private boolean transfereDe;
     private boolean reInicio;
+    private boolean fim;
+    private String diseaseType;
 
     SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
-    public HistoricoLevantamentosExcel(boolean inicio,boolean manter, boolean alterar, boolean transfereDe, boolean reInicio, Shell parent, String reportFileName, Date theStartDate, Date theEndDate) {
+    public HistoricoLevantamentosExcel(boolean inicio,boolean manter, boolean alterar, boolean transfereDe, boolean reInicio, boolean fim, Shell parent, String reportFileName, Date theStartDate, Date theEndDate, String diseaseType) {
         this.inicio = inicio;
         this.manter = manter;
         this.alterar = alterar;
@@ -51,6 +53,7 @@ public class HistoricoLevantamentosExcel implements IRunnableWithProgress {
         this.reportFileName = reportFileName;
         this.theStartDate = theStartDate;
         this.theEndDate = theEndDate;
+        this.diseaseType= diseaseType;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class HistoricoLevantamentosExcel implements IRunnableWithProgress {
 
             monitor.beginTask("Por Favor, aguarde ... ", 1);
 
-            historicoLevantamentoXLS = con.getQueryHistoricoLevantamentosXLS(this.inicio, this.manter,this.alterar,this.transfereDe, this.reInicio, sdf.format(theStartDate), sdf.format(theEndDate));
+            historicoLevantamentoXLS = con.getQueryHistoricoLevantamentosXLS(this.inicio, this.manter,this.alterar,this.transfereDe, this.reInicio, this.fim, sdf.format(theStartDate), sdf.format(theEndDate), diseaseType);
 
             if(historicoLevantamentoXLS.size() > 0) {
                 // Tell the user what you are doing
@@ -134,11 +137,20 @@ public class HistoricoLevantamentosExcel implements IRunnableWithProgress {
                     createCellTipoDispensa.setCellValue(xls.getTipoDispensa());
                     createCellTipoDispensa.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataLevantamento = row.createCell(7);
+
+                    HSSFCell createCellProveniencia = row.createCell(7);
+                    createCellProveniencia.setCellValue(xls.getProveniencia());
+                    createCellProveniencia.setCellStyle(cellStyle);
+
+                    HSSFCell createCellModoDispensa = row.createCell(8);
+                    createCellModoDispensa.setCellValue(xls.getModoDispensa());
+                    createCellModoDispensa.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDataLevantamento = row.createCell(9);
                     createCellDataLevantamento.setCellValue(xls.getDataLevantamento());
                     createCellDataLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataProximoLevantamento = row.createCell(8);
+                    HSSFCell createCellDataProximoLevantamento = row.createCell(10);
                     createCellDataProximoLevantamento.setCellValue(xls.getDataProximoLevantamento());
                     createCellDataProximoLevantamento.setCellStyle(cellStyle);
 

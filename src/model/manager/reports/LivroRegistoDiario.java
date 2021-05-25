@@ -22,11 +22,11 @@ public class LivroRegistoDiario extends AbstractJasperReport {
 	private boolean alteraccao;
 	private boolean trasfereDe;
 	private boolean reInicio;
+	private String diseaseType;
+	private  boolean fim;
 
 
-
-	public LivroRegistoDiario(Shell parent, Date theStartDate,
-			Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio) {
+	public LivroRegistoDiario(Shell parent, Date theStartDate, Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio, boolean fim, String diseaseType) {
 		super(parent);
 		
 		this.theStartDate=theStartDate;
@@ -36,6 +36,8 @@ public class LivroRegistoDiario extends AbstractJasperReport {
 		this.manutencao=manutencao;
 		this.trasfereDe=trasfereDe;
 		this.reInicio=reInicio;
+		this.diseaseType = diseaseType;
+		this.fim = fim;
 	}
 
 	@Override
@@ -60,10 +62,11 @@ public class LivroRegistoDiario extends AbstractJasperReport {
 		
 		map.put("mes", mesPortugues(theStartDate));
 		map.put("mes2",mesPortugues(theEndDate));
+		map.put("diseaseType", this.diseaseType);
 
 		ConexaoJDBC con=new ConexaoJDBC();
 		
-		String query = con.getLivroRegistoDiario(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio,dateFormat.format(theStartDate),dateFormat.format(theEndDate));
+		String query = con.getLivroRegistoDiario(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio, this.fim, dateFormat.format(theStartDate),dateFormat.format(theEndDate), this.diseaseType);
 
 //		Vector<String> v = new Vector<String>();
 //

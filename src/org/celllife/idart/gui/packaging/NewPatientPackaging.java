@@ -111,6 +111,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Button rdBtnYesAppointmentDate;
     private Button rdBtnPrintSummaryLabelNo;
     private Button rdBtnPrintSummaryLabelYes;
+    private Button rdBtnTARVPrescription;
+    private Button rdBtnTBPrescription;
+    private Button rdBtnPREPPrescription;
     private ProgressBar pbLoading;
     private Text searchBar;
     private Table tblPrescriptionInfo;
@@ -136,6 +139,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private Patient localPatient;
     private int dias = 0;
     private boolean postOpenMrsEncounterStatus;
+    public String tipoPaciente = iDartProperties.SERVICOTARV;
+
 
     ConexaoJDBC conn = new ConexaoJDBC();
     private static Logger log = Logger.getLogger(NewPatientPackaging.class);
@@ -159,6 +164,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
      */
     public NewPatientPackaging(Shell parent, Patient patient) {
         super(parent, HibernateUtil.getNewSession());
+        createScreenForNewPatient(patient);
+    }
+
+    public NewPatientPackaging(Shell parent, Patient patient, String tipoPaciente) {
+        super(parent, HibernateUtil.getNewSession());
+        this.tipoPaciente = tipoPaciente;
         createScreenForNewPatient(patient);
     }
 
@@ -601,18 +612,18 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription();
-
-        if (pre.getMotivocriacaoespecial().contains("Perda")) {
-            String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
-            if (dateExpected != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-                Date dataproximolev = new Date(dateExpected);
-                adjustForNewAppointmentDate(dataproximolev);
-                btnNextAppDate.setText(sdf.format(dataproximolev));
-                btnNextAppDate.setEnabled(false);
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
+        if (pre != null)
+            if (pre.getMotivocriacaoespecial().contains("Perda")) {
+                String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
+                if (dateExpected != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                    Date dataproximolev = new Date(dateExpected);
+                    adjustForNewAppointmentDate(dataproximolev);
+                    btnNextAppDate.setText(sdf.format(dataproximolev));
+                    btnNextAppDate.setEnabled(false);
+                }
             }
-        }
 
     }
 
@@ -663,7 +674,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         else
                             pdi.setInhPickup(true);
 
-                        if(rdBtnPrintSummaryLabelNo.getSelection())
+                        if (rdBtnPrintSummaryLabelNo.getSelection())
                             pdi.setCtzPickup(false);
                         else
                             pdi.setCtzPickup(true);
@@ -685,7 +696,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     private void initialiseSearchList() {
         java.util.List<PatientIdAndName> patients = null;
-        patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession());
+        patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession(), tipoPaciente);
 
         lstWaitingPatients.setInput(patients);
     }
@@ -699,7 +710,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         getLog().info("New Patient Packaging: User chose 'Patient History Report'");
 
         if (localPatient != null) {
-            PatientHistoryReport report = new PatientHistoryReport(getShell(), localPatient);
+            PatientHistoryReport report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);
@@ -793,7 +804,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     private void cmdUpdatePrescriptionWidgetSelected() {
 
-        final AddPrescription myPrescription = new AddPrescription(localPatient, getShell(), true);
+        final AddPrescription myPrescription = new AddPrescription(localPatient, getShell(), true, tipoPaciente);
+
         myPrescription.addDisposeListener(new DisposeListener() {
             @Override
             public void widgetDisposed(DisposeEvent e) {
@@ -805,7 +817,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 else
                     clearForm();
 
-                if ((patient != null) && (patient.getCurrentPrescription() != null)) {
+                if ((patient != null) && (patient.getCurrentPrescription(tipoPaciente) != null)) {
                     populatePatientDetails(patient.getId());
                 } else {
                     clearForm();
@@ -1070,26 +1082,84 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Group compPatientsWaiting = new Group(getShell(), SWT.NONE);
         compPatientsWaiting.setBounds(new Rectangle(6, 56, 213, 349));
 
+        // rdBtnTARVPrescription
+        rdBtnTARVPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnTARVPrescription.setBounds(new Rectangle(8, 8, 55, 20));
+        rdBtnTARVPrescription.setText("TARV");
+        rdBtnTARVPrescription.setToolTipText("Pressione este botão para prescriçõe de medicamentos TARV.");
+        rdBtnTARVPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.SERVICOTARV;
+                rdBtnTBPrescription.setSelection(false);
+                rdBtnTARVPrescription.setSelection(true);
+
+                initialiseSearchList();
+            }
+        });
+        rdBtnTARVPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+
+        // rdBtnTBPrescription
+        rdBtnTBPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnTBPrescription.setBounds(new Rectangle(80, 8, 50, 20));
+        rdBtnTBPrescription.setText("TPT");
+        rdBtnTBPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos TB.");
+        rdBtnTBPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.PNCT;
+                rdBtnTBPrescription.setSelection(true);
+                rdBtnTARVPrescription.setSelection(false);
+
+                initialiseSearchList();
+            }
+        });
+
+        rdBtnTBPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
+        // rdBtnTBPrescription
+        rdBtnPREPPrescription = new Button(compPatientsWaiting, SWT.RADIO);
+        rdBtnPREPPrescription.setBounds(new Rectangle(140, 8, 50, 20));
+        rdBtnPREPPrescription.setText("PrEP");
+        rdBtnPREPPrescription.setToolTipText("Pressione este botão para criar/actualizar uma prescrição de medicamentos PrEP.");
+        rdBtnPREPPrescription.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+            @Override
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+                clearForm();
+                tipoPaciente = iDartProperties.PREP;
+                rdBtnTBPrescription.setSelection(false);
+                rdBtnTARVPrescription.setSelection(false);
+                rdBtnPREPPrescription.setSelection(true);
+
+                initialiseSearchList();
+            }
+        });
+
+        rdBtnPREPPrescription.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
         Label lblSearch = new Label(compPatientsWaiting, SWT.NONE);
-        lblSearch.setBounds(new Rectangle(10, 7, 187, 20));
+        lblSearch.setBounds(new Rectangle(10, 37, 187, 20));
         lblSearch.setText("Procurar Paciente:");
         lblSearch.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         searchBar = new Text(compPatientsWaiting, SWT.BORDER);
-        searchBar.setBounds(new Rectangle(10, 28, 187, 20));
+        searchBar.setBounds(new Rectangle(10, 57, 187, 20));
         searchBar.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         searchBar.setFocus();
 
         attachSearchBarListener();
 
         Label lblWaitingPatients = new Label(compPatientsWaiting, SWT.BORDER);
-        lblWaitingPatients.setBounds(new Rectangle(10, 58, 186, 20));
+        lblWaitingPatients.setBounds(new Rectangle(10, 77, 186, 20));
         lblWaitingPatients.setAlignment(SWT.CENTER);
         lblWaitingPatients.setText("1. Resultados da Pesquisa");
         lblWaitingPatients.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8_BOLD));
 
         lstWaitingPatients = new ListViewer(compPatientsWaiting);
-        lstWaitingPatients.getList().setBounds(new Rectangle(9, 77, 187, 199));
+        lstWaitingPatients.getList().setBounds(new Rectangle(9, 97, 187, 179));
         lstWaitingPatients.getList().setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         lstWaitingPatients.setContentProvider(new ArrayContentProvider());
         lstWaitingPatients.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -1596,10 +1666,17 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         int amountperPackage = (int) (allPackagedDrugsList.get(0).getDispensedQty() / (allPackagedDrugsList.get(0).getTimesPerDay() *
                 Double.parseDouble(allPackagedDrugsList.get(0).getAmountPerTime()))) / 7;
 
-        if (localPatient.getCurrentPrescription().getDuration() != newPack.getWeekssupply()) {
+        if (Integer.parseInt(lblIndex.getText()) > Integer.parseInt(lblDuration.getText())) {
+            showMessage(MessageDialog.ERROR, "Dispensa efectuada usando uma prescrição expirada ",
+                    "Dispensa N. " + Integer.parseInt(lblIndex.getText()) + " de " + Integer.parseInt(lblDuration.getText()) + " válida(s). \n" +
+                            "A prescrição usada nesta dispensa é inválida. Por favor adicione outra prescrição.");
+            return false;
+        }
+
+        if (localPatient.getCurrentPrescription(tipoPaciente).getDuration() != newPack.getWeekssupply()) {
             MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
             mb.setText("Dispensa Trimestral");
-            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription().getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
+            mb.setMessage("A duração da prescrição é de " + localPatient.getCurrentPrescription(tipoPaciente).getDuration() / 4 + " mes(es) e não é a mesma que a da dispensa. "
                     + "PRETENDE MESMO DISPENSAR ESTA PRESCRIÇÃO?");
             int resposta = mb.open();
             if (resposta == SWT.NO) {
@@ -1630,12 +1707,23 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             return false;
         }
 
-        //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
-        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId())) { //$NON-NLS-1$
+//        //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
+//        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId(),tipoPaciente)) { //$NON-NLS-1$
+//
+//            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+//                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH) ",
+//                        "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH).");
+//            }else {
+//                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
+//                        "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
+//            }
+//            return false;
+//        }
 
-            showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para TIPO TARV MANTER ",
-                    "Por favor actualize a prescricao do paciente para TIPO TARV MANTER.");
-
+        //Se nao tiver Modo de dispensa nao pode dispensar
+        if (cmbDispenseMode.getText().trim().isEmpty()) { //$NON-NLS-1$
+            showMessage(MessageDialog.ERROR, "O Modo de Dispensa esta vazio ",
+                    "O campo Modo de Dispensa esta vazio, por favor seleccione o Modo de dispensa.");
             return false;
         }
 
@@ -1926,7 +2014,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     protected void populatePatientDetails(String patientID, boolean forceSelect) {
         java.util.List<PatientIdAndName> patients = null;
         if (patientID == null || patientID.trim().isEmpty()) {
-            patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession());
+            patients = SearchManager.getActivePatientWithValidPrescriptionIDsAndNames(getHSession(), tipoPaciente);
         } else {
             patients = SearchManager.findPatientsWithIdLike(getHSession(), patientID);
         }
@@ -1977,14 +2065,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         searchBar.setSelection(0, localPatient.getPatientId().length());
         lstWaitingPatients.setSelection(new StructuredSelection(new PatientIdAndName(localPatient.getId(),
                 localPatient.getPatientId(), localPatient.getFirstNames() + "," + localPatient.getLastname())));
-        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription() == null) {
+        if (!localPatient.getAccountStatusWithCheck() || localPatient.getCurrentPrescription(tipoPaciente) == null) {
             showMessage(MessageDialog.ERROR, "O Paciente não pode ser dispensado.",
                     "Paciente está inativo ou não tem uma prescrição válida.");
             initialiseSearchList();
             clearForm();
             return;
         }
-
 
         Clinic clinic = localPatient.getCurrentClinic();
         setDispenseTypeFromClinic();
@@ -2013,8 +2100,21 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             rdBtnPrintSummaryLabelNo.setSelection(true);
         }
 
+        if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
+            rdBtnTARVPrescription.setSelection(true);
+            rdBtnTBPrescription.setSelection(false);
+            rdBtnPREPPrescription.setSelection(false);
+        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
+            rdBtnTARVPrescription.setSelection(false);
+            rdBtnTBPrescription.setSelection(false);
+            rdBtnPREPPrescription.setSelection(true);
+        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+            rdBtnTARVPrescription.setSelection(false);
+            rdBtnTBPrescription.setSelection(true);
+            rdBtnPREPPrescription.setSelection(false);
+        }
 
-        Prescription pre = localPatient.getCurrentPrescription();
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
         if (pre == null) {
             MessageBox noScript = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
             noScript.setText("O Paciente não tem uma prescrição válida");
@@ -2049,7 +2149,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             btnCaptureDate.setDate(new Date());
             newPack.setPackDate(btnCaptureDate.getDate());
 
-            previousPack = PackageManager.getLastPackagePickedUp(getHSession(), localPatient);
+            previousPack = PackageManager.getLastPackagePickedUp(getHSession(), localPatient, tipoPaciente);
 
             if (patientHasPackageAwaitingPickup()) {
                 MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
@@ -2126,10 +2226,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         adjustForNewDispDate(btnCaptureDate.getDate());
                         adjustForNewAppointmentDate(theCal.getTime());
                     }
-
                 }
-
-
             }
         }
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
@@ -2140,7 +2237,6 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 adjustForNewAppointmentDate(dataproximolev);
                 btnNextAppDate.setText(sdf.format(dataproximolev));
                 btnNextAppDate.setEnabled(false);
-
             }
         }
     }
@@ -2156,10 +2252,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             btnCaptureDate.setDate(new Date());
         } else {
             boolean isMainClinic = clinic.isMainClinic();
-
             rdBtnDispenseNow.setSelection(isMainClinic & iDartProperties.dispenseDirectlyDefault);
             rdBtnDispenseLater.setSelection(!(isMainClinic & iDartProperties.dispenseDirectlyDefault));
-
             resetGUIforDispensingType();
         }
     }
@@ -2183,9 +2277,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             getLog().error("Tried to populate prescription details, but pack.prescription is null");
             return;
         }
-
         txtPrescriptionId.setText(newPack.getPrescription().getPrescriptionId());
-
         txtDoctor.setText(newPack.getPrescription().getDoctor().getFirstname() + " "
                 + newPack.getPrescription().getDoctor().getLastname());
 
@@ -2196,6 +2288,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         if (newPack.getPrescription().getNotes() != null) {
             txtAreaNotes.setText(newPack.getPrescription().getNotes());
         }
+
         int dur = newPack.getPrescription().getDuration();
 
         // Set the default index to 1
@@ -2278,13 +2371,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 lblDateOfLastPickupContents.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
                 lblDateOfLastPickupContents.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_BACKGROUND));
             }
-
         } else {
-
             lblDateOfLastPickupContents.setText("Levantamento inicial");
             lblDateOfLastPickupContents.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
             lblDateOfLastPickupContents.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_BACKGROUND));
-
         }
 
     }
@@ -2404,33 +2494,27 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             int units = 0;
             int numlabels = 1;
             int weeksperUnits = 0;
+            int takePeriod = 1;
 
-            double unitsPerMonth;
+
+            if (theDrug.getDefaultTakePeriod().startsWith("S")) {
+                takePeriod = 7;
+            } else if (theDrug.getDefaultTakePeriod().startsWith("M")) {
+                takePeriod = 30;
+            }
 
             // for most items, which have an amountpertime, work out the
             // quanitity to prepopulates
             int packSize = theDrug.getPackSize();
             if (pd.getAmtPerTime() != 0.0) {
 
-                if ((packSize % 28) == 0) {
-                    unitsPerMonth = pd.getAmtPerTime() * pd.getTimesPerDay() * 28;
-                } else {
-                    unitsPerMonth = pd.getAmtPerTime() * pd.getTimesPerDay() * 30;
-                }
-
-                // round units up to multiple of packSize
-                if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())
-                        && unitsPerMonth % packSize != 0) {
-                    unitsPerMonth = (Math.floor(unitsPerMonth / packSize) + 1) * packSize;
-                }
-
                 switch (newPack.getWeekssupply()) {
 
-                    case 1: // 1 week supply
+                    case 1: // 1 week supply 7 days
 
                         // First, calculate the number of units required for the
                         // total supply
-                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 7);
+                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 7) / takePeriod;
 
                         // round units up to multiple of packSize
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
@@ -2448,14 +2532,16 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         // First, calculate the number of units required for the
                         // total supply
-                        units = (int) Math.ceil(unitsPerMonth / 2);
+
+                        units = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 14) / takePeriod;
+
+                        //  units = (int) Math.ceil(unitsPerMonth / 2);
 
                         // round units up to multiple of packSize
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
                             if (units % packSize != 0) {
                                 int noOfPacks = units / packSize;
                                 units = (noOfPacks + 1) * packSize;
-
                             }
                         }
 
@@ -2464,14 +2550,22 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     default:
                         // First, calculate the number of units required for the
                         // total supply
+                        int unitsPerMonth;
+
                         if ((packSize % 28) == 0) {
-                            units = (int) ((newPack.getWeekssupply() / 4) * (pd.getAmtPerTime() * pd.getTimesPerDay() * 28));
+                            unitsPerMonth = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 28) / takePeriod;
+                            units = (int) ((newPack.getWeekssupply() / 4) * unitsPerMonth);
                         } else {
-                            units = (int) ((newPack.getWeekssupply() / 4) * (pd.getAmtPerTime() * pd.getTimesPerDay() * 30));
+                            unitsPerMonth = (int) (pd.getAmtPerTime() * pd.getTimesPerDay() * 30) / takePeriod;
+                            units = (int) ((newPack.getWeekssupply() / 4) * unitsPerMonth);
                         }
 
                         if (packSize > units)
                             units = packSize;
+
+//                        else
+//                            if(packSize < units)
+//                                units = packSize * 2;
 
                         // Next round up syrup if required.
                         if (iDartProperties.roundUpForms.contains(theDrug.getForm().getForm())) {
@@ -2659,7 +2753,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             else
                 pdi.setInhPickup(true);
 
-            if(rdBtnPrintSummaryLabelNo.getSelection())
+            if (rdBtnPrintSummaryLabelNo.getSelection())
                 pdi.setCtzPickup(false);
             else
                 pdi.setCtzPickup(true);
@@ -2749,6 +2843,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 if (nextApp != null)
                     pdi.setDateExpectedString(sdf.format(nextApp.getAppointmentDate()));
             }
+
             pdi.setPackagedDrug(pd);
             pdi.setNotes(localPatient.getCurrentClinic().getNotes());
             pdi.setPackageId(newPack.getPackageId());
@@ -2758,7 +2853,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             else
                 pdi.setInhPickup(true);
 
-            if(rdBtnPrintSummaryLabelNo.getSelection())
+            if (rdBtnPrintSummaryLabelNo.getSelection())
                 pdi.setCtzPickup(false);
             else
                 pdi.setCtzPickup(true);
@@ -2773,7 +2868,6 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         //PackageManager.savePackage(getHSession(), newPack);
 
-        //
         int patientId = newPack.getPrescription().getPatient().getId();
         boolean aviado = false;
         Set<Episode> episodes = newPack.getClinic().getEpisodes();
@@ -2790,13 +2884,20 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         }
 
         if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || !checkOpenmrs) {
+
             PackageManager.savePackage(getHSession(), newPack);
             aviado = true;
+
         } else {
 
             Date dtPickUp = newPack.getPickupDate();
 
             Clinic clinic = AdministrationManager.getMainClinic(hSession);
+
+            String dispenseModeAnswer = "";
+
+            if (!cmbDispenseMode.getText().trim().isEmpty())
+                dispenseModeAnswer = AdministrationManager.dispenseModUUID(hSession, cmbDispenseMode.getText());
 
             // EncounterDatetime
             String strPickUp = RestUtils.castDateToString(dtPickUp);
@@ -2828,186 +2929,251 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 PackageManager.savePackage(getHSession(), newPack);
                 aviado = true;
                 log.trace("Servidor Rest offline, o aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms a posterior");
-                saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                        facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                        iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
+
+                if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                    saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                            facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                    // to be added
+                } else {
+                    saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                }
             } else {
 
                 User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
 
                 assert currentUser != null;
                 if (ApiAuthRest.loginOpenMRS(currentUser)) {
-                // Add interoperability with OpenMRS through Rest Web Services
-                RestClient restClient = new RestClient();
+                    // Add interoperability with OpenMRS through Rest Web Services
+                    RestClient restClient = new RestClient();
 
-                String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
+                    String nidRest = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
 
-                JSONObject jsonObject = new JSONObject(nidRest);
-                JSONArray _jsonArray = (JSONArray) jsonObject.get("results");
-                String nidUuid = null;
+                    JSONObject jsonObject = new JSONObject(nidRest);
+                    JSONArray _jsonArray = (JSONArray) jsonObject.get("results");
+                    String nidUuid = null;
 
-                for (int i = 0; i < _jsonArray.length(); i++) {
-                    JSONObject results = (JSONObject) _jsonArray.get(i);
-                    nidUuid = (String) results.get("uuid");
-                }
+                    for (int i = 0; i < _jsonArray.length(); i++) {
+                        JSONObject results = (JSONObject) _jsonArray.get(i);
+                        nidUuid = (String) results.get("uuid");
+                    }
 
 //                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + nidUuid);
 //                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
 //                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
 
-                String uuid = localPatient.getUuidopenmrs();
-                if (uuid != null && !uuid.isEmpty()) {
-                    uuid = localPatient.getUuidopenmrs();
-                } else {
-
-                    PackageManager.savePackage(getHSession(), newPack);
-                    aviado = true;
-                    log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
-                    saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "O NID deste paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] foi alterado no OpenMRS ou não possui UUID."
-                            + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
-                    MessageBox m = new MessageBox(getShell(), SWT.OK |
-                            SWT.ICON_ERROR);
-                    m.setText("Problema dispensando o pacote de medicamentos");
-                    m.setMessage("O NID deste paciente foi alterado no OpenMRS ou não possui UUID."
-                            + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente." +
-                            "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
-                    m.open();
-
-                    return;
-
-                }
-
-                if (nidUuid != null && !nidUuid.isEmpty()) {
-                    if (!nidUuid.equals(uuid)) {
+                    String uuid = localPatient.getUuidopenmrs();
+                    if (uuid != null && !uuid.isEmpty()) {
+                        uuid = localPatient.getUuidopenmrs();
+                    } else {
 
                         PackageManager.savePackage(getHSession(), newPack);
                         aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
-                        saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                                iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                        saveErroLog(newPack, dtNextPickUp, "O paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] "
-                                + " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .");
+
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                            // to be added
+                        } else {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        }
+
+                        saveErroLog(newPack, dtNextPickUp, "O NID deste paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] foi alterado no OpenMRS ou não possui UUID."
+                                + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
                         MessageBox m = new MessageBox(getShell(), SWT.OK |
                                 SWT.ICON_ERROR);
                         m.setText("Problema dispensando o pacote de medicamentos");
-                        m.setMessage("O paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] " +
-                                " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente no bloco de Administração" +
-                                " do Paciente usando a opção Atualizar um Paciente Existente." +
-                                "\nEste aviamento será enviado ao Openrms após a verificação do erro.");
+                        m.setMessage("O NID deste paciente foi alterado no OpenMRS ou não possui UUID."
+                                + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente." +
+                                "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
+                        m.open();
+
+                        return;
+
+                    }
+
+                    if (nidUuid != null && !nidUuid.isEmpty()) {
+                        if (!nidUuid.equals(uuid)) {
+
+                            PackageManager.savePackage(getHSession(), newPack);
+                            aviado = true;
+                            log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
+
+                            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                                saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                                        facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                        iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                            } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                                // to be added
+                            } else {
+                                saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                        facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                        iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                            }
+
+                            saveErroLog(newPack, dtNextPickUp, "O paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] "
+                                    + " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .");
+                            MessageBox m = new MessageBox(getShell(), SWT.OK |
+                                    SWT.ICON_ERROR);
+                            m.setText("Problema dispensando o pacote de medicamentos");
+                            m.setMessage("O paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] " +
+                                    " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente no bloco de Administração" +
+                                    " do Paciente usando a opção Atualizar um Paciente Existente." +
+                                    "\nEste aviamento será enviado ao Openrms após a verificação do erro.");
+                            m.open();
+
+                            return;
+                        }
+                    }
+
+                    String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
+
+                    JSONObject jsonReportingRest = new JSONObject(openrsMrsReportingRest);
+                    JSONArray jsonReportingRestArray = (JSONArray) jsonReportingRest.get("members");
+
+
+                    if (jsonReportingRestArray.length() < 1) {
+
+                        PackageManager.savePackage(getHSession(), newPack);
+                        aviado = true;
+                        log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                            // to be added
+                        } else {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        }
+
+                        saveErroLog(newPack, dtNextPickUp, "NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + "com o uuid ( " + localPatient.getUuidopenmrs() + " )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE" +
+                                ". Actualize primeiro o estado do paciente no OpenMRS.");
+                        MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                        m.setText("Informação sobre estado do programa");
+                        m.setMessage("NID inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS." +
+                                "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
                         m.open();
 
                         return;
                     }
-                }
 
-                String openrsMrsReportingRest = restClient.getOpenMRSReportingRest(iDartProperties.REST_GET_REPORTING_REST + uuid);
+                    String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
+                    String providerUuid = "";
 
-                JSONObject jsonReportingRest = new JSONObject(openrsMrsReportingRest);
-                JSONArray jsonReportingRestArray = (JSONArray) jsonReportingRest.get("members");
+                    // Location
+                    String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
+                    String strFacilityUuid = "";
+                    // Health Facility
 
+                    if (strFacility.length() < 50) {
 
-                if (jsonReportingRestArray.length() < 1) {
-
-                    PackageManager.savePackage(getHSession(), newPack);
-                    aviado = true;
-                    log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila( newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, "NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + "com o uuid ( "+localPatient.getUuidopenmrs()+" )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE" +
-                            ". Actualize primeiro o estado do paciente no OpenMRS.");
-                    MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                    m.setText("Informação sobre estado do programa");
-                    m.setMessage("NID inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS." +
-                            "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
-                    m.open();
-
-                    return;
-                }
-
-                String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
-                String providerUuid = "";
-
-                // Location
-                String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
-                String strFacilityUuid = "";
-                // Health Facility
-
-                if (strFacility.length() < 50) {
-
-                    PackageManager.savePackage(getHSession(), newPack);
-                    aviado = true;
-                    log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
-                    MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                    m.setText("Informação sobre estado da Unidade Sanitaria");
-                    m.setMessage("O UUID da Unidade Sanitaria nao contem o pradrao recomendado." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
-                    m.open();
-
-                    return;
-                } else strFacilityUuid = strFacility.substring(21, 57);
-
-                if (response.length() < 50) {
-
-                    PackageManager.savePackage(getHSession(), newPack);
-                    aviado = true;
-                    log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                    saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp);
-                    saveErroLog(newPack, dtNextPickUp, " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
-                    MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                    m.setText("Informação sobre estado do Provedor");
-                    m.setMessage("O UUID do PRovedor nao contem o pradrao recomendado ou nao existe no OpenMRS." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
-                    m.open();
-
-                    return;
-                } else providerUuid = response.substring(21, 57);
-
-                try {
-
-                    postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, regimenAnswer,
-                            iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
-                            iDartProperties.VISIT_UUID, strNextPickUp);
-
-                    log.trace("Criou o fila no openmrs para o paciente " + patientId + ": " + postOpenMrsEncounterStatus);
-
-                    if (postOpenMrsEncounterStatus) {
                         PackageManager.savePackage(getHSession(), newPack);
                         aviado = true;
-                        OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(getHSession(), newPack.getPrescription());
-                        if (errorLog != null)
-                            OpenmrsErrorLogManager.removeErrorLog(getHSession(), errorLog);
+                        log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                            // to be added
+                        } else {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        }
+
+                        saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
+                        MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                        m.setText("Informação sobre estado da Unidade Sanitaria");
+                        m.setMessage("O UUID da Unidade Sanitaria nao contem o pradrao recomendado." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
+                        m.open();
+
+                        return;
+
+                    } else strFacilityUuid = strFacility.substring(21, 57);
+
+                    if (response.length() < 50) {
+
+                        PackageManager.savePackage(getHSession(), newPack);
+                        aviado = true;
+                        log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
+
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                            // to be added
+                        } else {
+                            saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
+                        }
+
+                        saveErroLog(newPack, dtNextPickUp, " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
+                        MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                        m.setText("Informação sobre estado do Provedor");
+                        m.setMessage("O UUID do PRovedor nao contem o pradrao recomendado ou nao existe no OpenMRS." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
+                        m.open();
+
+                        return;
+                    } else providerUuid = response.substring(21, 57);
+                    try {
+                        if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)){
+                            postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
+                                    strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID, iDartProperties.FILT_DISPENSED_TYPE_UUID, iDartProperties.FILT_TPT_FOLLOW_UP_UUID,
+                                    regimenAnswer, prescribedDrugs, iDartProperties.FILT_NEXT_APOINTMENT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
+                        }else if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")){
+                            // to add
+                        }else{
+                            postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                                    strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, regimenAnswer,
+                                    iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
+                                    iDartProperties.VISIT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
+                        }
+
+                        log.trace("Criou o fila no openmrs para o paciente " + patientId + ": " + postOpenMrsEncounterStatus);
+
+                        if (postOpenMrsEncounterStatus) {
+                            PackageManager.savePackage(getHSession(), newPack);
+                            aviado = true;
+                            OpenmrsErrorLog errorLog = OpenmrsErrorLogManager.getErrorLog(getHSession(), newPack.getPrescription());
+                            if (errorLog != null)
+                                OpenmrsErrorLogManager.removeErrorLog(getHSession(), errorLog);
+                        }
+                    } catch (Exception e) {
+                        log.trace("Nao foi criado o fila no openmrs para o paciente " + patientId + ": " + postOpenMrsEncounterStatus);
+                        getLog().info(e.getMessage());
+                        saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + patientId + ": " + e.getMessage());
+                        MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+                        m.setText("Problema salvando o pacote de medicamentos");
+                        m.setMessage("Houve um problema ao salvar o pacote de medicamentos para o paciente " + nid + ". " + "Por favor contacte o SIS.");
+
+                        m.open();
                     }
-
-                } catch (Exception e) {
-                    log.trace("Nao foi criado o fila no openmrs para o paciente " + patientId + ": " + postOpenMrsEncounterStatus);
-                    getLog().info(e.getMessage());
-                    saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + patientId + ": " + e.getMessage());
-                    MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-                    m.setText("Problema salvando o pacote de medicamentos");
-                    m.setMessage("Houve um problema ao salvar o pacote de medicamentos para o paciente " + nid + ". " + "Por favor contacte o SIS.");
-
-                    m.open();
-                }
-                }else {
-                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                } else {
+                    log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                 }
             }
         }
 
-        if(aviado){
+        if (aviado) {
             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_WORKING);
             m.setText("Aviamento efectuado com sucesso");
-            m.setMessage("O pacote de medicamentos foi aviado para o paciente [ " + newPack.getPrescription().getPatient().getPatientId()+ " ]");
+            m.setMessage("O pacote de medicamentos foi aviado para o paciente [ " + newPack.getPrescription().getPatient().getPatientId() + " ]");
             m.open();
         }
     }
@@ -3113,7 +3279,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        Prescription pre = localPatient.getCurrentPrescription();
+        Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
 
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
@@ -3157,23 +3323,18 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                     if (pc.getAccum() == -1) {
                         tblPrescriptionInfo.getItem(i).setText(5, "" + qty);
-
                     } else {
                         if (iDartProperties.accumByDefault) {
                             tblPrescriptionInfo.getItem(i).setText(5, "" + (pc.getAccum() + qty));
                         } else {
                             tblPrescriptionInfo.getItem(i).setText(5, "" + qty);
                         }
-
                     }
-
                 } catch (NumberFormatException e) {
                     getLog().error("NumberFormatException parsing qty to dispense");
                     tblPrescriptionInfo.getItem(i).setText(5, "");
                 }
-
             }
-
         }
     }
 
@@ -3544,7 +3705,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     public static void saveOpenmrsPatientFila(Prescription prescribed, String nid, String encounterDatetime, String nidUuid, String encounterType, String strFacility,
                                               String filaUuid, String provider, String regimeUuid,
-                                              String strRegimenAnswerUuid, String dispensedAmountUuid, String dosageUuid, String returnVisitUuid, String strNextPickUp) {
+                                              String strRegimenAnswerUuid, String dispensedAmountUuid, String dosageUuid, String returnVisitUuid, String strNextPickUp,
+                                              String dispenseModeAnswer) {
         // Adiciona FILA para a sincronizacao.
         Session sess = HibernateUtil.getNewSession();
         Transaction tx = sess.beginTransaction();
@@ -3575,6 +3737,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 syncOpenmrsDispense.setReturnVisitUuid(returnVisitUuid);
                 syncOpenmrsDispense.setStrNextPickUp(strNextPickUp);
                 syncOpenmrsDispense.setPrescription(prescription);
+                syncOpenmrsDispense.setDispenseModeAnswer(dispenseModeAnswer);
 
                 syncOpenmrsDispense.setSyncstatus('P');
 
@@ -3583,7 +3746,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             sess.flush();
             tx.commit();
             sess.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
                 sess.close();
@@ -3603,14 +3766,14 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 errorLog.setPrescription(newPack.getPrescription());
                 errorLog.setPickupdate(newPack.getPickupDate());
                 errorLog.setReturnpickupdate(dtNextPickUp);
-                errorLog.setErrordescription(error);
+                errorLog.setErrordescription("["+newPack.getPrescription().getTipoDoenca()+"] - "+ error);
                 errorLog.setDatacreated(new Date());
                 OpenmrsErrorLogManager.saveOpenmrsRestLog(sess, errorLog);
             }
             sess.flush();
             tx.commit();
             sess.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
                 sess.close();

@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.celllife.idart.gui.platform.GenericReportGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartFont;
@@ -79,11 +80,15 @@ public class LivroRegistoDiario extends GenericReportGui {
 
     private Button chkBtnReinicio;
 
+    private Button chkBtnFim;
+
     private List<LivroRegistoDiarioXLS> livroRegistoDiarios;
 
     private final Shell parent;
 
     private FileOutputStream out = null;
+
+    private String diseaseType;
 
     /**
      * Constructor
@@ -91,9 +96,10 @@ public class LivroRegistoDiario extends GenericReportGui {
      * @param parent   Shell
      * @param activate boolean
      */
-    public LivroRegistoDiario(Shell parent, boolean activate) {
+    public LivroRegistoDiario(Shell parent, boolean activate, String diseaseType) {
         super(parent, REPORTTYPE_MIA, activate);
         this.parent = parent;
+        this.diseaseType = diseaseType;
     }
 
     /**
@@ -102,7 +108,9 @@ public class LivroRegistoDiario extends GenericReportGui {
     @Override
     protected void createShell() {
         Rectangle bounds = new Rectangle(100, 50, 600, 510);
-        buildShell(REPORT_LIVRO_ELETRONICO_ARV, bounds);
+        buildShell( (this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LIVRO_ELETRONICO_PREP:  REPORT_LIVRO_ELETRONICO_ARV), bounds);
+
+
         // create the composites
         createMyGroups();
     }
@@ -119,7 +127,7 @@ public class LivroRegistoDiario extends GenericReportGui {
     @Override
     protected void createCompHeader() {
         iDartImage icoImage = iDartImage.REPORT_STOCKCONTROLPERCLINIC;
-        buildCompdHeader(REPORT_LIVRO_ELETRONICO_ARV, icoImage);
+        buildCompdHeader(((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? REPORT_LIVRO_ELETRONICO_TB : (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP)) ? REPORT_LIVRO_ELETRONICO_PREP:  REPORT_LIVRO_ELETRONICO_ARV)), icoImage);
     }
 
     /**
@@ -136,7 +144,6 @@ public class LivroRegistoDiario extends GenericReportGui {
     protected void createCompButtons() {
     }
 
-    @SuppressWarnings("unused")
     @Override
     protected void cmdViewReportWidgetSelected() {
 
@@ -145,37 +152,52 @@ public class LivroRegistoDiario extends GenericReportGui {
             return;
         }
 
-        if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
-                !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
-            showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv", "Seleccione pelo menos um tipo TARV.");
-            return;
+        if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
+                    !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
+                return;
 
-        } else {
+            }
+        }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection()  &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                return;
 
-            try {
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
-
-                Date theStartDate = calendarStart.getCalendar().getTime();
-
-                Date theEndDate = calendarEnd.getCalendar().getTime();
-
-                Calendar c = Calendar.getInstance(Locale.US);
-                c.setLenient(true);
-                c.setTime(theStartDate);
-
-                if (Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)) {
-                    c.add(Calendar.DAY_OF_WEEK, -2);
-                    theStartDate = c.getTime();
-                }
-
-                model.manager.reports.LivroRegistoDiario report =
-                        new model.manager.reports.LivroRegistoDiario(getShell(), theStartDate, theEndDate, chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(), chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection());
-                viewReport(report);
-            } catch (Exception e) {
-                getLog().error("Exception while running Historico levantamento report", e);
             }
         }
+        else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
+                return;
+
+            }
+        }
+
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+
+            Date theStartDate = calendarStart.getCalendar().getTime();
+
+            Date theEndDate = calendarEnd.getCalendar().getTime();
+
+            Calendar c = Calendar.getInstance(Locale.US);
+            c.setLenient(true);
+            c.setTime(theStartDate);
+
+            if (Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)) {
+                c.add(Calendar.DAY_OF_WEEK, -2);
+                theStartDate = c.getTime();
+            }
+
+            model.manager.reports.LivroRegistoDiario report =
+                    new model.manager.reports.LivroRegistoDiario(getShell(), theStartDate, theEndDate, chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(), chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), this.chkBtnFim.getSelection(), this.diseaseType);
+            viewReport(report);
+        } catch (Exception e) {
+            getLog().error("Exception while running Historico levantamento report", e);
+        }
+
     }
 
     @Override
@@ -186,46 +208,60 @@ public class LivroRegistoDiario extends GenericReportGui {
             return;
         }
 
-        if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
-                !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
-            showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv", "Seleccione pelo menos um tipo TARV.");
-            return;
+        if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() && !chkBtnAlteraccao.getSelection() &&
+                    !chkBtnTransfereDe.getSelection() && !chkBtnReinicio.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo Tarv","Seleccione pelo menos um tipo TARV.");
+                return;
 
-        } else {
+            }
+        }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                return;
 
-            Date theStartDate = calendarStart.getCalendar().getTime();
+            }
+        }
+        else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_PREP)) {
+            if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo PREP","Seleccione pelo menos um tipo PREP.");
+                return;
 
-            Date theEndDate = calendarEnd.getCalendar().getTime();
+            }
+        }
 
-            Calendar c = Calendar.getInstance(Locale.US);
-            c.setLenient(true);
-            c.setTime(theStartDate);
+        Date theStartDate = calendarStart.getCalendar().getTime();
 
-            if(Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)) {
-                c.add(Calendar.DAY_OF_WEEK, -2);
-                theStartDate = c.getTime();
+        Date theEndDate = calendarEnd.getCalendar().getTime();
+
+        Calendar c = Calendar.getInstance(Locale.US);
+        c.setLenient(true);
+        c.setTime(theStartDate);
+
+        if(Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)) {
+            c.add(Calendar.DAY_OF_WEEK, -2);
+            theStartDate = c.getTime();
+        }
+
+        String reportNameFile = this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Reports/LivroRegistoDiarioTB.xls" : this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ? "Reports/LivroRegistoDiarioPREP.xls" :"Reports/LivroRegistoDiarioARV.xls";
+
+        try {
+            LivroRegistoDiarioExcel op = new LivroRegistoDiarioExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
+                    chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), chkBtnFim.getSelection(), parent, reportNameFile, theStartDate, theEndDate, this.diseaseType);
+            new ProgressMonitorDialog(parent).run(true, true, op);
+
+            if (op.getList() == null ||
+                    op.getList().size() <= 0) {
+                MessageBox mNoPages = new MessageBox(parent, SWT.ICON_ERROR | SWT.OK);
+                mNoPages.setText("O relatório não possui páginas");
+                mNoPages.setMessage("O relatório que estás a gerar não contém nenhum dado.Verifique os valores de entrada que inseriu (como datas) para este relatório e tente novamente.");
+                mNoPages.open();
             }
 
-            String reportNameFile = "Reports/LivroRegistoDiarioARV.xls";
-            try {
-                LivroRegistoDiarioExcel op = new LivroRegistoDiarioExcel(chkBtnInicio.getSelection(), chkBtnManutencao.getSelection(),
-                        chkBtnAlteraccao.getSelection(), chkBtnTransfereDe.getSelection(), chkBtnReinicio.getSelection(), parent, reportNameFile, theStartDate, theEndDate);
-                new ProgressMonitorDialog(parent).run(true, true, op);
-
-                if (op.getList() == null ||
-                        op.getList().size() <= 0) {
-                    MessageBox mNoPages = new MessageBox(parent, SWT.ICON_ERROR | SWT.OK);
-                    mNoPages.setText("O relatório não possui páginas");
-                    mNoPages.setMessage("O relatório que estás a gerar não contém nenhum dado.Verifique os valores de entrada que inseriu (como datas) para este relatório e tente novamente.");
-                    mNoPages.open();
-                }
-
-            } catch (InvocationTargetException ex) {
-                ex.printStackTrace();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-
+        } catch (InvocationTargetException ex) {
+            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -256,7 +292,7 @@ public class LivroRegistoDiario extends GenericReportGui {
 
         //Group tipo tarv
         grpTipoTarv = new Group(getShell(), SWT.NONE);
-        grpTipoTarv.setText("Tipo Tarv:");
+        grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" :  (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ?  "Tipo PREP" : "Tipo Tarv:")));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpTipoTarv.setBounds(new Rectangle(55, 90, 520, 50));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -276,6 +312,7 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnAlteraccao.setText("Alteração");
         chkBtnAlteraccao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnAlteraccao.setSelection(false);
+        chkBtnAlteraccao.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
 
         //chk button  Manter
         chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
@@ -293,13 +330,24 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnReinicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnReinicio.setSelection(false);
 
+
         //chk button  Transfere de
         chkBtnTransfereDe = new Button(grpTipoTarv, SWT.CHECK);
         chkBtnTransfereDe.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-        chkBtnTransfereDe.setBounds(new Rectangle(415, 20, 100, 20));
+        chkBtnTransfereDe.setBounds(new Rectangle(410, 20, 100, 20));
         chkBtnTransfereDe.setText("Transferido De");
         chkBtnTransfereDe.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnTransfereDe.setSelection(false);
+        chkBtnTransfereDe.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
+
+        //chk button  FIm
+        chkBtnFim = new Button(grpTipoTarv, SWT.CHECK);
+        chkBtnFim.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
+        chkBtnFim.setBounds(new Rectangle(440, 20, 100, 20));
+        chkBtnFim.setText("Fim");
+        chkBtnFim.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        chkBtnFim.setSelection(false);
+        chkBtnFim.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) || this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP));
 
 
         grpDateRange = new Group(getShell(), SWT.NONE);

@@ -70,6 +70,7 @@ public class MmiaReport extends GenericReportGui {
 
 	private Shell parent;
 
+	private String diseaseType;
 	/**
 	 * Constructor
 	 *
@@ -78,9 +79,10 @@ public class MmiaReport extends GenericReportGui {
 	 * @param activate
 	 *            boolean
 	 */
-	public MmiaReport(Shell parent, boolean activate) {
+	public MmiaReport(Shell parent, boolean activate, String diseaseType) {
 		super(parent, REPORTTYPE_MIA, activate);
 		this.parent = parent;
+		this.diseaseType = diseaseType;
 	}
 
 	/**
@@ -227,7 +229,7 @@ public class MmiaReport extends GenericReportGui {
 		} else {
 			try {
 				MiaReport report = new MiaReport(
-						getShell(), pharm, cmbMonth.getText(), cmbYear.getText());
+						getShell(), pharm, cmbMonth.getText(), cmbYear.getText(), this.diseaseType);
 				viewReport(report);
 			} catch (Exception e) {
 				getLog()

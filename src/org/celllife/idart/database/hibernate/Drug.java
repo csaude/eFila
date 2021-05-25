@@ -65,6 +65,8 @@ public class Drug implements Comparable<Drug> {
 
 	private int defaultTimes;
 
+	private String defaultTakePeriod;
+
 	private String stockCode;
 
 	private String uuid;
@@ -109,7 +111,7 @@ public class Drug implements Comparable<Drug> {
 	public Drug(Form form, String dispensingInstructions1,
 			String dispensingInstructions2, char modified, String name,
 			int packSize, Set<Stock> stock, char sideTreatment,
-			double defaultAmnt, int defaultTimes, char pediatric) {
+			double defaultAmnt, int defaultTimes, char pediatric, String defaultTakePeriod) {
 		super();
 
 		this.form = form;
@@ -122,6 +124,7 @@ public class Drug implements Comparable<Drug> {
 		this.sideTreatment = sideTreatment;
 		this.defaultAmnt = defaultAmnt;
 		this.defaultTimes = defaultTimes;
+		this.defaultTakePeriod = defaultTakePeriod;
 	}
 
 	/**
@@ -408,6 +411,14 @@ public class Drug implements Comparable<Drug> {
 
 	public String getTipoDoenca() {
 		return tipoDoenca;
+	}
+
+	public String getDefaultTakePeriod() {
+		return defaultTakePeriod;
+	}
+
+	public void setDefaultTakePeriod(String defaultTakePeriod) {
+		this.defaultTakePeriod = defaultTakePeriod;
 	}
 
 	public boolean isActive() {

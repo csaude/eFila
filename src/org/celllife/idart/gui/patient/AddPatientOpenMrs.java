@@ -960,7 +960,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         Date episodeStartDate = btnEpisodeStartDate.getDate();
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         restClient = new RestClient();
@@ -1539,7 +1539,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false);
+                new AddPrescription(localPatient, getParent(), false,iDartProperties.SERVICOTARV);
                 // myPrescription.addDisposeListener(new DisposeListener() {
                 // public void widgetDisposed(DisposeEvent e1) {
                 cmdCancelWidgetSelected();
@@ -2163,7 +2163,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
 
         if (localPatient != null) {
             PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPatient);
+                    localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);

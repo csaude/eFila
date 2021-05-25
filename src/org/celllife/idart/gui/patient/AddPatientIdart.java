@@ -602,6 +602,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
 
         btnPatientHistoryReport = new Button(grpParticulars, SWT.NONE);
         btnPatientHistoryReport.setBounds(new Rectangle(310, 140, 40, 40));
+        btnPatientHistoryReport.setEnabled(false);
         btnPatientHistoryReport
                 .setToolTipText(Messages.getString("patient.button.report.tooltip")); //$NON-NLS-1$
         btnPatientHistoryReport.setImage(ResourceUtils
@@ -956,7 +957,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         Date episodeStartDate = btnEpisodeStartDate.getDate();
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         if (txtPatientId.getText().trim().isEmpty()) {
@@ -1608,7 +1609,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false);
+                new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
                 cmdCancelWidgetSelected();
 
             }
@@ -2233,7 +2234,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
 
         if (localPatient != null) {
             PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPatient);
+                    localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);

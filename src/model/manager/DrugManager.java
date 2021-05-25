@@ -4,6 +4,7 @@
 package model.manager;
 
 import org.apache.log4j.Logger;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -327,6 +328,31 @@ public class DrugManager {
     }
 
     /**
+     * Returns all drugsdependindOnTipoDoenca
+     *
+     * @param sess
+     * @return List<Drug>
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Drug> getAllDrugsByTipoDoenca(Session sess, String tipoDoenca)
+            throws HibernateException {
+        List<Drug> result = sess.createQuery(
+                "select d from Drug as d where d.tipoDoenca = :tipoDoenca order by d.name").setString("tipoDoenca",
+                tipoDoenca).list();
+
+        return result;
+    }
+
+
+    public static List<Drug> getDrugs(Session sess)
+                throws HibernateException {
+        List<Drug> result = sess.createQuery(
+                "select d from Drug as d order by d.name").list();
+
+        return result;
+    }
+    /**
      * Returns all drugs
      *
      * @param sess
@@ -433,7 +459,7 @@ public class DrugManager {
             throws HibernateException {
 
         // get a list of all the drugs in the database
-        List<Drug> existingDrugs = getAllDrugs(s);
+        List<Drug> existingDrugs = getAllDrugsByTipoDoenca(s, iDartProperties.SERVICOTARV);
 
         for (Drug drug : existingDrugs) {
             if (drug.getChemicalDrugStrengths().size() == toCompare.size()) {
@@ -450,7 +476,7 @@ public class DrugManager {
             throws HibernateException {
 
         // get a list of all the drugs in the database
-        List<Drug> existingDrugs = getAllDrugs(s);
+        List<Drug> existingDrugs = getAllDrugsByTipoDoenca(s,iDartProperties.SERVICOTARV);
         for (Drug drug : existingDrugs) {
 
             if (drug.getChemicalDrugStrengths().size() == toCompare.size()) {

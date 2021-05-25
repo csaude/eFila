@@ -84,6 +84,21 @@ public class AdministrationManager {
     }
 
     /**
+     * Devolve lista de regimes para alimentar o combobox no formulario de
+     * prescricao
+     */
+    @SuppressWarnings("unchecked")
+    public static List<RegimeTerapeutico> getAllRegimesByDiseaseType(Session sess, String diseaseType)
+            throws HibernateException {
+
+        List<RegimeTerapeutico> result = sess.createQuery(
+                "select r from RegimeTerapeutico as r where r.tipoDoenca = '"+ diseaseType +"'").list();
+
+        return result;
+    }
+
+
+    /**
      * Devolve lista de linhas terapeuticas para alimentar o combobox no
      * formulario de prescricao
      */
@@ -100,6 +115,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getAllDiseases(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.description = 'Disease' order by s.value asc";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getAllTakePeriod(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.description = 'Period' order by s.id asc";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -168,7 +192,7 @@ public class AdministrationManager {
         if (regimeList != null) {
             for (int i = 0; i < regimeList.size(); i++) {
                 regime = regimeList.get(i);
-                if (regime.getRegimeesquema().equals(regimeesquema)) {
+                if (regime.getRegimeesquema().equalsIgnoreCase(regimeesquema)) {
                     break;
                 }
             }
@@ -228,10 +252,10 @@ public class AdministrationManager {
     }
 
     //Previous regime
-    public static String loadRegime(int idPatient) throws ClassNotFoundException, SQLException {
+    public static String loadRegime(int idPatient, String tipoPaciente) throws ClassNotFoundException, SQLException {
         ConexaoJDBC conn = new ConexaoJDBC();
 
-        return conn.carregaRegime(idPatient);
+        return conn.carregaRegime(idPatient, tipoPaciente);
 
     }
 
@@ -1069,6 +1093,22 @@ public class AdministrationManager {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    public static String dispenseModUUID(Session session, String value) throws HibernateException {
+        List<SimpleDomain> domainList = session.createQuery("from SimpleDomain sd where sd.description = 'dispense_mode' order by sd.id asc").list();
+
+
+        if (domainList.size() > 0) {
+            for(SimpleDomain sd : domainList){
+
+                if(sd.getValue().equalsIgnoreCase(value)){
+                    return sd.getName();
+                }
+            }
+        }
+        return " ";
+    }
+
     /**
      * Method addSimpleDomain.
      *
@@ -1076,6 +1116,7 @@ public class AdministrationManager {
      * @param sDomain SimpleDomain
      * @throws HibernateException
      */
+
     public static void addSimpleDomain(Session session, SimpleDomain sDomain)
             throws HibernateException {
 
@@ -1131,6 +1172,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getReasonForUpdate(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.name like 'reason_for_update' order by s.value";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getprofilaxiaINH(Session sess)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.name like 'inh_prophylaxis' order by s.id";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -1643,7 +1693,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSave(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'I'").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'I' order by sync.date asc").list();
 
         return result;
     }
@@ -1652,7 +1702,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'P' or sync.syncstatus is null order by sync.date asc").list();
 
         return result;
     }
@@ -1661,7 +1711,7 @@ public class AdministrationManager {
     public static List<SyncTempDispense> getAllLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempDispense sync where sync.syncstatus = 'L'").list();
+                "from SyncTempDispense sync where sync.syncstatus = 'L' order by sync.date asc").list();
 
         return result;
     }

@@ -243,13 +243,13 @@ public class PackageManager {
      */
     @SuppressWarnings("unchecked")
     public static void saveNewPrescription(Session sess,
-                                           Prescription preToBeSaved, boolean previousPrescriptionDeleted)
+                                           Prescription preToBeSaved, boolean previousPrescriptionDeleted, String tipoPaciente)
             throws HibernateException, IllegalArgumentException {
 
         if (!previousPrescriptionDeleted) {
             List<Prescription> updatedPrescriptions = sess
                     .createQuery(
-                            "from Prescription as p where p.patient.id = :patid")
+                            "from Prescription as p where p.tipoDoenca = '"+tipoPaciente+"' and p.patient.id = :patid")
                     .setInteger("patid", preToBeSaved.getPatient().getId())
                     .list();
 
@@ -432,11 +432,11 @@ public class PackageManager {
      */
     @SuppressWarnings("unchecked")
     public static List<Packages> getAllCollectedPackagesForPatient(
-            Session session, Patient p) throws HibernateException {
+            Session session, Patient p, String tipoPaciente) throws HibernateException {
         List<Packages> patientsPackages = session
                 .createQuery(
                         "select pack from Packages as pack where pack.prescription.patient.id = :thePatientId "
-                                + "and pack.pickupDate is not null "
+                                + "and pack.pickupDate is not null and pack.prescription.tipoDoenca = '"+tipoPaciente+"' "
                                 + "and pack.packageReturned = false "
                                 + "order by pack.pickupDate desc")
                 .setInteger("thePatientId", p.getId()).list();
@@ -1292,11 +1292,11 @@ public class PackageManager {
      * @throws HibernateException
      */
 
-    public static Packages getLastPackagePickedUp(Session sess, Patient pat)
+    public static Packages getLastPackagePickedUp(Session sess, Patient pat, String tipoPaciente)
             throws HibernateException {
 
         List<Packages> patientsPackages = getAllCollectedPackagesForPatient(
-                sess, pat);
+                sess, pat, tipoPaciente);
 
         if (patientsPackages.size() >= 1)
             return patientsPackages.get(0);

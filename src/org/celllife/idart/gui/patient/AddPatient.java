@@ -623,7 +623,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         btnPatientHistoryReport = new Button(grpParticulars, SWT.NONE);
         btnPatientHistoryReport.setBounds(new Rectangle(260, 115, 40, 40));
-        btnPatientHistoryReport
+        btnPatientHistoryReport.setEnabled(false);
+                btnPatientHistoryReport
                 .setToolTipText(Messages.getString("patient.button.report.tooltip")); //$NON-NLS-1$
         btnPatientHistoryReport.setImage(ResourceUtils
                 .getImage(iDartImage.REPORT_PATIENTHISTORY_30X26));
@@ -992,7 +993,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             checkOpenmrs = false;
 
         if (!isAddnotUpdate) {
-            currentPrescription = localPatient.getCurrentPrescription();
+            currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
         if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
@@ -1767,7 +1768,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false);
+                new AddPrescription(localPatient, getParent(), false,iDartProperties.SERVICOTARV);
                 // myPrescription.addDisposeListener(new DisposeListener() {
                 // public void widgetDisposed(DisposeEvent e1) {
                 cmdCancelWidgetSelected();
@@ -2394,7 +2395,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
         if (localPatient != null) {
             PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPatient);
+                    localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         } else {
             PatientHistory patHistory = new PatientHistory(getShell(), true);

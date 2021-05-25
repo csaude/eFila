@@ -17,7 +17,9 @@ import java.util.Properties;
 public class iDartProperties {
 	
 	public static final String ENCOUNTER_TYPE_PHARMACY = "e279133c-1d5f-11e0-b929-000c29ad1d07";
-	
+
+	public static final String ENCOUNTER_TYPE_FILT = "24bd60e2-a1c9-4159-a24f-12af15b77510";
+
 	public static final String REST_GET_SESSION = "session";
 	
 	public static final String REST_GET_PATIENT = "patient?q=";
@@ -45,15 +47,40 @@ public class iDartProperties {
 	public static final String REST_CONCEPT = "&concept=";
 	
 	public static final String FORM_FILA = "49857ace-1a92-4980-8313-1067714df151";
-	
+
 	public static final String REGIME = "e1d83e4e-1d5f-11e0-b929-000c29ad1d07";
-	
+
 	public static final String DISPENSED_AMOUNT = "e1de2ca0-1d5f-11e0-b929-000c29ad1d07";
-	
+
 	public static final String DOSAGE = "e1de28ae-1d5f-11e0-b929-000c29ad1d07";
 	
 	public static final String VISIT_UUID = "e1e2efd8-1d5f-11e0-b929-000c29ad1d07";
-	
+
+	public static final String DISPENSEMODE_UUID = "40a9a12b-1205-4a55-bb93-caf15452bf61";
+
+
+	public static final String FORM_FILT_UUID = "4ce83895-5c0e-4170-b0cc-d3974b54131f";
+
+	public static final String REGIME_TPT_UUID = "9db4ce3b-4c1c-45dd-905f-c984a052f26e";
+
+	public static final String FILT_DISPENSED_TYPE_UUID = "d5c15047-58f3-4eb2-9f98-af82e3531cb5";
+
+	public static final String FILT_TPT_FOLLOW_UP_UUID = "93603742-1cae-4970-9077-e2b27e46bd7e";
+
+	public static final String FILT_VISIT_UUID = "d9911494-b231-4b3c-9246-1fe5f269476c";
+
+	public static final String FILT_NEXT_APOINTMENT_UUID = "b7c246bc-f2b6-49e5-9325-911cdca7a8b3";
+
+	public static final String FILT_MONTHLY_DISPENSED_TYPE_UUID = "e1d848f8-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_QUARTERLY_DISPENSED_TYPE_UUID = "f53848d5-3521-4cc8-ac72-d63adef281a1";
+	public static final String FILT_SEMESTRAL_DISPENSED_TYPE_UUID = "3069be5c-cd02-4ddb-aa1f-bdd71d3dd6be";
+
+	public static final String FILT_TPT_INITIAL_FOLLOW_UP_UUID = "e1d9ef28-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_TPT_CONTINUE_FOLLOW_UP_UUID = "e1d9f036-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_TPT_RESTART_FOLLOW_UP_UUID = "e1de1bfc-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_TPT_END_FOLLOW_UP_UUID = "e1d9facc-1d5f-11e0-b929-000c29ad1d07";
+
+
 	public static final String CONCEPT_CONFIDENT_NAME = "e1de46a4-1d5f-11e0-b929-000c29ad1d07";
 	
 	public static final String CONCEPT_CONFIDENT_TELEPHONE_NUMBER = "e1dcb3ca-1d5f-11e0-b929-000c29ad1d07";
@@ -85,6 +112,12 @@ public class iDartProperties {
 	public final static String ONLINE_DOWNREFERRAL_MODE = "online";
 
 	public final static String randbDataFolder = "randb";
+
+	public final static String SERVICOTARV = "TARV";
+
+	public final static String PNCT = "TB";
+
+	public final static String PREP = "PREP";
 
 	public static boolean allowMultipleUncollectedPackages = false;
 
@@ -152,7 +185,7 @@ public class iDartProperties {
 
 	public static int logoutTime = -1;
 
-	public static String idartVersionNumber = "2.2.2";
+	public static String idartVersionNumber = "2.4.0";
 
 	public static boolean nextAppointmentDateOnLabels = true;
 

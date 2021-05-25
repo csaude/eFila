@@ -109,7 +109,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + " 	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -119,7 +119,8 @@ public class ConexaoJDBC {
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
-                + " 	inner join episode ep on ep.id = pack.episode ";
+                + " 	inner join episode ep on ep.id = pack.episode "
+                + " WHERE P.tipodoenca like '%ARV'";
 
         int totalpacientestransito = 0;
         int totalpacientesinicio = 0;
@@ -272,7 +273,7 @@ public class ConexaoJDBC {
     }
 
 
-    public Map MMIAACTUALIZADO(String startDate, String endDate) throws ClassNotFoundException, SQLException {
+    public Map MMIAACTUALIZADO(String startDate, String endDate, String diseaseType) throws ClassNotFoundException, SQLException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         String query = " SELECT  distinct p.patient, "
@@ -300,7 +301,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "'   "
+                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%' "
                 + " 	GROUP BY 5 order by 5) pack  "
                 + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
@@ -313,6 +314,7 @@ public class ConexaoJDBC {
         int totalpacientesmanter = 0;
         int totalpacientesalterar = 0;
         int totalpacientestransferidoDe = 0;
+        int totalfim = 0;
 
         int pacientesdispensadosparaDM = 0;
         int pacientesdispensadosparaDT = 0;
@@ -351,14 +353,16 @@ public class ConexaoJDBC {
                 }
 
                 // Tipo de Pacinte
-                if (!nonuspatient && rs.getString("reasonforupdate").contains("Inicia")) {
+                if (!nonuspatient && (rs.getString("reasonforupdate").contains("Inicia") || rs.getString("reasonforupdate").contains("Inicio"))) {
                     totalpacientesinicio++;
-                } else if (!nonuspatient && (rs.getString("reasonforupdate").contains("Manter") || rs.getString("reasonforupdate").contains("Reiniciar"))) {
+                } else if (!nonuspatient && (rs.getString("reasonforupdate").contains("Manter") || rs.getString("reasonforupdate").contains("Reiniciar") || rs.getString("reasonforupdate").contains("Continua"))) {
                     totalpacientesmanter++;
                 } else if (!nonuspatient && rs.getString("reasonforupdate").contains("Alterar")) {
                     totalpacientesalterar++;
                 } else if (!nonuspatient && rs.getString("reasonforupdate").contains("ransfer")) {
                     totalpacientestransferidoDe++;
+                }else if (!nonuspatient && rs.getString("reasonforupdate").contains("Fim")) {
+                    totalfim++;
                 }
 
 
@@ -412,6 +416,7 @@ public class ConexaoJDBC {
 
         map.put("totalpacientestransito", totalpacientestransito);
         map.put("totalpacientesinicio", totalpacientesinicio);
+        map.put("totalfim", totalfim);
         map.put("totalpacientesmanter", totalpacientesmanter);
         map.put("totalpacientesalterar", totalpacientesalterar);
         map.put("totalpacientestransferidoDe", totalpacientestransferidoDe);
@@ -438,7 +443,7 @@ public class ConexaoJDBC {
     }
 
 
-    public Map MMIA_Actualizado_Dispensas(String startDate, String endDate) throws ClassNotFoundException, SQLException {
+    public Map MMIA_Actualizado_Dispensas(String startDate, String endDate, String diseaseType) throws ClassNotFoundException, SQLException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         String query = " SELECT  distinct p.patient, "
@@ -458,7 +463,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "'   "
+                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%'  "
                 + " 	GROUP BY 5 order by 5) pack  "
                 + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
@@ -1099,7 +1104,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + " 	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -1111,7 +1116,7 @@ public class ConexaoJDBC {
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
                 + " 	inner join episode ep on ep.id = pack.episode "
                 + "  inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
-                + " WHERE p.dispensatrimestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
+                + " WHERE p.tipodoenca like '%ARV' and p.dispensatrimestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
                 + " order by 8";
 
         int totalpacientesmanter = 0;
@@ -1181,7 +1186,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + " 	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -1193,7 +1198,7 @@ public class ConexaoJDBC {
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
                 + " 	inner join episode ep on ep.id = pack.episode "
                 + "  inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
-                + " WHERE p.dispensatrimestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
+                + " WHERE p.tipodoenca like '%ARV' and p.dispensatrimestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
                 + " order by 8";
 
         conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
@@ -1258,7 +1263,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + " 	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -1270,7 +1275,7 @@ public class ConexaoJDBC {
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
                 + " 	inner join episode ep on ep.id = pack.episode "
                 + "  inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
-                + " WHERE p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
+                + " WHERE p.tipodoenca like '%ARV' and p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
                 + " order by 8";
 
         int totalpacientesmanter = 0;
@@ -1340,7 +1345,7 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + " 	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -1352,7 +1357,7 @@ public class ConexaoJDBC {
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
                 + " 	inner join episode ep on ep.id = pack.episode "
                 + "  inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
-                + " WHERE p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
+                + " WHERE p.tipodoenca like '%ARV' and p.dispensasemestral = 1 and (ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%') "
                 + " order by 8";
 
         conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
@@ -3130,14 +3135,14 @@ public class ConexaoJDBC {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public String carregaRegime(int idpaciente) throws ClassNotFoundException,
+    public String carregaRegime(int idpaciente, String tipoPaciente) throws ClassNotFoundException,
             SQLException {
 
         String query = " " + " SELECT " + " regimeterapeutico.regimeesquema "
                 + "  FROM " + "  regimeterapeutico , " + "  prescription "
                 + "  WHERE "
                 + "  prescription.regimeid =regimeterapeutico.regimeid "
-                + "  AND " + "  prescription.patient=" + idpaciente + "  AND "
+                + "  AND " + "  prescription.patient=" + idpaciente + "  AND prescription.tipoDoenca='"+tipoPaciente+ "' AND "
                 + "  prescription.current=\'T\'" + "";
 
         conecta(iDartProperties.hibernateUsername,
@@ -4235,21 +4240,24 @@ public class ConexaoJDBC {
         return total;
     }
 
-    public String getLivroRegistoDiario(boolean i, boolean m,
-                                        boolean a, boolean t, boolean r, String startDate, String endDate) {
+    public String getLivroRegistoDiario(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim (F)");
 
 
         String condicao = "(\'";
@@ -4310,7 +4318,7 @@ public class ConexaoJDBC {
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
-                + "	   ))   "
+                + "	 AND pre.tipodoenca = '" + diseaseType + "'   ))   "
                 + "	GROUP BY 5 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
@@ -4318,26 +4326,30 @@ public class ConexaoJDBC {
                 + "	inner join linhat l on l.linhaid = p.linhaid "
                 + "	inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
                 + " inner join episode ep on ep.id = pack.episode "
-                + "	where p.reasonforupdate IN " + condicao + " ";
+                + "	where p.reasonforupdate IN " + condicao + " AND p.tipodoenca like '%" + diseaseType + "%' ";
 
         return query;
     }
 
     public String getQueryHistoricoLevantamentos(boolean i, boolean m,
-                                                 boolean a, boolean t, boolean r, String startDate, String endDate) {
+                                                 boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) {
 
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+            {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+            {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 
@@ -4361,6 +4373,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4373,10 +4396,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id, max(visit.id) episode "
+                + " 			pat.id, max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4385,19 +4409,19 @@ public class ConexaoJDBC {
                 + "	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + "				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + "				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + "	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + "	where pre.tipodoenca like '%" + diseaseType + "%'  and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
                 + "	inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
                 + " inner join episode ep on ep.id = pack.episode "
-                + "	where p.reasonforupdate IN " + condicao + " ";
+                + "	where p.tipodoenca like '%" + diseaseType + "%' and p.reasonforupdate IN " + condicao + " ";
 
         return query;
     }
@@ -4413,7 +4437,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate) throws SQLException, ClassNotFoundException {
+    public List<HistoricoLevantamentoXLS> getQueryHistoricoLevantamentosXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4421,15 +4445,19 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 
@@ -4453,6 +4481,17 @@ public class ConexaoJDBC {
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
                 + " CASE  "
+                + " 	WHEN p.ccr = 'T' THEN 'CCR'"
+                + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
+                + " 	WHEN p.af = 'T' THEN 'Abordagem Familiar'"
+                + " 	WHEN p.ca = 'T' THEN 'Clube de Adesão'"
+                + " 	WHEN p.cpn = 'T' THEN 'CPN'"
+                + " 	WHEN p.tb = 'T' THEN 'TB'"
+                + " 	WHEN p.saaj = 'T' THEN 'SAAJ'"
+                + " 	WHEN p.dc = 'T' THEN 'Dispensa Comunitária'"
+                + " 	ELSE '--' "
+                + " END AS proveniencia, "
+                + " CASE  "
                 + " 	WHEN p.dispensatrimestral = 1 THEN "
                 + "           CASE WHEN  pack.pickupdate >= '" + startDate + "' THEN 'DT' "
                 + "                ELSE 'DT - TRANSPORTE' "
@@ -4465,10 +4504,11 @@ public class ConexaoJDBC {
                 + " END AS tipodispensa, "
                 + " pa.pickupdate::date as datalevantamento, "
                 + " to_date(pack.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento,  "
-                + " ep.startreason  "
+                + " ep.startreason  ,  "
+                + " pack.modedispense  "
                 + " FROM  ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(pa.id) packid, "
-                + " 			pat.id , max(visit.id) episode "
+                + " 			pat.id , max(visit.id) episode, pdit.modedispense "
                 + "	from package pa "
                 + "	inner join packageddrugs pds on pds.parentpackage = pa.id "
                 + "	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "
@@ -4477,19 +4517,19 @@ public class ConexaoJDBC {
                 + "	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + "				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + "				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + "	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + "	where pre.tipodoenca like '%" + diseaseType + "%' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
-                + "	GROUP BY 5 order by 5) pack  "
+                + "	GROUP BY 5,7 order by 5) pack  "
                 + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
                 + "	inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
                 + " inner join episode ep on ep.id = pack.episode "
-                + "	where p.reasonforupdate IN " + condicao + " ";
+                + "	where p.tipodoenca like '%" + diseaseType + "%' and p.reasonforupdate IN " + condicao + " ";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
         ResultSet rs = st.executeQuery(query);
@@ -4505,6 +4545,8 @@ public class ConexaoJDBC {
                 levantamentoXLS.setTipoPaciente(rs.getString("startreason"));
                 levantamentoXLS.setRegimeTerapeutico(rs.getString("regime"));
                 levantamentoXLS.setTipoDispensa(rs.getString("tipodispensa"));
+                levantamentoXLS.setProveniencia(rs.getString("proveniencia"));
+                levantamentoXLS.setModoDispensa(rs.getString("modedispense"));
                 levantamentoXLS.setDataLevantamento(rs.getString("datalevantamento"));
                 levantamentoXLS.setDataProximoLevantamento(rs.getString("dataproximolevantamento"));
 
@@ -4525,23 +4567,26 @@ public class ConexaoJDBC {
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
 
-        String query = "select distinct patientid as nid, " +
-                "patientfirstname ||' '|| patientlastname as nome, " +
-                "reasonforupdate as tipoPaciente, " +
-                "regimenome as regimeTerapeutico, " +
+        String query = "select distinct spt.patientid as nid, " +
+                "spt.patientfirstname as nome, " +
+                "spt.patientlastname as apelido, " +
+                "spt.reasonforupdate as tipotarv, " +
+                "spt.regimenome as regime, " +
                 "CASE " +
-                "WHEN dispensatrimestral = 1 THEN 'DT' " +
-                "WHEN dispensasemestral = 1 THEN 'DS' " +
+                "WHEN spt.dispensatrimestral = 1 THEN 'DT' " +
+                "WHEN spt.dispensasemestral = 1 THEN 'DS' " +
                 "ELSE 'DM' " +
                 "        END AS tipodispensa, " +
-                "pg_catalog.date(pickupdate) as dataLevantamento, " +
-                "to_date(dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, " +
-                "mainclinicname as referencia " +
-                "from sync_temp_dispense " +
-                "where pg_catalog.date(pickupdate) >= '" + startDate + "'::date " +
-                "AND pg_catalog.date(pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') " +
-                "GROUP BY 1,2,3,4,5,6,7,8 " +
-                "order by 6";
+                "pg_catalog.date(spt.pickupdate) as dataLevantamento, " +
+                "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento, " +
+                "c.clinicname as referencia " +
+                "from sync_temp_dispense spt " +
+                "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs " +
+                "inner join clinic c on c.id = p.clinic " +
+                "where pg_catalog.date(spt.pickupdate) >= '"+startDate+"'::date " +
+                "AND pg_catalog.date(spt.pickupdate) < ('"+endDate+"'::date + INTERVAL '1 day') " +
+                "GROUP BY 1,2,3,4,5,6,7,8,9 " +
+                "order by 7 asc";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
         ResultSet rs = st.executeQuery(query);
@@ -4582,7 +4627,7 @@ public class ConexaoJDBC {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, String startDate, String endDate) throws SQLException, ClassNotFoundException {
+    public List<LivroRegistoDiarioXLS> getLivroRegistoDiarioXLS(boolean i, boolean m, boolean a, boolean t, boolean r, boolean f, String startDate, String endDate, String diseaseType) throws SQLException, ClassNotFoundException {
 
         conecta(iDartProperties.hibernateUsername,
                 iDartProperties.hibernatePassword);
@@ -4592,15 +4637,19 @@ public class ConexaoJDBC {
         Vector<String> v = new Vector<String>();
 
         if (i)
-            v.add("Inicia");
+        {v.add("Inicia");
+            v.add("Inicio (I)");}
         if (m)
-            v.add("Manter");
+        {v.add("Manter");
+            v.add("Continua (C)");}
         if (a)
             v.add("Alterar");
         if (t)
             v.add("Transfer de");
         if (r)
             v.add("Reiniciar");
+        if (r)
+            v.add("Fim (F)");
 
         String condicao = "(\'";
 
@@ -4658,7 +4707,7 @@ public class ConexaoJDBC {
                 + "	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + "				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
                 + "				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + "	where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
+                + "	where pre.tipodoenca like '%" + diseaseType + "%' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "')  "
                 + "	OR (pg_catalog.date(pa.pickupdate) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > '" + endDate + "'  "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' "
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
@@ -4675,14 +4724,14 @@ public class ConexaoJDBC {
                 + "      from packageddrugs as packdrug, stock, drug, prescribeddrugs as predrug,"
                 + "      package as pack,"
                 + "      prescription as pre"
-                + "      where packdrug.stock = stock.id"
+                + "      where pre.tipodoenca like '%" + diseaseType + "%' and packdrug.stock = stock.id"
                 + "      and stock.drug = drug.id"
                 + "      and packdrug.parentPackage = pack.id"
                 + "      and pack.prescription = pre.id"
                 + "      and predrug.prescription = pre.id"
                 + "      and predrug.drug = drug.id"
                 + "      group by drug.name,pack.id) drug_set ON pack.packid = drug_set.drugid"
-                + "	where p.reasonforupdate IN " + condicao + " ";
+                + "	where p.tipodoenca like '%" + diseaseType + "%' and p.reasonforupdate IN " + condicao + " ";
 
         diarioXLS = new ArrayList<LivroRegistoDiarioXLS>();
         ResultSet rs = st.executeQuery(query);
@@ -5178,7 +5227,7 @@ public class ConexaoJDBC {
         return id;
     }
 
-    public boolean jaTemFilaInicio(String nid) {
+    public boolean jaTemFilaInicio(String nid, String tipoPaciente) {
 
         boolean jatemFilaInicio = false;
 
@@ -5186,6 +5235,7 @@ public class ConexaoJDBC {
                 + " prescription.id, "
                 + " package.packageid ,"
                 + " prescription.reasonforupdate as tipotarv, "
+                + " prescription.current as currentprescription, "
                 + " patient.patientid "
                 + " FROM  "
                 + " prescription  "
@@ -5193,8 +5243,8 @@ public class ConexaoJDBC {
                 + " inner join patient on patient.id = prescription.patient"
                 + " WHERE   "
                 + " prescription.ppe=\'F\' "
-                + " AND   "
-                + " prescription.reasonforupdate IN ('Inicia') "
+                + " AND  prescription.tipodoenca = '"+tipoPaciente+"' AND "
+                + " prescription.reasonforupdate like 'Inici%' "
                 + " AND patient.patientid = \'" + nid + "\'";
         try {
             conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
@@ -5208,10 +5258,17 @@ public class ConexaoJDBC {
 
         try {
             ResultSet rs = st.executeQuery(query);
+
             while (rs.next()) {
-                if (rs.getString("patientid").equals(nid)) {
-                    jatemFilaInicio = true;
+                if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+                    if(rs.getString("currentprescription").equals("T"))
+                        jatemFilaInicio = true;
                     break;
+                }else{
+                    if (rs.getString("patientid").equals(nid)) {
+                        jatemFilaInicio = true;
+                        break;
+                    }
                 }
                 log.trace("/*/*//*///*/*//*/*/" + rs.getString("nid"));
             }
@@ -5347,6 +5404,7 @@ public class ConexaoJDBC {
                     "from prescription  " +
                     "where prescription.patient = pat.id  " +
                     "and prescription.dispensatrimestral = 1  " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + dataInicial + "'::date between prescription.date and prescription.endDate)or(('" + dataInicial + "'::date > prescription.date)) and (prescription.endDate is null)))  " +
                     "and exists (select id from episode where episode.patient = pat.id  " +
                     "and (('" + dataInicial + "'::date between episode.startdate and episode.stopdate)or(('" + dataInicial + "'::date > episode.startdate)) and (episode.stopdate is null)))  " +
@@ -5431,6 +5489,7 @@ public class ConexaoJDBC {
                     "from prescription  " +
                     "where prescription.patient = pat.id  " +
                     "and prescription.dispensatrimestral = 0  " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.reasonforupdate = 'Inicia'  " +
                     "and (('" + dataInicial + "'::date between prescription.date and prescription.endDate)or(('" + dataInicial + "'::date > prescription.date)) and (prescription.endDate is null)))  " +
                     "and exists (select id from episode where episode.patient = pat.id  " +
@@ -5530,6 +5589,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
@@ -5624,6 +5684,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
@@ -5759,6 +5820,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "'::date > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "'::date between episode.startdate and episode.stopdate)or(('" + data + "'::date > episode.startdate)) and (episode.stopdate is null)))" +
@@ -5878,6 +5940,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
@@ -5997,6 +6060,7 @@ public class ConexaoJDBC {
                     " and exists (select prescription.id" +
                     " from prescription" +
                     " where prescription.patient = pat.id" +
+                    " and prescription.tipodoenca like '%ARV' " +
                     " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
@@ -6082,11 +6146,12 @@ public class ConexaoJDBC {
                     "and pi.value = pat.patientid " +
                     "and idt.id = pi.type_id " +
                     "and " + clinicid + " = pat.clinic " +
-                    "and (app.visitDate > app.appointmentDate OR app.visitDate is null ) " +
+                    "and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null ) " +
                     "and ('" + data + "'::date - app.appointmentDate::date) between " + minDays + " and " + maxDays + " " +
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.dispensatrimestral = 0 " +
                     "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
@@ -6906,6 +6971,7 @@ public class ConexaoJDBC {
                     "and exists (select prescription.id " +
                     "from prescription " +
                     "where prescription.patient = pat.id " +
+                    "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.endDate is null) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and episode.stopdate is null) " +

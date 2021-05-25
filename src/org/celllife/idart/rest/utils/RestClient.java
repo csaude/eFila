@@ -68,7 +68,7 @@ public class RestClient {
     public boolean postOpenMRSEncounter(String encounterDatetime, String nidUuid, String encounterType, String strFacilityUuid,
                                         String filaUuid, String providerUuid, String regimeUuid,
                                         String strRegimenAnswerUuid, String dispensedAmountUuid, List<PrescribedDrugs> prescribedDrugs,
-                                        List<PackagedDrugs> packagedDrugs, String dosageUuid, String returnVisitUuid, String strNextPickUp) throws Exception {
+                                        List<PackagedDrugs> packagedDrugs, String dosageUuid, String returnVisitUuid, String strNextPickUp, String dispenseModeUuid, String answerDispenseModeUuid) throws Exception {
 
         StringEntity inputAddPerson = null;
 
@@ -338,7 +338,7 @@ public class RestClient {
 
     }
 
-    public static void setOpenmrsPatients( Session sess) {
+    public static void setOpenmrsPatients(Session sess) {
 
         RestClient restClient = new RestClient();
 
@@ -346,7 +346,6 @@ public class RestClient {
 
         String name = "";
         String middleName = "";
-
 
 
         try {
@@ -513,16 +512,16 @@ public class RestClient {
         } else {
             msgError = " O NID [" + dispense.getNid() + "] foi alterado no OpenMRS ou não possui UUID."
                     + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.";
-            log.trace(new Date() +  msgError);
-            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            log.trace(new Date() + msgError);
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         }
 
-        if (!patient.getUuidopenmrs().equals(uuid)){
+        if (!patient.getUuidopenmrs().equals(uuid)) {
             msgError = " O paciente [" + patient.getPatientId() + " ] "
                     + " Tem um UUID [" + patient.getUuidopenmrs() + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .";
             log.trace(new Date() + msgError);
-            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         }
 
@@ -536,11 +535,11 @@ public class RestClient {
 
         if (jsonReportingRestArray.length() < 1) {
 
-            msgError =" O NID [" + dispense.getNid() + " com o uuid (" + dispense.getUuid() + ")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
+            msgError = " O NID [" + dispense.getNid() + " com o uuid (" + dispense.getUuid() + ")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
                     " ou contem o UUID inactivo/inexistente. Actualize primeiro o estado do paciente no OpenMRS..";
             log.trace(new Date() + msgError);
 
-            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         }
 
@@ -556,18 +555,27 @@ public class RestClient {
         } else strFacilityUuid = strFacility.substring(21, 57);
 
         if (response.length() < 50) {
-            msgError = " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" +  dispense.getNid() + " ].";
+            msgError = " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + dispense.getNid() + " ].";
             log.trace(new Date() + msgError);
-            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         } else providerUuid = response.substring(21, 57);
 
         try {
 
-            postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                    strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispense.getRegimenAnswer(),
-                    iDartProperties.DISPENSED_AMOUNT, dispense.getPrescription().getPrescribedDrugs(), newPack.getPackagedDrugs(), iDartProperties.DOSAGE,
-                    iDartProperties.VISIT_UUID, dispense.getStrNextPickUp());
+            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
+                        strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID, iDartProperties.FILT_DISPENSED_TYPE_UUID,
+                        iDartProperties.FILT_TPT_FOLLOW_UP_UUID, dispense.getRegimenAnswer(), dispense.getPrescription().getPrescribedDrugs(), iDartProperties.FILT_NEXT_APOINTMENT_UUID,
+                        dispense.getStrNextPickUp(), iDartProperties.DISPENSEMODE_UUID, dispense.getDispenseModeAnswer());
+            } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
+                // to add
+            } else {
+                postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                        strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispense.getRegimenAnswer(),
+                        iDartProperties.DISPENSED_AMOUNT, dispense.getPrescription().getPrescribedDrugs(), newPack.getPackagedDrugs(), iDartProperties.DOSAGE,
+                        iDartProperties.VISIT_UUID, dispense.getStrNextPickUp(), iDartProperties.DISPENSEMODE_UUID, dispense.getDispenseModeAnswer());
+            }
 
             log.trace("Criou o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
 
@@ -579,11 +587,12 @@ public class RestClient {
                 if (errorLog != null)
                     OpenmrsErrorLogManager.removeErrorLog(session, errorLog);
             }
-
         } catch (Exception e) {
-            msgError = "Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + e.getMessage() + "\nHouve um problema ao salvar o pacote de medicamentos para o paciente " + dispense.getNid() + ". " + "Por favor contacte o Administrador.";
+            msgError = "Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + e.getMessage() +
+                    "\nHouve um problema ao salvar o pacote de medicamentos para o paciente " + dispense.getNid() +
+                    ". " + "Por favor contacte o Administrador.";
             log.trace("Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
-            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError );
+            saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
         }
     }
 
@@ -598,19 +607,18 @@ public class RestClient {
                 errorLog.setPrescription(newPack.getPrescription());
                 errorLog.setPickupdate(newPack.getPickupDate());
                 errorLog.setReturnpickupdate(dtNextPickUp);
-                errorLog.setErrordescription(error);
+                errorLog.setErrordescription("[" + newPack.getPrescription().getTipoDoenca() + "] - " + error);
                 errorLog.setDatacreated(new Date());
                 OpenmrsErrorLogManager.saveOpenmrsRestLog(sess, errorLog);
             }
             sess.flush();
             tx.commit();
             sess.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
                 sess.close();
             }
         }
     }
-
 }

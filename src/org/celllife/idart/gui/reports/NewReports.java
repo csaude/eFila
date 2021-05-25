@@ -23,9 +23,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import model.manager.reports.MiaReport;
 import model.manager.reports.OpenmrsErrorLog;
+import model.manager.reports.PatientHistoryReport;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.celllife.idart.gui.dataExports.DataExport;
 import org.celllife.idart.gui.dataQuality.DataQuality;
 import org.celllife.idart.gui.platform.GenericAdminGui;
@@ -381,7 +384,10 @@ public class NewReports extends GenericAdminGui {
          * MmiaReport(getShell(), false));
          */
         reportGUIs.put(GenericReportGuiInterface.REPORT_MIA,
-                new MmiaReport(getShell(), false));
+                new MmiaReport(getShell(), false, MiaReport.TARV_MIA_REPORT));
+
+        reportGUIs.put(GenericReportGuiInterface.REPORT_MIA_TB,
+                new MmiaReport(getShell(), false, MiaReport.TB_MIA_REPORT));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_MIAMISAU,
                 new MmiaReportMISAU(getShell(), false));
@@ -389,7 +395,13 @@ public class NewReports extends GenericAdminGui {
       	reportGUIs.put(GenericReportGuiInterface.REPORT_PRESCRICOES_SEM_DISPENSAS, new PrescriptionsWithNoEncounter(getShell(), false));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_LIVRO_ELETRONICO_ARV,
-                new LivroRegistoDiario(getShell(), false));
+                new LivroRegistoDiario(getShell(), false, Prescription.TIPO_DOENCA_TARV));
+
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LIVRO_ELETRONICO_TB,
+                new LivroRegistoDiario(getShell(), false, Prescription.TIPO_DOENCA_TB));
+
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LIVRO_ELETRONICO_PREP,
+                new LivroRegistoDiario(getShell(), false, Prescription.TIPO_DOENCA_PREP));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_IDART,
                 new RegisteredIdart(getShell(), false));
@@ -401,8 +413,13 @@ public class NewReports extends GenericAdminGui {
                 new IsoniazidaReport(getShell(), false));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_ARV,
-                new HistoricoLevantamentos(getShell(), false));
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TARV));
 
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_TB,
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TB));
+
+        reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_PREP,
+                new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_PREP));
         //Dipensa Trimestral
         reportGUIs.put(GenericReportGuiInterface.REPORT_DISPENSA_TRIMESTRAL,
                 new DispensaTrimestralReport(getShell(), false));
@@ -431,7 +448,11 @@ public class NewReports extends GenericAdminGui {
 
         // Patient Reports
         reportGUIs.put(GenericReportGuiInterface.REPORT_PATIENT_HISTORY,
-                new PatientHistory(getShell(), false));
+                new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_FILA));
+        reportGUIs.put(GenericReportGuiInterface.REPORT_PATIENT_TB_HISTORY,
+                new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_FILT));
+        reportGUIs.put(GenericReportGuiInterface.REPORT_PATIENT_PREP_HISTORY,
+                new PatientHistory(getShell(), false, PatientHistoryReport.PATIENT_HISTORY_PREP));
         reportGUIs.put(
                 GenericReportGuiInterface.REPORT_EPISODES_STARTED_OR_ENDED,
                 new EpisodesStartedOrEndedReportGUI(getShell(), false));

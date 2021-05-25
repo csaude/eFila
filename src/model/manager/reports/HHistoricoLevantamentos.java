@@ -3,6 +3,7 @@ package model.manager.reports;
 import model.manager.excel.conversion.exceptions.ReportException;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Prescription;
 import org.eclipse.swt.widgets.Shell;
 
 import java.text.SimpleDateFormat;
@@ -22,10 +23,12 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 	private boolean alteraccao;
 	private boolean trasfereDe;
 	private boolean reInicio;
+	private String diseaseType;
+	private boolean fim;
 
 
 	public HHistoricoLevantamentos(Shell parent, Date theStartDate,
-			Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio) {
+			Date theEndDate, boolean inicio,boolean manutencao,boolean alteraccao, boolean trasfereDe, boolean reInicio, boolean fim, String diseaseType) {
 		super(parent);
 		
 		this.theStartDate=theStartDate;
@@ -35,6 +38,8 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 		this.manutencao=manutencao;
 		this.trasfereDe=trasfereDe;
 		this.reInicio=reInicio;
+		this.diseaseType = diseaseType;
+		this.fim = fim;
 	}
 
 	@Override
@@ -62,7 +67,7 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 
 		ConexaoJDBC con=new ConexaoJDBC();
 		
-		String query = con.getQueryHistoricoLevantamentos(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio,dateFormat.format(theStartDate),dateFormat.format(theEndDate));
+		String query = con.getQueryHistoricoLevantamentos(this.inicio, this.manutencao, this.alteraccao,this.trasfereDe,this.reInicio, this.fim, dateFormat.format(theStartDate),dateFormat.format(theEndDate), this.diseaseType);
 				
 		map.put("query",query);
 		map.put("path", getReportPath());
@@ -76,7 +81,13 @@ public class HHistoricoLevantamentos extends AbstractJasperReport {
 
 	@Override
 	protected String getReportFileName() {
-		return "HistoricoLevantamentos";
+		if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TARV)){
+			return "HistoricoLevantamentos";
+		}else  if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
+			return "HistoricoLevantamentosTB";
+		}
+		else return "HistoricoLevantamentosPREP";
+
 	}
 	
 

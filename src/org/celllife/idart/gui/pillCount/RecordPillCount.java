@@ -28,6 +28,7 @@ import model.manager.AdherenceManager;
 import model.manager.PackageManager;
 
 import org.apache.log4j.Logger;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.Packages;
 import org.celllife.idart.database.hibernate.Patient;
 import org.celllife.idart.database.hibernate.PatientIdentifier;
@@ -336,10 +337,10 @@ public class RecordPillCount extends GenericFormGui {
 	}
 
 	protected void populateGui() {
-		Prescription prescription = localPatient.getCurrentPrescription();
+		Prescription prescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
 		if (prescription != null) {
 			previousPack = PackageManager.getLastPackagePickedUp(getHSession(),
-					prescription.getPatient());
+					prescription.getPatient(),prescription.getTipoDoenca());
 			if (previousPack != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
 				txtPatientName.setText(localPatient.getFirstNames() + " "

@@ -19,6 +19,7 @@
 
 package org.celllife.idart.gui.patientAdmin;
 
+import model.manager.reports.PatientHistoryReport;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.commonobjects.JdbcProperties;
@@ -320,6 +321,7 @@ public class PatientAdmin extends GenericAdminGui {
             btnPatientHistoryReport.setData(iDartProperties.SWTBOT_KEY, Screens.PATIENT_HISTORY_REPORT.getAccessButtonId());
             btnPatientHistoryReport.setLayoutData(gdBtn);
             btnPatientHistoryReport.setText(Messages.getString("PatientAdmin.button.viewPatientHistory")); //$NON-NLS-1$
+            btnPatientHistoryReport.setEnabled(false);
             btnPatientHistoryReport
                     .setToolTipText(Messages.getString("PatientAdmin.button.viewPatientHistory.tooltip")); //$NON-NLS-1$
             btnPatientHistoryReport.setFont(ResourceUtils
@@ -532,7 +534,7 @@ public class PatientAdmin extends GenericAdminGui {
     }
 
     private void cmdUpdatePrescriptionWidgetSelected() {
-        new AddPrescription(null, getShell(), false);
+        new AddPrescription(null, getShell(), false, iDartProperties.SERVICOTARV);
     }
 
     private void cmdViewPatientHistoryWidgetSelected() {

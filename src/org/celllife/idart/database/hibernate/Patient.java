@@ -1016,24 +1016,32 @@ public class Patient {
         }
     }
 
-    public Prescription getCurrentPrescription() {
+    public Prescription getCurrentPrescription(String tipoPaciente) {
         Prescription result = null;
-        for (Prescription p : prescriptions) {
-            if (p.getCurrent() == 'T') {
-                result = p;
-                break;
+        try {
+            for (Prescription p : prescriptions) {
+                if (p.getTipoDoenca().equalsIgnoreCase(tipoPaciente)) {
+                    if (p.getCurrent() == 'T') {
+                        result = p;
+                        break;
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
 
-    public Prescription getMostRecentPrescription() {
+    public Prescription getMostRecentPrescription(String tipoPaciente) {
         Prescription mostRecent = null;
         for (Prescription script : prescriptions) {
-            if (mostRecent == null) {
-                mostRecent = script;
-            } else if (iDARTUtil.after(script.getDate(), mostRecent.getDate())) {
-                mostRecent = script;
+            if (script.getTipoDoenca().equalsIgnoreCase(tipoPaciente)) {
+                if (mostRecent == null) {
+                    mostRecent = script;
+                } else if (iDARTUtil.after(script.getDate(), mostRecent.getDate())) {
+                    mostRecent = script;
+                }
             }
         }
         return mostRecent;
