@@ -63,6 +63,7 @@ public interface GenericReportGuiInterface {
     static String REPORT_MISSED_APPOINTMENTS_DS = Messages.getString("reports.missedAppointmentsDS");
     static String REPORT_FILA_GERAL = Messages.getString("reports.fila");
     static String REPORT_PACIENTES_REFERIDOS = Messages.getString("reports.referidos");
+    static String REPORT_PACIENTES_REFERIDOSDEVOLTA = Messages.getString("reports.referidosdevolta");
     static String REPORT_PACIENTES_RECEBIDOS = Messages.getString("reports.recebidos");
     static String REPORT_SECOND_LINE = Messages.getString("reports.secondLine");
     static String REPORT_LOST_TO_FOLLOW_UP = Messages.getString("reports.losttofollowup");

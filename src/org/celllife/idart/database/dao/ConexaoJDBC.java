@@ -6728,6 +6728,153 @@ public class ConexaoJDBC {
 
     }
 
+    public List<PacienteReferidoDeVoltaXLS> getReferedOutPatients(String dataInicio, String dataFim) {
+
+        List<PacienteReferidoDeVoltaXLS> pacienteReferidoDeVoltaXLS = new ArrayList<PacienteReferidoDeVoltaXLS>();
+
+        try {
+            conecta(iDartProperties.hibernateUsername,
+                    iDartProperties.hibernatePassword);
+
+            String query = "select distinct"
+                    +" p.patientid as nid, "
+                    +"         p.firstnames ||' '||p.lastname as nome,"
+                    +" extract(year FROM age(current_date, p.dateofbirth))::integer as idade,"
+                    +" c.clinicname as facilityName,"
+                    +" referidos.clinicname as referencialClinic,"
+                    +" referidos.ultimaReferencia,"
+                    +" referidos.ultimoLev,"
+                    +" e.startnotes as notas,"
+                    +" Max(e.startdate) as dataRetorno"
+                    +" from Patient as p"
+                    +" inner join clinic c on c.id = p.clinic"
+                    +" inner join prescription pr on pr.patient = p.id"
+                    +" inner join episode e on e.patient = p.id"
+                    +" inner join ("
+                    +" select distinct Max(e.id) id, e.patient,  c.clinicname,"
+                    +" Max(e.startdate) ultimaReferencia, Max(pa.pickupdate) ultimoLev"
+                    +" from episode e "
+                    +" inner join clinic c on c.id = e.clinic  "
+                    +" inner join prescription pr on pr.patient = e.patient "
+                    +" inner join package pa on pa.prescription = pr.id "
+                    +" inner join packageddrugs pd on pd.parentpackage = pa.id "
+                    +" where e.startdate < ('"+dataFim+"'::date::date + INTERVAL '1 day') "
+                    +" and pd.amount = 0 "
+                    +" and e.startreason like '%eferido%' "
+                    +" group by 2,3 "
+                    +" order by 2 asc "
+                    +" ) referidos on referidos.patient = p.id "
+                    +" inner join ( "
+                    +" select distinct Max(e.id) id, e.patient,  c.clinicname, "
+                    +" Max(e.startdate) ultimaReferencia "
+                    +" from episode e "
+                    +" inner join clinic c on c.id = e.clinic "
+                    +" where  e.startdate >= '"+dataInicio+"'::date::date "
+                    +" AND e.startdate < ('"+dataFim+"'::date::date + INTERVAL '1 day') "
+                    +" and e.startreason like '%Voltou%' "
+                    +" AND c.mainclinic = true "
+                    +" group by 2,3 "
+                    +" order by 2 asc "
+                    +" ) retornados on retornados.patient = referidos.patient and e.id = retornados.id "
+                    +" where "
+                    +" pg_catalog.date(pr.date) < ('"+dataFim+"'::date::date + INTERVAL '1 day') "
+                    +" AND c.mainclinic = true "
+                    +" group by 1,2,3,4,5,6,7,8 "
+                    +" order by p.patientid asc";
+
+
+            ResultSet rs = st.executeQuery(query);
+
+            if (rs != null) {
+
+                while (rs.next()) {
+                    PacienteReferidoDeVoltaXLS referidoDeVoltaXLS = new PacienteReferidoDeVoltaXLS();
+                    referidoDeVoltaXLS.setNid(rs.getString("nid"));
+                    referidoDeVoltaXLS.setNome(rs.getString("nome"));
+                    referidoDeVoltaXLS.setIdade(rs.getString("idade"));
+                    referidoDeVoltaXLS.setFarmaciaReferencia(rs.getString("referencialClinic"));
+                    referidoDeVoltaXLS.setDataUltimaReferencia(rs.getString("ultimaReferencia"));
+                    referidoDeVoltaXLS.setDataUltimaDispensa(rs.getString("ultimoLev"));
+                    referidoDeVoltaXLS.setDataRetorno(rs.getString("dataRetorno"));
+                    referidoDeVoltaXLS.setNotas(rs.getString("notas"));
+
+                    pacienteReferidoDeVoltaXLS.add(referidoDeVoltaXLS);
+                }
+                rs.close();
+            }
+
+            st.close();
+            conn_db.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return pacienteReferidoDeVoltaXLS;
+    }
+
+    public List<PacienteReferidoXLS> getPatientsReferedFrom(String dataInicio, String dataFim) {
+
+        List<PacienteReferidoXLS> pacienteReferidoXLSList = new ArrayList<PacienteReferidoXLS>();
+
+        try {
+            conecta(iDartProperties.hibernateUsername,
+                    iDartProperties.hibernatePassword);
+
+            String query = "select distinct  " +
+                    "p.patientid as nid,  " +
+                    "p.firstnames ||' '||p.lastname as nome,  " +
+                    "extract(year FROM age(current_date, p.dateofbirth))::integer as idade,  " +
+                    "CASE  " +
+                    "  WHEN (stp.province IS null OR stp.province like '%Selec%')  " +
+                    "    THEN stp.mainclinicname  " +
+                    "  ELSE stp.mainclinicname ||' - '||stp.province  " +
+                    "END as facilityName,  " +
+                    "c.clinicname as mainfacilityName,  " +
+                    "to_char(Min(e.startdate),'DD-MM-YYYY') as dataEntrada  " +
+                    "from Patient as p  " +
+                    "inner join clinic c on c.id = p.clinic  " +
+                    "inner join sync_temp_patients stp on stp.uuidopenmrs = p.uuidopenmrs  " +
+                    "inner join episode e on e.patient = p.id  " +
+                    "where e.startdate >= '" + dataInicio + "'::date  " +
+                    "AND e.startdate < ('" + dataFim + "'::date + INTERVAL '1 day')  " +
+                    "AND e.startreason like '%Novo%'  " +
+                    "AND c.mainclinic = true  " +
+                    "group by 1,2,3,4,5  " +
+                    "order by p.patientid asc";
+
+
+            ResultSet rs = st.executeQuery(query);
+
+            if (rs != null) {
+
+                while (rs.next()) {
+                    PacienteReferidoXLS pacienteReferidoXLS = new PacienteReferidoXLS();
+                    pacienteReferidoXLS.setNid(rs.getString("nid"));
+                    pacienteReferidoXLS.setNome(rs.getString("nome"));
+                    pacienteReferidoXLS.setIdade(rs.getString("idade"));
+                    pacienteReferidoXLS.setDatareferencia(rs.getString("dataEntrada"));
+                    pacienteReferidoXLS.setFarmaciaReferencia(rs.getString("facilityName"));
+
+                    pacienteReferidoXLSList.add(pacienteReferidoXLS);
+                }
+                rs.close();
+            }
+
+            st.close();
+            conn_db.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return pacienteReferidoXLSList;
+    }
+
     public List<PacienteReferidoXLS> getReferedPatients(String dataInicio, String dataFim) {
 
         List<PacienteReferidoXLS> pacienteReferidoXLSList = new ArrayList<PacienteReferidoXLS>();
@@ -6794,66 +6941,6 @@ public class ConexaoJDBC {
                     pacienteReferidoXLS.setDataProximoLevantamento(rs.getString("proxlev"));
                     pacienteReferidoXLS.setDatareferencia(rs.getString("datareferencia"));
                     pacienteReferidoXLS.setFarmaciaReferencia(rs.getString("facilityname"));
-
-                    pacienteReferidoXLSList.add(pacienteReferidoXLS);
-                }
-                rs.close();
-            }
-
-            st.close();
-            conn_db.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return pacienteReferidoXLSList;
-    }
-
-    public List<PacienteReferidoXLS> getPatientsReferedFrom(String dataInicio, String dataFim) {
-
-        List<PacienteReferidoXLS> pacienteReferidoXLSList = new ArrayList<PacienteReferidoXLS>();
-
-        try {
-            conecta(iDartProperties.hibernateUsername,
-                    iDartProperties.hibernatePassword);
-
-            String query = "select distinct  " +
-                    "p.patientid as nid,  " +
-                    "p.firstnames ||' '||p.lastname as nome,  " +
-                    "extract(year FROM age(current_date, p.dateofbirth))::integer as idade,  " +
-                    "CASE  " +
-                    "  WHEN (stp.province IS null OR stp.province like '%Selec%')  " +
-                    "    THEN stp.mainclinicname  " +
-                    "  ELSE stp.mainclinicname ||' - '||stp.province  " +
-                    "END as facilityName,  " +
-                    "c.clinicname as mainfacilityName,  " +
-                    "to_char(Min(e.startdate),'DD-MM-YYYY') as dataEntrada  " +
-                    "from Patient as p  " +
-                    "inner join clinic c on c.id = p.clinic  " +
-                    "inner join sync_temp_patients stp on stp.uuidopenmrs = p.uuidopenmrs  " +
-                    "inner join episode e on e.patient = p.id  " +
-                    "where e.startdate >= '" + dataInicio + "'::date  " +
-                    "AND e.startdate < ('" + dataFim + "'::date + INTERVAL '1 day')  " +
-                    "AND e.startreason like '%Novo%'  " +
-                    "AND c.mainclinic = true  " +
-                    "group by 1,2,3,4,5  " +
-                    "order by p.patientid asc";
-
-
-            ResultSet rs = st.executeQuery(query);
-
-            if (rs != null) {
-
-                while (rs.next()) {
-                    PacienteReferidoXLS pacienteReferidoXLS = new PacienteReferidoXLS();
-                    pacienteReferidoXLS.setNid(rs.getString("nid"));
-                    pacienteReferidoXLS.setNome(rs.getString("nome"));
-                    pacienteReferidoXLS.setIdade(rs.getString("idade"));
-                    pacienteReferidoXLS.setDatareferencia(rs.getString("dataEntrada"));
-                    pacienteReferidoXLS.setFarmaciaReferencia(rs.getString("facilityName"));
 
                     pacienteReferidoXLSList.add(pacienteReferidoXLS);
                 }
