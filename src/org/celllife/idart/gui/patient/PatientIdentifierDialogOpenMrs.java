@@ -276,6 +276,7 @@ public class PatientIdentifierDialogOpenMrs extends GenericOthersGui {
 	}
 
 	private boolean fieldsOk() {
+
 		boolean allEmpty = true;
 		for (PatientIdentifier newId : identiers) {
 			if (newId.getValueEdit() == null || newId.getValueEdit().isEmpty())
@@ -299,10 +300,14 @@ public class PatientIdentifierDialogOpenMrs extends GenericOthersGui {
 				return false;
 			}
 
-			if(newId.getType().getName().equalsIgnoreCase("NID")) {
+			if(newId.getType().getName().equalsIgnoreCase("NID") || newId.getType().getName().equalsIgnoreCase("PREP")) {
 				//Validate NID format against OpenMRS
 				if (!(newId.getValueEdit().matches("[0-9]{8,10}/[0-9]{2,4}/[0-9]{4,5}"))) {
-					showMessage(MessageDialog.ERROR, "Formato de NID incorrecto", "O valor introduzido não obedece a estrutura de um NID");
+					if(newId.getType().getName().equalsIgnoreCase("NID")) {
+						showMessage(MessageDialog.ERROR, "Formato de NID incorrecto", "O valor introduzido não obedece a estrutura de um NID");
+					}else if (newId.getType().getName().equalsIgnoreCase("PREP")){
+						showMessage(MessageDialog.ERROR, "Formato do identificador PrEP incorrecto", "O valor introduzido não obedece a estrutura de um identificador PrEP");
+					}
 					return false;
 				}
 			}

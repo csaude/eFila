@@ -20,14 +20,7 @@
 package org.celllife.idart.database.hibernate;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -432,6 +425,51 @@ public class Patient {
         }
 
         return patientIdentifiers;
+    }
+
+    public boolean patientHasNID(){
+        Iterator<PatientIdentifier> itr = patientIdentifiers.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().isNID()) return true;
+        }
+
+        return false;
+    }
+
+    public boolean patientHasPREP(){
+        Iterator<PatientIdentifier> itr = patientIdentifiers.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().isPREP()) return true;
+        }
+
+        return false;
+    }
+
+
+    public PatientIdentifier getPatientNIDIdentifier() {
+        if (!patientHasNID()) return null;
+
+        Iterator<PatientIdentifier> itr = patientIdentifiers.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().isNID()) return itr.next();
+        }
+
+        return null;
+    }
+
+    public PatientIdentifier getPatientPREPIdentifier() {
+        if (!patientHasPREP()) return null;
+
+        Iterator<PatientIdentifier> itr = patientIdentifiers.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().isPREP()) return itr.next();
+        }
+
+        return null;
     }
 
     /**

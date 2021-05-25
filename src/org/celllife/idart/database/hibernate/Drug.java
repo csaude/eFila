@@ -70,7 +70,7 @@ public class Drug implements Comparable<Drug> {
 	private String stockCode;
 
 	private String uuidopenmrs;
-	
+
 	@OneToMany(mappedBy = "drug")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
 		org.hibernate.annotations.CascadeType.DELETE_ORPHAN })

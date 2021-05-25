@@ -1348,8 +1348,19 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                 assert currentUser != null;
                 if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
+                    String patientIdentifier;
+                    String patientIdentifierType;
+
+                    if (localPatient.patientHasNID()){
+                        patientIdentifier = localPatient.getPatientNIDIdentifier().getValue();
+                        patientIdentifierType = "NID";
+                    }else {
+                        patientIdentifier = localPatient.getPatientPREPIdentifier().getValue();
+                        patientIdentifierType = "PREP";
+                    }
+
                     restClient.postOpenMRSPatient(cmbSex.getText().trim().equals(iDartProperties.MASCULINO) ? "M" : "F", lstFullName.get(0), lstFullName.get(1), lstFullName.get(2),
-                            cmbDOBYear.getText().trim() + "-" + String.valueOf(cal.get(Calendar.MONTH) + 1) + "-" + cmbDOBDay.getText().trim(), txtPatientId.getText().toUpperCase().trim());
+                            cmbDOBYear.getText().trim() + "-" + String.valueOf(cal.get(Calendar.MONTH) + 1) + "-" + cmbDOBDay.getText().trim(), txtPatientId.getText().toUpperCase().trim(), patientIdentifierType);
 
                     String resource = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(txtPatientId.getText().toUpperCase(), " ", "%20"));
 
