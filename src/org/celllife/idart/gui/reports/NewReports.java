@@ -462,6 +462,9 @@ public class NewReports extends GenericAdminGui {
         if (!CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
             reportGUIs.put(GenericReportGuiInterface.REPORT_PACIENTES_REFERIDOS,
                     new PacientesReferidos(getShell(), false));
+
+            reportGUIs.put(GenericReportGuiInterface.REPORT_PACIENTES_REFERIDOSDEVOLTA,
+                    new PacientesReferidosDeVolta(getShell(), false));
         }
 
         if (!CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {

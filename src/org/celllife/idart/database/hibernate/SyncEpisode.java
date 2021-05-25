@@ -6,6 +6,7 @@ import org.celllife.idart.misc.iDARTUtil;
 // import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -150,9 +151,13 @@ public class SyncEpisode {
         SyncEpisode episode = new SyncEpisode();
         episode.setClinicuuid(currentClinic.getUuid());
         episode.setStopReason(iDARTUtil.stringHasValue(e.getStopReason()) ? e.getStopReason() : null);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(e.getStartDate());
+        cal.add(Calendar.MINUTE, 5);
+        Date newDate = cal.getTime();
         episode.setStartReason(e.getStartReason());
         episode.setStopDate(e.getStopDate());
-        episode.setStartDate(e.getStartDate());
+        episode.setStartDate(newDate);
         episode.setStartNotes(iDARTUtil.stringHasValue(e.getStartNotes()) ? e.getStartNotes() : null);
         episode.setStopNotes(iDARTUtil.stringHasValue(e.getStopNotes()) ? e.getStopNotes() : null);
         episode.setPatientUUID(e.getPatient().getUuidopenmrs());

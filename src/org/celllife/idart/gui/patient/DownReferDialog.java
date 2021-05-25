@@ -279,88 +279,105 @@ public class DownReferDialog extends GenericOthersGui {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
         Prescription prescription = patient.getMostRecentPrescription("TARV");
-        Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
+     //   Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
 
-        java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
+      //  java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
 
-
-        int prescriptionDuration = 0;
-
-        if (patient.getUuidopenmrs() != null)
-            pacienteReferido = AdministrationManager.getSyncTempPatienByUuid(getHSession(), patient.getUuidopenmrs());
-        else
-            pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), mainClinic.getUuid());
-
-        if (pacienteReferido == null)
-            pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), mainClinic.getClinicName());
-
-        if (pacienteReferido == null)
-            pacienteReferido = new SyncTempPatient();
-
-        pacienteReferido.setId(patient.getId());
-        pacienteReferido.setAccountstatus(Boolean.FALSE);
-        pacienteReferido.setAddress1(patient.getAddress1());
-        pacienteReferido.setAddress2(patient.getAddress2());
-        pacienteReferido.setAddress3(patient.getAddress3());
-        pacienteReferido.setCellphone(patient.getCellphone());
-        pacienteReferido.setDateofbirth(patient.getDateOfBirth());
-        pacienteReferido.setClinic(clinic.getId());
-        pacienteReferido.setClinicname(clinic.getClinicName());
-        pacienteReferido.setClinicuuid(clinic.getUuid());
-        pacienteReferido.setMainclinic(mainClinic.getId());
-        pacienteReferido.setMainclinicname(mainClinic.getClinicName());
-        pacienteReferido.setMainclinicuuid(mainClinic.getUuid());
-        pacienteReferido.setNextofkinname(patient.getNextOfKinName());
-        pacienteReferido.setNextofkinphone(patient.getNextOfKinPhone());
-        pacienteReferido.setFirstnames(patient.getFirstNames());
-        pacienteReferido.setHomephone(patient.getHomePhone());
-        pacienteReferido.setLastname(patient.getLastname());
-        pacienteReferido.setModified(patient.getModified());
-        pacienteReferido.setPatientid(patient.getPatientId());
-        pacienteReferido.setProvince(patient.getProvince());
-        pacienteReferido.setSex(patient.getSex());
-        pacienteReferido.setWorkphone(patient.getWorkPhone());
-        pacienteReferido.setRace(patient.getRace());
-        pacienteReferido.setUuid(patient.getUuidopenmrs());
 
         if (prescription != null) {
-            prescriptionDuration = prescription.getDuration();
+            if (prescription.getPackages() != null) {
+                int prescriptionDuration = 0;
 
-            for (Packages pack : prescription.getPackages()) {
-                prescriptionDuration = prescriptionDuration - pack.getWeekssupply();
+                if (patient.getUuidopenmrs() != null)
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByUuid(getHSession(), patient.getUuidopenmrs());
+                else
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), mainClinic.getUuid());
+
+                if (pacienteReferido == null)
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), mainClinic.getClinicName());
+
+                if (pacienteReferido == null)
+                    pacienteReferido = new SyncTempPatient();
+
+                pacienteReferido.setId(patient.getId());
+                pacienteReferido.setAccountstatus(Boolean.FALSE);
+                pacienteReferido.setAddress1(patient.getAddress1());
+                pacienteReferido.setAddress2(patient.getAddress2());
+                pacienteReferido.setAddress3(patient.getAddress3());
+                pacienteReferido.setCellphone(patient.getCellphone());
+                pacienteReferido.setDateofbirth(patient.getDateOfBirth());
+                pacienteReferido.setClinic(clinic.getId());
+                pacienteReferido.setClinicname(clinic.getClinicName());
+                pacienteReferido.setClinicuuid(clinic.getUuid());
+                pacienteReferido.setMainclinic(mainClinic.getId());
+                pacienteReferido.setMainclinicname(mainClinic.getClinicName());
+                pacienteReferido.setMainclinicuuid(mainClinic.getUuid());
+                pacienteReferido.setNextofkinname(patient.getNextOfKinName());
+                pacienteReferido.setNextofkinphone(patient.getNextOfKinPhone());
+                pacienteReferido.setFirstnames(patient.getFirstNames());
+                pacienteReferido.setHomephone(patient.getHomePhone());
+                pacienteReferido.setLastname(patient.getLastname());
+                pacienteReferido.setModified(patient.getModified());
+                pacienteReferido.setPatientid(patient.getPatientId());
+                pacienteReferido.setProvince(patient.getProvince());
+                pacienteReferido.setSex(patient.getSex());
+                pacienteReferido.setWorkphone(patient.getWorkPhone());
+                pacienteReferido.setRace(patient.getRace());
+                pacienteReferido.setUuid(patient.getUuidopenmrs());
+
+
+                prescriptionDuration = prescription.getDuration();
+
+                for (Packages pack : prescription.getPackages()) {
+                    prescriptionDuration = prescriptionDuration - pack.getWeekssupply();
+                }
+                pacienteReferido.setPrescriptiondate(prescription.getDate());
+                pacienteReferido.setDuration(prescriptionDuration);
+                pacienteReferido.setPrescriptionenddate(prescription.getEndDate());
+                pacienteReferido.setRegimenome(prescription.getRegimeTerapeutico().getRegimeesquema());
+                pacienteReferido.setLinhanome(prescription.getLinha().getLinhanome());
+                pacienteReferido.setDispensatrimestral(prescription.getDispensaTrimestral());
+                pacienteReferido.setDispensasemestral(prescription.getDispensaSemestral());
+                pacienteReferido.setPrescriptionid(prescription.getPrescriptionId());
+                pacienteReferido.setPrescricaoespecial(prescription.getPrescricaoespecial());
+                pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
+
+
+                if (!prescription.getPrescribedDrugs().isEmpty()) {
+
+                    Map<String, Object> pd = new HashMap<String, Object>();
+                    ArrayList listPD = new ArrayList();
+
+                    for (PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()) {
+                        pd.put("drugId", prescribedDrugs.getDrug().getId());
+                        pd.put("drugcode", prescribedDrugs.getDrug().getAtccode());
+                        pd.put("timesperday", prescribedDrugs.getTimesPerDay());
+                        listPD.add(pd);
+                    }
+                    pacienteReferido.setJsonprescribeddrugs(listPD.toString());
+                }
+
+                if (patient.getAttributeByName("ARV Start Date") != null)
+                    pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());
+                pacienteReferido.setSyncstatus('P');
+
+                AdministrationManager.saveSyncTempPatient(session, pacienteReferido);
+            }else{
+                MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
+                        | SWT.OK);
+                missing.setText("Prescrição sem dispensa");
+                missing
+                        .setMessage("Este paciente contém uma prescriao sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
+                missing.open();
             }
-            pacienteReferido.setPrescriptiondate(prescription.getDate());
-            pacienteReferido.setDuration(prescriptionDuration);
-            pacienteReferido.setPrescriptionenddate(prescription.getEndDate());
-            pacienteReferido.setRegimenome(prescription.getRegimeTerapeutico().getRegimeesquema());
-            pacienteReferido.setLinhanome(prescription.getLinha().getLinhanome());
-            pacienteReferido.setDispensatrimestral(prescription.getDispensaTrimestral());
-            pacienteReferido.setDispensasemestral(prescription.getDispensaSemestral());
-            pacienteReferido.setPrescriptionid(prescription.getPrescriptionId());
-            pacienteReferido.setPrescricaoespecial(prescription.getPrescricaoespecial());
-            pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
+        }else{
+            MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
+                    | SWT.OK);
+            missing.setText("Paciente sem Prescrição");
+            missing
+                    .setMessage("Este paciente não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
+            missing.open();
         }
-
-        if (!prescription.getPrescribedDrugs().isEmpty()) {
-
-            Map<String, Object> pd = new HashMap<String, Object>();
-            ArrayList listPD = new ArrayList();
-
-            for (PrescribedDrugs prescribedDrugs : prescription.getPrescribedDrugs()) {
-                pd.put("drugId", prescribedDrugs.getDrug().getId());
-                pd.put("drugcode", prescribedDrugs.getDrug().getAtccode());
-                pd.put("timesperday", prescribedDrugs.getTimesPerDay());
-                listPD.add(pd);
-            }
-            pacienteReferido.setJsonprescribeddrugs(listPD.toString());
-        }
-
-        if (patient.getAttributeByName("ARV Start Date") != null)
-            pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());
-        pacienteReferido.setSyncstatus('P');
-
-        AdministrationManager.saveSyncTempPatient(session, pacienteReferido);
-
     }
 
     public void saveLastDispense(Patient patient, Session session){
