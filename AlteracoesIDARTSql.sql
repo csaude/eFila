@@ -521,3 +521,43 @@ INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid f
 
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
+
+ alter table drug add column uuidopenmrs varchar(255);
+
+update drug set uuidopenmrs='08S18W-7f-c2a7-4d27-95dc-564791951b5f' where atccode_id='08S18W';
+update drug set uuidopenmrs='08S18WI-4-70b1-4732-af8b-be24cb04aaa6' where atccode_id='08S18WI';
+update drug set uuidopenmrs='08S18WII-5863-4423-9e97-bc1b480df134' where atccode_id='08S18WII';
+update drug set uuidopenmrs='08S38Z-99-3fe6-48b7-9b25-3052660f3d8b' where atccode_id='08S38Z';
+update drug set uuidopenmrs='08S30ZY-ae-3c79-46bd-9970-2d02b8788fdf' where atccode_id='08S01ZY';
+update drug set uuidopenmrs='08S01ZZ-2e-29dd-40aa-94b4-0d4fe65e081c' where atccode_id='08S01ZZ';
+update drug set uuidopenmrs='08S40-833-b26a-4996-8066-48847431404a' where atccode_id='08S40';
+update drug set uuidopenmrs='08S18Z-da-b787-4fa1-a2d6-2fda22da6564' where atccode_id='08S18Z';
+update drug set uuidopenmrs='08S30ZZ-b2-edb5-4815-a4bf-8f0618f029be' where atccode_id='08S30ZZ';
+update drug set uuidopenmrs='08S39-054-ad23-4d26-8ca1-88308070d08e' where atccode_id='08S39';
+update drug set uuidopenmrs='08S39B-b2-e392-425a-b824-f33f745733e6' where atccode_id='08S39B';
+update drug set uuidopenmrs='08S39Z-7a-93f6-4e05-baa3-8c4684c8013e' where atccode_id='08S39Z';
+update drug set uuidopenmrs='08S38Y-0c-0932-4b37-ab53-4aae60820544' where atccode_id='08S38Y';
+update drug set uuidopenmrs='08S30WZ-48-cf6b-47e2-a101-0cc9faa8fbce' where atccode_id='08S30WZ';
+update drug set uuidopenmrs='08S22-d18-2655-4426-868a-b291a5adff38' where atccode_id='08S22';
+update drug set uuidopenmrs='08S23Z-cd-22ff-4993-9378-335cf43bd5c8' where atccode_id='08S23Z';
+update drug set uuidopenmrs='08S23-316-d7e9-4757-9466-d0e6c1d8b1db' where atccode_id='08S23';
+update drug set uuidopenmrs='08S17Y-b6-6e76-451d-8892-a6d407e0e0d6' where atccode_id='08S17Y';
+update drug set uuidopenmrs='08S15-f3b-d54c-420d-ad96-698f71c003c5' where atccode_id='08S15';
+update drug set uuidopenmrs='08S01-ab-d6e9-4de6-beb8-441daf8d00a3' where atccode_id='08S01';
+update drug set uuidopenmrs='08S01Z-02-843e-4dd0-af6f-2eff173d4b30' where atccode_id='08S01Z';
+update drug set uuidopenmrs='08S21-918-6273-4f5c-be72-755da371e731' where atccode_id='08S21';
+update drug set uuidopenmrs='08S20-9db-3bef-4de8-af61-4610d4ead1ba' where atccode_id='08S20';
+update drug set uuidopenmrs='08S13-ddb-e5bd-4b96-ae5d-11ada78c8a35' where atccode_id='08S13';
+update drug set uuidopenmrs='08S18-6cb-4b62-4cc0-98af-8053e1396419' where atccode_id='08S18';
+update drug set uuidopenmrs='08S18XI-6-0715-4389-a4b2-d20de330e26c' where atccode_id='08S18XI';
+update drug set uuidopenmrs='08S18X-b0-de4a-4233-86fa-c91f9e606be5' where atccode_id='08S18X';
+update drug set uuidopenmrs='08S18XII-3a07-4e5f-9d00-0016dc840a84' where atccode_id='08S18XII';
+update drug set uuidopenmrs='08S18Y-5e-9493-41e4-a5e0-5671be3fd66b' where atccode_id='08S18Y';
+update drug set uuidopenmrs='08S42-d98-6b3e-485f-b969-376fca8b7789' where atccode_id='08S42';
+update drug set uuidopenmrs='08S42B-d89-7e03-4f25-975e-b66a5e28e063' where atccode_id='08S42B';
+update drug set uuidopenmrs='08S41-ec0-c1cf-42e1-9a37-9f23b4f07bba' where atccode_id='08S41';
+update drug set uuidopenmrs='08S31-9e9-49f9-4cd6-8268-8df7315e3d09' where atccode_id='08S31';
+update drug set uuidopenmrs='08S39Y-3a-20c8-4a16-aaea-f2d4537202e4' where atccode_id='08S39Y';
+update drug set uuidopenmrs='08S01ZW-ec-ec31-45aa-a74e-7238872483e8' where atccode_id='08S01ZW';
+update drug set uuidopenmrs='08S40Z-fc-6563-49e4-bf81-a456bf79ec88' where atccode_id='08S40Z';
+update drug set uuidopenmrs='08S30ZY-ae-3c79-46bd-9970-2d02b8788fdf' where atccode_id='08S30ZY';

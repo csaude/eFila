@@ -69,7 +69,7 @@ public class Drug implements Comparable<Drug> {
 
 	private String stockCode;
 
-	private String uuid;
+	private String uuidopenmrs;
 
 	@OneToMany(mappedBy = "drug")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
@@ -429,16 +429,16 @@ public class Drug implements Comparable<Drug> {
 		this.active = active;
 	}
 
+	public String getUuidopenmrs() {
+		return uuidopenmrs;
+	}
+
+	public void setUuidopenmrs(String uuidopenmrs) {
+		this.uuidopenmrs = uuidopenmrs;
+	}
+
 	@Override
 	public String toString() {
 		return "[" + atccode_id + "] "+ name;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 }
