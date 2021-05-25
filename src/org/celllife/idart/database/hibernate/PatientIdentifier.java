@@ -114,4 +114,12 @@ public class PatientIdentifier {
 	public void setValueEdit(String valueEdit) {
 		this.valueEdit = valueEdit;
 	}
+
+	public boolean isNID(){
+		return this.type.getName().equalsIgnoreCase("NID");
+	}
+
+	public boolean isPREP(){
+		return this.type.getName().equalsIgnoreCase("PREP");
+	}
 }

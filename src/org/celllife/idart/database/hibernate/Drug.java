@@ -66,7 +66,9 @@ public class Drug implements Comparable<Drug> {
 	private int defaultTimes;
 
 	private String stockCode;
-	
+
+	private String uuid;
+
 	@OneToMany(mappedBy = "drug")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL,
 		org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
@@ -419,5 +421,13 @@ public class Drug implements Comparable<Drug> {
 	@Override
 	public String toString() {
 		return "[" + atccode_id + "] "+ name;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

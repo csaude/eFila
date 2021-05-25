@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
+import org.celllife.idart.misc.iDARTUtil;
 import org.celllife.idart.rest.ApiAuthRest;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -78,12 +80,59 @@ public class RestClient {
 
         String customizedDosage = null;
 
-        if (prescribedDrugs.size() == 1) {
+
+            List<String> obsGroups = new ArrayList<>();
+
+            for (PrescribedDrugs pb : prescribedDrugs){
+                String formulationString = "{\"" +
+                                                "person\":\"" + nidUuid + "\"," +
+                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                                "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
+                                                "\"value\":\"" + pb.getDrug().getUuid() + "\"," +
+                                                "\"comment\":\"IDART\"" +
+                                            "}";
+
+                String quantityString =     "{\"" +
+                                                "person\":\"" + nidUuid + "\"," +
+                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                                "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
+                                                "\"value\":\"" + pb.getDrug().getPackSize() + "\"," +
+                                                "\"comment\":\"IDART\"" +
+                                            "}";
+
+                String dosageString =       "{\"" +
+                                                "person\":\"" + nidUuid + "\"," +
+                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                                "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
+                                                "\"value\":\"" + pb.getTimesPerDay() + "\"," +
+                                                "\"comment\":\"IDART\"" +
+                                            "}";
+
+                String obsGroup = "{\"" +
+                                        "person\":\"" + nidUuid + "\"," +
+                                        "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                        "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
+                                        "\"comment\":\"IDART\"," +
+                                        "\"groupMembers\": [" + formulationString +","+ quantityString +"," + dosageString + "]"+
+                                    "}";
+
+                obsGroups.add(obsGroup);
+            }
+
+            String obsGroupsJson = null;
+
+            for (String group : obsGroups){
+                if (!iDARTUtil.stringHasValue(obsGroupsJson)) obsGroupsJson = obsGroupsJson + group;
+                else {
+                    obsGroupsJson = obsGroupsJson + "," + group;
+                }
+
+            }
 
             //Dispensed amount
             packSize = String.valueOf(packagedDrugs.get(0).getAmount());
 
-            //Dosage
+            //posologia
             dosage = String.valueOf(prescribedDrugs.get(0).getTimesPerDay());
 
             customizedDosage = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(0).getAmtPerTime()))
@@ -92,41 +141,87 @@ public class RestClient {
             inputAddPerson = new StringEntity(
                     "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
                             + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
-                            + "\"obs\":[{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},{\"person\":"
-                            + "\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\","
-                            + "\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}]}"
+                            + "\"obs\":["
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\",\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
+                            + "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                            + obsGroupsJson
+                            + "]"
+                            + "}"
                     , "UTF-8");
 
             System.out.println(IOUtils.toString(inputAddPerson.getContent()));
-        } else if (prescribedDrugs.size() > 1) {
 
-            //Dosage
-            dosage = String.valueOf(prescribedDrugs.get(0).getTimesPerDay());
+        inputAddPerson.setContentType("application/json");
+        //log.info("AddPerson = " + ApiAuthRest.getRequestPost("encounter",inputAddPerson));
+        return ApiAuthRest.getRequestPost("encounter", inputAddPerson);
+    }
 
-            String customizedDosage_0 = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(0).getAmtPerTime()))
-                    + iDartProperties.COMP + dosage + iDartProperties.VEZES_DIA;
 
-            //Dosage
-            dosage_1 = String.valueOf(prescribedDrugs.get(1).getTimesPerDay());
+    public boolean postOpenMRSEncounterFILT(String encounterDatetime, String nidUuid, String encounterType, String strFacilityUuid,
+                                            String filtUuid, String providerUuid, String regimeFiltUuid, String tipoDispensaUuid, String seguimentoFiltUuid,
+                                            String strRegimenAnswerUuid, List<PrescribedDrugs> prescribedDrugs, String returnVisitUuid, String strNextPickUp,
+                                            String dispenseModeUuid, String answerDispenseModeUuid) throws Exception {
 
-            String customizedDosage_1 = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(1).getAmtPerTime()))
-                    + iDartProperties.COMP + dosage_1 + iDartProperties.VEZES_DIA;
+        StringEntity inputAddPerson = null;
 
-            inputAddPerson = new StringEntity(
-                    "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
-                            + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
-                            + "\"obs\":[{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\",\"comment\":\"IDART\"},{\"person\":"
-                            + "\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\","
-                            + "\"value\":\"" + String.valueOf(packagedDrugs.get(1).getAmount()) + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\","
-                            + "\"value\":\"" + String.valueOf(packagedDrugs.get(0).getAmount()) + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage_0 + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":"
-                            + "\"" + dosageUuid + "\",\"value\":\"" + customizedDosage_1 + "\",\"comment\":\"IDART\"},{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}]}"
-                    , "UTF-8");
+        String tipoDispensa = null;
+
+        String tipoPrescricao = null;
+
+        Prescription prescription = null;
+
+        if (prescribedDrugs.size() > 0) {
+
+            prescription = prescribedDrugs.get(0).getPrescription();
+
+            if (prescription != null) {
+
+                if (prescription.getDispensaTrimestral() == 1)
+                    tipoDispensa = iDartProperties.FILT_QUARTERLY_DISPENSED_TYPE_UUID;
+                else if (prescription.getDispensaSemestral() == 1)
+                    tipoDispensa = iDartProperties.FILT_SEMESTRAL_DISPENSED_TYPE_UUID;
+                else
+                    tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID;
+
+                if (prescription.getReasonForUpdate().startsWith("I"))
+                    tipoPrescricao = iDartProperties.FILT_TPT_INITIAL_FOLLOW_UP_UUID;
+                else if (prescription.getReasonForUpdate().startsWith("F"))
+                    tipoPrescricao = iDartProperties.FILT_TPT_END_FOLLOW_UP_UUID;
+                else if (prescription.getReasonForUpdate().startsWith("R"))
+                    tipoPrescricao = iDartProperties.FILT_TPT_RESTART_FOLLOW_UP_UUID;
+                else
+                    tipoPrescricao = iDartProperties.FILT_TPT_CONTINUE_FOLLOW_UP_UUID;
+
+                inputAddPerson = new StringEntity(
+                        "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
+                                + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filtUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
+                                + "\"obs\":["
+                                + "{\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + regimeFiltUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},"
+                                + "{\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + tipoDispensaUuid + "\",\"value\":\"" + tipoDispensa + "\",\"comment\":\"IDART\"},"
+                                + "{\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + seguimentoFiltUuid + "\",\"value\":\"" + tipoPrescricao + "\",\"comment\":\"IDART\"},"
+                                + "{\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
+                                + "{\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                                + "]"
+                                + "}"
+                        , "UTF-8");
+                System.out.println(IOUtils.toString(inputAddPerson.getContent()));
+            } else {
+                log.error("Prescricao foi removida no iDART");
+                return false;
+            }
         }
 
         inputAddPerson.setContentType("application/json");
@@ -134,11 +229,19 @@ public class RestClient {
         return ApiAuthRest.getRequestPost("encounter", inputAddPerson);
     }
 
-    public boolean postOpenMRSPatient(String gender, String firstName, String middleName, String lastName, String birthDate, String nid) throws Exception {
+    public boolean postOpenMRSPatient(String gender, String firstName, String middleName, String lastName, String birthDate, String nid, String patientIdentifierType) throws Exception {
 
         StringEntity inputAddPatient;
 
         String openmrsJSON = "";
+
+        String patientIdentifierConceptUid = null;
+
+        if (patientIdentifierType.equalsIgnoreCase("NID")){
+            patientIdentifierConceptUid = "e2b966d0-1d5f-11e0-b929-000c29ad1d07";
+        }else if (patientIdentifierType.equalsIgnoreCase("PREP")){
+            patientIdentifierConceptUid = "c29e5740-8ea5-409e-b322-7414f36e2739";
+        }
 
         if (birthDate.isEmpty()) {
 
@@ -151,7 +254,7 @@ public class RestClient {
                     + "\"identifiers\":"
                     + "["
                     + "{"
-                    + "\"identifier\": \"" + nid + "\", \"identifierType\": \"e2b966d0-1d5f-11e0-b929-000c29ad1d07\","
+                    + "\"identifier\": \"" + nid + "\", \"identifierType\":  \"" + patientIdentifierConceptUid + "\","
                     + "\"location\": \"" + prop.getProperty("location") + "\", \"preferred\": \"true\""
                     + "}"
                     + "]"
@@ -166,7 +269,7 @@ public class RestClient {
                     + "\"identifiers\":"
                     + "["
                     + "{"
-                    + "\"identifier\": \"" + nid + "\", \"identifierType\": \"e2b966d0-1d5f-11e0-b929-000c29ad1d07\","
+                    + "\"identifier\": \"" + nid + "\", \"identifierType\":  \"" + patientIdentifierConceptUid + "\","
                     + "\"location\": \"" + prop.getProperty("location") + "\", \"preferred\": \"true\""
                     + "}"
                     + "]"
@@ -270,8 +373,19 @@ public class RestClient {
                                     name = name.substring(0, name.indexOf(" ") - 1);
                                 }
 
-                                postOpenMrsEncounterStatus = restClient.postOpenMRSPatient(patient.getSex() + "", name, middleName, patient.getLastname(),
-                                        RestUtils.castDateToString(patient.getDateOfBirth()), patient.getPatientId());
+
+                                String patientIdentifier;
+                                String patientIdentifierType;
+
+                                if (patient.patientHasNID()){
+                                    patientIdentifier = patient.getPatientNIDIdentifier().getValue();
+                                    patientIdentifierType = "NID";
+                                }else {
+                                    patientIdentifier = patient.getPatientPREPIdentifier().getValue();
+                                    patientIdentifierType = "PREP";
+                                }
+
+                                postOpenMrsEncounterStatus = restClient.postOpenMRSPatient(patient.getSex() + "", name, middleName, patient.getLastname(), RestUtils.castDateToString(patient.getDateOfBirth()), patientIdentifier, patientIdentifierType);
 
                                 if (postOpenMrsEncounterStatus) {
                                     uuid = getUUidFromOpenmrs(patient.getPatientId());
