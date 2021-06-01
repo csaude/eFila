@@ -88,7 +88,7 @@ public class RestClient {
                                                 "person\":\"" + nidUuid + "\"," +
                                                 "\"obsDatetime\":\"" + encounterDatetime + "\"," +
                                                 "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
-                                                "\"value\":\"" + pb.getDrug().getUuid() + "\"," +
+                                                "\"value\":\"" + pb.getDrug().getUuidopenmrs() + "\"," +
                                                 "\"comment\":\"IDART\"" +
                                             "}";
 
