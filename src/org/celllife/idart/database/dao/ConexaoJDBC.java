@@ -58,7 +58,7 @@ public class ConexaoJDBC {
         // Conectar com o servidor de banco de dados
         conn_db = DriverManager.getConnection(url, usr, pwd);
 
-        log.info("Conectado...Criando a declara��o");
+        log.info("Conectado...Criando a declaracao");
 
         st = conn_db.createStatement();
 
@@ -303,7 +303,7 @@ public class ConexaoJDBC {
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
                 + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%' "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -465,7 +465,7 @@ public class ConexaoJDBC {
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
                 + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%'  "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -768,7 +768,7 @@ public class ConexaoJDBC {
                     "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' " +
                     "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <=   '" + endDate + "')) " +
                     "GROUP BY 3 order by 3) pack " +
-                    "inner join prescription p on p.date = pack.predate and p.patient=pack.id " +
+                    "inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id " +
                     "inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate " +
                     "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
                     "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
@@ -827,7 +827,7 @@ public class ConexaoJDBC {
                     "inner join patient pat ON pre.patient=pat.id " +
                     "where pds.amount <> 0 and (pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <=   '" + endDate + "')  " +
                     "GROUP BY 3 order by 3) pack " +
-                    "inner join prescription p on p.date = pack.predate and p.patient=pack.id " +
+                    "inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id " +
                     "inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate " +
                     "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
                     "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
@@ -904,7 +904,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ) )  "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -1110,7 +1110,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -1192,7 +1192,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -1269,7 +1269,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ) )  "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -1351,7 +1351,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
@@ -1473,7 +1473,7 @@ public class ConexaoJDBC {
                 + "                 WHERE pg_catalog.date(pa.pickupdate) < " + "\'" + startDate + "\'" + " AND pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >= " + "\'" + endDate + "\'"
                 + "             GROUP BY 2"
                 + ") pack "
-                + " INNER JOIN prescription pre on pre.date = pack.predate and pre.patient=pack.id "
+                + " INNER JOIN prescription pre on pre.date::date = pack.predate::date and pre.patient=pack.id "
                 + " INNER JOIN patient pat ON pre.patient=pat.id  "
                 + " INNER JOIN regimeterapeutico reg ON pre.regimeid=reg.regimeid  "
                 + " WHERE pre.dispensatrimestral = 1 and length(TRIM(pre.tipodt)) > 0 and pre.tipodt is not null"
@@ -1514,7 +1514,7 @@ public class ConexaoJDBC {
                 + "                 WHERE pg_catalog.date(pa.pickupdate) < " + "\'" + startDate + "\'" + " AND pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >= " + "\'" + endDate + "\'"
                 + "             GROUP BY 2"
                 + ") pack "
-                + " INNER JOIN prescription pre on pre.date = pack.predate and pre.patient=pack.id "
+                + " INNER JOIN prescription pre on pre.date::date = pack.predate::date and pre.patient=pack.id "
                 + " INNER JOIN patient pat ON pre.patient=pat.id  "
                 + " INNER JOIN regimeterapeutico reg ON pre.regimeid=reg.regimeid  "
                 + " WHERE pre.dispensasemestral = 1 and length(TRIM(pre.tipodt)) > 0 and pre.tipodt is not null"
@@ -4320,7 +4320,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	 AND pre.tipodoenca = '" + diseaseType + "'   ))   "
                 + "	GROUP BY 5 order by 5) pack  "
-                + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + "	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
@@ -4415,7 +4415,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + "	GROUP BY 5,7 order by 5) pack  "
-                + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + "	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
@@ -4523,7 +4523,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + "	GROUP BY 5,7 order by 5) pack  "
-                + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + "	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
@@ -4713,7 +4713,7 @@ public class ConexaoJDBC {
                 + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + endDate + "' "
                 + "	   ))   "
                 + "	GROUP BY 5 order by 5) pack  "
-                + "	inner join prescription p on p.date = pack.predate and p.patient=pack.id  "
+                + "	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + "	inner join patient pat on pat.id = pack.id  "
                 + "	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate  "
                 + "	inner join linhat l on l.linhaid = p.linhaid "
@@ -5319,9 +5319,9 @@ public class ConexaoJDBC {
                     + "		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', '" + dataFim + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <= '" + dataFim + "' "
                     + "	   )) "
                     + "	   GROUP BY 5 order by 5) pack "
-                    + "	   inner join prescription p on p.date = pack.predate and p.patient=pack.id "
+                    + "	   inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id "
                     + "	   inner join patient pat on pat.id = pack.id "
-                    + "	   inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
+                    + "	   inner join package pa on pa.prescription = p.id and pa.pickupdate::date = pack.pickupdate::date "
                     + "	   inner join linhat l on l.linhaid = p.linhaid "
                     + "	   inner join regimeterapeutico reg on reg.regimeid = p.regimeid "
                     + "	   inner join clinic c on c.id = pat.clinic "
@@ -5590,7 +5590,7 @@ public class ConexaoJDBC {
                     "from prescription " +
                     "where prescription.patient = pat.id " +
                     "and prescription.tipodoenca like '%ARV' " +
-                    "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
+                    "and (('" + date + "' between prescription.date::date and prescription.endDate::date)or(('" + date + "' > prescription.date::date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
                     "group by 1,2,3,4,5,6,7,8,9,10,11,12,13 " +
@@ -5685,7 +5685,7 @@ public class ConexaoJDBC {
                     "from prescription " +
                     "where prescription.patient = pat.id " +
                     "and prescription.tipodoenca like '%ARV' " +
-                    "and (('" + date + "' between prescription.date and prescription.endDate)or(('" + date + "' > prescription.date)) and (prescription.endDate is null))) " +
+                    "and (('" + date + "' between prescription.date::date and prescription.endDate::date)or(('" + date + "' > prescription.date::date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + date + "' between episode.startdate and episode.stopdate)or(('" + date + "' > episode.startdate)) and (episode.stopdate is null))) " +
                     "group by 1,2,3,4,5,6,7,8,9,10,11,12,13 " +
@@ -5821,7 +5821,7 @@ public class ConexaoJDBC {
                     " from prescription" +
                     " where prescription.patient = pat.id" +
                     " and prescription.tipodoenca like '%ARV' " +
-                    " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "'::date > prescription.date)) and (prescription.endDate is null)))" +
+                    " and (('" + data + "' between prescription.date::date and prescription.endDate::date)or(('" + data + "'::date > prescription.date::date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "'::date between episode.startdate and episode.stopdate)or(('" + data + "'::date > episode.startdate)) and (episode.stopdate is null)))" +
                     " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16" +
@@ -5941,7 +5941,7 @@ public class ConexaoJDBC {
                     " from prescription" +
                     " where prescription.patient = pat.id" +
                     " and prescription.tipodoenca like '%ARV' " +
-                    " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
+                    " and (('" + data + "' between prescription.date::date and prescription.endDate::date)or(('" + data + "' > prescription.date::date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
                     " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16" +
@@ -6061,7 +6061,7 @@ public class ConexaoJDBC {
                     " from prescription" +
                     " where prescription.patient = pat.id" +
                     " and prescription.tipodoenca like '%ARV' " +
-                    " and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))" +
+                    " and (('" + data + "' between prescription.date::date and prescription.endDate::date)or(('" + data + "' > prescription.date::date)) and (prescription.endDate is null)))" +
                     " and exists (select id from episode where episode.patient = pat.id" +
                     " and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))" +
                     " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16" +
@@ -6153,7 +6153,7 @@ public class ConexaoJDBC {
                     "where prescription.patient = pat.id " +
                     "and prescription.tipodoenca like '%ARV' " +
                     "and prescription.dispensatrimestral = 0 " +
-                    "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null))) " +
+                    "and (('" + data + "' between prescription.date::date and prescription.endDate::date)or(('" + data + "' > prescription.date::date)) and (prescription.endDate is null))) " +
                     "and exists (select id from episode where episode.patient = pat.id " +
                     "and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null))) " +
                     "group by 1,2,3,4,5,6,7,8,9,10 " +
@@ -6249,7 +6249,7 @@ public class ConexaoJDBC {
                     "from prescription  " +
                     "where prescription.patient = pat.id  " +
                     "and prescription.dispensatrimestral = 0  " +
-                    "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null)))  " +
+                    "and (('" + data + "' between prescription.date::date and prescription.endDate::date)or(('" + data + "' > prescription.date::date)) and (prescription.endDate is null)))  " +
                     "and exists (select id from episode where episode.patient = pat.id  " +
                     "and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null)))  " +
                     "group by 1,2,3,4,5,6,7,8,9,10,11  " +
@@ -7110,7 +7110,7 @@ public class ConexaoJDBC {
                 " from package pack " +
                 " inner join prescription pr on pr.id = pack.prescription " +
                 " inner join regimeterapeutico rt on pr.regimeid = rt.regimeid " +
-                " where pr.date between '" + startDate + "' and '" + endDate + "' " +
+                " where pr.date::date between '" + startDate + "' and '" + endDate + "' " +
                 " group by 1,2,3 " +
                 " order by 3 asc";
 
@@ -7169,7 +7169,7 @@ public class ConexaoJDBC {
                 " select p.patient, p.date from prescription p " +
                 "  inner join package pack on p.id = pack.prescription " +
                 "  inner join packageddrugs pds on pds.parentpackage = pack.id " +
-                " where p.date between '" + startDate + "' and '" + endDate + "' and pds.amount <> 0 " +
+                " where p.date::date between '" + startDate + "' and '" + endDate + "' and pds.amount <> 0 " +
                 " group by 1,2 " +
                 ") pr on pr.patient = pat.id " +
                 "group by 1 " +

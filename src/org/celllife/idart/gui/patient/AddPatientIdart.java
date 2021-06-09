@@ -2359,7 +2359,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         //yes - update patient details
         setLocalPatient();
 
-        if ((cmbEpisodeStartReason.getText().contains("nsito") || cmbEpisodeStartReason.getText().contains("nidade") && localPatient.getIsPatientEmTransito()))
+        if ((cmbEpisodeStartReason.getText().contains("nsito") || cmbEpisodeStartReason.getText().contains("nidade") || cmbEpisodeStartReason.getText().contains("CCR") && localPatient.getIsPatientEmTransito()))
             confirmationSave = true;
         else if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !localPatient.getIsPatientEmTransito())
             confirmationSave = true;
