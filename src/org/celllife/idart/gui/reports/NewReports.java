@@ -406,11 +406,6 @@ public class NewReports extends GenericAdminGui {
         reportGUIs.put(GenericReportGuiInterface.REPORT_IDART,
                 new RegisteredIdart(getShell(), false));
 
-        reportGUIs.put(GenericReportGuiInterface.REPORT_TPC,
-                new CotrimoxazolReport(getShell(), false));
-
-        reportGUIs.put(GenericReportGuiInterface.REPORT_TPI,
-                new IsoniazidaReport(getShell(), false));
 
         reportGUIs.put(GenericReportGuiInterface.REPORT_LEVANTAMENTOS_ARV,
                 new HistoricoLevantamentos(getShell(), false, Prescription.TIPO_DOENCA_TARV));

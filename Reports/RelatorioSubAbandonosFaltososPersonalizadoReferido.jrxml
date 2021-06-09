@@ -34,6 +34,7 @@ pat.patientid as patID,
  pat.nextofkinname as supportername,
 pat.nextofkinphone as supporterphone,
 pat.cellphone as cellno,
+cl.clinicname as nomefarmacia,
 date_part('year',age(pat.dateofbirth)) as age,
 app.appointmentDate::date as dateexpected,
 ($P{date}::date-app.appointmentDate::date)::integer as dayssinceexpected,
@@ -46,35 +47,34 @@ CASE
     	END
 END
   AS datelostfollowup,
-
   CASE
     WHEN (app.visitdate::date - app.appointmentdate::date) > 0 THEN app.visitdate::date
     ELSE null
   END
   AS datereturn,
 max(app.appointmentDate) as ultimaData
-from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt
+from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt , clinic as cl
 where app.patient = pat.id
 and idt.name = 'NID'
 and pi.value = pat.patientid
 and idt.id = pi.type_id
-and $P{clinicid} = pat.clinic
 and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null )
 and ($P{date}::date - app.appointmentDate::date) between $P{minDays} and $P{maxDays}
 and exists (select prescription.id
 from prescription
 where prescription.patient = pat.id
-and prescription.dispensatrimestral = 0
 and (($P{date} between prescription.date and prescription.endDate)or(($P{date} > prescription.date)) and (prescription.endDate is null)))
 and exists (select id from episode where episode.patient = pat.id
 and (($P{date} between episode.startdate and episode.stopdate)or(($P{date} > episode.startdate)) and (episode.stopdate is null)))
-group by 1,2,3,4,5,6,7,8,9,10
+and cl.mainclinic=false
+group by 1,2,3,4,5,6,7,8,9,10,11
 order by patID asc]]>
 	</queryString>
 	<field name="patid" class="java.lang.String"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="supportername" class="java.lang.String"/>
 	<field name="supporterphone" class="java.lang.String"/>
+	<field name="nomefarmacia" class="java.lang.String"/>
 	<field name="cellno" class="java.lang.String"/>
 	<field name="age" class="java.lang.Double"/>
 	<field name="dateexpected" class="java.sql.Date"/>
@@ -198,6 +198,19 @@ order by patID asc]]>
 				<reportElement x="572" y="0" width="85" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cellno}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-2" mode="Transparent" x="479" y="1" width="93" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nomefarmacia}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
