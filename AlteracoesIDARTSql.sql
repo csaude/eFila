@@ -82,6 +82,7 @@ DELETE FROM simpledomain WHERE description  = 'Disease';
 DELETE FROM simpledomain WHERE description  = 'Period';
 DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
+DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
 
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
@@ -480,6 +481,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Outro');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Inicio CCR');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','4b51ace2-f778-4f54-bdaa-be2b350b7499','Farmácia Pública - Hora Normal');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','1309d08a-5c73-4429-8f4b-43a551952858','Farmácia Pública - Fora Hora Normal');
