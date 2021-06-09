@@ -89,8 +89,9 @@ public class ApiAuthRest {
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             
            log.trace("GET Executing request: " + httpGet.getRequestLine());
-           log.trace(response);
             response = httpclient.execute(httpGet,responseHandler);
+            log.trace(response);
+
         } finally {
             httpclient.getConnectionManager().shutdown();
         }

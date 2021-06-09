@@ -502,6 +502,8 @@ public class NewReports extends GenericAdminGui {
                 new MissedAppointmentsAPSS(getShell(), false));
         reportGUIs.put(GenericReportGuiInterface.REPORT_MISSED_APPOINTMENTS_NEW,
                 new MissedAppointmentsNew(getShell(), false));
+        reportGUIs.put(GenericReportGuiInterface.REPORT_MISSED_APPOINTMENTS_FROM_OTHER_PHARM,
+                new MissedAppointmentsReferred(getShell(), false));
         reportGUIs.put(GenericReportGuiInterface.REPORT_MISSED_APPOINTMENTS_CHAMADAS,
                 new MissedAppointmentsChamadas(getShell(), false));
         reportGUIs.put(GenericReportGuiInterface.REPORT_MISSED_APPOINTMENTS_DT,
