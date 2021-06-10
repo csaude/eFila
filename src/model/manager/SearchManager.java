@@ -1011,25 +1011,40 @@ public class SearchManager {
         return newList;
     }
 
-    public static List<PatientIdentifier> getPatientIdentifiers(Session session, String patientId,
-                                                                boolean includeInactivePatients)
+    public static List<PatientIdentifier> getPatientIdentifiers(Session session, String patientId, boolean includeInactivePatients, String tipoPaciente)
             throws HibernateException {
         patientId = patientId == null ? "" : patientId.trim();
 
         String queryString = "select id from PatientIdentifier as id where "
                 + "upper(id.value) like :patientId "
                 + "or upper(id.patient.lastname) like :patientId "
-                + "or upper(id.patient.firstNames) like :patientId";
+                + "or upper(id.patient.firstNames) like :patientId ";
         if (!includeInactivePatients) {
             queryString += " and id.patient.accountStatus = true";
         }
+
+
         queryString += " order by id.patient.lastname asc";
 
-        Query query = session.createQuery(queryString)
-                .setParameter("patientId", "%" + patientId.toUpperCase() + "%");
+        Query query = session.createQuery(queryString);
+        query.setParameter("patientId", "%" + patientId.toUpperCase() + "%");
+
 
         @SuppressWarnings("unchecked")
         List<PatientIdentifier> list = query.list();
+
+        List<PatientIdentifier> resultList = new ArrayList<>();
+
+        if (iDARTUtil.stringHasValue(tipoPaciente) && tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV) || tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)){
+            for (PatientIdentifier identifier : list){
+                if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)){
+                    if (!identifier.getType().isPREP()) resultList.add(identifier);
+                }else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)){
+                    if (identifier.getType().isPREP()) resultList.add(identifier);
+                }
+            }
+            return resultList;
+        }
 
         return list;
     }

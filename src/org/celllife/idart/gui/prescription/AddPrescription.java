@@ -384,7 +384,7 @@ public class  AddPrescription extends GenericFormGui implements
     protected void createCompButtons() {
         // Parent Class generic call
         buildCompButtons();
-        btnSave.setText("Salar esta Prescrição");
+        btnSave.setText("Salvar esta Prescrição");
         // btnSavePrescription
 
     }
@@ -2443,8 +2443,9 @@ public class  AddPrescription extends GenericFormGui implements
 
         String parsedPatientId = PatientBarcodeParser.getPatientId(txtPatientId
                 .getText());
+        System.out.println(tipoPaciente);
 
-        PatientSearch search = new PatientSearch(getShell(), getHSession());
+        PatientSearch search = new PatientSearch(getShell(), getHSession(), tipoPaciente);
         PatientIdentifier identifier = search.search(parsedPatientId);
 
         if (identifier != null) {
