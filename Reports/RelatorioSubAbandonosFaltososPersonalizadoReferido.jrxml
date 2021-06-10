@@ -53,11 +53,12 @@ END
   END
   AS datereturn,
 max(app.appointmentDate) as ultimaData
-from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt , clinic as cl
+from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt,clinic as cl
 where app.patient = pat.id
 and idt.name = 'NID'
 and pi.value = pat.patientid
 and idt.id = pi.type_id
+and cl.id=pat.clinic
 and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null )
 and ($P{date}::date - app.appointmentDate::date) between $P{minDays} and $P{maxDays}
 and exists (select prescription.id
@@ -67,6 +68,7 @@ and (($P{date} between prescription.date and prescription.endDate)or(($P{date} >
 and exists (select id from episode where episode.patient = pat.id
 and (($P{date} between episode.startdate and episode.stopdate)or(($P{date} > episode.startdate)) and (episode.stopdate is null)))
 and cl.mainclinic=false
+and app.visitdate is null
 group by 1,2,3,4,5,6,7,8,9,10,11
 order by patID asc]]>
 	</queryString>
