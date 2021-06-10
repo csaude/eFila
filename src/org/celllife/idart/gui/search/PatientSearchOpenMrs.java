@@ -141,7 +141,7 @@ public class PatientSearchOpenMrs extends GenericOthersGui {
 					if (showPatientsWithPackagesAwaiting){
 						identifiers = SearchManager.getPatientIdentifiersWithAwiatingPackages(getHSession(), searchString);	
 					} else {
-						identifiers = SearchManager.getPatientIdentifiers(getHSession(), searchString, showInactive);	
+						identifiers = SearchManager.getPatientIdentifiers(getHSession(), searchString, showInactive, null);
 					}
 					
 					if (identifiers.size() <= maxNumberOfIdentifiersPerPatient){

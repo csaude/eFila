@@ -3,6 +3,8 @@
  */
 package org.celllife.idart.database.hibernate;
 
+import org.celllife.idart.commonobjects.iDartProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -77,6 +79,14 @@ public class IdentifierType {
 
 	public boolean isVoided() {
 		return voided;
+	}
+
+	public boolean isPREP(){
+		return this.name.equalsIgnoreCase(iDartProperties.PREP);
+	}
+
+	public boolean isNID(){
+		return this.name.equalsIgnoreCase("NID");
 	}
 
 }

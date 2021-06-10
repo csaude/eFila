@@ -99,11 +99,20 @@ public class PatientSearch extends GenericOthersGui {
 	 */
 	private int maxNumberOfIdentifiersPerPatient;
 	private boolean disableSelection = false;
+
+	public static String tipoPaciente = null;
 	
 	private List<IdentifierType> types;
 
 	// FIXME: (simon - multi ids) show alternate patients
 	// see model.manager.PatientSearchManager.getSelectedPatient(boolean)
+	public PatientSearch(Shell parent, Session session, String tipoPaciente) {
+		super(parent, session);
+		types = PatientManager.getAllIdentifierTypes(session);
+		maxNumberOfIdentifiersPerPatient = types.size();
+		this.tipoPaciente = tipoPaciente;
+	}
+
 	public PatientSearch(Shell parent, Session session) {
 		super(parent, session);
 		types = PatientManager.getAllIdentifierTypes(session);
@@ -164,7 +173,7 @@ public class PatientSearch extends GenericOthersGui {
 					if (showPatientsWithPackagesAwaiting){
 						identifiers = SearchManager.getPatientIdentifiersWithAwiatingPackages(getHSession(), searchString);	
 					} else {
-						identifiers = SearchManager.getPatientIdentifiers(getHSession(), searchString, showInactive);	
+						identifiers = SearchManager.getPatientIdentifiers(getHSession(), searchString, showInactive, tipoPaciente);
 					}
 					
 					if (identifiers.size() <= maxNumberOfIdentifiersPerPatient){
