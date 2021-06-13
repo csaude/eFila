@@ -1477,6 +1477,13 @@ public class  AddPrescription extends GenericFormGui implements
                 || CentralizationProperties.pharmacy_type.equalsIgnoreCase("P"))
             checkOpenmrs = false;
 
+        Episode episode = PatientManager.getLastEpisode(getHSession(), patient.getPatientId());
+
+        if (episode.getStartReason().contains("nsito") || episode.getStartReason().contains("aternidade") || episode.getStartReason().contains("CCR")) {
+            checkOpenmrs = false;
+        }
+
+
         if (oldPrescription != null)
             if (Integer.parseInt(String.valueOf(cmbLinha.getText().charAt(0))) < Integer.parseInt(String.valueOf(oldPrescription.getLinha().getLinhanome().charAt(0)))) {
 
@@ -1508,10 +1515,8 @@ public class  AddPrescription extends GenericFormGui implements
 
                         String facility = clinic.getClinicName().trim();
 
-                        Episode episode = PatientManager.getLastEpisode(getHSession(), patient.getPatientId());
-
                         if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
-                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("PrEP")
+                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
                                 && !episode.getStartReason().contains("CRAM")) {
                             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                             m.setText("Informação sobre estado do programa");

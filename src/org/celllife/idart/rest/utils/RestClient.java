@@ -122,7 +122,8 @@ public class RestClient {
             String obsGroupsJson = null;
 
             for (String group : obsGroups){
-                if (!iDARTUtil.stringHasValue(obsGroupsJson)) obsGroupsJson = obsGroupsJson + group;
+                if (!iDARTUtil.stringHasValue(obsGroupsJson))
+                    obsGroupsJson = group;
                 else {
                     obsGroupsJson = obsGroupsJson + "," + group;
                 }
@@ -149,7 +150,7 @@ public class RestClient {
                             + "{\"person\":\"" + nidUuid + "\","
                             + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
                             + "{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"},"
                             + obsGroupsJson
                             + "]"
                             + "}"
@@ -238,7 +239,7 @@ public class RestClient {
         if (patientIdentifierType.equalsIgnoreCase("NID")){
             patientIdentifierConceptUid = "e2b966d0-1d5f-11e0-b929-000c29ad1d07";
         }else if (patientIdentifierType.equalsIgnoreCase("PREP")){
-            patientIdentifierConceptUid = "c29e5740-8ea5-409e-b322-7414f36e2739";
+            patientIdentifierConceptUid = "bce7c891-27e9-42ec-abb0-aec3a641175e";
         }
 
         if (birthDate.isEmpty()) {
