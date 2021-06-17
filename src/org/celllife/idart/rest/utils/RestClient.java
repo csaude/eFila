@@ -121,6 +121,8 @@ public class RestClient {
 
             String obsGroupsJson = null;
 
+            String dispenseMod = "";
+
             for (String group : obsGroups){
                 if (!iDARTUtil.stringHasValue(obsGroupsJson))
                     obsGroupsJson = group;
@@ -139,6 +141,11 @@ public class RestClient {
             customizedDosage = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(0).getAmtPerTime()))
                     + iDartProperties.COMP + dosage + iDartProperties.VEZES_DIA;
 
+            if(!answerDispenseModeUuid.isEmpty()){
+                dispenseMod = "{\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"},";
+            }
+
             inputAddPerson = new StringEntity(
                     "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
                             + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
@@ -149,8 +156,7 @@ public class RestClient {
                             + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},"
                             + "{\"person\":\"" + nidUuid + "\","
                             + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
-                            + "{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"},"
+                            + dispenseMod
                             + obsGroupsJson
                             + "]"
                             + "}"

@@ -2,6 +2,7 @@ package model.manager.reports;
 
 import model.manager.excel.conversion.exceptions.ReportException;
 import org.celllife.idart.commonobjects.LocalObjects;
+import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.dao.ConexaoJDBC;
 import org.eclipse.swt.widgets.Shell;
 
@@ -118,7 +119,16 @@ public class LivroRegistoDiario extends AbstractJasperReport {
 
 	@Override
 	protected String getReportFileName() {
-		return "LivroRegistoDiarioARV";
+
+		String reportFile = "LivroRegistoDiarioARV";
+
+		if(this.diseaseType.equalsIgnoreCase(iDartProperties.PNCT))
+			reportFile = "LivroRegistoDiarioTB";
+		else
+		if(this.diseaseType.equalsIgnoreCase(iDartProperties.PREP))
+			reportFile = "LivroRegistoDiarioPREP";
+
+		return reportFile;
 	}
 	
 

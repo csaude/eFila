@@ -108,7 +108,7 @@ public class MmiaReport extends GenericReportGui {
 	@Override
 	protected void createCompHeader() {
 		iDartImage icoImage = iDartImage.REPORT_STOCKCONTROLPERCLINIC;
-		buildCompdHeader("NOVO MMIA (ACTUALIZADO)", icoImage);
+		buildCompdHeader(" MM TB", icoImage);
 	}
 
 	/**

@@ -650,6 +650,7 @@ public class AddDrug extends GenericFormGui {
             rdBtnInactive.setSelection(true);
         }
 
+        if(localDrug.getUuidopenmrs() != null)
         txtOpenmrsUuid.setText(localDrug.getUuidopenmrs());
         Form theForm = localDrug.getForm();
         lblPackDescription
