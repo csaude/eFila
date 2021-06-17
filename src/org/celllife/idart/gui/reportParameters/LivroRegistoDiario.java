@@ -292,7 +292,7 @@ public class LivroRegistoDiario extends GenericReportGui {
 
         //Group tipo tarv
         grpTipoTarv = new Group(getShell(), SWT.NONE);
-        grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" :  (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ?  "Tipo PREP" : "Tipo Tarv:")));
+        grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" :  (this.diseaseType.equals(Prescription.TIPO_DOENCA_PREP) ?  "Tipo PREP" : this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Tipo Tarv:" : "Tipo PrEP:")));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpTipoTarv.setBounds(new Rectangle(55, 90, 520, 50));
         grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -312,20 +312,20 @@ public class LivroRegistoDiario extends GenericReportGui {
         chkBtnAlteraccao.setText("Alteração");
         chkBtnAlteraccao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnAlteraccao.setSelection(false);
-        chkBtnAlteraccao.setVisible(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
+        chkBtnAlteraccao.setEnabled(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV));
 
         //chk button  Manter
         chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
         chkBtnManutencao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-        chkBtnManutencao.setBounds(new Rectangle(215, 20, 100, 20));
-        chkBtnManutencao.setText("Manutenção");
+        chkBtnManutencao.setBounds(new Rectangle(215, 20, 110, 20));
+        chkBtnManutencao.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Manutenção" : "Continua/Manutenção"));
         chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnManutencao.setSelection(false);
 
         //chk button Re-Inicio
         chkBtnReinicio = new Button(grpTipoTarv, SWT.CHECK);
         chkBtnReinicio.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-        chkBtnReinicio.setBounds(new Rectangle(315, 20, 100, 20));
+        chkBtnReinicio.setBounds(new Rectangle(330, 20, 100, 20));
         chkBtnReinicio.setText("Re-Inicio");
         chkBtnReinicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnReinicio.setSelection(false);

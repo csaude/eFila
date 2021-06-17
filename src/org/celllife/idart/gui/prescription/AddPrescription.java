@@ -262,14 +262,21 @@ public class  AddPrescription extends GenericFormGui implements
             rdBtnTBPrescription.setSelection(true);
             rdBtnTARVPrescription.setSelection(false);
             rdBtnPrEPPrescription.setSelection(false);
+            chkBtnPrEP.setEnabled(true);
+            chkBtnPrEP.setSelection(false);
+
         } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(false);
             rdBtnPrEPPrescription.setSelection(true);
+            chkBtnPrEP.setEnabled(false);
+            chkBtnPrEP.setSelection(true);
         } else {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(true);
             rdBtnPrEPPrescription.setSelection(false);
+            chkBtnPrEP.setEnabled(true);
+            chkBtnPrEP.setSelection(false);
         }
 
         if (rdBtnTBPrescription.getSelection()) {
@@ -2680,7 +2687,7 @@ public class  AddPrescription extends GenericFormGui implements
                             }
 
                             if (patientsPrescriptions.size() > 0 && oldPrescription != null) {
-                                    if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime())) {
+                                    if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime()) && localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
                                         MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                                         errorBox.setText("Não foi possível salvar a prescrição, má alteração da linha terapêutica");
                                         errorBox.setMessage("Não é possível mudar o regime terapeutico do paciente de " + oldPrescription.getRegimeTerapeutico().getRegimeesquema()
@@ -3520,7 +3527,7 @@ public class  AddPrescription extends GenericFormGui implements
                 }
             });
 
-            lblUpdateReason.setText("* Profilaxia (INH):");
+            lblUpdateReason.setText(rdBtnTBPrescription.getSelection() ? "* Profilaxia (INH):" : "*  Tipo PrEP:");
             cmbUpdateReason.removeAll();
             CommonObjects.populatePrescriptionUpdateReasonsTPT(getHSession(), cmbUpdateReason);
             cmbUpdateReason.setVisibleItemCount(cmbUpdateReason.getItemCount());
