@@ -19,11 +19,7 @@
 
 package org.celllife.idart.database.hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  */
@@ -41,6 +37,9 @@ public class PrescribedDrugs {
 	@ManyToOne
 	@JoinColumn(name = "drug")
 	private Drug drug;
+
+	@Column(name = "takeperiod")
+	private String takePeriod;
 
 	private int timesPerDay;
 
@@ -61,13 +60,14 @@ public class PrescribedDrugs {
 	 * @param modified
 	 */
 	public PrescribedDrugs(Prescription prescription, Drug drug,
-			int timesPerDay, double amtPerTime, char modified) {
+			int timesPerDay, double amtPerTime, char modified, String takePeriod) {
 		super();
 		this.prescription = prescription;
 		this.drug = drug;
 		this.timesPerDay = timesPerDay;
 		this.amtPerTime = amtPerTime;
 		this.modified = modified;
+		this.takePeriod = takePeriod;
 
 	}
 
@@ -165,6 +165,14 @@ public class PrescribedDrugs {
 	 */
 	public void setTimesPerDay(int timesPerDay) {
 		this.timesPerDay = timesPerDay;
+	}
+
+	public String getTakePeriod() {
+		return takePeriod;
+	}
+
+	public void setTakePeriod(String takePeriod) {
+		this.takePeriod = takePeriod;
 	}
 
 	public boolean isARV() {

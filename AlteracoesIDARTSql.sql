@@ -64,6 +64,7 @@ ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varyi
 ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
+ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
@@ -465,6 +466,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'diseas
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Inicio (I)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Continua (C)');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Re-Inicio');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_prophylaxis','inh_prophylaxis','Fim (F)');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');

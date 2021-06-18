@@ -669,7 +669,6 @@ public class  AddPrescription extends GenericFormGui implements
         cmbMotivoMudanca.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
         cmbMotivoMudanca.setEnabled(false);
 
-
         lblDispensaTrimestral = new Label(grpPatientID, SWT.NONE);
 
         lblDispensaTrimestral.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -679,6 +678,7 @@ public class  AddPrescription extends GenericFormGui implements
 
         cmbDispensaTrimestral.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbDispensaTrimestral.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+
         //POPULA combo dispensa trimestral
         cmbDispensaTrimestral.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
         CommonObjects.populateDispensaTrimestral(getHSession(), cmbDispensaTrimestral);
@@ -689,8 +689,8 @@ public class  AddPrescription extends GenericFormGui implements
         lblDispensaSemestral.setText("Dispensa Semestral:");
 
         cmbDispensaSemestral = new CCombo(grpPatientID, SWT.BORDER | SWT.READ_ONLY);
-
         cmbDispensaSemestral.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+
         cmbDispensaSemestral.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
         cmbDispensaTrimestral.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
 
@@ -1336,13 +1336,13 @@ public class  AddPrescription extends GenericFormGui implements
 
         // 6 - tblTPD
         tblTPD = new TableColumn(tblDrugs, SWT.NONE);
-        tblTPD.setText("Por Dia");
+        tblTPD.setText("Por Periodo");
         tblTPD.setWidth(85);
         tblTPD.setResizable(false);
 
         // 7 - tblQnty
         tblQnty = new TableColumn(tblDrugs, SWT.NONE);
-        tblQnty.setText("Frasco");
+        tblQnty.setText("Frasco/Un.");
         tblQnty.setWidth(44);
         tblQnty.setResizable(true);
 
@@ -3089,6 +3089,7 @@ public class  AddPrescription extends GenericFormGui implements
                 newPD.setModified(oldPD.getModified());
                 newPD.setPrescription(localPrescription);
                 newPD.setTimesPerDay(oldPD.getTimesPerDay());
+                newPD.setTakePeriod(oldPD.getTakePeriod());
                 prescribedDrugsList.add(newPD);
             }
         }
@@ -3582,6 +3583,8 @@ public class  AddPrescription extends GenericFormGui implements
         lblMotivoMudanca.setVisible(enable);
         cmbLinha.setVisible(enable);
         lblLinha.setVisible(enable);
+        lblDispensaSemestral.setVisible(enable);
+        cmbDispensaSemestral.setVisible(enable);
     }
 
     private boolean checkDispensaTrimestral() {
