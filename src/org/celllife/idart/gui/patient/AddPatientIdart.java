@@ -1609,7 +1609,26 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().isNID()) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
+                        break;
+                    }
+                }
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().isPREP()) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PREP);
+                        break;
+                    }
+                }
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().getName().contains("CCR")) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
+                        break;
+                    }
+                }
                 cmdCancelWidgetSelected();
 
             }

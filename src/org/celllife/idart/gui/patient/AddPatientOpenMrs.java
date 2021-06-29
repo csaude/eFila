@@ -1348,14 +1348,14 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                 assert currentUser != null;
                 if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                    String patientIdentifier;
+                //    String patientIdentifier;
                     String patientIdentifierType;
 
                     if (localPatient.patientHasNID()){
-                        patientIdentifier = localPatient.getPatientNIDIdentifier().getValue();
+                    //    patientIdentifier = localPatient.getPatientNIDIdentifier().getValue();
                         patientIdentifierType = "NID";
                     }else {
-                        patientIdentifier = localPatient.getPatientPREPIdentifier().getValue();
+                    //    patientIdentifier = localPatient.getPatientPREPIdentifier().getValue();
                         patientIdentifierType = "PREP";
                     }
 
@@ -1539,7 +1539,28 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         }
         if (proceed) {
             if (localPatient.getId() != -1) {
-                new AddPrescription(localPatient, getParent(), false,iDartProperties.SERVICOTARV);
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().isNID()) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
+                        break;
+                    }
+                }
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().isPREP()) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PREP);
+                        break;
+                    }
+                }
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().getName().contains("CCR")) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
+                        break;
+                    }
+                }
+
                 // myPrescription.addDisposeListener(new DisposeListener() {
                 // public void widgetDisposed(DisposeEvent e1) {
                 cmdCancelWidgetSelected();

@@ -13,6 +13,7 @@ import org.celllife.idart.gui.utils.ResourceUtils;
 import org.celllife.idart.gui.utils.iDartColor;
 import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
+import org.celllife.idart.misc.iDARTUtil;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -210,8 +211,16 @@ public class MissedAppointmentsReferred extends GenericReportGui {
 //            viewReport = false;
 //
 //        }
-
-        if (txtMinimumDaysLate.getText().equals("")
+        if(!iDARTUtil.isInPast( swtCal.getCalendar().getTime())){
+            MessageBox incorrectData = new MessageBox(getShell(),
+                    SWT.ICON_ERROR | SWT.OK);
+            incorrectData.setText("Informacao Invalida");
+            incorrectData
+                    .setMessage("A data do Relatorio deve ser menor ou igual a data de hoje.");
+            incorrectData.open();
+            viewReport = false;
+        }
+       else  if (txtMinimumDaysLate.getText().equals("")
                 || txtMaximumDaysLate.getText().equals("")) {
             MessageBox incorrectData = new MessageBox(getShell(),
                     SWT.ICON_ERROR | SWT.OK);

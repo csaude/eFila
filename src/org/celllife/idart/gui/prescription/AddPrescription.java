@@ -262,14 +262,21 @@ public class  AddPrescription extends GenericFormGui implements
             rdBtnTBPrescription.setSelection(true);
             rdBtnTARVPrescription.setSelection(false);
             rdBtnPrEPPrescription.setSelection(false);
+            chkBtnPrEP.setEnabled(true);
+            chkBtnPrEP.setSelection(false);
+
         } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(false);
             rdBtnPrEPPrescription.setSelection(true);
+            chkBtnPrEP.setEnabled(false);
+            chkBtnPrEP.setSelection(true);
         } else {
             rdBtnTBPrescription.setSelection(false);
             rdBtnTARVPrescription.setSelection(true);
             rdBtnPrEPPrescription.setSelection(false);
+            chkBtnPrEP.setEnabled(true);
+            chkBtnPrEP.setSelection(false);
         }
 
         if (rdBtnTBPrescription.getSelection()) {
@@ -1477,6 +1484,13 @@ public class  AddPrescription extends GenericFormGui implements
                 || CentralizationProperties.pharmacy_type.equalsIgnoreCase("P"))
             checkOpenmrs = false;
 
+        Episode episode = PatientManager.getLastEpisode(getHSession(), patient.getPatientId());
+
+        if (episode.getStartReason().contains("nsito") || episode.getStartReason().contains("aternidade") || episode.getStartReason().contains("CCR")) {
+            checkOpenmrs = false;
+        }
+
+
         if (oldPrescription != null)
             if (Integer.parseInt(String.valueOf(cmbLinha.getText().charAt(0))) < Integer.parseInt(String.valueOf(oldPrescription.getLinha().getLinhanome().charAt(0)))) {
 
@@ -1508,10 +1522,8 @@ public class  AddPrescription extends GenericFormGui implements
 
                         String facility = clinic.getClinicName().trim();
 
-                        Episode episode = PatientManager.getLastEpisode(getHSession(), patient.getPatientId());
-
                         if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
-                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("PrEP")
+                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
                                 && !episode.getStartReason().contains("CRAM")) {
                             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                             m.setText("Informação sobre estado do programa");
@@ -2675,7 +2687,7 @@ public class  AddPrescription extends GenericFormGui implements
                             }
 
                             if (patientsPrescriptions.size() > 0 && oldPrescription != null) {
-                                    if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime())) {
+                                    if (!localPrescription.getRegimeTerapeutico().getCodigoregime().equals(oldPrescription.getRegimeTerapeutico().getCodigoregime()) && localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
                                         MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                                         errorBox.setText("Não foi possível salvar a prescrição, má alteração da linha terapêutica");
                                         errorBox.setMessage("Não é possível mudar o regime terapeutico do paciente de " + oldPrescription.getRegimeTerapeutico().getRegimeesquema()
@@ -3515,7 +3527,7 @@ public class  AddPrescription extends GenericFormGui implements
                 }
             });
 
-            lblUpdateReason.setText("* Profilaxia (INH):");
+            lblUpdateReason.setText(rdBtnTBPrescription.getSelection() ? "* Profilaxia (INH):" : "*  Tipo PrEP:");
             cmbUpdateReason.removeAll();
             CommonObjects.populatePrescriptionUpdateReasonsTPT(getHSession(), cmbUpdateReason);
             cmbUpdateReason.setVisibleItemCount(cmbUpdateReason.getItemCount());

@@ -1722,11 +1722,11 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 //        }
 
         //Se nao tiver Modo de dispensa nao pode dispensar
-        if (cmbDispenseMode.getText().trim().isEmpty()) { //$NON-NLS-1$
-            showMessage(MessageDialog.ERROR, "O Modo de Dispensa esta vazio ",
-                    "O campo Modo de Dispensa esta vazio, por favor seleccione o Modo de dispensa.");
-            return false;
-        }
+//        if (cmbDispenseMode.getText().trim().isEmpty()) { //$NON-NLS-1$
+//            showMessage(MessageDialog.ERROR, "O Modo de Dispensa esta vazio ",
+//                    "O campo Modo de Dispensa esta vazio, por favor seleccione o Modo de dispensa.");
+//            return false;
+//        }
 
         if (btnCaptureDate.getDate().before(newPack.getPrescription().getDate())
                 && !(sdf.format(btnCaptureDate.getDate()).equals(sdf.format(newPack.getPrescription().getDate())))) {
@@ -2794,6 +2794,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             newPack.setPickupDate(new Date());
         }
 
+        if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP))
+            checkOpenmrs = false;
+
         newPack.setPackageId(newPack.getPrescription().getPrescriptionId() + "-" + lblIndex.getText());
         newPack.setModified('T');
 
@@ -2884,7 +2887,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || !checkOpenmrs) {
+        if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || patientEpisode.getStartReason().contains("CCR") || !checkOpenmrs) {
 
             PackageManager.savePackage(getHSession(), newPack);
             aviado = true;
