@@ -231,4 +231,10 @@ public class PrescriptionManager {
 	}
 
 
+	public static void setUpdatedPatientNidSyncOpenmrsPatienFila(Session s,  SyncOpenmrsDispense syncOpenmrsDispense)
+			throws HibernateException {
+
+		s.update(syncOpenmrsDispense);
+	}
+
 }

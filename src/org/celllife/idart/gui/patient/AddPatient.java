@@ -2606,25 +2606,35 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 }
             } else {
                 if (oldPatient != null) {
+                    List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
                     if (!oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
                         // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
                         List<PackageDrugInfo> pdiList = TemporaryRecordsManager.getOpenmrsUnsubmittedPackageDrugInfos(getHSession(), oldPatient);
                         if (!pdiList.isEmpty())
                             TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, localPatient);
+
+                        if (!syncOpenmrsDispenseList.isEmpty()){
+                            for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
+                                stp.setNid(localPatient.getPatientId());
+                                PrescriptionManager.setUpdatedPatientNidSyncOpenmrsPatienFila(getHSession(), stp);
+                            }
+                        }
                     }
-                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
+
                         if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs())) {
                             // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
-                            List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
                             if (!syncOpenmrsDispenseList.isEmpty())
                                 for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
                                     stp.setUuid(localPatient.getUuidopenmrs());
                                     PrescriptionManager.setUUIDSyncOpenmrsPatienFila(getHSession(), stp);
                                 }
                         }
+                    }
                 }
             }
             return submitForm();
+          //  return true;
         } else {
             // if validation fails or the user chooses not to save, replace
             // the current localPatient, which
