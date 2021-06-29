@@ -85,6 +85,9 @@
 	<parameter name="totallinhas2" class="java.lang.String"/>
 	<parameter name="totallinhas3" class="java.lang.String"/>
 	<parameter name="totallinhas" class="java.lang.String"/>
+	<parameter name="diseaseType" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select
 distinct d.id,
@@ -1256,12 +1259,6 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 		<band height="21">
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" mode="Opaque" x="0" y="0" width="578" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<subreportParameter name="id">
-					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="StockCode">
-					<subreportParameterExpression><![CDATA[$F{stockcode}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="monthEnd">
 					<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -1270,6 +1267,18 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</subreportParameter>
 				<subreportParameter name="formlanguage1">
 					<subreportParameterExpression><![CDATA[$F{formlanguage1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="diseaseType">
+					<subreportParameterExpression><![CDATA[$P{diseaseType}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="monthStart">
+					<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="StockCode">
+					<subreportParameterExpression><![CDATA[$F{stockcode}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="packsize">
 					<subreportParameterExpression><![CDATA[$F{packsize}]]></subreportParameterExpression>
@@ -1288,9 +1297,6 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</subreportParameter>
 				<subreportParameter name="dateFormat">
 					<subreportParameterExpression><![CDATA[$P{dateFormat}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="monthStart">
-					<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[($P{path} + java.io.File.separator+ "MmiaReport_batchNovaVersao.jasper")]]></subreportExpression>

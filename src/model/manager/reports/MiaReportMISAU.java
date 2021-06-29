@@ -110,6 +110,7 @@ public class MiaReportMISAU extends AbstractJasperReport {
             map.put("dataelaboracao", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
             map.put("mes", mesPortugues(theStartDate));
             map.put("mes2", mesPortugues(theEndDate));
+            map.put("diseaseType", MiaReport.TARV_MIA_REPORT);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1035,7 +1035,7 @@ public class SearchManager {
 
         List<PatientIdentifier> resultList = new ArrayList<>();
 
-        if (iDARTUtil.stringHasValue(tipoPaciente) && tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV) || tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)){
+        if (iDARTUtil.stringHasValue(tipoPaciente) && (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV) || tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))){
             for (PatientIdentifier identifier : list){
                 if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)){
                     if (!identifier.getType().isPREP()) resultList.add(identifier);
