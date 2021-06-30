@@ -183,6 +183,10 @@ public class RestClient {
 
         Prescription prescription = null;
 
+        String dispenseMod = "";
+
+        String dataProximoLev = "";
+
         if (prescribedDrugs.size() > 0) {
 
             prescription = prescribedDrugs.get(0).getPrescription();
@@ -205,6 +209,16 @@ public class RestClient {
                 else
                     tipoPrescricao = iDartProperties.FILT_TPT_CONTINUE_FOLLOW_UP_UUID;
 
+                if(!answerDispenseModeUuid.isEmpty()){
+                    dispenseMod = " {\"person\":\"" + nidUuid + "\","
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}";
+                }
+
+                if(!prescription.getReasonForUpdate().contains("Fim")){
+                    dataProximoLev = ", {\"person\":\"" + nidUuid + "\","
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}";
+                }
+
                 inputAddPerson = new StringEntity(
                         "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
                                 + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filtUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
@@ -214,11 +228,8 @@ public class RestClient {
                                 + "{\"person\":\"" + nidUuid + "\","
                                 + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + tipoDispensaUuid + "\",\"value\":\"" + tipoDispensa + "\",\"comment\":\"IDART\"},"
                                 + "{\"person\":\"" + nidUuid + "\","
-                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + seguimentoFiltUuid + "\",\"value\":\"" + tipoPrescricao + "\",\"comment\":\"IDART\"},"
-                                + "{\"person\":\"" + nidUuid + "\","
-                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
-                                + "{\"person\":\"" + nidUuid + "\","
-                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}"
+                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + seguimentoFiltUuid + "\",\"value\":\"" + tipoPrescricao + "\",\"comment\":\"IDART\"}"
+                                + dataProximoLev
                                 + "]"
                                 + "}"
                         , "UTF-8");
