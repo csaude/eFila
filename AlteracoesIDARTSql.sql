@@ -496,8 +496,6 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','091737af-d6bf-4830-8e87-82572ffac9ea','Clínicas Móveis - Distribuição durante o final do dia');
 
 
-
-
 INSERT INTO "role" (id, description, code) values (1,'Administrador','ADMIN');
 INSERT INTO "role" (id, description, code) values (2 ,'Técnico de Farmácia','PHARMACIST');
 INSERT INTO "role" (id, description, code) values (3 ,'Administrativo de Farmácia','PHARMACISTADMIN');
@@ -522,6 +520,51 @@ INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid f
 INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'CLERK') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
 INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'STUDYWORKER') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
 INSERT INTO rolefunction (functionid, roleid) (select id, (select id as roleid from "role" r where r.code = 'MEA') from systemfunctionality s2 where s2.code != 'ADMINISTRATION');
+
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117470, 14, '', '', 'T', '[INH 100 cp] Isoniazida 100mg', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '08L04', 'Dia', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117520, 14, '', '', 'T', '[Vit B6 25mg cp] Piridoxina (Vit B6) 25mg', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '12D14Z', 'Dia', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117510, 14, '', '', 'T', '[Vit B6 50mg cp] Piridoxina (Vitamina B6) 50mg', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '12D14', 'Dia', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117480, 14, '', '', 'T', '[INH 300mg cp] Isoniazida 300mg', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '08L03', 'Dia', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6162450, 14, '', '', 'T', '[RPT/INH 300/300mg cp] Rifapentina 300mg/ Isoniazida 300mg', 1, 'F', 3, 1, NULL, NULL, true, 'TB', '08L06X', 'Semana', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6162460, 14, '', '', 'T', '[RPT 150mg cp] Rifapentina 150mg', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '08L06XZ', 'Semana', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117500, 14, '', '', 'T', '[LFX 250mg cp] Levofloxacina 250mg ', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '08H07', 'Dia', '');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (6117490, 14, '', '', 'T', '[LFX 100mg cp] Levofloxacina 100 mg Disp', 1, 'F', 1, 1, NULL, NULL, true, 'TB', '08H07Y', 'Dia', '');
+
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117710, 'TPT - 3HP Adultos (>30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Adultos (>30kg)', 'TPT - 3HP Adultos (>30kg)', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117780, 'TPT - 3HP Crianças (< 30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Crianças (< 30kg)', 'TPT - 3HP Crianças (< 30kg)', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117580, 'TPT - INH300', true, 'e1d43e52-1d5f-11e0-b929-000c29ad1d07', 'TPT - INH300', 'TPT - INH300', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6162580, 'TPT - MR- LFX100', true, 'e1d4b30a-1d5f-11e0-b929-000c29ad1d07', 'TPT - MR- LFX100', 'TPT - MR- LFX100', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117630, 'TPT - MR- LFX250', true, 'e1d4b30a-1d5f-11e0-b929-000c29ad1d07', 'TPT - MR- LFX250', 'TPT - MR- LFX250', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6162530, 'TPT - 1HP Adultos (>30kg)', false, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 1HP Adultos (>30kg)', 'TPT - 1HP Adultos (>30kg) ', 'TB');
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6162660, 'TPT - INH100', true, 'e1d43e52-1d5f-11e0-b929-000c29ad1d07', 'TPT - INH100', 'TPT - INH100', 'TB');
+
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6158800, 'TDF+3TC PrEP', true, 'e1e59e0e-1d5f-11e0-b929-000c29ad1d07', 'TDF+3TC PrEP', 'TDF+3TC PrEP', 'PREP');
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162470, 3, 6162450, 'T', 6117710, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162480, 1, 6117510, 'T', 6117710, 1, NULL, 1);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162770, 1, 6117520, 'T', 6117780, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162780, 1, 6117510, 'T', 6117780, 1, NULL, 1);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162790, 1, 6162460, 'T', 6117780, 1, NULL, 2);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162800, 1, 6117470, 'T', 6117780, 1, NULL, 3);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162860, 1, 6117510, 'T', 6117580, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162870, 1, 6117480, 'T', 6117580, 1, NULL, 1);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162920, 1, 6117490, 'T', 6162580, 1, NULL, 0);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162930, 1, 6117500, 'T', 6117630, 1, NULL, 0);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162940, 1, 6117510, 'T', 6162530, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162950, 1, 6162450, 'T', 6162530, 1, NULL, 1);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162960, 1, 6162460, 'T', 6162530, 1, NULL, 2);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162830, 1, 6117470, 'T', 6162660, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162840, 1, 6117520, 'T', 6162660, 1, NULL, 1);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162850, 1, 6117510, 'T', 6162660, 1, NULL, 2);
+
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162730, 1, 41188, 'T', 6158800, 1, NULL, 0);
+
 
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";

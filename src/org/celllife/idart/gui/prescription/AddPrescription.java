@@ -1502,85 +1502,6 @@ public class  AddPrescription extends GenericFormGui implements
                 return false;
             }
 
-        if (checkOpenmrs) {
-
-            try {
-                if (!getServerStatus(JdbcProperties.urlBase).contains("Red")) {
-
-                    User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
-
-                    assert currentUser != null;
-                    if (ApiAuthRest.loginOpenMRS(currentUser)) {
-
-                        String strProvider = cmbDoctor.getText().split(",")[1].trim() + " " + cmbDoctor.getText().split(",")[0].trim();
-
-                        String providerWithNoAccents = org.apache.commons.lang3.StringUtils.stripAccents(strProvider);
-
-                        String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
-
-                        Clinic clinic = AdministrationManager.getMainClinic(getHSession());
-
-                        String facility = clinic.getClinicName().trim();
-
-                        if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
-                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
-                                && !episode.getStartReason().contains("CRAM")) {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                            m.setText("Informação sobre estado do programa");
-                            m.setMessage("O uuid do paciente " + patient.getPatientId().trim() + " está vazio na base de dados do iDART. Preencha o uuid deste paciente apartir da base de dados do OpenMRS.");
-                            m.open();
-                            return false;
-                        }
-                        // Location
-                        String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
-
-                        if (StringUtils.isEmpty(restClient.getOpenMRSResource("concept/" + regimenomeespecificado))) {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                            m.setText("Informação sobre estado do programa");
-                            m.setMessage("O uuid " + regimenomeespecificado + " parametrizado para o regime " + cmbRegime.getText() + " não existe no OpenMRS.");
-                            m.open();
-
-                            return false;
-                        }
-
-                        try {
-                            response.substring(21, 57);
-                        } catch (StringIndexOutOfBoundsException siobe) {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                            m.setText("Informação sobre estado do programa");
-                            m.setMessage("Verifica se o nome do provedor " + cmbDoctor.getText().trim() + " existe no OpenMRS.");
-                            m.open();
-
-                            return false;
-                        }
-
-                        try {
-                            strFacility.substring(21, 57);
-                        } catch (StringIndexOutOfBoundsException siobe) {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                            m.setText("Informação sobre estado do programa");
-                            m.setMessage("Verifica se o nome da Unidade Sanitaria " + facility + " existe no OpenMRS.");
-                            m.open();
-                            return false;
-                        }
-
-                        if (StringUtils.isEmpty(regimenomeespecificado)) {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-                            m.setText("Informação sobre estado do programa");
-                            m.setMessage("Verifica a parametrização do uuid do regime " + cmbRegime.getText() + " na base de dados do iDART.");
-                            m.open();
-                            return false;
-                        }
-                    } else {
-                        getLog().error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
-                    }
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         if ((cmbLinha.getText().trim().equals("")) || (cmbRegime.getText().trim().equals("")) || (cmbDoctor.getText().trim().equals(""))
                 || (lblNewPrescriptionId.getText().trim().equals(""))
                 || (cmbDuration.getText().trim().equals(""))) {
@@ -1707,6 +1628,85 @@ public class  AddPrescription extends GenericFormGui implements
             cmbMotivoCriacao.setFocus();
 
             return false;
+        }
+
+        if (checkOpenmrs) {
+
+            try {
+                if (!getServerStatus(JdbcProperties.urlBase).contains("Red")) {
+
+                    User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
+
+                    assert currentUser != null;
+                    if (ApiAuthRest.loginOpenMRS(currentUser)) {
+
+                        String strProvider = cmbDoctor.getText().split(",")[1].trim() + " " + cmbDoctor.getText().split(",")[0].trim();
+
+                        String providerWithNoAccents = org.apache.commons.lang3.StringUtils.stripAccents(strProvider);
+
+                        String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
+
+                        Clinic clinic = AdministrationManager.getMainClinic(getHSession());
+
+                        String facility = clinic.getClinicName().trim();
+
+                        if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
+                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
+                                && !episode.getStartReason().contains("CRAM")) {
+                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                            m.setText("Informação sobre estado do programa");
+                            m.setMessage("O uuid do paciente " + patient.getPatientId().trim() + " está vazio na base de dados do iDART. Preencha o uuid deste paciente apartir da base de dados do OpenMRS.");
+                            m.open();
+                            return false;
+                        }
+                        // Location
+                        String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
+
+                        if (StringUtils.isEmpty(restClient.getOpenMRSResource("concept/" + regimenomeespecificado))) {
+                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                            m.setText("Informação sobre estado do programa");
+                            m.setMessage("O uuid " + regimenomeespecificado + " parametrizado para o regime " + cmbRegime.getText() + " não existe no OpenMRS.");
+                            m.open();
+
+                            return false;
+                        }
+
+                        try {
+                            response.substring(21, 57);
+                        } catch (StringIndexOutOfBoundsException siobe) {
+                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                            m.setText("Informação sobre estado do programa");
+                            m.setMessage("Verifica se o nome do provedor " + cmbDoctor.getText().trim() + " existe no OpenMRS.");
+                            m.open();
+
+                            return false;
+                        }
+
+                        try {
+                            strFacility.substring(21, 57);
+                        } catch (StringIndexOutOfBoundsException siobe) {
+                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                            m.setText("Informação sobre estado do programa");
+                            m.setMessage("Verifica se o nome da Unidade Sanitaria " + facility + " existe no OpenMRS.");
+                            m.open();
+                            return false;
+                        }
+
+                        if (StringUtils.isEmpty(regimenomeespecificado)) {
+                            MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                            m.setText("Informação sobre estado do programa");
+                            m.setMessage("Verifica a parametrização do uuid do regime " + cmbRegime.getText() + " na base de dados do iDART.");
+                            m.open();
+                            return false;
+                        }
+                    } else {
+                        getLog().error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return true;

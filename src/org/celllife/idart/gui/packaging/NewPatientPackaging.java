@@ -3448,7 +3448,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Map<Object, Integer> labelQuantities = new HashMap<Object, Integer>();
         try {
             ConexaoJDBC conn = new ConexaoJDBC();
-            if (conn.dispensadonoperiodo(allPackagedDrugsList.get(0).getPatientId())) {
+            if (conn.dispensadonoperiodo(allPackagedDrugsList.get(0).getPatientId()) && rdBtnTARVPrescription.getSelection()) {
                 log.trace("Num of Days: " + dias);
                 MessageBox mbox = new MessageBox(new Shell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
                 mbox.setText("Levantamento de ARVs");
@@ -3712,6 +3712,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private void checkARVStartDate() throws HibernateException {
         Patient pat = newPack.getPrescription().getPatient();
         if (PackageManager.getMostRecentARVPackage(getHSession(), pat) == null
+                && rdBtnTARVPrescription.getSelection()
                 && (pat.getAttributeByName(PatientAttribute.ARV_START_DATE)) == null && rdBtnDispenseNow.getSelection()
                 && (Episode.REASON_NEW_PATIENT
                 .equalsIgnoreCase(PatientManager.getMostRecentEpisode(pat).getStartReason()))) {
