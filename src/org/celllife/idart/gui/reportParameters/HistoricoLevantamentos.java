@@ -305,7 +305,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button Inicio
 		chkBtnInicio = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnInicio.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnInicio.setBounds(new Rectangle(10, 20, 100, 20));
+		chkBtnInicio.setBounds(new Rectangle(10, 20, 60, 20));
 		chkBtnInicio.setText("Início");
 		chkBtnInicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnInicio.setSelection(false);
@@ -313,7 +313,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button Alterar
 		chkBtnAlteraccao = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnAlteraccao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnAlteraccao.setBounds(new Rectangle(115, 20, 100, 20));
+		chkBtnAlteraccao.setBounds(new Rectangle(70, 20, 80, 20));
 		chkBtnAlteraccao.setText("Alteração");
 		chkBtnAlteraccao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnAlteraccao.setSelection(false);
@@ -322,7 +322,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  Manter
 		chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnManutencao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnManutencao.setBounds(new Rectangle(215, 20, 120, 20));
+		chkBtnManutencao.setBounds(new Rectangle(150, 20, 135, 20));
 		chkBtnManutencao.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Manutenção" : "Continua/Manutenção"));
 		chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnManutencao.setSelection(false);
@@ -330,7 +330,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button Re-Inicio
 		chkBtnReinicio = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnReinicio.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnReinicio.setBounds(new Rectangle(330, 20, 100, 20));
+		chkBtnReinicio.setBounds(new Rectangle(300, 20, 80, 20));
 		chkBtnReinicio.setText("Re-Inicio");
 		chkBtnReinicio.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnReinicio.setSelection(false);
@@ -339,7 +339,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  Transfere de
 		chkBtnTransfereDe = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnTransfereDe.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnTransfereDe.setBounds(new Rectangle(415, 20, 100, 20));
+		chkBtnTransfereDe.setBounds(new Rectangle(380, 20, 120, 20));
 		chkBtnTransfereDe.setText("Transferido De");
 		chkBtnTransfereDe.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnTransfereDe.setSelection(false);
@@ -348,7 +348,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  FIm
 		chkBtnFim = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnFim.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnFim.setBounds(new Rectangle(440 , 20, 100, 20));
+		chkBtnFim.setBounds(new Rectangle(390 , 20, 50, 20));
 		chkBtnFim.setText("Fim");
 		chkBtnFim.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnFim.setSelection(false);
