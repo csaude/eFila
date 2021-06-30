@@ -108,10 +108,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     private Button rdBtnDispenseNow;
     private Button rdBtnDispenseLater;
-    /*private Button rdBtnNoAppointmentDate;
+    private Button rdBtnNoAppointmentDate;
     private Button rdBtnYesAppointmentDate;
     private Button rdBtnPrintSummaryLabelNo;
-    private Button rdBtnPrintSummaryLabelYes;*/
+    private Button rdBtnPrintSummaryLabelYes;
     private Button rdBtnTARVPrescription;
     private Button rdBtnTBPrescription;
     private Button rdBtnPREPPrescription;
@@ -834,7 +834,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
      * @param parent Composite
      */
     private void createCompShowAppointmentOnLabels(Composite parent) {
-        /*Composite compShowAppointmentOnLabels = new Composite(parent, SWT.NONE);
+        Composite compShowAppointmentOnLabels = new Composite(parent, SWT.NONE);
         compShowAppointmentOnLabels.setLayout(null);
         compShowAppointmentOnLabels.setBounds(new Rectangle(400, 173, 110, 22));
 
@@ -854,7 +854,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         } else {
             rdBtnYesAppointmentDate.setSelection(false);
             rdBtnNoAppointmentDate.setSelection(false);
-        }*/
+        }
 
     }
 
@@ -1060,7 +1060,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         createPrescriptionInfoTable(compLastPackage);
 
 
-        /*Label lblSummaryLabel = new Label(compLastPackage, SWT.NONE);
+        Label lblSummaryLabel = new Label(compLastPackage, SWT.NONE);
         lblSummaryLabel.setBounds(new Rectangle(630, 177, 100, 18));
         lblSummaryLabel.setText("Leva Isoniazida?");
         lblSummaryLabel.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -1068,7 +1068,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Label lblAppointmentDate = new Label(compLastPackage, SWT.NONE);
         lblAppointmentDate.setBounds(new Rectangle(270, 177, 120, 15));
         lblAppointmentDate.setText("Leva Cotrimoxazol?");
-        lblAppointmentDate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));*/
+        lblAppointmentDate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         createCompShowAppointmentOnLabels(compLastPackage);
         createCompSummaryLabel(compLastPackage);
@@ -1203,7 +1203,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         compSummaryLabel.setLayout(null);
         compSummaryLabel.setBounds(new Rectangle(730, 173, 110, 21));
 
-        /*rdBtnPrintSummaryLabelYes = new Button(compSummaryLabel, SWT.RADIO);
+        rdBtnPrintSummaryLabelYes = new Button(compSummaryLabel, SWT.RADIO);
         rdBtnPrintSummaryLabelYes.setBounds(new Rectangle(5, 1, 49, 20));
         rdBtnPrintSummaryLabelYes.setText("Sim");
         rdBtnPrintSummaryLabelYes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -1219,7 +1219,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         } else {
             rdBtnPrintSummaryLabelYes.setSelection(false);
             rdBtnPrintSummaryLabelNo.setSelection(false);
-        }*/
+        }
     }
 
     @Override
@@ -2093,13 +2093,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         }
 
-        /*if (!iDartProperties.summaryLabelDefault) {
+        if (!iDartProperties.summaryLabelDefault) {
             rdBtnPrintSummaryLabelYes.setSelection(false);
             rdBtnPrintSummaryLabelNo.setSelection(true);
         } else {
             rdBtnPrintSummaryLabelYes.setSelection(false);
             rdBtnPrintSummaryLabelNo.setSelection(true);
-        }*/
+        }
 
         if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV)) {
             rdBtnTARVPrescription.setSelection(true);
@@ -2181,6 +2181,17 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (previousPack != null && rdBtnDispenseNow.getSelection()) {
                 pillCountTable.populateLastPackageDetails(previousPack, newPack.getPackDate());
             }
+
+
+            if(newPack.getPrescription().getReasonForUpdate().contains("Fim")){
+                btnNextAppDate.setEnabled(false);
+                btnNextAppDate.setVisible(false);
+                txtNextAppDate.setVisible(false);
+                lblNextAppointment.setVisible(false);
+            }else{
+                lblNextAppointment.setVisible(true);
+            }
+
 
             if (rdBtnDispenseNow.getSelection()) {
                 // Display the next appointment date if there is one,
@@ -2405,10 +2416,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (theForm.getFormLanguage1().equals("")) // is a cream, no amount
             // per time
             {
-                tableEntry[1] = theForm.getActionLanguage1() + " " + pd.getTimesPerDay() + " vezes por dia.";
+                tableEntry[1] = theForm.getActionLanguage1() + " " + pd.getTimesPerDay() + " vezes por "+pd.getTakePeriod();
             } else {
                 tableEntry[1] = theForm.getActionLanguage1() + " " + tempAmtPerTime + " " + theForm.getFormLanguage1()
-                        + " " + pd.getTimesPerDay() + " vezes por dia.";
+                        + " " + pd.getTimesPerDay() + " vezes por "+pd.getTakePeriod();
             }
             tableEntry[2] = "0";
             tableEntry[4] = "0";
@@ -2464,6 +2475,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
      * for a month. The default is one pack per month.
      */
     private void prepopulateQuantities() {
+
         if (localPharmacy == null) {
             getLog().warn("Tried to prepopulate quantities, but localPharmacy is null");
             return;
@@ -2498,9 +2510,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             int takePeriod = 1;
 
 
-            if (theDrug.getDefaultTakePeriod().startsWith("S")) {
+//            if (theDrug.getDefaultTakePeriod().startsWith("S")) {
+//                takePeriod = 7;
+//            } else if (theDrug.getDefaultTakePeriod().startsWith("M")) {
+//                takePeriod = 30;
+//            }
+
+            if (pd.getTakePeriod().startsWith("S")) {
                 takePeriod = 7;
-            } else if (theDrug.getDefaultTakePeriod().startsWith("M")) {
+            } else if (pd.getTakePeriod().startsWith("M")) {
                 takePeriod = 30;
             }
 
@@ -2657,17 +2675,17 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
             pillCountTable.getTable().setEnabled(false);
             // Disabling the label printing.
-            /*rdBtnYesAppointmentDate.setEnabled(true);
+            rdBtnYesAppointmentDate.setEnabled(true);
             rdBtnYesAppointmentDate.setSelection(false);
             rdBtnNoAppointmentDate.setEnabled(true);
-            rdBtnNoAppointmentDate.setSelection(false);*/
+            rdBtnNoAppointmentDate.setSelection(false);
         } else {
             if (previousPack != null) {
                 pillCountTable.getTable().setEnabled(true);
                 pillCountTable.populateLastPackageDetails(previousPack, newPack.getPackDate());
             }
             // Re-enabling the printing of the next appointment date.
-            /*if (iDartProperties.nextAppointmentDateOnLabels) {
+            if (iDartProperties.nextAppointmentDateOnLabels) {
                 rdBtnYesAppointmentDate.setEnabled(true);
                 rdBtnYesAppointmentDate.setSelection(false);
                 rdBtnNoAppointmentDate.setEnabled(true);
@@ -2677,7 +2695,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 rdBtnYesAppointmentDate.setSelection(false);
                 rdBtnNoAppointmentDate.setEnabled(true);
                 rdBtnNoAppointmentDate.setSelection(true);
-            }*/
+            }
 
         }
         setDateExpectedFields();
@@ -2749,7 +2767,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             pdi.setNotes(packageDrugInfo.getNotes());
             pdi.setPackageId(newPack.getPackageId());
 
-            /*if (rdBtnNoAppointmentDate.getSelection())
+            if (rdBtnNoAppointmentDate.getSelection())
                 pdi.setInhPickup(false);
             else
                 pdi.setInhPickup(true);
@@ -2757,7 +2775,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (rdBtnPrintSummaryLabelNo.getSelection())
                 pdi.setCtzPickup(false);
             else
-                pdi.setCtzPickup(true);*/
+                pdi.setCtzPickup(true);
 
         }
 
@@ -3208,6 +3226,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         if (rdBtnDispenseNow.getSelection()) {
 
+
             lblNextAppointment.setText("Próximo Levantamento:");
             btnNextAppDate.setEnabled(true);
             btnNextAppDate.setVisible(true);
@@ -3283,6 +3302,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
+
         Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
 
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
@@ -3294,6 +3314,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 btnNextAppDate.setText(sdf.format(dataproximolev));
                 btnNextAppDate.setEnabled(false);
             }
+        }
+
+        if(pre.getReasonForUpdate().contains("Fim")){
+            btnNextAppDate.setEnabled(false);
+            btnNextAppDate.setVisible(false);
+            txtNextAppDate.setVisible(false);
+            lblNextAppointment.setVisible(false);
+        }else{
+            lblNextAppointment.setVisible(true);
         }
 
     }
@@ -3419,7 +3448,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Map<Object, Integer> labelQuantities = new HashMap<Object, Integer>();
         try {
             ConexaoJDBC conn = new ConexaoJDBC();
-            if (conn.dispensadonoperiodo(allPackagedDrugsList.get(0).getPatientId())) {
+            if (conn.dispensadonoperiodo(allPackagedDrugsList.get(0).getPatientId()) && rdBtnTARVPrescription.getSelection()) {
                 log.trace("Num of Days: " + dias);
                 MessageBox mbox = new MessageBox(new Shell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
                 mbox.setText("Levantamento de ARVs");
@@ -3683,6 +3712,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private void checkARVStartDate() throws HibernateException {
         Patient pat = newPack.getPrescription().getPatient();
         if (PackageManager.getMostRecentARVPackage(getHSession(), pat) == null
+                && rdBtnTARVPrescription.getSelection()
                 && (pat.getAttributeByName(PatientAttribute.ARV_START_DATE)) == null && rdBtnDispenseNow.getSelection()
                 && (Episode.REASON_NEW_PATIENT
                 .equalsIgnoreCase(PatientManager.getMostRecentEpisode(pat).getStartReason()))) {
