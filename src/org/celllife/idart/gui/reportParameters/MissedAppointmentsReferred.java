@@ -305,14 +305,6 @@ public class MissedAppointmentsReferred extends GenericReportGui {
         int max = 0;
         int min = 0;
 
-        if (cmbClinic.getText().equals("")) {
-            MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            missing.setText("Nenhuma US selecionada");
-            missing.setMessage("Nenhuma US selecionada. Por favor selecione a Unidade Sanitaria.");
-            missing.open();
-            viewReport = false;
-        }
-
 
         if (txtMinimumDaysLate.getText().equals("") || txtMaximumDaysLate.getText().equals("")) {
             MessageBox incorrectData = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
