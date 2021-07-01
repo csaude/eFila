@@ -2634,7 +2634,6 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 }
             }
             return submitForm();
-          //  return true;
         } else {
             // if validation fails or the user chooses not to save, replace
             // the current localPatient, which
