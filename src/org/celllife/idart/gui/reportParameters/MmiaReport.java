@@ -71,6 +71,8 @@ public class MmiaReport extends GenericReportGui {
 	private Shell parent;
 
 	private String diseaseType;
+	private final String title;
+
 	/**
 	 * Constructor
 	 *
@@ -83,6 +85,11 @@ public class MmiaReport extends GenericReportGui {
 		super(parent, REPORTTYPE_MIA, activate);
 		this.parent = parent;
 		this.diseaseType = diseaseType;
+
+		if (this.diseaseType.equalsIgnoreCase("ARV"))
+			title = REPORT_MIA;
+		else
+			title = REPORT_MIA_TB;
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class MmiaReport extends GenericReportGui {
 	@Override
 	protected void createShell() {
 		Rectangle bounds = new Rectangle(100, 50, 600, 510);
-		buildShell(REPORT_MIA, bounds);
+		buildShell(title, bounds);
 		// create the composites
 		createMyGroups();
 	}
@@ -108,7 +115,7 @@ public class MmiaReport extends GenericReportGui {
 	@Override
 	protected void createCompHeader() {
 		iDartImage icoImage = iDartImage.REPORT_STOCKCONTROLPERCLINIC;
-		buildCompdHeader(" MM TB", icoImage);
+		buildCompdHeader(title, icoImage);
 	}
 
 	/**
