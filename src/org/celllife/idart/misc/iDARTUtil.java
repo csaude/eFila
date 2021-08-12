@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.celllife.idart.commonobjects.JdbcProperties;
 import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.gui.welcome.GenericWelcome;
 import org.eclipse.swt.SWT;
@@ -590,6 +591,14 @@ public class iDARTUtil {
 
 	public static boolean stringHasValue(String string){
 		return string != null && !string.isEmpty() && string.length() > 0;
+	}
+
+	public static boolean is1XOpenMRS(String openMRSVersion){
+		return openMRSVersion.equalsIgnoreCase("1.x");
+	}
+
+	public static boolean is2XOpenMRS(String openMRSVersion){
+		return openMRSVersion.equalsIgnoreCase("2.x");
 	}
 
 }

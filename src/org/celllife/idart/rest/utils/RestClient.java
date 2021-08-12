@@ -197,8 +197,14 @@ public class RestClient {
                     tipoDispensa = iDartProperties.FILT_QUARTERLY_DISPENSED_TYPE_UUID;
                 else if (prescription.getDispensaSemestral() == 1)
                     tipoDispensa = iDartProperties.FILT_SEMESTRAL_DISPENSED_TYPE_UUID;
-                else
-                    tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID;
+                else {
+                    if (iDARTUtil.is1XOpenMRS(prop.getProperty("openMRSVersion"))){
+                        tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID_1X;
+                    }else {
+                        tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID_2X;
+                    }
+                }
+
 
                 if (prescription.getReasonForUpdate().startsWith("I"))
                     tipoPrescricao = iDartProperties.FILT_TPT_INITIAL_FOLLOW_UP_UUID;

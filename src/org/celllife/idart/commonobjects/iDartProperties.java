@@ -71,7 +71,9 @@ public class iDartProperties {
 
 	public static final String FILT_NEXT_APOINTMENT_UUID = "b7c246bc-f2b6-49e5-9325-911cdca7a8b3";
 
-	public static final String FILT_MONTHLY_DISPENSED_TYPE_UUID = "e1d848f8-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_MONTHLY_DISPENSED_TYPE_UUID_1X = "e1d848f8-1d5f-11e0-b929-000c29ad1d07";
+	public static final String FILT_MONTHLY_DISPENSED_TYPE_UUID_2X = "1098AAAAAAAAAAAAAAAAAAAAAAAAA";
+
 	public static final String FILT_QUARTERLY_DISPENSED_TYPE_UUID = "f53848d5-3521-4cc8-ac72-d63adef281a1";
 	public static final String FILT_SEMESTRAL_DISPENSED_TYPE_UUID = "3069be5c-cd02-4ddb-aa1f-bdd71d3dd6be";
 

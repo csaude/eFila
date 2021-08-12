@@ -27,6 +27,8 @@ public class JdbcProperties {
 
     public static String hibernateOpenMRSDatabase = "opemrs";
 
+    public static String openMRSVersion = "1.x";
+
     public static String hibernateOpenMRSDriver = "com.mysql.jdbc.Drive";
 
     public static String hibernateOpenMRSDialect = "org.hibernate.dialect.MySQLDialect";
@@ -61,6 +63,7 @@ public class JdbcProperties {
         urlBase = setStringProperty("urlBase");
         urlBaseReportingRest = setStringProperty("urlBaseReportingRest");
         location = setStringProperty("location");
+        openMRSVersion = setStringProperty("openMRSVersion");
         hibernateOpenMRSConnectionUrl = setStringProperty("hibernateOpenMRSConnectionUrl");
         hibernateOpenMRSPassword = setStringProperty("hibernateOpenMRSPassword");
         hibernateOpenMRSUsername = setStringProperty("hibernateOpenMRSUsername");
@@ -80,6 +83,8 @@ public class JdbcProperties {
         sb.append("urlBaseReportingRest=" + urlBaseReportingRest);
         sb.append("\n");
         sb.append("location=" + location);
+        sb.append("\n");
+        sb.append("openMRSVersion=" + openMRSVersion);
         sb.append("\n");
         sb.append("hibernateOpenMRSConnectionUrl=" + hibernateOpenMRSConnectionUrl);
         sb.append("\n");
