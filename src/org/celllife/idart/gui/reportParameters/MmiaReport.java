@@ -192,6 +192,7 @@ public class MmiaReport extends GenericReportGui {
 		Calendar rightNow = Calendar.getInstance();
 		int currentYear = rightNow.get(Calendar.YEAR);
 		for (int i = currentYear - 2; i <= currentYear + 1; i++) {
+			System.out.println(i);
 			this.cmbYear.add(Integer.toString(i));
 		}
 		cmbYear.setText(String.valueOf(Calendar.getInstance()

@@ -987,7 +987,31 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
 
             title = Messages.getString("Sexo vazio"); //$NON-NLS-1$
             message = Messages.getString("Seleccione o sexo do paciente"); //$NON-NLS-1$
-            txtPatientId.setFocus();
+            cmbSex.setFocus();
+            result = false;
+        }
+
+        if (cmbDOBYear.getText().trim().isEmpty()) { //$NON-NLS-1$
+
+            title = Messages.getString("Ano de Nascimento vazio"); //$NON-NLS-1$
+            message = Messages.getString("Seleccione o ano de Nasciemnto"); //$NON-NLS-1$
+            cmbDOBYear.setFocus();
+            result = false;
+        }
+
+        if (cmbDOBMonth.getText().trim().isEmpty()) { //$NON-NLS-1$
+
+            title = Messages.getString("Mês de Nascimento vazio"); //$NON-NLS-1$
+            message = Messages.getString("Seleccione o mês de Nasciemnto"); //$NON-NLS-1$
+            cmbDOBMonth.setFocus();
+            result = false;
+        }
+
+        if (cmbDOBDay.getText().trim().isEmpty()) { //$NON-NLS-1$
+
+            title = Messages.getString("Dia de Nascimento vazio"); //$NON-NLS-1$
+            message = Messages.getString("Seleccione o dia de Nasciemnto"); //$NON-NLS-1$
+            cmbDOBDay.setFocus();
             result = false;
         }
 

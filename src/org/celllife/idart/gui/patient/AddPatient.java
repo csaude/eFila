@@ -624,7 +624,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         btnPatientHistoryReport = new Button(grpParticulars, SWT.NONE);
         btnPatientHistoryReport.setBounds(new Rectangle(260, 115, 40, 40));
         btnPatientHistoryReport.setEnabled(false);
-                btnPatientHistoryReport
+        btnPatientHistoryReport
                 .setToolTipText(Messages.getString("patient.button.report.tooltip")); //$NON-NLS-1$
         btnPatientHistoryReport.setImage(ResourceUtils
                 .getImage(iDartImage.REPORT_PATIENTHISTORY_30X26));
@@ -1010,8 +1010,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                             assert currentUser != null;
                             if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                            restClient = new RestClient();
-                            String patientId = txtPatientId.getText().toUpperCase().trim();
+                                restClient = new RestClient();
+                                String patientId = txtPatientId.getText().toUpperCase().trim();
 
                                 //Verificar se o NID existe no OpenMRS
                                 String openMrsResource = restClient.getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(patientId, " ", "%20"));
@@ -1022,8 +1022,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                     txtPatientId.setFocus();
                                     result = false;
                                 }
-                            }else {
-                                log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está em funcionamento.");
+                            } else {
+                                log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está em funcionamento.");
                             }
                         }
                     }
@@ -1197,25 +1197,25 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                             assert currentUser != null;
                             if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                            restClient = new RestClient();
-                            String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + txtOpenmrsuuid.getText());
-                            if (nidvoided != null) {
+                                restClient = new RestClient();
+                                String nidvoided = restClient.getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + txtOpenmrsuuid.getText());
+                                if (nidvoided != null) {
 
-                                JSONObject jsonObjectPerson = new JSONObject(nidvoided);
-                                Boolean voided = (Boolean) jsonObjectPerson.get("voided");
+                                    JSONObject jsonObjectPerson = new JSONObject(nidvoided);
+                                    Boolean voided = (Boolean) jsonObjectPerson.get("voided");
 
-                                if (voided) {
-                                    title = Messages.getString("UUID Inanctivo no OpenMRS"); //$NON-NLS-1$
-                                    message = Messages.getString("O UUID introduzido esta no estado incativo no openmrs, por favor contacte o administrador."); //$NON-NLS-1$
+                                    if (voided) {
+                                        title = Messages.getString("UUID Inanctivo no OpenMRS"); //$NON-NLS-1$
+                                        message = Messages.getString("O UUID introduzido esta no estado incativo no openmrs, por favor contacte o administrador."); //$NON-NLS-1$
+                                        result = false;
+                                    }
+                                } else {
+                                    title = Messages.getString("UUID não existe no OpenMRS"); //$NON-NLS-1$
+                                    message = Messages.getString("O UUID introduzido não existe no openmrs, por favor introduza um UUID válido ou contacte o administrador."); //$NON-NLS-1$
                                     result = false;
                                 }
                             } else {
-                                title = Messages.getString("UUID não existe no OpenMRS"); //$NON-NLS-1$
-                                message = Messages.getString("O UUID introduzido não existe no openmrs, por favor introduza um UUID válido ou contacte o administrador."); //$NON-NLS-1$
-                                result = false;
-                            }
-                            }else {
-                                log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                                log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                             }
                         }
                     } catch (IOException e) {
@@ -1303,60 +1303,60 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
                                     //Preparar Prim.Nomes, Apelido e Data de Nascimento apartir do NID usando REST WEB SERVICES
 
-                                String nid = txtPatientId.getText().toUpperCase().trim();
+                                    String nid = txtPatientId.getText().toUpperCase().trim();
 
-                                String resource = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
+                                    String resource = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PATIENT + StringUtils.replace(nid, " ", "%20"));
 
-                                String personUuid = (resource.length() > 21) ? resource.substring(21, 57) : "";
+                                    String personUuid = (resource.length() > 21) ? resource.substring(21, 57) : "";
 
-                                String personDemografics = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + personUuid);
+                                    String personDemografics = new RestClient().getOpenMRSResource(iDartProperties.REST_GET_PERSON_GENERIC + personUuid);
 
-                                JSONObject jsonObject = new org.json.JSONObject(personDemografics);
+                                    JSONObject jsonObject = new org.json.JSONObject(personDemografics);
 
-                                String fullName = jsonObject.getJSONObject("preferredName").getString("display").replace("\r", "").replace("\n", "");
+                                    String fullName = jsonObject.getJSONObject("preferredName").getString("display").replace("\r", "").replace("\n", "");
 
-                                String[] names = fullName.trim().split(" ");
+                                    String[] names = fullName.trim().split(" ");
 
 //               log.trace(names[0]);
 //               log.trace(names[names.length - 1]);
 
-                                txtFirstNames.setText(fullName.replace(names[names.length - 1], ""));//Primeiros nomes
-                                localPatient.setFirstNames(txtFirstNames.getText());//Primeiros nomes
+                                    txtFirstNames.setText(fullName.replace(names[names.length - 1], ""));//Primeiros nomes
+                                    localPatient.setFirstNames(txtFirstNames.getText());//Primeiros nomes
 
-                                txtSurname.setText(names[names.length - 1]);//Apelido
-                                localPatient.setLastname(txtSurname.getText());//Apelido
+                                    txtSurname.setText(names[names.length - 1]);//Apelido
+                                    localPatient.setLastname(txtSurname.getText());//Apelido
 
-                                String gender = jsonObject.getString("gender").trim();
+                                    String gender = jsonObject.getString("gender").trim();
 
-                                if (gender.toUpperCase().startsWith("F")) {
-                                    cmbSex.setText(Messages.getString("patient.sex.female")); //$NON-NLS-1$
-                                } else if (gender.toUpperCase().startsWith("M")) {
-                                    cmbSex.setText(Messages.getString("patient.sex.male")); //$NON-NLS-1$
-                                }
+                                    if (gender.toUpperCase().startsWith("F")) {
+                                        cmbSex.setText(Messages.getString("patient.sex.female")); //$NON-NLS-1$
+                                    } else if (gender.toUpperCase().startsWith("M")) {
+                                        cmbSex.setText(Messages.getString("patient.sex.male")); //$NON-NLS-1$
+                                    }
 
-                                localPatient.setSex(cmbSex.getText().charAt(0));
-                                txtOpenmrsuuid.setText(localPatient.getUuidopenmrs());
+                                    localPatient.setSex(cmbSex.getText().charAt(0));
+                                    txtOpenmrsuuid.setText(localPatient.getUuidopenmrs());
 
-                                String birthDate = jsonObject.getString("birthdate").trim();
+                                    String birthDate = jsonObject.getString("birthdate").trim();
 
-                                String year = birthDate.substring(0, 4);
-                                String month = new DateFormatSymbols(Locale.ENGLISH).getMonths()[Integer.valueOf(birthDate.substring(5, 7)) - 1];
-                                Integer day = Integer.valueOf(birthDate.substring(8, 10));
+                                    String year = birthDate.substring(0, 4);
+                                    String month = new DateFormatSymbols(Locale.ENGLISH).getMonths()[Integer.valueOf(birthDate.substring(5, 7)) - 1];
+                                    Integer day = Integer.valueOf(birthDate.substring(8, 10));
 
-                                SimpleDateFormat sdf = new SimpleDateFormat("d-MMMM-yyyy", Locale.ENGLISH);
-                                theDate = null;//Data de Nascimento
-                                try {
-                                    theDate = sdf.parse(day.toString() + "-" + month + "-" + year);
-                                } catch (ParseException e1) {
-                                    getLog().error("Error parsing date: ", e1);
-                                }
+                                    SimpleDateFormat sdf = new SimpleDateFormat("d-MMMM-yyyy", Locale.ENGLISH);
+                                    theDate = null;//Data de Nascimento
+                                    try {
+                                        theDate = sdf.parse(day.toString() + "-" + month + "-" + year);
+                                    } catch (ParseException e1) {
+                                        getLog().error("Error parsing date: ", e1);
+                                    }
 
-                                cmbDOBDay.setText(day.toString());
-                                cmbDOBMonth.setText(month);
-                                cmbDOBYear.setText(year);
-                                localPatient.setDateOfBirth(theDate);
-                                }else {
-                                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                                    cmbDOBDay.setText(day.toString());
+                                    cmbDOBMonth.setText(month);
+                                    cmbDOBYear.setText(year);
+                                    localPatient.setDateOfBirth(theDate);
+                                } else {
+                                    log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                                 }
                             }
                         } catch (IOException e) {
@@ -1629,23 +1629,23 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         assert currentUser != null;
                         if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                        if (localPatient.getUuidopenmrs() == null) {
-                            String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
+                            if (localPatient.getUuidopenmrs() == null) {
+                                String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
 
-                            JSONObject _jsonObject = new JSONObject(openMrsResource);
+                                JSONObject _jsonObject = new JSONObject(openMrsResource);
 
-                            String personUuid = null;
+                                String personUuid = null;
 
-                            JSONArray _jsonArray = (JSONArray) _jsonObject.get("results");
+                                JSONArray _jsonArray = (JSONArray) _jsonObject.get("results");
 
-                            for (int i = 0; i < _jsonArray.length(); i++) {
-                                JSONObject results = (JSONObject) _jsonArray.get(i);
-                                personUuid = (String) results.get("uuid");
+                                for (int i = 0; i < _jsonArray.length(); i++) {
+                                    JSONObject results = (JSONObject) _jsonArray.get(i);
+                                    personUuid = (String) results.get("uuid");
+                                }
+                                localPatient.setUuidopenmrs(personUuid);
                             }
-                            localPatient.setUuidopenmrs(personUuid);
-                        }
-                        }else {
-                            log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                        } else {
+                            log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                         }
                     }
                 } catch (IOException e) {
@@ -1706,12 +1706,12 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         if (localPatient.getMostRecentEpisode() != null) {
             if (localPatient.getMostRecentEpisode().getStartReason().contains("Voltou da Refer")) {
 
-                List<SyncEpisode> syncEpisodeList = EpisodeManager.getAllSyncTempEpiReadyToSendForPacient(getHSession(),localPatient);
+                List<SyncEpisode> syncEpisodeList = EpisodeManager.getAllSyncTempEpiReadyToSendForPacient(getHSession(), localPatient);
 
-                if(syncEpisodeList.isEmpty()) {
+                if (syncEpisodeList.isEmpty()) {
                     SyncEpisode syncEpisode = SyncEpisode.generateFromEpisode(localPatient.getMostRecentEpisode(), localPatient.getCurrentClinic(), AdministrationManager.getMainClinic(getHSession()).getUuid());
                     EpisodeManager.saveSyncTempEpisode(syncEpisode);
-                }else{
+                } else {
                     MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
                             | SWT.OK);
                     missing.setText("Este paciente ja voltou da referência.");
@@ -2570,18 +2570,18 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         assert currentUser != null;
                         if (ApiAuthRest.loginOpenMRS(currentUser)) {
 
-                        String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
+                            String openMrsResource = new RestClient().getOpenMRSResource("patient?q=" + StringUtils.replace(txtPatientId.getText().trim(), " ", "%20"));
 
-                        if (openMrsResource.length() == 14) {
-                            MessageBox mb = new MessageBox(getShell());
-                            mb.setText("Informação não encontrada"); //$NON-NLS-1$
-                            mb.setMessage("NID inserido não existe no OpenMRS"); //$NON-NLS-1$
-                            mb.open();
-                            txtPatientId.setFocus();
-                            return false;
-                        }
-                        }else {
-                            log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
+                            if (openMrsResource.length() == 14) {
+                                MessageBox mb = new MessageBox(getShell());
+                                mb.setText("Informação não encontrada"); //$NON-NLS-1$
+                                mb.setMessage("NID inserido não existe no OpenMRS"); //$NON-NLS-1$
+                                mb.open();
+                                txtPatientId.setFocus();
+                                return false;
+                            }
+                        } else {
+                            log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não está  em funcionamento.");
                         }
                     }
                 } catch (IOException e) {
@@ -2606,31 +2606,65 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                 }
             } else {
                 if (oldPatient != null) {
-                    List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
                     if (!oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
                         // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
                         List<PackageDrugInfo> pdiList = TemporaryRecordsManager.getOpenmrsUnsubmittedPackageDrugInfos(getHSession(), oldPatient);
                         if (!pdiList.isEmpty())
                             TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, localPatient);
-
-                        if (!syncOpenmrsDispenseList.isEmpty()){
-                            for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
-                                stp.setNid(localPatient.getPatientId());
-                                PrescriptionManager.setUpdatedPatientNidSyncOpenmrsPatienFila(getHSession(), stp);
-                            }
-                        }
                     }
+
                     if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
+                        if (!oldPatient.getUuidopenmrs().trim().isEmpty()) {
+                            if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs()) || !oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
+                                List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
 
-                        if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs())) {
-                            // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
-                            if (!syncOpenmrsDispenseList.isEmpty())
-                                for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
-                                    stp.setUuid(localPatient.getUuidopenmrs());
-                                    PrescriptionManager.setUUIDSyncOpenmrsPatienFila(getHSession(), stp);
+                                if (!syncOpenmrsDispenseList.isEmpty()) {
+                                    for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
+                                        stp.setNid(localPatient.getPatientId());
+                                        stp.setUuid(localPatient.getUuidopenmrs());
+                                        PrescriptionManager.setUpdatedPatientNidSyncOpenmrsPatienFila(getHSession(), stp);
+                                    }
                                 }
+
+                                SyncTempPatient syncTempPatient = AdministrationManager.getSyncTempPatienByUuid(getHSession(), oldPatient.getUuidopenmrs());
+
+                                if(syncTempPatient != null) {
+                                    syncTempPatient.setPatientid(localPatient.getPatientId());
+                                    syncTempPatient.setUuid(localPatient.getUuidopenmrs());
+                                    syncTempPatient.setCellphone(localPatient.getCellphone());
+                                    AdministrationManager.saveSyncTempPatient(getHSession(), syncTempPatient);
+                                }
+
+                                List<SyncTempDispense> syncTempDispensesList = AdministrationManager.getAllSyncTempDispenseByuuid(getHSession(), oldPatient.getUuidopenmrs());
+
+                                if(!syncTempDispensesList.isEmpty()){
+                                    for( SyncTempDispense std: syncTempDispensesList){
+                                        std.setUuidopenmrs(localPatient.getUuidopenmrs());
+                                        std.setPatientid(localPatient.getPatientId());
+                                        AdministrationManager.saveSyncTempDispense(getHSession(),std);
+                                    }
+                                }
+
+                            }
+                        } else {
+                            MessageBox msgbox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK | SWT.PRIMARY_MODAL);
+                            msgbox.setText(Messages.getString("Paciente sem uuid")); //$NON-NLS-1$
+                            msgbox.setMessage(Messages.getString("Paciente sem uuid, por favor actualize os dados do Paciente")); //$NON-NLS-1$
+                            msgbox.open();
                         }
                     }
+
+//                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
+//
+//                        if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs())) {
+//                            // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch
+//                            if (!syncOpenmrsDispenseList.isEmpty())
+//                                for (SyncOpenmrsDispense stp : syncOpenmrsDispenseList) {
+//                                    stp.setUuid(localPatient.getUuidopenmrs());
+//                                    PrescriptionManager.setUUIDSyncOpenmrsPatienFila(getHSession(), stp);
+//                                }
+//                        }
+//                    }
                 }
             }
             return submitForm();

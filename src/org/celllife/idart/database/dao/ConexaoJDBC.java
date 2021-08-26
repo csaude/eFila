@@ -6287,6 +6287,95 @@ public class ConexaoJDBC {
 
     }
 
+    public List<MissedAppointmentsReportReferredXLS> getReferredMissedAppointment(String minDays, String maxDays, Date date, String clinicid) {
+
+        List<MissedAppointmentsReportReferredXLS> missedAppointmentsReportReferredXLS = new ArrayList<MissedAppointmentsReportReferredXLS>();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        String data = dateFormat.format(date);
+
+        try {
+            conecta(iDartProperties.hibernateUsername,
+                    iDartProperties.hibernatePassword);
+
+            String query = "select " +
+                    "pat.patientid as patID, " +
+                    "(pat.lastname||', '|| pat.firstnames) as name, " +
+                    " pat.nextofkinname as supportername, " +
+                    "pat.nextofkinphone as supporterphone, " +
+                    "pat.cellphone as cellno, " +
+                    "cl.clinicname as nomefarmacia, " +
+                    "date_part('year',age(pat.dateofbirth)) as age, " +
+                    "app.appointmentDate::date as dateexpected, " +
+                    "('" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
+                    "CASE " +
+                    "    WHEN (('" + data + "'::date-app.appointmentDate::date) > 59 AND app.visitdate::date IS NULL) THEN (app.appointmentDate::date + INTERVAL '60 days') " +
+                    "    ELSE " +
+                    " CASE " +
+                    "     WHEN ((app.appointmentDate::date - app.visitdate::date) > 60) THEN (app.appointmentDate::date + INTERVAL '60 days') " +
+                    "              ELSE null " +
+                    "     END " +
+                    "END " +
+                    "  AS datelostfollowup, " +
+                    "  CASE " +
+                    "    WHEN (app.visitdate::date - app.appointmentdate::date) > 0 THEN app.visitdate::date " +
+                    "    ELSE null " +
+                    "  END " +
+                    "  AS datereturn, " +
+                    "max(app.appointmentDate) as ultimaData " +
+                    "from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt,clinic as cl " +
+                    "where app.patient = pat.id " +
+                    "and idt.name = 'NID' " +
+                    "and pi.value = pat.patientid " +
+                    "and idt.id = pi.type_id " +
+                    "and cl.id=pat.clinic " +
+                    "and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null ) " +
+                    "and ('" + data + "'::date - app.appointmentDate::date) between " + minDays + " and " + maxDays + " " +
+                    "and exists (select prescription.id " +
+                    "from prescription " +
+                    "where prescription.patient = pat.id " +
+                    "and (('" + data + "' between prescription.date and prescription.endDate)or(('" + data + "' > prescription.date)) and (prescription.endDate is null))) " +
+                    "and exists (select id from episode where episode.patient = pat.id " +
+                    "and (('" + data + "' between episode.startdate and episode.stopdate)or(('" + data + "' > episode.startdate)) and (episode.stopdate is null))) " +
+                    "and cl.mainclinic=false " +
+                    "and app.visitdate is null " +
+                    "group by 1,2,3,4,5,6,7,8,9,10,11 " +
+                    "order by patID asc";
+
+
+            ResultSet rs = st.executeQuery(query);
+
+            if (rs != null) {
+
+                while (rs.next()) {
+                    MissedAppointmentsReportReferredXLS referredXLS = new MissedAppointmentsReportReferredXLS();
+                    referredXLS.setPatientIdentifier(rs.getString("patID"));
+                    referredXLS.setNome(rs.getString("name"));
+                    referredXLS.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
+                    referredXLS.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
+                    referredXLS.setDataRegressoUnidadeSanitaria(rs.getString("datereturn"));
+                    referredXLS.setDataRegressoUnidadeSanitaria(rs.getString("nomefarmacia"));
+                    referredXLS.setContacto(rs.getString("cellno"));
+
+                    missedAppointmentsReportReferredXLS.add(referredXLS);
+                }
+                rs.close();
+            }
+
+            st.close();
+            conn_db.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return missedAppointmentsReportReferredXLS;
+
+    }
+
     public void UpdateDatabase() throws SQLException {
         String s = new String();
         StringBuffer sb = new StringBuffer();

@@ -840,7 +840,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
             temp[3] = tempAmtPerTime;
             temp[4] = theForm.getFormLanguage1();
             temp[5] = String.valueOf(rd.getTimesPerDay());
-            temp[6] = Messages.getString("adddruggroup.drug.times"); //$NON-NLS-1$
+            temp[6] = "Vezes por "+theDrug.getDefaultTakePeriod();
 
             ti.setText(temp);
             ti.setData(rd);

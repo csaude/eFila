@@ -1785,7 +1785,7 @@ public class AdministrationManager {
 
     }
 
-    // Devolve a lista de todos pacientes referidos por uuid
+    // Devolve a lista de dispensa de pacientes referidos por id
     public static SyncTempDispense getSyncTempDispenseById(Session sess, int id) throws HibernateException {
 
         SyncTempDispense result;
@@ -1797,6 +1797,15 @@ public class AdministrationManager {
         else
             result = (SyncTempDispense) dispenses.get(0);
 
+        return result;
+
+    }
+
+    // Devolve a lista de dispensa de pacientes referidos por id
+    public static List<SyncTempDispense> getAllSyncTempDispenseByuuid(Session sess, String uuid) throws HibernateException {
+
+        List  result;
+        result = sess.createQuery("from SyncTempDispense sync where sync.uuidopenmrs = '" + uuid + "'").list();
         return result;
 
     }
