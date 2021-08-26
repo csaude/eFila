@@ -151,8 +151,8 @@ GenericFormGuiInterface {
 		// this component since the screen rebuilds this component all the time.
 		if (lblHeader == null) {
 			lblHeader = new Label(getCompHeader(), SWT.CENTER | SWT.SHADOW_IN);
-			lblHeader.setBackground(ResourceUtils
-					.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+			lblHeader.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//			lblHeader.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 			lblHeader.setFont(ResourceUtils.getFont(iDartFont.VERASANS_14));
 		}
 		lblHeader.setText(headerTxt);
@@ -178,8 +178,8 @@ GenericFormGuiInterface {
 
 		// lblBackGround
 		Label lblBg = new Label(getCompHeader(), SWT.NONE | SWT.SHADOW_IN);
-		lblBg.setBackground(ResourceUtils
-				.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+		lblBg.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//		lblBg.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 		fdata = new FormData();
 		fdata.left = new FormAttachment(lblHeader, -6, SWT.LEFT);
 		fdata.top = new FormAttachment(lblHeader, -6, SWT.TOP);

@@ -74,6 +74,8 @@ UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigore
 UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
 UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
+UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
 UPDATE identifiertype set name = 'NID CCR' where index = 4;
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';

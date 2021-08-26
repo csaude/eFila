@@ -391,8 +391,8 @@ public class TemporaryRecordsManager {
     @SuppressWarnings("unchecked")
     public static List<PackageDrugInfo> getOpenmrsUnsubmittedPackageDrugInfos(
             Session sess, Patient pat) throws HibernateException {
-        String query = "from PackageDrugInfo as pd where pd.notes = ''  "
-                + "and pd.patientId = '" + pat.getPatientId() + "'";
+        String query = "from PackageDrugInfo as pd where "
+                + " pd.patientId = '" + pat.getPatientId() + "'";
 
         List<PackageDrugInfo> pdiList = sess
                 .createQuery(query).list();

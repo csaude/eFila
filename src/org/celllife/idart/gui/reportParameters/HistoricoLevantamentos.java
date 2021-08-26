@@ -322,7 +322,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  Manter
 		chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnManutencao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnManutencao.setBounds(new Rectangle(150, 20, 135, 20));
+		chkBtnManutencao.setBounds(new Rectangle(140, 20, 120, 20));
 		chkBtnManutencao.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Manutenção" : "Continua/Manutenção"));
 		chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnManutencao.setSelection(false);
@@ -339,7 +339,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  Transfere de
 		chkBtnTransfereDe = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnTransfereDe.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnTransfereDe.setBounds(new Rectangle(380, 20, 120, 20));
+		chkBtnTransfereDe.setBounds(new Rectangle(400, 20, 120, 20));
 		chkBtnTransfereDe.setText("Transferido De");
 		chkBtnTransfereDe.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnTransfereDe.setSelection(false);

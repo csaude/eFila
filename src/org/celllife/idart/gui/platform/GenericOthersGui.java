@@ -95,8 +95,8 @@ public abstract class GenericOthersGui extends GenericGui {
 
 		// lblHeader
 		lblHeader = new Label(compHeader, SWT.CENTER | SWT.SHADOW_IN);
-		lblHeader.setBackground(ResourceUtils
-				.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+		lblHeader.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//		lblHeader.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 		lblHeader.setFont(ResourceUtils.getFont(iDartFont.VERASANS_14));
 		lblHeader.setText(txt);
 		lblHeader.setLayoutData(fd);
@@ -122,8 +122,8 @@ public abstract class GenericOthersGui extends GenericGui {
 
 		// lblBackGround
 		lblBg = new Label(getCompHeader(), SWT.NONE | SWT.SHADOW_IN);
-		lblBg.setBackground(ResourceUtils
-				.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+		lblBg.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//		lblBg.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 		lblBg.setLayoutData(fd);
 
 		getCompHeader().pack();

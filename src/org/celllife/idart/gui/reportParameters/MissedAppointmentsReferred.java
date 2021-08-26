@@ -1,6 +1,7 @@
 package org.celllife.idart.gui.reportParameters;
 
 import model.manager.AdministrationManager;
+import model.manager.reports.MissedAppointmentsReport;
 import model.manager.reports.MissedAppointmentsReportNew;
 import model.manager.reports.MissedAppointmentsReportReferred;
 import org.apache.log4j.Logger;
@@ -353,9 +354,9 @@ public class MissedAppointmentsReferred extends GenericReportGui {
         }
 
         if (viewReport) {
-            String	reportNameFile = "Reports/FaltosoLevantamentoARV.xls";
+            String	reportNameFile = "Reports/ReferidosFaltosoLevantamentoARV.xls";
             try {
-                MissedAppointmentsNewExcel op = new MissedAppointmentsNewExcel(swtCal, parent, reportNameFile, txtMinimumDaysLate.getText(), txtMaximumDaysLate.getText());
+                MissedAppointmentsReferredExcel op = new MissedAppointmentsReferredExcel(swtCal, parent, reportNameFile, txtMinimumDaysLate.getText(), txtMaximumDaysLate.getText());
                 new ProgressMonitorDialog(parent).run(true, true, op);
 
                 if (op.getList() == null ||

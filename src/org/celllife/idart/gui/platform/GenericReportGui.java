@@ -124,7 +124,7 @@ public abstract class GenericReportGui extends GenericGui implements GenericRepo
 	/**
 	 * Method buildShell.
 	 * 
-	 * @param shellTxt
+	 * @param shellTitle
 	 *            String
 	 * @param bounds
 	 *            Rectangle
@@ -166,8 +166,8 @@ public abstract class GenericReportGui extends GenericGui implements GenericRepo
 
 		// lblHeader
 		lblHeader = new Label(getCompHeader(), SWT.CENTER | SWT.SHADOW_IN);
-		lblHeader.setBackground(ResourceUtils
-				.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+		lblHeader.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//		lblHeader.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 		lblHeader.setFont(ResourceUtils.getFont(iDartFont.VERASANS_14));
 		lblHeader.setText(headerTxt.replaceAll("&", "&&"));
 
@@ -188,8 +188,8 @@ public abstract class GenericReportGui extends GenericGui implements GenericRepo
 
 		// lblBackGround
 		Label lblBg = new Label(getCompHeader(), SWT.NONE | SWT.SHADOW_IN);
-		lblBg.setBackground(ResourceUtils
-				.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
+		lblBg.setBackground(ResourceUtils.getColor(iDartColor.GRAY));
+//		lblBg.setBackground(ResourceUtils.getColor(iDartColor.WIDGET_NORMAL_SHADOW_BACKGROUND));
 		fdata = new FormData();
 		fdata.left = new FormAttachment(lblHeader, -5, SWT.LEFT);
 		fdata.top = new FormAttachment(lblHeader, -5, SWT.TOP);
