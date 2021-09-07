@@ -164,7 +164,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 			}
 		}else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
 			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection()  &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
-				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TPT","Seleccione pelo menos um tipo TPT.");
 				return;
 
 			}
@@ -219,7 +219,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 			}
 		}else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
 			if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
-				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+				showMessage(MessageDialog.ERROR, "Seleccionar Tipo TPT","Seleccione pelo menos um tipo TPT.");
 				return;
 
 			}
@@ -297,7 +297,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		
 		//Group tipo tarv
 		grpTipoTarv = new Group(getShell(), SWT.NONE);
-		grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TB:" : this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Tipo Tarv:" : "Tipo PrEP:"  ));
+		grpTipoTarv.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TB) ? "Tipo TPT:" : this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Tipo Tarv:" : "Tipo PrEP:"  ));
 		grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		grpTipoTarv.setBounds(new Rectangle(55, 90, 520, 50));
 		grpTipoTarv.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -322,7 +322,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  Manter
 		chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnManutencao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnManutencao.setBounds(new Rectangle(140, 20, 120, 20));
+		chkBtnManutencao.setBounds(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? new Rectangle(180, 20, 120, 20) : new Rectangle(150, 20, 130, 20));
 		chkBtnManutencao.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Manutenção" : "Continua/Manutenção"));
 		chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnManutencao.setSelection(false);
@@ -348,7 +348,7 @@ public class HistoricoLevantamentos extends GenericReportGui {
 		//chk button  FIm
 		chkBtnFim = new Button(grpTipoTarv, SWT.CHECK);
 		chkBtnFim.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-		chkBtnFim.setBounds(new Rectangle(390 , 20, 50, 20));
+		chkBtnFim.setBounds(new Rectangle(400 , 20, 50, 20));
 		chkBtnFim.setText("Fim");
 		chkBtnFim.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		chkBtnFim.setSelection(false);

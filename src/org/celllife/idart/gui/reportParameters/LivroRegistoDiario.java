@@ -161,7 +161,7 @@ public class LivroRegistoDiario extends GenericReportGui {
             }
         }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
             if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection()  &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
-                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TPT","Seleccione pelo menos um tipo TPT.");
                 return;
 
             }
@@ -217,7 +217,7 @@ public class LivroRegistoDiario extends GenericReportGui {
             }
         }else if (this.diseaseType.equalsIgnoreCase(Prescription.TIPO_DOENCA_TB)) {
             if (!chkBtnInicio.getSelection() && !chkBtnManutencao.getSelection() &&!chkBtnReinicio.getSelection() && !chkBtnFim.getSelection()) {
-                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TB","Seleccione pelo menos um tipo TB.");
+                showMessage(MessageDialog.ERROR, "Seleccionar Tipo TPT","Seleccione pelo menos um tipo TPT.");
                 return;
 
             }
@@ -317,7 +317,7 @@ public class LivroRegistoDiario extends GenericReportGui {
         //chk button  Manter
         chkBtnManutencao = new Button(grpTipoTarv, SWT.CHECK);
         chkBtnManutencao.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
-        chkBtnManutencao.setBounds(new Rectangle(170, 20, 149, 20));
+        chkBtnManutencao.setBounds(this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? new Rectangle(195, 20, 120, 20) : new Rectangle(170, 20, 149, 20));
         chkBtnManutencao.setText((this.diseaseType.equals(Prescription.TIPO_DOENCA_TARV) ? "Manutenção" : "Continua/Manutenção"));
         chkBtnManutencao.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         chkBtnManutencao.setSelection(false);
