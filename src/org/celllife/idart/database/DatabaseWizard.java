@@ -35,10 +35,12 @@ public class DatabaseWizard extends Wizard {
 
 	@Override
 	public void addPages() {
+
 		if (startPage <= PAGE_CONNECTION_DETAILS) {
 			connPage = new ConnectionPage();
 			addPage(connPage);
 		}
+
 		if (startPage <= PAGE_CREATE_DB) {
 			dbPage = new CreateDatabasePage();
 			addPage(dbPage);

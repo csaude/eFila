@@ -49,6 +49,7 @@ public class ConnectionPage extends WizardPage implements PropertiesPage {
 					@Override
 					public void run() {
 						if (updateProperties()) {
+							setDescription("iDART connected to the database successfully.");
 							setPageComplete(true);
 						}
 					}

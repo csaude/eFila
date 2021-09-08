@@ -62,6 +62,7 @@ import org.hibernate.Transaction;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -1476,6 +1477,8 @@ public class  AddPrescription extends GenericFormGui implements
         ConexaoJDBC conexao = new ConexaoJDBC();
         Prescription oldPrescription = localPrescription.getPatient().getCurrentPrescription(tipoPaciente);
         Patient patient = localPrescription.getPatient();
+        String dateExpected = PatientManager.lastNextPickup(getHSession(), patient.getId());
+        Date dataproximolev = null;
         String regimenomeespecificado = AdministrationManager.getRegimeTerapeutico(getHSession(), cmbRegime.getText()).getRegimenomeespecificado();
 
         if (CentralizationProperties.centralization.equalsIgnoreCase("off"))
@@ -1490,8 +1493,18 @@ public class  AddPrescription extends GenericFormGui implements
             checkOpenmrs = false;
         }
 
+        if (episode.getStartReason().contains("eferido")) {
+            MessageBox
+                    m = new MessageBox(getShell(), SWT.YES | SWT.NO
+                    | SWT.ICON_QUESTION);
+            m.setText("Este paciente foi referido para outra Farmácia.");
+            m.setMessage("Este paciente foi referido para outra Farmácia. Pretende continuar a registar a prescrição?");
+            if (m.open() == SWT.NO) {
+                return false;
+            }
+        }
 
-        if (oldPrescription != null)
+        if (oldPrescription != null) {
             if (Integer.parseInt(String.valueOf(cmbLinha.getText().charAt(0))) < Integer.parseInt(String.valueOf(oldPrescription.getLinha().getLinhanome().charAt(0)))) {
 
                 MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
@@ -1501,6 +1514,30 @@ public class  AddPrescription extends GenericFormGui implements
                 errorBox.open();
                 return false;
             }
+
+            if(!dateExpected.trim().isEmpty()) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                try {
+                    dataproximolev = sdf.parse(dateExpected);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if(dataproximolev != null) {
+                long difference = dataproximolev.getTime() - btnCaptureDate.getDate().getTime();
+                    float daysBetween = (difference / (1000 * 60 * 60 * 24));
+
+                    if (daysBetween > 3 && !chkBtnPrescicaoEspecial.getSelection()) {
+                        MessageBox errorBox = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+                        errorBox.setText("Paciente ainda tem medicamentos.");
+                        errorBox.setMessage("Este paciente tem medicamentos em casa. " +
+                                "Por favor seleccione a prescrição especial e o motivo se pretende dispensar.");
+                        errorBox.open();
+                        return false;
+                    }
+                }
+            }
+        }
 
         if ((cmbLinha.getText().trim().equals("")) || (cmbRegime.getText().trim().equals("")) || (cmbDoctor.getText().trim().equals(""))
                 || (lblNewPrescriptionId.getText().trim().equals(""))

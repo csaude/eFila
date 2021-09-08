@@ -433,7 +433,7 @@ public class PatientManager {
 		List<String> patientLastEpisode = session
 				.createSQLQuery(
 						"select  v.startreason  from ( select t.startreason,t.patient, t.maxtime from  (select patient, startreason , max(startdate) as maxtime "
-								+ " from episode group by patient,startreason ) t inner join episode ep on ep.patient=t.patient and ep.startdate = t.maxtime ) v "
+								+ " from episode group by patient,startreason ) t inner join episode ep on ep.patient=t.patient and ep.startdate = t.maxtime order by t.maxtime desc) v "
 								+ "inner join patient pat on pat.id = v.patient  and pat.patientid = :identifier ")
 				.setString("identifier", patientid).list();
 		if(patientLastEpisode.isEmpty()){
@@ -584,7 +584,7 @@ public class PatientManager {
 				"inner join packageddrugs packdg on packdg.parentpackage = pack.id \n" +
 				"inner join packagedruginfotmp packinfo on packinfo.packageddrug = packdg.id \n" +
 				"where pre.patient = :patid \n" +
-				"group by 2) lastpickupdate on lastpickupdate.id = packdrugtemp.id");
+				"group by 2 order by 2 desc) lastpickupdate on lastpickupdate.id = packdrugtemp.id");
 		query.setInteger("patid", patientId);
 //		query.setResultTransformer(new AliasToBeanResultTransformer(String.class));
 
