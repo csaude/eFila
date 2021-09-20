@@ -589,9 +589,12 @@ public class PatientManager {
 //		query.setResultTransformer(new AliasToBeanResultTransformer(String.class));
 
 		@SuppressWarnings("unchecked")
-		List<String> list = query.list();
+		List<String> list =query.list();
 
-		return list.get(0);
+		if(list.isEmpty())
+			return null;
+		else
+			return list.get(0);
 	}
 
 	/**

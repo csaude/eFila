@@ -459,7 +459,7 @@ public class AddDrug extends GenericFormGui {
 
         // lblTimesPerDay
         Label lblTimesPerDay = new Label(grpStandadDosages, SWT.CENTER);
-        lblTimesPerDay.setBounds(new Rectangle(298, 28, 126, 22));
+        lblTimesPerDay.setBounds(new Rectangle(298, 28, 105, 22));
         lblTimesPerDay.setText("vezes por ");
         lblTimesPerDay.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 

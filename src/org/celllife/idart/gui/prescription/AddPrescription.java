@@ -1515,7 +1515,7 @@ public class  AddPrescription extends GenericFormGui implements
                 return false;
             }
 
-            if(!dateExpected.trim().isEmpty()) {
+            if(dateExpected != null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
                 try {
                     dataproximolev = sdf.parse(dateExpected);
