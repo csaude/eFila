@@ -66,7 +66,7 @@ public class RestClient {
     }
 
     public boolean postOpenMRSEncounter(String encounterDatetime, String nidUuid, String encounterType, String strFacilityUuid,
-                                        String filaUuid, String providerUuid, String regimeUuid,
+                                        String filaUuid, String providerUuid, String regimeUuid, String dispennsedQty,
                                         String strRegimenAnswerUuid, String dispensedAmountUuid, List<PrescribedDrugs> prescribedDrugs,
                                         List<PackagedDrugs> packagedDrugs, String dosageUuid, String returnVisitUuid, String strNextPickUp, String dispenseModeUuid, String answerDispenseModeUuid) throws Exception {
 
@@ -91,12 +91,12 @@ public class RestClient {
                                                 "\"value\":\"" + pb.getDrug().getUuidopenmrs() + "\"," +
                                                 "\"comment\":\"IDART\"" +
                                             "}";
-
+              //  System.out.println(pb.getDispensedQty());
                 String quantityString =     "{\"" +
                                                 "person\":\"" + nidUuid + "\"," +
                                                 "\"obsDatetime\":\"" + encounterDatetime + "\"," +
                                                 "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
-                                                "\"value\":\"" + pb.getDrug().getPackSize() + "\"," +
+                                                "\"value\":\"" + dispennsedQty + "\"," +
                                                 "\"comment\":\"IDART\"" +
                                             "}";
 
@@ -594,7 +594,7 @@ public class RestClient {
                 // to add
             } else {
                 postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                        strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispense.getRegimenAnswer(),
+                        strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispense.getDispennsedQty(), dispense.getRegimenAnswer(),
                         iDartProperties.DISPENSED_AMOUNT, dispense.getPrescription().getPrescribedDrugs(), newPack.getPackagedDrugs(), iDartProperties.DOSAGE,
                         iDartProperties.VISIT_UUID, dispense.getStrNextPickUp(), iDartProperties.DISPENSEMODE_UUID, dispense.getDispenseModeAnswer());
             }

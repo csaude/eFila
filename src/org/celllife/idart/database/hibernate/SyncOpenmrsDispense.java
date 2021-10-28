@@ -42,6 +42,16 @@ public class SyncOpenmrsDispense {
     private Character syncstatus;
     @Column(name = "notas")
     private String notas;
+    @Column(name = "dispennsedQty")
+    private String dispennsedQty;
+
+    public String getDispennsedQty() {
+        return dispennsedQty;
+    }
+
+    public void setDispennsedQty(String dispennsedQty) {
+        this.dispennsedQty = dispennsedQty;
+    }
 
     public Integer getId() {
         return id;
