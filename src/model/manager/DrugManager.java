@@ -274,13 +274,34 @@ public class DrugManager {
         if (includeZeroBatches) {
             result = sess.createQuery(
                     "select distinct d" + " from Drug as d, Stock s"
-                            + " where d.id = s.drug" +
+                            + " where d.id = s.drug " +
 
                             " order by d.name asc").list();
         } else {
             result = sess.createQuery(
                     "select distinct d" + " from Drug as d, Stock s"
                             + " where s.drug = d.id and "
+                            + " s.hasUnitsRemaining = 'T'"
+                            + " order by d.sideTreatment, d.name asc").list();
+
+        }
+        return result;
+
+    }
+
+    public static List<Drug> getActiveDrugsListForStockTake(Session sess,
+                                                      boolean includeZeroBatches) throws HibernateException {
+        List<Drug> result;
+        if (includeZeroBatches) {
+            result = sess.createQuery(
+                    "select distinct d" + " from Drug as d, Stock s"
+                            + " where d.id = s.drug and d.active = true" +
+
+                            " order by d.name asc").list();
+        } else {
+            result = sess.createQuery(
+                    "select distinct d" + " from Drug as d, Stock s"
+                            + " where s.drug = d.id and and d.active = true "
                             + " s.hasUnitsRemaining = 'T'"
                             + " order by d.sideTreatment, d.name asc").list();
 
@@ -360,10 +381,10 @@ public class DrugManager {
      * @throws HibernateException
      */
     @SuppressWarnings("unchecked")
-    public static List<Drug> getAllDrugs(Session sess)
+    public static List<Drug> getAllActiveDrugs(Session sess)
             throws HibernateException {
         List<Drug> result = sess.createQuery(
-                "select d from Drug as d order by d.name").list();
+                "select d from Drug as d where d.active=true order by d.name").list();
 
         return result;
     }

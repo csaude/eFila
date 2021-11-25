@@ -19,10 +19,7 @@
 package org.celllife.idart.gui.packaging;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import model.manager.PackageManager;
 import model.manager.PatientManager;
@@ -76,6 +73,7 @@ import org.hibernate.Transaction;
 public class PackageReturn extends GenericFormGui {
 
 	// Fields which can be manipulated
+	private Locale localeEn = new Locale("en", "US");
 	private Text txtPatientId;
 	private Button btnSearchPatient;
 	private Button rbtnReturnToStock;
@@ -84,7 +82,7 @@ public class PackageReturn extends GenericFormGui {
 	private Table tblPackages;
 	private TableColumn[] tblPackageCols;
 	private CCombo cmbReturnReason;
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
 	private CCombo cmbStopEpisode;
 	private Text txtStopNotes;
 	private DateButton btnStopDate;

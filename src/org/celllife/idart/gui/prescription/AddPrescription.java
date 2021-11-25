@@ -58,6 +58,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -244,6 +246,8 @@ public class  AddPrescription extends GenericFormGui implements
     private boolean fieldsEnabled = false; // has a patient been selected to
 
     public static String tipoPaciente = null;
+
+    private static Locale localeEn = new Locale("en", "US");
 
     /**
      * Constructor
@@ -1515,8 +1519,8 @@ public class  AddPrescription extends GenericFormGui implements
                 return false;
             }
 
-            if(!dateExpected.trim().isEmpty()) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+            if(dateExpected != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 try {
                     dataproximolev = sdf.parse(dateExpected);
                 } catch (ParseException e) {
@@ -1686,6 +1690,7 @@ public class  AddPrescription extends GenericFormGui implements
                         Clinic clinic = AdministrationManager.getMainClinic(getHSession());
 
                         String facility = clinic.getClinicName().trim();
+                        String strFacility = null;
 
                         if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
                                 && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
@@ -1697,7 +1702,13 @@ public class  AddPrescription extends GenericFormGui implements
                             return false;
                         }
                         // Location
-                        String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
+
+                        JSONObject strFacilityArray = new JSONObject( restClient.getOpenMRSResource("location/" + patient.getUuidlocationopenmrs()));
+
+                        if(strFacilityArray.getString("uuid") != null)
+                            strFacility = strFacilityArray.toString();
+                        else
+                            strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
 
                         if (StringUtils.isEmpty(restClient.getOpenMRSResource("concept/" + regimenomeespecificado))) {
                             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
@@ -2659,7 +2670,7 @@ public class  AddPrescription extends GenericFormGui implements
                             }
                             setLocalPrescription();
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                             Prescription oldPrescription = localPrescription.getPatient().getCurrentPrescription(tipoPaciente);
                             // Check if any packages have been created for the
                             // prescription
@@ -2795,7 +2806,7 @@ public class  AddPrescription extends GenericFormGui implements
                             }
                             setLocalPrescription();
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                             Prescription oldPrescription = localPrescription.getPatient().getCurrentPrescription(tipoPaciente);
                             // Check if any packages have been created for the
                             // prescription

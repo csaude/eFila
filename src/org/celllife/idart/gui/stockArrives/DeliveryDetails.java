@@ -118,7 +118,7 @@ public class DeliveryDetails extends GenericFormGui {
 		this.parentStockScreen = parentStockScreen;
 
 		Search drugSearch = new Search(getHSession(), getShell(),
-				CommonObjects.DRUG);
+				CommonObjects.ACTIVEDRUG);
 
 		if (drugSearch.getValueSelected() != null) {
 			btnDrugSearch.setEnabled(false);

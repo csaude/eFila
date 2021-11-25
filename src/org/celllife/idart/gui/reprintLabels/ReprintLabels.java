@@ -20,10 +20,7 @@
 package org.celllife.idart.gui.reprintLabels;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import model.manager.PackageManager;
 
@@ -90,6 +87,8 @@ public class ReprintLabels extends GenericOthersGui {
 	private final List<ReprintLabelsViewModel> tableData = new ArrayList<ReprintLabelsViewModel>();
 
 	private boolean dispensedDirectly = true;
+
+	private Locale localeEn = new Locale("en", "US");
 
 	/***************************************************************************
 	 * Default Constructor
@@ -498,7 +497,7 @@ public class ReprintLabels extends GenericOthersGui {
 			+ new SimpleDateFormat("h:mma").format(pdiTemp
 					.getDispenseDate())
 					+ " on "
-					+ new SimpleDateFormat("dd MMM yyyy").format(pdiTemp
+					+ new SimpleDateFormat("dd MMM yyyy", localeEn).format(pdiTemp
 							.getDispenseDate()) + ")", null);
 		tableData.add(title);
 		

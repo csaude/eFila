@@ -9,12 +9,14 @@ import migracao.connection.hibernateConectionRemote;
 import migracao.entidades.PatientIdentifier;
 import migracao.entidades.PatientProgram;
 import migracao.entidadesHibernate.Interfaces.PatientProgramDaoInterface;
+import org.celllife.idart.commonobjects.JdbcProperties;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -85,6 +87,7 @@ public class PatientProgramDao implements PatientProgramDaoInterface<PatientProg
     @Override
     public List<PatientProgram> findAll() {
 
+        String uuidLocation = JdbcProperties.location;
         List patientPrograms = this.getCurrentSession().createQuery("from PatientProgram p "
                                                                     + "where p.programId = 2 and "
                                                                     + "p.idart is null and "
@@ -94,7 +97,8 @@ public class PatientProgramDao implements PatientProgramDaoInterface<PatientProg
         SQLQuery query = this.getCurrentSession().createSQLQuery(" " +
                         "select pg.* from patient p "+
                         "inner join patient_program pg on pg.patient_id = p.patient_id "+
-                        "where pg.voided=0 and pg.program_id=2 "+
+                        "inner join location lc on lc.location_id = pg.location_id "+
+                        "where pg.voided=0 and pg.program_id=2 and lc.uuid = '"+uuidLocation+"' "+
                         "and pg.idart is null "+
                         "and pg.date_enrolled is not null "+
                         "and pg.date_completed is null " +

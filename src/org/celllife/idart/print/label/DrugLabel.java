@@ -28,6 +28,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.celllife.idart.commonobjects.iDartProperties;
@@ -106,9 +107,11 @@ public class DrugLabel implements Printable, DefaultLabel {
 
 	private String clinicNotes;
 
-	SimpleDateFormat sdfLong = new SimpleDateFormat("dd MMM yyyy");
+	private static Locale localeEn = new Locale("en", "US");
 
-	SimpleDateFormat sdfShort = new SimpleDateFormat("dd MMM yy");
+	SimpleDateFormat sdfLong = new SimpleDateFormat("dd MMM yyyy", localeEn);
+
+	SimpleDateFormat sdfShort = new SimpleDateFormat("dd MMM yy", localeEn);
 
 	public DrugLabel() {
 		super();

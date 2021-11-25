@@ -30,6 +30,7 @@ import java.awt.print.PrinterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -42,6 +43,7 @@ import org.celllife.idart.database.hibernate.Patient;
 public class PatientInfoLabel implements Printable, DefaultLabel {
 
 	Logger log = Logger.getLogger(this.getClass());
+	private static Locale localeEn = new Locale("en", "US");
 	private String id;
 	private String surname;
 	private String firstname;
@@ -52,7 +54,7 @@ public class PatientInfoLabel implements Printable, DefaultLabel {
 
 	final int BORDER_X = 5;
 	final int BORDER_Y = 3;
-	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
 
 	private LabelType labeltype;
 
@@ -175,7 +177,7 @@ public class PatientInfoLabel implements Printable, DefaultLabel {
 		
 		try {
 			Date theDate = sdf.parse(dateOfBirth);
-			dateOfBirth = new SimpleDateFormat("dd MMM yyyy").format(theDate);
+			dateOfBirth = new SimpleDateFormat("dd MMM yyyy", localeEn).format(theDate);
 		} catch (ParseException e) {
 			log.error("Error parsing date", e);
 		}

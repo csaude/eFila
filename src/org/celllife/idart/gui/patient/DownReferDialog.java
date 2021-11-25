@@ -289,12 +289,12 @@ public class DownReferDialog extends GenericOthersGui {
                 int prescriptionDuration = 0;
 
                 if (patient.getUuidopenmrs() != null)
-                    pacienteReferido = AdministrationManager.getSyncTempPatienByUuid(getHSession(), patient.getUuidopenmrs());
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByUuidAndClinicUuid(getHSession(), patient.getUuidopenmrs(), clinic.getUuid());
                 else
-                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), mainClinic.getUuid());
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicNameUuid(getHSession(), patient.getPatientId(), clinic.getUuid());
 
                 if (pacienteReferido == null)
-                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), mainClinic.getClinicName());
+                    pacienteReferido = AdministrationManager.getSyncTempPatienByNIDandClinicName(getHSession(), patient.getPatientId(), clinic.getClinicName());
 
                 if (pacienteReferido == null)
                     pacienteReferido = new SyncTempPatient();

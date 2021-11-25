@@ -200,6 +200,10 @@ public class Search extends GenericOthersGui {
                 searchList = SearchManager.loadDrugs(getHSession(), this, true,
                         true);
                 break;
+            case CommonObjects.ACTIVEDRUG:
+                searchList = SearchManager.loadActiveDrugs(getHSession(), this, true,
+                        true);
+                break;
             case CommonObjects.REGIMEN:
                 searchList = SearchManager.loadRegimens(getHSession(), this);
                 break;

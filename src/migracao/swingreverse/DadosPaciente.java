@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class DadosPaciente {
-    public static Patient InserePaciente(String patientIdentifier, Person person, PersonName personName, PersonAddress personAddress, Clinic clinic, PatientImportService patientImportService, String idPatient, String numeroTelefone) {
+    public static Patient InserePaciente(String locationuuid, String patientIdentifier, Person person, PersonName personName, PersonAddress personAddress, Clinic clinic, PatientImportService patientImportService, String idPatient, String numeroTelefone) {
 
         Patient patient = null;
         PatientIdentifierImportService patientIdentifierImportService = new PatientIdentifierImportService();
@@ -60,6 +60,7 @@ public class DadosPaciente {
         patient.setWorkPhone(null);
         patient.setRace(null);
         patient.setUuidopenmrs(person.getUuid());
+        patient.setUuidlocationopenmrs(locationuuid);
         if (importedPatientIdentifier == null) {
             patientImportService.persist(patient);
         } else {

@@ -21,12 +21,7 @@ package org.celllife.idart.gui.packaging;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import model.manager.AdherenceManager;
 import model.manager.AdministrationManager;
@@ -199,6 +194,8 @@ iDARTChangeListener {
 	
 	private String appointmentErrorMsg = "";
 
+	private Locale localeEn = new Locale("en", "US");
+
 	/**
 	 * Constructor
 	 * 
@@ -214,7 +211,7 @@ iDARTChangeListener {
 	 */
 	@Override
 	protected void createShell() {
-		dateFormatter = new SimpleDateFormat("dd MMM yyyy");
+		dateFormatter = new SimpleDateFormat("dd MMM yyyy", localeEn);
 		String shellTxt = "Scan Out Packages To Patients";
 		Rectangle bounds = new Rectangle(25, 0, 900, 700);
 		buildShell(shellTxt, bounds);
@@ -1776,7 +1773,7 @@ iDARTChangeListener {
 	 */
 	@Override
 	protected boolean fieldsOk() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
 
 		// If the scannedPack happens to be null.
 		if (scannedPack == null)

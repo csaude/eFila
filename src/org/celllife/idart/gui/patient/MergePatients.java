@@ -21,12 +21,7 @@ package org.celllife.idart.gui.patient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import model.manager.PackageManager;
 import model.manager.PatientManager;
@@ -226,6 +221,8 @@ public class MergePatients extends GenericFormGui {
 	private Button rdBtnAppointmentFromRight;
 
 	private Label lblWarning;
+
+	private Locale localeEn = new Locale("en", "US");
 
 	/**
 	 */
@@ -1203,7 +1200,7 @@ public class MergePatients extends GenericFormGui {
 		txtPatientIdLeft.setText(p.getPatientId());
 		txtSurnameLeft.setText(p.getLastname());
 		txtFirstnamesLeft.setText(p.getFirstNames());
-		txtDateOfBirthLeft.setText(new SimpleDateFormat("dd MMM yyyy").format(p
+		txtDateOfBirthLeft.setText(new SimpleDateFormat("dd MMM yyyy", localeEn).format(p
 				.getDateOfBirth()));
 		txtAgeLeft.setText(p.getAge() + "");
 		String addr = "";
@@ -1251,7 +1248,7 @@ public class MergePatients extends GenericFormGui {
 
 		txtSurnameRight.setText(p.getLastname());
 		txtFirstnamesRight.setText(p.getFirstNames());
-		txtDateOfBirthRight.setText(new SimpleDateFormat("dd MMM yyyy")
+		txtDateOfBirthRight.setText(new SimpleDateFormat("dd MMM yyyy", localeEn)
 				.format(p.getDateOfBirth()));
 		txtAgeRight.setText(p.getAge() + "");
 

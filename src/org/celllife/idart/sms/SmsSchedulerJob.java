@@ -3,6 +3,7 @@ package org.celllife.idart.sms;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import model.manager.AlertManager;
 import model.manager.SmsManager;
@@ -21,7 +22,7 @@ import org.quartz.JobExecutionException;
 public class SmsSchedulerJob extends CampaignSchedulingJob implements Job {
 
 	private static final Logger log = Logger.getLogger(SmsSchedulerJob.class.getName());
-	
+	private static Locale localeEn = new Locale("en", "US");
 	public static final String JOB_NAME = "smsJob";
 
 	@Override
@@ -111,13 +112,13 @@ public class SmsSchedulerJob extends CampaignSchedulingJob implements Job {
 				switch (messageSchedule.getMessageType()){
 				case MESSAGETYPE_APPOINTMENT_REMINDER:
 					message = "Failed to schedule Just SMS Campaign on " + 
-					new SimpleDateFormat("dd MMM yyyy").format(messageSchedule.getScheduleDate()) +  
+					new SimpleDateFormat("dd MMM yyyy", localeEn).format(messageSchedule.getScheduleDate()) +
 					" for Appointment Reminders " + messageSchedule.getDaysToSchedule() + " days before "
 					+ "(" + messageSchedule.getLanguage() + ")";
 					break;
 				case MESSAGETYPE_MISSED_APPOINTMENT:
 					message = "Failed to schedule Just SMS Campaign on " + 
-					new SimpleDateFormat("dd MMM yyyy").format(messageSchedule.getScheduleDate()) +  
+					new SimpleDateFormat("dd MMM yyyy", localeEn).format(messageSchedule.getScheduleDate()) +
 					" for Missed Appointments " + messageSchedule.getDaysToSchedule() + " days ago "
 					+ "(" + messageSchedule.getLanguage() + ")";
 					break;

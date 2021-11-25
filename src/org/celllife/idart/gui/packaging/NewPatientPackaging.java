@@ -139,12 +139,14 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
     private boolean dateAlreadyDispensed;
     private Patient localPatient;
     private int dias = 0;
+    private String saveLocalDispensedQty;
     private boolean postOpenMrsEncounterStatus;
     public String tipoPaciente = iDartProperties.SERVICOTARV;
 
 
     ConexaoJDBC conn = new ConexaoJDBC();
     private static Logger log = Logger.getLogger(NewPatientPackaging.class);
+    private static Locale localeEn = new Locale("en", "US");
 
     /**
      * Constructor
@@ -614,11 +616,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         }
 
         Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
+
         if (pre != null)
             if (pre.getMotivocriacaoespecial().contains("Perda")) {
                 String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
                 if (dateExpected != null) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                     Date dataproximolev = new Date(dateExpected);
                     adjustForNewAppointmentDate(dataproximolev);
                     btnNextAppDate.setText(sdf.format(dataproximolev));
@@ -1894,7 +1897,6 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
 
     private void getDispensedQuantity(java.util.List<PackageDrugInfo> theStockList, TableItem ti) {
-
         int totalDispensedQty = 0;
         int totalNumberOfLabels = 0;
 
@@ -2244,7 +2246,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), patientID);
             if (dateExpected != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);
                 adjustForNewAppointmentDate(dataproximolev);
                 btnNextAppDate.setText(sdf.format(dataproximolev));
@@ -2462,6 +2464,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         for (PrescribedDrugs pd : newPack.getPrescription().getPrescribedDrugs()) {
 
             TableItem ti = tblPrescriptionInfo.getItem(count);
+
             int[] unitsInStock = StockManager.getTotalStockLevelsForDrug(getHSession(), pd.getDrug(), localPharmacy);
             ti.setText(3, unitsInStock[0] + (unitsInStock[1] > 0 ? " (" + unitsInStock[1] + " loose)" : ""));
             count++;
@@ -2656,7 +2659,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
             count++;
             pbLoading.setSelection(count);
-
+            saveLocalDispensedQty = ti.getText(2);
         }
 
     }
@@ -2915,6 +2918,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             Date dtPickUp = newPack.getPickupDate();
 
             Clinic clinic = AdministrationManager.getMainClinic(hSession);
+//            Clinic clinic = newPack.getPrescription().getPatient().getCurrentClinic();
 
             String dispenseModeAnswer = "";
 
@@ -2954,13 +2958,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                 if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                            facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                            facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                 } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                     // to be added
                 } else {
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty ,regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                 }
             } else {
@@ -2998,13 +3002,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                             // to be added
                         } else {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         }
 
@@ -3031,13 +3035,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                             if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                                 saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                                        facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                        facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                             } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                                 // to be added
                             } else {
                                 saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                        facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                        facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                             }
 
@@ -3070,13 +3074,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                             // to be added
                         } else {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         }
 
@@ -3099,7 +3103,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     String strFacilityUuid = "";
                     // Health Facility
 
-                    if (strFacility.length() < 50) {
+                    if (strFacility.length() < 50 && newPack.getPrescription().getPatient().getUuidlocationopenmrs() == null) {
 
                         PackageManager.savePackage(getHSession(), newPack);
                         aviado = true;
@@ -3107,13 +3111,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                             // to be added
                         } else {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         }
 
@@ -3125,7 +3129,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         return;
 
-                    } else strFacilityUuid = strFacility.substring(21, 57);
+                    } else{
+                        if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                            strFacilityUuid = newPack.getPrescription().getPatient().getUuidlocationopenmrs();
+                        else
+                            strFacilityUuid = strFacility.substring(21, 57);
+                    }
 
                     if (response.length() < 50) {
 
@@ -3135,13 +3144,13 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
-                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                             // to be added
                         } else {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, regimenAnswer,
+                                    facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         }
 
@@ -3152,7 +3161,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         m.open();
 
                         return;
-                    } else providerUuid = response.substring(21, 57);
+                    } else{
+                        providerUuid = response.substring(21, 57);
+                    }
                     try {
                         if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)){
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
@@ -3162,7 +3173,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                             // to add
                         }else{
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                                    strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, regimenAnswer,
+                                    strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
                                     iDartProperties.VISIT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
                         }
@@ -3304,11 +3315,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
 
         Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
-
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
             if (dateExpected != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);
                 adjustForNewAppointmentDate(dataproximolev);
                 btnNextAppDate.setText(sdf.format(dataproximolev));
@@ -3738,7 +3748,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
 
     public static void saveOpenmrsPatientFila(Prescription prescribed, String nid, String encounterDatetime, String nidUuid, String encounterType, String strFacility,
-                                              String filaUuid, String provider, String regimeUuid,
+                                              String filaUuid, String provider, String regimeUuid, String dispennsedQty,
                                               String strRegimenAnswerUuid, String dispensedAmountUuid, String dosageUuid, String returnVisitUuid, String strNextPickUp,
                                               String dispenseModeAnswer) {
         // Adiciona FILA para a sincronizacao.
@@ -3767,6 +3777,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 syncOpenmrsDispense.setRegimeUuid(regimeUuid);
                 syncOpenmrsDispense.setRegimenAnswer(strRegimenAnswerUuid);
                 syncOpenmrsDispense.setDispensedAmountUuid(dispensedAmountUuid);
+                syncOpenmrsDispense.setDispennsedQty(dispennsedQty);
                 syncOpenmrsDispense.setDosageUuid(dosageUuid);
                 syncOpenmrsDispense.setReturnVisitUuid(returnVisitUuid);
                 syncOpenmrsDispense.setStrNextPickUp(strNextPickUp);

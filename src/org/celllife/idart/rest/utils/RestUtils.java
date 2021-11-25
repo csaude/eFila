@@ -1,11 +1,11 @@
 package org.celllife.idart.rest.utils;
 
+import org.apache.log4j.Logger;
+import org.dom4j.CDATA;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 
@@ -13,6 +13,8 @@ import java.util.List;
  *
  */
 public abstract class RestUtils {
+
+	public final static Logger log = Logger.getLogger(RestFarmac.class);
 
 	public static String castDateToString (Date date ) {
 		
@@ -25,11 +27,27 @@ public abstract class RestUtils {
 
 	public static Date castStringToDate (String date ) {
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+		Locale localeEn = new Locale("en", "US");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", localeEn);
+		Locale localeBR = new Locale("pt", "BR");
+		SimpleDateFormat dateFormatPt = new SimpleDateFormat("dd MMM yyyy", localeBR);
 
 		Date strDate = null;
+
+		if(date.contains("."))
+			date = date.replace(".","");
+
 		try {
-			strDate = dateFormat.parse(date);
+
+			if(checkLocaleDate(date, dateFormat)){
+				strDate = dateFormat.parse(date);
+			}else{
+				if(checkLocaleDate(date, dateFormatPt)){
+					strDate = dateFormatPt.parse(date);
+				}else
+					log.info(" Data com formato diferente ou a data esta nulla - "+ date);
+			}
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -53,7 +71,8 @@ public abstract class RestUtils {
 
 	public static String castDateToStringPattern (Date date ) {
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+		Locale localeEn = new Locale("en", "US");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", localeEn);
 
 		String strDate = null;
 		strDate = dateFormat.format(date);
@@ -119,6 +138,17 @@ public abstract class RestUtils {
 			return false;
 		}
 		return true;
+
+	}
+
+	public static boolean checkLocaleDate(String date, SimpleDateFormat dateFormat){
+
+		try{
+			dateFormat.parse(date);
+			return true;
+		}catch (Exception e){
+			return false;
+		}
 
 	}
 

@@ -564,6 +564,60 @@ public class SearchManager {
 
     }
 
+    public static List<Drug> loadActiveDrugs(Session sess, Search search,
+                                       boolean includeSideTreatmentDrugs, boolean includeZeroDrugs)
+            throws HibernateException {
+
+        listTableEntries = new ArrayList<SearchEntry>();
+        comparator = new TableComparator();
+
+        List<Drug> drugs = null;
+        String itemText[];
+        search.getTableColumn1().setText("Nome");
+        search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                cmdColOneSelected();
+            }
+        });
+        search.getTableColumn2().setText("QTD no Frasco");
+        search.getTableColumn2().addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                cmdColTwoSelected();
+            }
+        });
+
+        search.getShell().setText("Seleccione o Medicamento...");
+
+        if (includeZeroDrugs) {
+            drugs = DrugManager.getAllActiveDrugs(sess);
+        } else {
+            drugs = DrugManager.getActiveDrugsListForStockTake(sess, false);
+        }
+
+        Collections.sort(drugs);
+
+        Iterator<Drug> iter = new ArrayList<Drug>(drugs).iterator();
+        TableItem[] t = new TableItem[drugs.size()];
+
+        int i = 0;
+        while (iter.hasNext()) {
+            Drug drugList = iter.next();
+            t[i] = new TableItem(search.getTblSearch(), SWT.NONE);
+            itemText = new String[2];
+            itemText[0] = drugList.getName();
+            itemText[1] = (Integer.valueOf(drugList.getPackSize())).toString();
+            t[i].setText(itemText);
+            listTableEntries.add(new SearchEntry(itemText[0], itemText[1]));
+            i++;
+        }
+        comparator.setColumn(TableComparator.COL1_NAME);
+        redrawTable();
+        return drugs;
+
+    }
+
     public static List<Drug> loadAssociatedDrugs(Session sess, Search search,
                                                  String regimeterapeutico, boolean includeZeroDrugs)
             throws HibernateException {
