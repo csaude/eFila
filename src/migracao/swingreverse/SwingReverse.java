@@ -58,7 +58,8 @@ public class SwingReverse {
                 PersonAddress personAddress = personAddressService.findByPersonId(obj.getPersonId().getPersonId().toString());
                 PatientIdentifier patientIdentifier = patientIdentifierService.findByPatientId(obj.getPersonId().getPersonId().toString());
                 Person person = personService.findById(obj.getPersonId().getPersonId().toString());
-                Patient patient = DadosPaciente.InserePaciente(patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, obj.getPersonId().getPersonId().toString(),"");
+
+                Patient patient = DadosPaciente.InserePaciente(obj.getLocationId().getUuid(),patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, obj.getPersonId().getPersonId().toString(),"");
                 DadosPaciente.InserePatientIdentifier(patient, identifierType, patientIdentifier.getIdentifier(), patientIdentifierImportService);
                 DadosPaciente.InserePatientAttribute(patient, obj.getObsDatetime().toGMTString(), attributeType, patientAttributeImportService);
                 ObsService obsServiceActualizacao = new ObsService();

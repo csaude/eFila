@@ -29,6 +29,7 @@ import java.awt.print.Printable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -38,12 +39,13 @@ import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 public class ScriptSummaryLabel implements Printable, DefaultLabel {
 	
 	public static final String KEY = "SUMMARY";
+	private static Locale localeEn = new Locale("en", "US");
 	
 	Logger log = Logger.getLogger(this.getClass());
 
 	final int BORDER_X = 5;
 	final int BORDER_Y = 3;
-	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+	SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
 
 	private String pharmacyName;
 	private String dispDate;

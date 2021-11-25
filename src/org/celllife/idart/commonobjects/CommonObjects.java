@@ -75,7 +75,9 @@ public class CommonObjects {
 
 	public static final int SECTOR = 16;
 
-	public static String timesPerDayLanguage1 = "times per day";
+    public static final int ACTIVEDRUG = 17;
+
+    public static String timesPerDayLanguage1 = "times per day";
 
 	public static String timesPerDayLanguage2 = "ngemini";
 

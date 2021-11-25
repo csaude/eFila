@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import model.manager.AdministrationManager;
 import model.manager.DrugManager;
@@ -97,6 +98,8 @@ public class StockOnHandGui extends GenericOthersGui {
 	private StockCenter localStockCenter;
 
 	private final String initialStockCenter;
+
+	private static Locale localeEn = new Locale("en", "US");
 
 	private static String[] columnNames = { "Drug", "Date Rec", "Received",
 		"Dispensed(-)", "Destroyed(-)", "Adjusted(+-)", "Returned(+)", "On Hand" };
@@ -173,7 +176,7 @@ public class StockOnHandGui extends GenericOthersGui {
 		lblSummary.setBounds(new Rectangle(250, 51, 400, 20));
 		lblSummary.setText("This table shows you all stock on hand at "
 				+ (new SimpleDateFormat("hh:mma")).format(new Date()) + " on "
-				+ (new SimpleDateFormat("dd MMM yyyy").format(new Date())));
+				+ (new SimpleDateFormat("dd MMM yyyy", localeEn).format(new Date())));
 		lblSummary.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
 		lblPharmacy = new Label(cmpStock, SWT.NONE);

@@ -60,6 +60,7 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial ch
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS uuidlocationopenmrs character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
 ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
@@ -78,6 +79,8 @@ UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where
 UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
 UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
 UPDATE identifiertype set name = 'NID CCR' where index = 4;
+UPDATE prescription set tipodoenca = 'TARV' where tipodoenca is null ;
+UPDATE patient set uuidlocationopenmrs = (select uuid from clinic where mainclinic = true) where uuidlocationopenmrs is null;
 DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_type';
 DELETE FROM simpledomain WHERE description  = 'dispense_mode';
@@ -578,7 +581,7 @@ update drug set uuidopenmrs='08S18W-7f-c2a7-4d27-95dc-564791951b5f' where atccod
 update drug set uuidopenmrs='08S18WI-4-70b1-4732-af8b-be24cb04aaa6' where atccode_id='08S18WI';
 update drug set uuidopenmrs='08S18WII-5863-4423-9e97-bc1b480df134' where atccode_id='08S18WII';
 update drug set uuidopenmrs='08S38Z-99-3fe6-48b7-9b25-3052660f3d8b' where atccode_id='08S38Z';
-update drug set uuidopenmrs='08S30ZY-ae-3c79-46bd-9970-2d02b8788fdf' where atccode_id='08S01ZY';
+update drug set uuidopenmrs='08S01ZY-d7-4218-4032-aa8c-615aec71a218' where atccode_id='08S01ZY';
 update drug set uuidopenmrs='08S01ZZ-2e-29dd-40aa-94b4-0d4fe65e081c' where atccode_id='08S01ZZ';
 update drug set uuidopenmrs='08S40-833-b26a-4996-8066-48847431404a' where atccode_id='08S40';
 update drug set uuidopenmrs='08S18Z-da-b787-4fa1-a2d6-2fda22da6564' where atccode_id='08S18Z';

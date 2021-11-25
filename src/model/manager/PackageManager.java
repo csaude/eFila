@@ -19,12 +19,7 @@
 package model.manager;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import migracao.swingreverse.DadosPacienteFarmac;
 import org.apache.log4j.Logger;
@@ -60,6 +55,7 @@ import org.hibernate.Transaction;
  */
 public class PackageManager {
 
+    private static Locale localeEn = new Locale("en", "US");
     public final static Logger log = Logger.getLogger(PackageManager.class);
     // --------- METHODS FOR PRESCRIPTION OBJECT MANAGER
     // ---------------------------------
@@ -69,7 +65,6 @@ public class PackageManager {
      *
      * @param sess Session
      * @param d    Drug
-     * @param c    Clinic
      * @return boolean
      * @throws HibernateException
      */
@@ -1045,7 +1040,7 @@ public class PackageManager {
                     pdi.getClinic(),
                     "Packed "
                             + (pdi.getDispenseDate() == null ? ""
-                            : new SimpleDateFormat("dd MMM yyyy")
+                            : new SimpleDateFormat("dd MMM yyyy", localeEn)
                             .format(pdi.getDispenseDate())),
                     LocalObjects.pharmacy.getPharmacyName(),
                     LocalObjects.pharmacy.getPharmacist(),

@@ -569,12 +569,17 @@ public class RestClient {
 
         String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(dispense.getStrFacility(), " ", "%20"));
 
-        if (strFacility.length() < 50) {
+        if (strFacility.length() < 50 && newPack.getPrescription().getPatient().getUuidlocationopenmrs() == null) {
             msgError = " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + dispense.getNid() + " ].";
             log.trace(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
-        } else strFacilityUuid = strFacility.substring(21, 57);
+        } else{
+            if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                strFacilityUuid = newPack.getPrescription().getPatient().getUuidlocationopenmrs();
+            else
+                strFacilityUuid = strFacility.substring(21, 57);
+        }
 
         if (response.length() < 50) {
             msgError = " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + dispense.getNid() + " ].";

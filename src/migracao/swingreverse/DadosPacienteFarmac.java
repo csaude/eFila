@@ -625,7 +625,12 @@ public class DadosPacienteFarmac {
                                 iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + nid + " ].");
                         return false;
-                    } else strFacilityUuid = strFacility.substring(21, 57);
+                    } {
+                        if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                            strFacilityUuid = prescription.getPatient().getUuidlocationopenmrs();
+                        else
+                            strFacilityUuid = strFacility.substring(21, 57);
+                    }
 
                     if (response.length() < 50) {
 

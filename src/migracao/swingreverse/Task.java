@@ -128,8 +128,9 @@ class Task extends SwingWorker<String, Void> {
                             PatientIdentifier patientIdentifier = patientIdentifierService.findByPatientId(patientProgram.getPatientId().getPatientId().toString());
                             Person person = personService.findById(patientProgram.getPatientId().getPatientId().toString());
                             String numeroTelefone = personService.findByCellphone(person.getPersonId());
+                            String locationUuid = patientProgram.getLocationId().getUuid();
                             
-                            Patient patient = DadosPaciente.InserePaciente(patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, patientProgram.getPatientId().getPatientId().toString(),numeroTelefone);
+                            Patient patient = DadosPaciente.InserePaciente(locationUuid,patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, patientProgram.getPatientId().getPatientId().toString(),numeroTelefone);
 
                             DadosPaciente.InserePatientIdentifier(patient, identifierType, patientIdentifier.getIdentifier(), patientIdentifierImportService);
 

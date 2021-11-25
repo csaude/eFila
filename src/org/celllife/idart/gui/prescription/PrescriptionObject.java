@@ -29,9 +29,11 @@ import org.celllife.idart.database.hibernate.RegimenDrugs;
 import org.celllife.idart.gui.platform.GenericOthersGui;
 import org.celllife.idart.gui.search.Search;
 import org.celllife.idart.gui.utils.ResourceUtils;
+import org.celllife.idart.gui.utils.iDartColor;
 import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -82,6 +84,8 @@ public class PrescriptionObject extends GenericOthersGui {
     private boolean isRegimen = false;
 
     private Text txtTimes;
+
+    private CCombo cmbPeriodoToma;
 
     /**
      * Constructor
@@ -241,8 +245,18 @@ public class PrescriptionObject extends GenericOthersGui {
 
         });
 
+        cmbPeriodoToma = new CCombo(grpDrugInformation, SWT.BORDER);
+        cmbPeriodoToma.setBounds(new Rectangle(260, 89, 80, 22));
+        cmbPeriodoToma.setEditable(false);
+        cmbPeriodoToma.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        cmbPeriodoToma.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+        cmbPeriodoToma.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
+        CommonObjects.populateTakePeriod(getHSession(), cmbPeriodoToma);
+        cmbPeriodoToma.setText(cmbPeriodoToma.getItem(0));
+
         lblTakePeriod = new Label(grpDrugInformation, SWT.NONE);
         lblTakePeriod.setBounds(new Rectangle(219, 89, 120, 20));
+        lblTakePeriod.setText("por");
         lblTakePeriod.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
     }
 
@@ -261,6 +275,7 @@ public class PrescriptionObject extends GenericOthersGui {
 
         txtTake.setText("");
         txtTimes.setText("");
+        cmbPeriodoToma.setText(cmbPeriodoToma.getItem(0));
         txtDrugName.setText("");
 
         newDrug = null;
@@ -270,7 +285,7 @@ public class PrescriptionObject extends GenericOthersGui {
 
     private void cmdSearchWidgetSelected() {
         Search drugSearch = new Search(getHSession(), getShell(),
-                CommonObjects.DRUG);
+                CommonObjects.ACTIVEDRUG);
         if (drugSearch.getValueSelected() != null) {
             txtDrugName.setText(drugSearch.getValueSelected()[0]);
             loadDrugInformation();
@@ -287,7 +302,7 @@ public class PrescriptionObject extends GenericOthersGui {
 
     private void cmdAssossiationSearchWidgetSelected() {
         Search drugSearch = new Search(getHSession(), getShell(),
-                CommonObjects.DRUG);
+                CommonObjects.ACTIVEDRUG);
         if (drugSearch.getValueSelected() != null) {
             txtDrugName.setText(drugSearch.getValueSelected()[0]);
             loadDrugInformation();
@@ -307,7 +322,8 @@ public class PrescriptionObject extends GenericOthersGui {
         if (newDrug != null) {
             txtDrugName.setText(newDrug.getName());
             lblDescription.setText(newDrug.getForm().getFormLanguage1());
-            lblTakePeriod.setText(" por "+newDrug.getDefaultTakePeriod());
+            cmbPeriodoToma.setText(newDrug.getDefaultTakePeriod());
+           // lblTakePeriod.setText(" por "+newDrug.getDefaultTakePeriod());
             lblTake.setText(newDrug.getForm().getActionLanguage1());
             txtTake.setFocus();
             int[] standardDosage = new int[2];
@@ -457,6 +473,7 @@ public class PrescriptionObject extends GenericOthersGui {
                 pd.setDrug(newDrug);
                 pd.setModified('T');
                 pd.setTimesPerDay(Integer.parseInt(txtTimes.getText().trim()));
+                pd.setTakePeriod(cmbPeriodoToma.getText());
                 tableItem.setData(pd);
             }
             Form f = newDrug.getForm();
@@ -467,7 +484,7 @@ public class PrescriptionObject extends GenericOthersGui {
             temp[3] = (txtTake.isVisible() ? txtTake.getText() : "");
             temp[4] = f.getFormLanguage1();
             temp[5] = txtTimes.getText();
-            temp[6] = "vezes por "+ newDrug.getDefaultTakePeriod();
+            temp[6] = "vezes por " + cmbPeriodoToma.getText();
             temp[7] = String.valueOf(newDrug.getPackSize());
             tableItem.setText(temp);
             txtTimes.selectAll();
@@ -556,6 +573,7 @@ public class PrescriptionObject extends GenericOthersGui {
         txtTake.setEnabled(enable);
         txtTimes.setEnabled(enable);
         btnAddDrug.setEnabled(enable);
+        cmbPeriodoToma.setEnabled(enable);
     }
 
     @Override

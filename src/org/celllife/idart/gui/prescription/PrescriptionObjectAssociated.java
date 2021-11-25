@@ -265,7 +265,7 @@ public class PrescriptionObjectAssociated extends GenericOthersGui {
 
     private void cmdSearchWidgetSelected() {
         Search drugSearch = new Search(getHSession(), getShell(),
-                CommonObjects.DRUG);
+                CommonObjects.ACTIVEDRUG);
         if (drugSearch.getValueSelected() != null) {
             txtDrugName.setText(drugSearch.getValueSelected()[0]);
             loadDrugInformation();

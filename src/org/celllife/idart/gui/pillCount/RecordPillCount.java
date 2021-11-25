@@ -22,6 +22,7 @@ package org.celllife.idart.gui.pillCount;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
 import model.manager.AdherenceManager;
@@ -94,6 +95,8 @@ public class RecordPillCount extends GenericFormGui {
 	private Button btnSearch;
 
 	private Packages previousPack;
+
+	private Locale localeEn = new Locale("en", "US");
 
 	/**
 	 * Constructor for RecordPillCount.
@@ -342,7 +345,7 @@ public class RecordPillCount extends GenericFormGui {
 			previousPack = PackageManager.getLastPackagePickedUp(getHSession(),
 					prescription.getPatient(),prescription.getTipoDoenca());
 			if (previousPack != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
 				txtPatientName.setText(localPatient.getFirstNames() + " "
 						+ localPatient.getLastname());
 				txtAge.setText(String.valueOf(localPatient.getAge()));

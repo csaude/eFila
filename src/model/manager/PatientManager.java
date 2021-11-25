@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 public class PatientManager {
 
 	private static Logger log = Logger.getLogger(PatientManager.class);
+	private static Locale localeEn = new Locale("en", "US");
 
 	/**
 	 * Method addAttributeTypeToDatabase.
@@ -929,7 +930,7 @@ public class PatientManager {
 				+ "'(secondary patient)  was merged into '"
 				+ p1.getPatientId()
 				+ "'(primary patient)  on "
-				+ new SimpleDateFormat("dd MMM yyyy").format(new Date())
+				+ new SimpleDateFormat("dd MMM yyyy", localeEn).format(new Date())
 				+ ". Secondary Patient (firstName("
 				+ p2.getFirstNames()
 				+ "), LastName("

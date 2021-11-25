@@ -1785,6 +1785,22 @@ public class AdministrationManager {
 
     }
 
+    // Devolve a lista de todos pacientes referidos por uuid
+    public static SyncTempPatient getSyncTempPatienByUuidAndClinicUuid(Session sess, String uuid, String clinicUuid) throws HibernateException {
+
+        SyncTempPatient result;
+
+        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicuuid = '" + clinicUuid + "' and sync.uuidopenmrs = '" + uuid + "'").list();
+
+        if (patientIdentifiers.isEmpty())
+            result = null;
+        else
+            result = (SyncTempPatient) patientIdentifiers.get(0);
+
+        return result;
+
+    }
+
     // Devolve a lista de dispensa de pacientes referidos por id
     public static SyncTempDispense getSyncTempDispenseById(Session sess, int id) throws HibernateException {
 

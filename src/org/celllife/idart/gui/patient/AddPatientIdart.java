@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.celllife.function.DateRuleFactory;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.commonobjects.JdbcProperties;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
 import org.celllife.idart.database.dao.ConexaoJDBC;
@@ -1195,6 +1196,29 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
             cmbDOBMonth.setText(month);
             cmbDOBYear.setText(year);
             localPatient.setDateOfBirth(theDate);
+
+            String patientEncounterLocation = new RestClient().getOpenMRSResource(iDartProperties.ENCOUNTER_PATIENT+personUuid+"&limit=1&v=default");
+
+            JSONObject jsonEncounterObject = new org.json.JSONObject(patientEncounterLocation);
+
+            JSONArray locationUuidObject = jsonEncounterObject.getJSONArray("results");
+
+            if(locationUuidObject != null){
+                JSONObject locationUuid = locationUuidObject.getJSONObject(0);
+
+                if(locationUuid != null){
+                    JSONObject uuidObject = locationUuid.getJSONObject("location");
+
+                    if(uuidObject != null){
+                        String uuid = uuidObject.getString("uuid");
+                        localPatient.setUuidlocationopenmrs(uuid);
+                    }
+                }
+            }
+
+            if(localPatient.getUuidlocationopenmrs() == null)
+                localPatient.setUuidlocationopenmrs(JdbcProperties.location);
+
 
             String dataInicioTarv = new RestClient().getOpenMRSResource(iDartProperties.REST_OBS_PATIENT + personUuid.trim() + iDartProperties.CONCEPT_DATA_INICIO_TARV);
 

@@ -103,6 +103,8 @@ public class Patient {
 
     private String uuidopenmrs;
 
+    private String uuidlocationopenmrs;
+
     public Boolean getIsPatientEmTransito() {
         return isPatientEmTransito;
     }
@@ -137,6 +139,14 @@ public class Patient {
     public Patient() {
         super();
         this.id = -1;
+    }
+
+    public String getUuidlocationopenmrs() {
+        return uuidlocationopenmrs;
+    }
+
+    public void setUuidlocationopenmrs(String uuidlocationopenmrs) {
+        this.uuidlocationopenmrs = uuidlocationopenmrs;
     }
 
     /**

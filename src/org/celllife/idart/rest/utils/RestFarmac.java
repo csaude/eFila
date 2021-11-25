@@ -205,7 +205,7 @@ public class RestFarmac {
 
     public static String restPutPatient(String url, SyncTempPatient syncTempPatient, PoolingHttpClientConnectionManager pool) throws Exception {
 
-        String path = url + "/sync_temp_patients?id=eq." + syncTempPatient.getId() + "&mainclinic=eq." + syncTempPatient.getMainclinic();
+        String path = url + "/sync_temp_patients?id=eq." + syncTempPatient.getId() + "&mainclinicname=eq." + syncTempPatient.getMainclinicname().replaceAll(" ","%20");
         HttpResponse httpResponse = null;
         String response = null;
 
@@ -515,31 +515,77 @@ public class RestFarmac {
         return response;
     }
 
+    public static String restPutDispense(String url, SyncTempDispense syncTempDispense, PoolingHttpClientConnectionManager pool) throws Exception {
+
+        String path = url + "/sync_temp_dispense?id=eq." + syncTempDispense.getId() + "&mainclinicname=eq." + syncTempDispense.getMainclinicname().replaceAll(" ","%20");
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        Gson g = new Gson();
+        String restObject = g.toJson(syncTempDispense);
+        StringEntity inputAddPatient = new StringEntity(restObject, "UTF-8");
+        inputAddPatient.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPut(path, inputAddPatient, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST PUT - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST PUT efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+
+    }
+
     public static void restPostPatients(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
         List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempPatientReadyToSend(sess);
         String result = "";
+        String resultPut = "";
+        boolean confirmed = false;
         if (syncTempPatients.isEmpty()) {
             log.trace(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
             log.info(new Date() + " [FARMAC] INFO - Nenhumm paciente foi encontrado para referir");
         } else
             for (SyncTempPatient patientSync : syncTempPatients) {
                 Session session = HibernateUtil.getNewSession();
+                confirmed = false;
                 try {
                     session.beginTransaction();
-                    result = restPostPatient(url, patientSync, pool);
-                    if (result.contains("Falha") && !result.contains("409")) {
-                        log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + result);
-                    } else {
-                        log.info(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
-                        log.trace(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
-                        patientSync.setSyncstatus('E');
-                        AdministrationManager.saveSyncTempPatient(sess, patientSync);
-                        session.getTransaction().commit();
-                        session.flush();
-                        session.clear();
-                        session.close();
-                    }
+                    result = restPostPatient(url, patientSync,pool);
+                        if(result.contains("409")) {
+                            resultPut = restPutPatient(url, patientSync, pool);
+                            if (resultPut.contains("Falha")) {
+                                log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + resultPut);
+                            } else {
+                                confirmed = true;
+                                log.info(new Date() + ": Actualizou o paciente com nid " + patientSync.getPatientid() + " - Resultado: " + resultPut);
+                            }
+                        } else {
+                            if (result.contains("Falha")) {
+                                log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + resultPut);
+                            } else {
+                                confirmed = true;
+                                log.info(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                            }
+                        }
+
+                        if(confirmed){
+                            patientSync.setSyncstatus('E');
+                            AdministrationManager.saveSyncTempPatient(sess, patientSync);
+                            session.getTransaction().commit();
+                            session.flush();
+                            session.clear();
+                            session.close();
+                        }
                     break;
                 } catch (Exception e) {
                     session.getTransaction().rollback();
@@ -548,7 +594,6 @@ public class RestFarmac {
                 } finally {
                     continue;
                 }
-
             }
     }
 
@@ -632,20 +677,34 @@ public class RestFarmac {
         List<SyncTempDispense> syncTempDispenses = AdministrationManager.getAllLocalSyncTempDispenseReadyToSend(sess);
 
         String result = "";
-
+        String resultPut = "";
+        boolean conformed = false;
         if (syncTempDispenses.isEmpty())
             log.trace(new Date() + " [US] INFO - Nenhum último levantamento de ARV de paciente foi encontrado para enviar");
         else
             for (SyncTempDispense dispenseSync : syncTempDispenses) {
+                conformed = false;
                 Session session = HibernateUtil.getNewSession();
                 try {
                     session.beginTransaction();
                     result = restPostDispense(url, dispenseSync, pool);
+                    if(result.contains("409")) {
+                        resultPut = restPutDispense(url, dispenseSync, pool);
+                        if (resultPut.contains("Falha")) {
+                            log.error(new Date() + ": Ocorreu um erro ao gravar o Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " Erro: " + resultPut);
+                        } else {
+                            conformed = true;
+                            log.info(new Date() + ": Actualizou o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " - Resultado: " + resultPut);
+                        }
+                    } else
                     if (result.contains("Falha")) {
                         log.error(new Date() + ": Ocorreu um erro ao enviar o Levantamento do paciente com nid " + dispenseSync.getPatientid() + " Erro: " + result);
                     } else {
+                        conformed = true;
                         log.info(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
-                        log.trace(new Date() + ": Levantamento do Paciente com nid " + dispenseSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                    }
+
+                    if(conformed){
                         dispenseSync.setSyncstatus('M');
                         AdministrationManager.saveSyncTempDispense(sess, dispenseSync);
                         session.getTransaction().commit();

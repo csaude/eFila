@@ -146,6 +146,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
     ConexaoJDBC conn = new ConexaoJDBC();
     private static Logger log = Logger.getLogger(NewPatientPackaging.class);
+    private static Locale localeEn = new Locale("en", "US");
 
     /**
      * Constructor
@@ -620,7 +621,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (pre.getMotivocriacaoespecial().contains("Perda")) {
                 String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
                 if (dateExpected != null) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                     Date dataproximolev = new Date(dateExpected);
                     adjustForNewAppointmentDate(dataproximolev);
                     btnNextAppDate.setText(sdf.format(dataproximolev));
@@ -2245,7 +2246,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), patientID);
             if (dateExpected != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);
                 adjustForNewAppointmentDate(dataproximolev);
                 btnNextAppDate.setText(sdf.format(dataproximolev));
@@ -2917,6 +2918,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             Date dtPickUp = newPack.getPickupDate();
 
             Clinic clinic = AdministrationManager.getMainClinic(hSession);
+//            Clinic clinic = newPack.getPrescription().getPatient().getCurrentClinic();
 
             String dispenseModeAnswer = "";
 
@@ -3101,7 +3103,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     String strFacilityUuid = "";
                     // Health Facility
 
-                    if (strFacility.length() < 50) {
+                    if (strFacility.length() < 50 && newPack.getPrescription().getPatient().getUuidlocationopenmrs() == null) {
 
                         PackageManager.savePackage(getHSession(), newPack);
                         aviado = true;
@@ -3127,7 +3129,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         return;
 
-                    } else strFacilityUuid = strFacility.substring(21, 57);
+                    } else{
+                        if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                            strFacilityUuid = newPack.getPrescription().getPatient().getUuidlocationopenmrs();
+                        else
+                            strFacilityUuid = strFacility.substring(21, 57);
+                    }
 
                     if (response.length() < 50) {
 
@@ -3154,7 +3161,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         m.open();
 
                         return;
-                    } else providerUuid = response.substring(21, 57);
+                    } else{
+                        providerUuid = response.substring(21, 57);
+                    }
                     try {
                         if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)){
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
@@ -3309,7 +3318,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
             String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
             if (dateExpected != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);
                 adjustForNewAppointmentDate(dataproximolev);
                 btnNextAppDate.setText(sdf.format(dataproximolev));
