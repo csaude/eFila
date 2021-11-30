@@ -614,3 +614,6 @@ update drug set uuidopenmrs='08S39Y-3a-20c8-4a16-aaea-f2d4537202e4' where atccod
 update drug set uuidopenmrs='08S01ZW-ec-ec31-45aa-a74e-7238872483e8' where atccode_id='08S01ZW';
 update drug set uuidopenmrs='08S40Z-fc-6563-49e4-bf81-a456bf79ec88' where atccode_id='08S40Z';
 update drug set uuidopenmrs='08S30ZY-ae-3c79-46bd-9970-2d02b8788fdf' where atccode_id='08S30ZY';
+CREATE VIEW sync_temp_dispense_vw AS
+select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
+from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
