@@ -34,6 +34,7 @@ public class ExcelConversions {
 		try {
 			date = sdf.parse(oldDate);
 		} catch (ParseException e) {
+			e.printStackTrace();
 			log.error("Error converting date '" + oldDate + "' to format '"
 					+ iDartProperties.importDateFormat + "'");
 			try {

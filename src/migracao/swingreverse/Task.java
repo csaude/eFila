@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_114.
- * 
+ *
  * Could not load the following classes:
  *  org.hibernate.Session
  */
@@ -34,7 +34,7 @@ class Task extends SwingWorker<String, Void> {
 
     public String convertIntegerToMonth(int month) {
 
-        String srtMonth="";
+        String srtMonth = "";
         switch (month) {
             case 1:
                 srtMonth = "Jan";
@@ -99,9 +99,12 @@ class Task extends SwingWorker<String, Void> {
 
             Clinic clinic = AdministrationManager.getMainClinic(patientImportService.patientImportDao().openCurrentSessionwithTransaction());
             IdentifierType identifierType = AdministrationManager.getNationalIdentifierType(patientImportService.patientImportDao().openCurrentSessionwithTransaction());
+            IdentifierType pREPIdentifierType = AdministrationManager.getPrEPIdentifierType(patientImportService.patientImportDao().openCurrentSessionwithTransaction());
             AttributeType attributeType = PatientManager.getAttributeTypeObject(patientImportService.patientImportDao().openCurrentSessionwithTransaction(), "ARV Start Date");
 
             int current = 0;
+            int tarvCount = 0;
+            int prepCount = 0;
             int lengthOfTask = patientProgramlist.size();
             String personId = null;
             System.err.println("PROCESSANDO ....");
@@ -129,18 +132,24 @@ class Task extends SwingWorker<String, Void> {
                             Person person = personService.findById(patientProgram.getPatientId().getPatientId().toString());
                             String numeroTelefone = personService.findByCellphone(person.getPersonId());
                             String locationUuid = patientProgram.getLocationId().getUuid();
-                            
-                            Patient patient = DadosPaciente.InserePaciente(locationUuid,patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, patientProgram.getPatientId().getPatientId().toString(),numeroTelefone);
 
-                            DadosPaciente.InserePatientIdentifier(patient, identifierType, patientIdentifier.getIdentifier(), patientIdentifierImportService);
+                            Patient patient = DadosPaciente.InserePaciente(locationUuid, patientIdentifier.getIdentifier(), person, personName, personAddress, clinic, patientImportService, patientProgram.getPatientId().getPatientId().toString(), numeroTelefone);
 
-                            String dateopenmrs = patientProgram.getDateEnrolled().toString();
-                            String year = dateopenmrs.substring(0, 4);
-                            String month =  convertIntegerToMonth(Integer.parseInt(dateopenmrs.substring(5, 7)));
-                            String day = dateopenmrs.substring(8, 10);
-                            String dateEnrolled = day + " "+ month + " " + year;
-                            
-                            DadosPaciente.InserePatientAttribute(patient, dateEnrolled, attributeType, patientAttributeImportService);
+                            if (patientProgram.getProgramId().getProgramId() != 2) {
+                                prepCount++;
+                                DadosPaciente.InserePatientIdentifier(patient, pREPIdentifierType, patientIdentifier.getIdentifier(), patientIdentifierImportService);
+                            } else {
+                                tarvCount++;
+                                DadosPaciente.InserePatientIdentifier(patient, identifierType, patientIdentifier.getIdentifier(), patientIdentifierImportService);
+
+                                String dateopenmrs = patientProgram.getDateEnrolled().toString();
+                                String year = dateopenmrs.substring(0, 4);
+                                String month = convertIntegerToMonth(Integer.parseInt(dateopenmrs.substring(5, 7)));
+                                String day = dateopenmrs.substring(8, 10);
+                                String dateEnrolled = day + " " + month + " " + year;
+
+                                DadosPaciente.InserePatientAttribute(patient, dateEnrolled, attributeType, patientAttributeImportService);
+                            }
 
                             PatientProgramService patientProgramServiceActualiza = new PatientProgramService();
                             patientProgram.setIdart("Imported");
@@ -166,6 +175,8 @@ class Task extends SwingWorker<String, Void> {
                 }
                 System.err.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                 System.err.println("" + lengthOfTask + " Pacientes Importados do OpenMRS para o IDART com sucesso!!!!!!");
+                System.err.println("TARV - " + tarvCount + " Pacientes !!!!!!");
+                System.err.println("PrEP - " + prepCount + " Pacientes !!!!!!");
                 hibernateConection.getInstanceLocal().close();
                 hibernateConectionRemote.getInstanceRemote().close();
                 current = lengthOfTask * 2;

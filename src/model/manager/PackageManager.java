@@ -21,22 +21,11 @@ package model.manager;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import migracao.swingreverse.DadosPacienteFarmac;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.commonobjects.iDartProperties;
-import org.celllife.idart.database.hibernate.AccumulatedDrugs;
-import org.celllife.idart.database.hibernate.Clinic;
-import org.celllife.idart.database.hibernate.Drug;
-import org.celllife.idart.database.hibernate.Form;
-import org.celllife.idart.database.hibernate.PackagedDrugs;
-import org.celllife.idart.database.hibernate.Packages;
-import org.celllife.idart.database.hibernate.Patient;
-import org.celllife.idart.database.hibernate.PillCount;
-import org.celllife.idart.database.hibernate.Prescription;
-import org.celllife.idart.database.hibernate.StockCenter;
-import org.celllife.idart.database.hibernate.User;
+import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
 import org.celllife.idart.misc.iDARTUtil;
@@ -360,10 +349,29 @@ public class PackageManager {
     @SuppressWarnings("unchecked")
     public static List<Packages> getAllPackagesForPatient(Session session,
                                                           Patient p) throws HibernateException {
-        List<Packages> patientsPackages = session
-                .createQuery(
-                        "select pack from Packages as pack where pack.prescription.patient.id = :thePatientId order by pack.packDate desc")
-                .setInteger("thePatientId", p.getId()).list();
+
+        List<Packages> patientsPackages = new ArrayList<Packages>();
+        ArrayList<Integer> packagesIds = new ArrayList();
+
+        Query q = session.createQuery(
+                        " select p.packDate, p.prescription.id, Max(p.id) as packId from Packages as p \n"+
+                                "where p.prescription.patient.id = :thePatientId \n" +
+                                "group by 1,2")
+                        .setInteger("thePatientId", p.getId());
+
+        List<Object[]> lastPackages= (List<Object[]>)q.list();
+        for(Object[] pack: lastPackages){
+            try{
+                packagesIds.add((Integer) pack[2]);
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                continue;
+            }
+        }
+        if(!packagesIds.isEmpty())
+            patientsPackages = session.createQuery("select p from Packages p where p.id in (:ids) order by p.packDate desc").setParameterList("ids", packagesIds).list();
+
         return patientsPackages;
     }
 

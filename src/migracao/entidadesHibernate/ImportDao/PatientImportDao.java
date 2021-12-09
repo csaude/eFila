@@ -111,6 +111,7 @@ public class PatientImportDao
         try {
             syncPatientImport = this.getCurrentSession().createQuery("from SyncTempPatient").list();
         } catch (Exception e) {
+            e.printStackTrace();
            log.trace(e.getMessage());
         }
 
@@ -137,6 +138,7 @@ public class PatientImportDao
             syncDispenseExport = this.getCurrentSession().createQuery("from SyncTempDispense where syncTempDispenseid = '" + clinicName + "'"
                     + " AND patientid = '" + patient.getPatientId() + "' AND dispensedate = '"+datadispensa+"'").list();
         } catch (Exception e) {
+            e.printStackTrace();
            log.trace(e.getMessage());
         }
 
@@ -153,6 +155,7 @@ public class PatientImportDao
         try {
             patients = query.list();
         } catch (HibernateException e) {
+            e.printStackTrace();
            log.trace(e.getMessage());
         }
 

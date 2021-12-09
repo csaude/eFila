@@ -45,6 +45,7 @@ import org.celllife.idart.gui.utils.iDartColor;
 import org.celllife.idart.gui.utils.iDartFont;
 import org.celllife.idart.gui.utils.iDartImage;
 import org.celllife.idart.gui.welcome.GenericWelcome;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
@@ -129,7 +130,7 @@ public class StockTakeGui extends GenericOthersGui {
 
 	private Drug localDrug; // @jve:decl-index=0:
 
-	private final List<Drug> drugList;
+	private List<Drug> drugList;
 
 	private int currentDrugIndex = 0;
 
@@ -143,7 +144,7 @@ public class StockTakeGui extends GenericOthersGui {
 
 	private List<StockAdjustment> stockAdjustmentInStockTake;
 
-	private final Date captureDate;
+	private final Date captureDate = new Date();;
 
 	private boolean isdisposed = false;
 
@@ -158,26 +159,30 @@ public class StockTakeGui extends GenericOthersGui {
 	 */
 	public StockTakeGui(Shell parent) {
 		super(parent, HibernateUtil.getNewSession());
-		StockManager.clearStockTakes(getHSession());
-		activate();
-		GenericWelcome.timer.setDisabled(true);
-		currentStockTake = StockManager.getStockTake(getHSession());
-		if (currentStockTake != null) {
-			stockAdjustmentInStockTake = StockManager
-			.getStockAdjustmentsInStockTake(getHSession(),
-					currentStockTake);
-		} else {
-			stockAdjustmentInStockTake = new ArrayList<StockAdjustment>();
-		}
-		captureDate = new Date();
-		drugList = DrugManager.getDrugsListForStockTake(getHSession(),
-				includeZeroBatches);
-		sizeOfDrugList = drugList.size();
-		// Collections.sort(drugList);
-		if (currentStockTake == null) {
-			enableFields(false);
-		} else {
-			enableFields(true);
+		try{
+			StockManager.clearStockTakes(getHSession());
+			activate();
+			GenericWelcome.timer.setDisabled(true);
+			currentStockTake = StockManager.getStockTake(getHSession());
+			if (currentStockTake != null) {
+				stockAdjustmentInStockTake = StockManager
+						.getStockAdjustmentsInStockTake(getHSession(),
+								currentStockTake);
+			} else {
+				stockAdjustmentInStockTake = new ArrayList<StockAdjustment>();
+			}
+			drugList = DrugManager.getDrugsListForStockTake(getHSession(),
+					includeZeroBatches);
+			sizeOfDrugList = drugList.size();
+			// Collections.sort(drugList);
+			if (currentStockTake == null) {
+				enableFields(false);
+			} else {
+				enableFields(true);
+			}
+		}catch (Exception e){
+			showMessage(MessageDialog.ERROR, "Erro!", "Erro na abertura do inventário.\n" +
+					" Por favor, verifique se exixte um inventário aberto.");
 		}
 	}
 

@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.5937424601000023"/>
-	<property name="ireport.x" value="59"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -149,7 +149,7 @@ from 	(select sum(s.unitsreceived) as received
 				drug.id = $P{id}
 			and
 				drug.id=stock.drug
-			and drug.tipodoenca like '%ARV%'
+			and drug.tipodoenca like '%ARV%' and stock.expirydate::date >= $P{monthStart}::date
 
 		GROUP BY   drug.id, drug.name
 		 ) as drug_expire]]>

@@ -3482,8 +3482,16 @@ public class  AddPrescription extends GenericFormGui implements
                 "New Patient Packaging: User chose 'Patient History Report'");
 
         if (localPrescription != null) {
-            PatientHistoryReport report = new PatientHistoryReport(getShell(),
-                    localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
+            PatientHistoryReport report = null;
+            if(tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV))
+                report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
+            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT))
+                report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILT);
+            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))
+                report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_PREP);
+
+            if(report == null)
+                report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
             viewReport(report);
         }
     }

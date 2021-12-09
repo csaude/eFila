@@ -108,6 +108,7 @@ public class FarmaciasRegistadasReport  extends GenericReportGui {
                 viewReport(report);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 getLog().error("Exception while running Monthly Receipts and Issues report",e);
 
             }

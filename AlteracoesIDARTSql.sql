@@ -68,6 +68,7 @@ ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(25
 ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
+ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -271,6 +272,44 @@ CREATE TABLE IF NOT EXISTS sync_mobile_patient (
     arvstartdate timestamp with time zone,
     enrolldate timestamp with time zone
 );
+
+CREATE TABLE IF NOT EXISTS sync_temp_clinic_information (
+    id integer NOT NULL PRIMARY KEY DEFAULT nextval('hibernate_sequence'::regclass),
+    registerdate timestamp with time zone NOT NULL,
+    stopdate timestamp with time zone,
+    weight integer,
+    height integer,
+    imc character varying(255) COLLATE pg_catalog."default",
+    distort integer ,
+    systole integer ,
+    istreatmenttpi BOOLEAN NOT NULL,
+    isTreatmenttb BOOLEAN NOT NULL ,
+    isCough BOOLEAN NOT NULL,
+    isFever BOOLEAN NOT NULL ,
+    isLostWeight BOOLEAN NOT NULL,
+    isSweating BOOLEAN NOT NULL,
+    hasFatigueOrTirednesLastTwoWeeks BOOLEAN NOT NULL ,
+    hasParentTBTreatment BOOLEAN NOT NULL ,
+    isReferedToUsTB BOOLEAN NOT NULL ,
+    hasPatientCameCorrectDate BOOLEAN NOT NULL ,
+    lateDays integer  ,
+    patientForgotMedicine BOOLEAN NOT NULL ,
+    daysWithoutMedicine integer ,
+    lateMotives character varying(255) ,
+    adverseReactionOfMedicine BOOLEAN NOT NULL ,
+    adverseReaction character varying(255) ,
+    isReferedToUsRAM BOOLEAN NOT NULL,
+    isPregnant BOOLEAN NOT NULL ,
+    hasHadMenstruationLastTwoMonths BOOLEAN NOT NULL ,
+    startTreatmentDate timestamp with time zone,
+    patientuuid character varying(255) COLLATE pg_catalog."default",
+    syncstatus character(1) COLLATE pg_catalog."default",
+    usuuid character varying(255) COLLATE pg_catalog."default",
+    uuid character varying(255) COLLATE pg_catalog."default",
+    clinicuuid character varying(255) COLLATE pg_catalog."default"
+);
+
+CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
@@ -614,6 +653,34 @@ update drug set uuidopenmrs='08S39Y-3a-20c8-4a16-aaea-f2d4537202e4' where atccod
 update drug set uuidopenmrs='08S01ZW-ec-ec31-45aa-a74e-7238872483e8' where atccode_id='08S01ZW';
 update drug set uuidopenmrs='08S40Z-fc-6563-49e4-bf81-a456bf79ec88' where atccode_id='08S40Z';
 update drug set uuidopenmrs='08S30ZY-ae-3c79-46bd-9970-2d02b8788fdf' where atccode_id='08S30ZY';
+
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'mar','Mar') where substr(dateexpectedstring,4,3)='mar';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'abr','Apr') where substr(dateexpectedstring,4,3)='abr';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'mai','May') where substr(dateexpectedstring,4,3)='mai';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'jun','Jun') where substr(dateexpectedstring,4,3)='jun';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'jul','Jul') where substr(dateexpectedstring,4,3)='jul';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'ago','Aug') where substr(dateexpectedstring,4,3)='ago';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'set','Sep') where substr(dateexpectedstring,4,3)='set';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'out','Oct') where substr(dateexpectedstring,4,3)='out';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
+
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'mar','Mar') where substr(dateexpectedstring,4,3)='mar';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'abr','Apr') where substr(dateexpectedstring,4,3)='abr';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'mai','May') where substr(dateexpectedstring,4,3)='mai';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jun','Jun') where substr(dateexpectedstring,4,3)='jun';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jul','Jul') where substr(dateexpectedstring,4,3)='jul';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'ago','Aug') where substr(dateexpectedstring,4,3)='ago';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'set','Sep') where substr(dateexpectedstring,4,3)='set';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'out','Oct') where substr(dateexpectedstring,4,3)='out';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
+
 CREATE VIEW sync_temp_dispense_vw AS
 select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
 from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+

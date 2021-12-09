@@ -72,6 +72,7 @@ public class SwingReverse {
            log.trace("" + lengthOfTask + " Pacientes Importados do OpenMRS para o IDART com sucesso!!!!!!");
         }
         catch (Exception e) {
+            e.printStackTrace();
             System.err.println("ACONTECEU UM ERRO INESPERADO, Ligue o Servidor OpenMRS e Tente Novamente ou Contacte o Administrador \n" + e);
         }
     }

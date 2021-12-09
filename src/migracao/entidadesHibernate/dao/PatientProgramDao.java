@@ -98,7 +98,7 @@ public class PatientProgramDao implements PatientProgramDaoInterface<PatientProg
                         "select pg.* from patient p "+
                         "inner join patient_program pg on pg.patient_id = p.patient_id "+
                         "inner join location lc on lc.location_id = pg.location_id "+
-                        "where pg.voided=0 and pg.program_id=2 and lc.uuid = '"+uuidLocation+"' "+
+                        "where pg.voided=0 and ( pg.program_id = 2 OR pg.program_id = 25 ) and lc.uuid = '"+uuidLocation+"' "+
                         "and pg.idart is null "+
                         "and pg.date_enrolled is not null "+
                         "and pg.date_completed is null " +
@@ -109,7 +109,7 @@ public class PatientProgramDao implements PatientProgramDaoInterface<PatientProg
                             "inner join patient_state ps on ps.patient_program_id = pg.patient_program_id " +
                             "where pg.voided=0 and ps.voided=0 " +
                             "and p.voided=0 " +
-                            "and pg.program_id = 2 " +
+                            "and ( pg.program_id = 2 OR pg.program_id = 25 )" +
                             "and ps.state in (7,8,9,10) " +
                             "and ps.end_date is null " +
                             "and ps.start_date <= NOW() " +
