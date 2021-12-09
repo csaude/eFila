@@ -125,6 +125,7 @@ public class HistoricoLevantamentoReferidosDEouPARAReport extends GenericReportG
                 HistoricoLevantamentoReferidosDEouPARA report = new HistoricoLevantamentoReferidosDEouPARA(getShell(), theStartDate, theEndDate);
                 viewReport(report);
             } catch (Exception e) {
+                e.printStackTrace();
                 getLog().error("Exception while running Historico levantamento report",e);
             }
         }

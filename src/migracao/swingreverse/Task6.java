@@ -361,6 +361,7 @@ public class Task6 extends SwingWorker<String, Void> {
             prescription.setTpc(syncTempDispense.get(0).getTpc());
             prescription.setTpi(syncTempDispense.get(0).getTpi());
             prescription.setDrugTypes(syncTempDispense.get(0).getDrugtypes());
+            prescription.setTipoDoenca("TARV");
 
             List<PrescribedDrugs> prescribedDrugsList = new ArrayList<PrescribedDrugs>();
 

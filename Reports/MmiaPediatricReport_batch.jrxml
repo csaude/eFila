@@ -165,8 +165,7 @@ FROM
 
   WHERE
 drug.id = $P{id2}
-and
-drug.id=stock.drug
+and drug.id=stock.drug
 
  GROUP BY   drug.id, drug.name
  ) as drug_expire]]>

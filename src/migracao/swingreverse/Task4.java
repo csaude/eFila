@@ -76,6 +76,7 @@ public class Task4 extends SwingWorker<String, Void> {
                 pzip.unCompressPasswordProtectedFiles(jfc.getSelectedFile());
             } catch (ZipException e) {
                 // TODO Auto-generated catch block
+                e.printStackTrace();
                 System.err.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
              //   e.printStackTrace();
             }
@@ -108,6 +109,7 @@ public class Task4 extends SwingWorker<String, Void> {
                             }
 
                         } catch (IOException ex) {
+                            ex.printStackTrace();
                             Logger.getLogger(JBackupController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         System.err.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -116,12 +118,14 @@ public class Task4 extends SwingWorker<String, Void> {
                         current = lengthOfTask * 2;
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     System.err.println("1. Se o erro persistir,por favor, Contacte o Administrador \n" + e);
                   //  e.printStackTrace();
                 } 
             }
             System.err.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("2. Se o erro persistir,por favor, Contacte o Administrador \n" + e);
         //    e.printStackTrace();
         }

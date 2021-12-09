@@ -141,6 +141,7 @@ public abstract class BaseImportSheet implements ReadExcelReportInterface {
 			// close write file
 			session.flush();
 		} catch (Exception e) {
+			e.printStackTrace();
 			errorCount++;
 			xlw.writeCell(0, 0, e.getMessage());
 			if (tx != null) {

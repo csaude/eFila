@@ -12,11 +12,13 @@ import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.alert.RiscoRoptura;
 import org.celllife.idart.gui.sync.dispense.SyncLinha;
 import org.celllife.idart.gui.sync.patients.SyncLinhaPatients;
+import org.celllife.idart.rest.DateUtilities;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
@@ -534,6 +536,8 @@ public class ConexaoJDBC {
                     "     stock.stockcenter = " + stockCenter.getId() +
                     " AND " +
                     "   drug.id=stock.drug " +
+                    " AND " +
+                    "   pg_catalog.date(stock.expirydate) >= '" + dataInicial + "'" +
                     " GROUP BY 1,2,3,4,5 " +
                     " ORDER BY drug.atccode_id asc ";
 
@@ -874,7 +878,7 @@ public class ConexaoJDBC {
     public Map indicadoresMensais(String startDate, String endDate) throws ClassNotFoundException, SQLException {
 
         Map<String, Object> map = new HashMap<String, Object>();
-        String query = "SELECT  distinct p.patient,p.reasonforupdate, p.dispensatrimestral, " +
+        String query = "SELECT  distinct p.date, pa.pickupdate, p.patient,p.reasonforupdate, p.dispensatrimestral, " +
                 "p.dispensasemestral, p.prep,p.ptv,p.dc,p.ppe,p.ce,l.linhanome, " +
                 "p.af, p.gaac,p.ca,p.tb,p.ccr,p.saaj,p.cpn,p.fr, " +
                 "EXTRACT(year FROM age('" + endDate + "',pat.dateofbirth)) :: int dateofbirth, ep.startreason, " +
@@ -941,6 +945,7 @@ public class ConexaoJDBC {
         int totalppe = 0;
         int totalCE = 0;
         int totalDM = 0;
+        int daysPrescriptionDispensedDiff = 0;
 
 
         conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
@@ -993,32 +998,65 @@ public class ConexaoJDBC {
                 }
 
                 // idade e DT
-                if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Novo")) {
+                daysPrescriptionDispensedDiff =  DateUtilities.daysDiff(rs.getDate("date"),rs.getDate("pickupdate"));
+
+                if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensatrimestral") == 1 &&
+                        rs.getString("tipodt").contains("Novo") &&
+                        daysPrescriptionDispensedDiff <= 15 ) {
                     adultnovosdt++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Manunt")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensatrimestral") == 1 &&
+                        (rs.getString("tipodt").contains("Manunt") ||
+                        (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff > 15))) {
                     adultmanuntencaodt++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Transporte")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensatrimestral") == 1 &&
+                        rs.getString("tipodt").contains("Transporte")) {
                     adulttransportedt++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Novo")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 &&
+                        rs.getInt("dispensatrimestral") == 1 &&
+                        rs.getString("tipodt").contains("Novo") &&
+                        daysPrescriptionDispensedDiff <= 15) {
                     pednovosdt++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Manunt")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 &&
+                        rs.getInt("dispensatrimestral") == 1 &&
+                        (rs.getString("tipodt").contains("Manunt") ||
+                        (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff > 15))) {
                     pedmanuntencaodt++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensatrimestral") == 1 && rs.getString("tipodt").contains("Transporte")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15
+                        && rs.getInt("dispensatrimestral") == 1 &&
+                        rs.getString("tipodt").contains("Transporte")) {
                     pedtransportedt++;
                 }
 
                 // idade e DS
-                if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Novo")) {
+                if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensasemestral") == 1 &&
+                        rs.getString("tipods").contains("Novo") &&
+                        daysPrescriptionDispensedDiff <= 15 ) {
                     adultnovosds++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Manunt")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensasemestral") == 1 &&
+                        (rs.getString("tipods").contains("Manunt") ||
+                        (rs.getString("tipods").contains("Novo") && daysPrescriptionDispensedDiff > 15))) {
                     adultmanuntencaods++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Transporte")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") >= 15 &&
+                        rs.getInt("dispensasemestral") == 1 &&
+                        rs.getString("tipods").contains("Transporte")) {
                     adulttransporteds++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Novo")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 &&
+                        rs.getInt("dispensasemestral") == 1 &&
+                        rs.getString("tipods").contains("Novo") &&
+                        daysPrescriptionDispensedDiff <= 15 ) {
                     pednovosds++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Manunt")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 &&
+                        rs.getInt("dispensasemestral") == 1 &&
+                        (rs.getString("tipods").contains("Manunt") ||
+                        (rs.getString("tipods").contains("Novo") && daysPrescriptionDispensedDiff > 15))) {
                     pedmanuntencaods++;
-                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 && rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Transporte")) {
+                } else if (!nonuspatient && rs.getInt("dateofbirth") < 15 &&
+                        rs.getInt("dispensasemestral") == 1 && rs.getString("tipods").contains("Transporte")) {
                     pedtransporteds++;
                 }
 
@@ -1123,19 +1161,21 @@ public class ConexaoJDBC {
         int totalpacientesnovos = 0;
         int totalpacienteManuntencaoTransporte = 0;
         int totalpacienteCumulativo = 0;
+        int daysPrescriptionDispensedDiff = 0;
+
 
         conecta(iDartProperties.hibernateUsername, iDartProperties.hibernatePassword);
         ResultSet rs = st.executeQuery(query);
         if (rs != null) {
             while (rs.next()) {
                 totalpacienteCumulativo++;
-
+                daysPrescriptionDispensedDiff =  DateUtilities.daysDiff(rs.getDate("dataprescricao"),rs.getDate("dataLevantamento"));
                 if (rs.getString("tipodt") != null) {
 
                     // Tipo de Pacinte
-                    if (rs.getString("tipodt").contains("Novo")) {
+                    if (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff <= 15) {
                         totalpacientesnovos++;
-                    } else if ((rs.getString("tipodt").contains("Manunte"))) {
+                    } else if (rs.getString("tipodt").contains("Manunte") || (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff > 15)) {
                         totalpacientesmanter++;
                     } else if (rs.getString("tipodt").contains("Transporte")) {
                         totalpacienteManuntencaoTransporte++;

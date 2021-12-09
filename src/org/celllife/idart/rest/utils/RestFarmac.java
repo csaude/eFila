@@ -417,7 +417,6 @@ public class RestFarmac {
             e.printStackTrace();
         }
 
-
         return response.getStatusLine().toString();
     }
 
@@ -782,6 +781,7 @@ public class RestFarmac {
                 } catch (Exception e) {
                     sess.getTransaction().rollback();
                     sess.close();
+                    e.printStackTrace();
                     log.error("Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPatientid() + "]");
                 } finally {
                     continue;
@@ -794,8 +794,6 @@ public class RestFarmac {
     }
 
     public static void setEpisodesFromRest(Session session, Clinic clinic) {
-
-
 
         List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncEpisodesReadyToSave(session);
 

@@ -324,6 +324,8 @@ public class Episode implements Comparable< Episode >{
 	public static Episode generateFromSyncEpisode(SyncEpisode e, Patient patient, Clinic clinic) {
 		Episode episode = new Episode();
 		episode.setPatient(patient);
+		episode.setStartDate(e.getStartDate());
+		episode.setStartNotes(e.getStartNotes());
 		episode.setStartReason("Voltou da Referencia");
 		episode.setStartDate(e.getStopDate());
 		episode.setStartNotes(e.getStopNotes());
@@ -336,6 +338,7 @@ public class Episode implements Comparable< Episode >{
 		this.setStopDate(syncEpisode.getStopDate());
 		this.setStopReason("Voltou da Referencia");
 		this.setStopNotes(syncEpisode.getStartNotes());
+
 	}
 
 	@Override

@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.1586575189467514"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -111,7 +111,7 @@ d.stockcode
 from drug as d
 left join stock as s on s.drug = d.id
 left join form as f on d.form=f.id
-where s.stockcenter = $P{stockCenterId} and d.sidetreatment = 'F' and d.tipodoenca like '%ARV%'
+where s.stockcenter = $P{stockCenterId} and d.sidetreatment = 'F' and d.tipodoenca like '%ARV%' and s.expirydate::date >= $P{date}::date
 order by atccode_id asc]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
@@ -1501,17 +1501,17 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				<subreportParameter name="StockCode">
 					<subreportParameterExpression><![CDATA[$F{stockcode}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="packsize">
-					<subreportParameterExpression><![CDATA[$F{packsize}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="stockCenterId">
 					<subreportParameterExpression><![CDATA[$P{stockCenterId}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="name">
-					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+				<subreportParameter name="packsize">
+					<subreportParameterExpression><![CDATA[$F{packsize}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="atccode">
 					<subreportParameterExpression><![CDATA[$F{atccode}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="name">
+					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="path">
 					<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>

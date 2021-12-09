@@ -167,6 +167,9 @@ public class DadosPacienteFarmac {
 
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
 
+            if(prescription == null)
+                prescription = PackageManager.getPrescription(sess,syncTempDispense.getPrescriptionid());
+
             if (patient.getMostRecentEpisode() == null) {
                 Episode episode = new Episode();
                 episode.setPatient(patient);
@@ -234,6 +237,7 @@ public class DadosPacienteFarmac {
                 prescription.setTipoDT(syncTempDispense.getTipodt());
                 prescription.setDispensaTrimestral(syncTempDispense.getDispensatrimestral());
                 prescription.setDurationSentence(syncTempDispense.getDurationsentence());
+                prescription.setTipoDoenca("TARV");
 
                 List<PrescribedDrugs> prescribedDrugsList = new ArrayList<PrescribedDrugs>();
 

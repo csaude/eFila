@@ -1616,6 +1616,12 @@ public class AdministrationManager {
                 "from IdentifierType where name = 'CRAM'").uniqueResult();
     }
 
+    public static IdentifierType getPrEPIdentifierType(Session hSession) {
+        // FIXME: figure out a way to identify the national id type
+        return (IdentifierType) hSession.createQuery(
+                "from IdentifierType where name = 'PREP'").uniqueResult();
+    }
+
     //Insere regime terapeutico
     public static void saveRegimeTerapeutico(Session s, RegimeTerapeutico regimeTerapeutico)
             throws HibernateException {

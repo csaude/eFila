@@ -1438,6 +1438,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
             return true;
 
         } catch (Exception he) {
+            he.printStackTrace();
             if (tx != null) {
                 tx.rollback();
             }
@@ -1659,6 +1660,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                     Date arvStartDate = (Date) pa.getObjectValue();
                     btnARVStart.setDate((Date) arvStartDate.clone());
                 } catch (Exception e) {
+                    e.printStackTrace();
                     getLog().error("Error when obtaining ARV Start Date", e); //$NON-NLS-1$
                 }
             }
@@ -1669,6 +1671,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             getLog().error(e);
         }
     }
@@ -2198,6 +2201,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
         try {
             PrintLabel.printiDARTLabels(labelList);
         } catch (Exception e) {
+            e.printStackTrace();
             getLog().error("Error printing patient info label", e); //$NON-NLS-1$
         }
     }
@@ -2391,6 +2395,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                 MobilisrManager.updateMobilisrCellNo(oldCellNo, firstName, lastName, newCellNo);
             }
         } catch (RestCommandException e) {
+            e.printStackTrace();
             showMessage(MessageDialog.ERROR, "Error", "Error updating patients mobile number" +
                     " in Communicate");
         }
@@ -2540,6 +2545,7 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             if (localPatient.getEpisodes() == null) {
                 getLog().error(
                         "Patient has not been set with any episodes, " //$NON-NLS-1$

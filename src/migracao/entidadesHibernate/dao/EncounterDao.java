@@ -96,6 +96,7 @@ public class EncounterDao
         try {
             listencounter = query.list();
         } catch (HibernateException e) {
+            e.printStackTrace();
             System.err.println(e.getMessage());
         }
 
