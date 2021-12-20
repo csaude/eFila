@@ -309,7 +309,8 @@ public class ConexaoJDBC {
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
-                + " 	inner join episode ep on ep.id = pack.episode ";
+                + " 	inner join episode ep on ep.id = pack.episode "
+                + " 	where p.tipodoenca like '%" + diseaseType + "%'";
 
         int totalpacientestransito = 0;
         int totalpacientesinicio = 0;
@@ -471,7 +472,8 @@ public class ConexaoJDBC {
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
-                + " 	inner join episode ep on ep.id = pack.episode ";
+                + " 	inner join episode ep on ep.id = pack.episode "
+                + " 	where p.tipodoenca like '%" + diseaseType + "%'";
 
         int pacientesdispensadosparaDM = 0;
         int pacientesdispensadosparaDT = 0;
@@ -4412,6 +4414,7 @@ public class ConexaoJDBC {
                 + " pat.lastname as apelido,  "
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
+                + " EXTRACT(year FROM age('" + endDate + "',pat.dateofbirth))::Integer as idade, "
                 + " CASE  "
                 + " 	WHEN p.ccr = 'T' THEN 'CCR'"
                 + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
@@ -4520,6 +4523,7 @@ public class ConexaoJDBC {
                 + " pat.lastname as apelido,  "
                 + " p.reasonforupdate as tipotarv, "
                 + " reg.regimeesquema as regime,  "
+                + " EXTRACT(year FROM age('" + endDate + "',pat.dateofbirth))::Integer as idade, "
                 + " CASE  "
                 + " 	WHEN p.ccr = 'T' THEN 'CCR'"
                 + " 	WHEN p.gaac = 'T' THEN 'GAAC'"
@@ -4589,6 +4593,7 @@ public class ConexaoJDBC {
                 levantamentoXLS.setModoDispensa(rs.getString("modedispense"));
                 levantamentoXLS.setDataLevantamento(rs.getString("datalevantamento"));
                 levantamentoXLS.setDataProximoLevantamento(rs.getString("dataproximolevantamento"));
+                levantamentoXLS.setIdade(rs.getString("idade"));
 
                 levantamentoXLSs.add(levantamentoXLS);
             }

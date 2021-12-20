@@ -895,6 +895,7 @@ public class SearchManager {
                         tableItem.setText(newStrings);
                     }
                     break;
+                /* Adicionado por colaco 10.01.2020: Adicionado o filto de pesquisa de Regimes Terapeuticos */
 
                 case CommonObjects.DRUG:
                     Drug drug = (Drug) fullList.get(i);
@@ -912,7 +913,37 @@ public class SearchManager {
                     }
                     break;
 
-                /* Adicionado por colaco 10.01.2020: Adicionado o filto de pesquisa de Regimes Terapeuticos */
+                case CommonObjects.ACTIVEDRUG:
+                    Drug activeDrug = (Drug) fullList.get(i);
+                    found1 = activeDrug.getName().toUpperCase().indexOf(
+                            searchString.toUpperCase());
+                    found2 = (Integer.valueOf(activeDrug.getPackSize())).toString()
+                            .toUpperCase().indexOf(searchString.toUpperCase());
+                    if (found1 != -1 || found2 != -1) {
+                        TableItem tableItem = new TableItem(t, SWT.NONE);
+                        String[] newStrings = new String[2];
+                        newStrings[0] = activeDrug.getName();
+                        newStrings[1] = (new Integer(activeDrug.getPackSize()))
+                                .toString();
+                        tableItem.setText(newStrings);
+                    }
+                    break;
+
+                case CommonObjects.ASSOCIATEDDRUGS:
+                    Drug associatedDrug = (Drug) fullList.get(i);
+                    found1 = associatedDrug.getName().toUpperCase().indexOf(
+                            searchString.toUpperCase());
+                    found2 = (Integer.valueOf(associatedDrug.getPackSize())).toString()
+                            .toUpperCase().indexOf(searchString.toUpperCase());
+                    if (found1 != -1 || found2 != -1) {
+                        TableItem tableItem = new TableItem(t, SWT.NONE);
+                        String[] newStrings = new String[2];
+                        newStrings[0] = associatedDrug.getName();
+                        newStrings[1] = (new Integer(associatedDrug.getPackSize()))
+                                .toString();
+                        tableItem.setText(newStrings);
+                    }
+                    break;
 //                            Inicio
                 case CommonObjects.REGIMEN:
                     RegimeTerapeutico regName = (RegimeTerapeutico) fullList.get(i);
@@ -943,6 +974,8 @@ public class SearchManager {
                         tableItem.setText(newStrings);
                     }
                     break;
+
+
 //                              Fim
 
                 case CommonObjects.STOCK:
