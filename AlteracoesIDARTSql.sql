@@ -682,3 +682,8 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'set
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'out','Oct') where substr(dateexpectedstring,4,3)='out';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
+
+CREATE VIEW sync_temp_dispense_vw AS
+select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
+from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+
