@@ -7,6 +7,8 @@ public class HistoricoLevantamentoXLS {
 	private String nome;
 	
 	private String apelido;
+
+	private String idade;
 	
 	private String tipoTarv;
 
@@ -119,5 +121,13 @@ public class HistoricoLevantamentoXLS {
 
 	public void setProveniencia(String proveniencia) {
 		this.proveniencia = proveniencia;
+	}
+
+	public String getIdade() {
+		return idade;
+	}
+
+	public void setIdade(String idade) {
+		this.idade = idade;
 	}
 }

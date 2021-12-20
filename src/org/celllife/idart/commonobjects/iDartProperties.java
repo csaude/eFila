@@ -58,7 +58,6 @@ public class iDartProperties {
 
 	public static final String DISPENSEMODE_UUID = "40a9a12b-1205-4a55-bb93-caf15452bf61";
 
-
 	public static final String FORM_FILT_UUID = "4ce83895-5c0e-4170-b0cc-d3974b54131f";
 
 	public static final String REGIME_TPT_UUID = "9db4ce3b-4c1c-45dd-905f-c984a052f26e";
@@ -81,7 +80,6 @@ public class iDartProperties {
 	public static final String FILT_TPT_CONTINUE_FOLLOW_UP_UUID = "e1d9f036-1d5f-11e0-b929-000c29ad1d07";
 	public static final String FILT_TPT_RESTART_FOLLOW_UP_UUID = "e1de1bfc-1d5f-11e0-b929-000c29ad1d07";
 	public static final String FILT_TPT_END_FOLLOW_UP_UUID = "e1d9facc-1d5f-11e0-b929-000c29ad1d07";
-
 
 	public static final String CONCEPT_CONFIDENT_NAME = "e1de46a4-1d5f-11e0-b929-000c29ad1d07";
 	
