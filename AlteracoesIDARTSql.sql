@@ -57,6 +57,8 @@ ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensasemestral intege
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS estadopaciente character varying(255) COLLATE pg_catalog."default" DEFAULT "Activo"::character varying;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS exclusaopaciente boolean NOT NULL DEFAULT FALSE;
 ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
 ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
@@ -686,4 +688,3 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez
 CREATE VIEW sync_temp_dispense_vw AS
 select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
 from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
-

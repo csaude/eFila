@@ -575,7 +575,7 @@ public class PatientManager {
 		return pat;
 	}
 
-	public static String lastNextPickup(Session session, int patientId)
+	public static String lastNextPickup(Session session, int patientId, String tipoDoenca)
 			throws HibernateException {
 
 		SQLQuery query = session.createSQLQuery("select dateexpectedstring from packagedruginfotmp packdrugtemp \n" +
@@ -584,8 +584,9 @@ public class PatientManager {
 				"inner join package pack on pack.prescription = pre.id \n" +
 				"inner join packageddrugs packdg on packdg.parentpackage = pack.id \n" +
 				"inner join packagedruginfotmp packinfo on packinfo.packageddrug = packdg.id \n" +
-				"where pre.patient = :patid \n" +
+				"where pre.patient = :patid and pre.tipodoenca = :tdoenca \n" +
 				"group by 2 order by 2 desc) lastpickupdate on lastpickupdate.id = packdrugtemp.id");
+		query.setString("tdoenca", tipoDoenca);
 		query.setInteger("patid", patientId);
 //		query.setResultTransformer(new AliasToBeanResultTransformer(String.class));
 

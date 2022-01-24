@@ -106,6 +106,11 @@ public class SyncTempPatient {
     @Column(name = "jsonprescribeddrugs")
     private String jsonprescribeddrugs;
 
+    @Column(name = "estadopaciente")
+    private String estadopaciente;
+    @Column(name = "exclusaopaciente")
+    private boolean exclusaopaciente;
+
     public SyncTempPatient() {
         super();
         this.id = -1;
@@ -487,5 +492,21 @@ public class SyncTempPatient {
 
     public void setJsonprescribeddrugs(String jsonprescribeddrugs) {
         this.jsonprescribeddrugs = jsonprescribeddrugs;
+    }
+
+    public String getEstadopaciente() {
+        return estadopaciente;
+    }
+
+    public void setEstadopaciente(String estadopaciente) {
+        this.estadopaciente = estadopaciente;
+    }
+
+    public boolean isExclusaopaciente() {
+        return exclusaopaciente;
+    }
+
+    public void setExclusaopaciente(boolean exclusaopaciente) {
+        this.exclusaopaciente = exclusaopaciente;
     }
 }
