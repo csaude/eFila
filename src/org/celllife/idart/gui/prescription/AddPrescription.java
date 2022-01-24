@@ -1481,7 +1481,7 @@ public class  AddPrescription extends GenericFormGui implements
         ConexaoJDBC conexao = new ConexaoJDBC();
         Prescription oldPrescription = localPrescription.getPatient().getCurrentPrescription(tipoPaciente);
         Patient patient = localPrescription.getPatient();
-        String dateExpected = PatientManager.lastNextPickup(getHSession(), patient.getId());
+        String dateExpected = PatientManager.lastNextPickup(getHSession(), patient.getId(), tipoPaciente);
         Date dataproximolev = null;
         String regimenomeespecificado = AdministrationManager.getRegimeTerapeutico(getHSession(), cmbRegime.getText()).getRegimenomeespecificado();
 

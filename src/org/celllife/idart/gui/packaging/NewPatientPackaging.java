@@ -619,7 +619,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         if (pre != null)
             if (pre.getMotivocriacaoespecial().contains("Perda")) {
-                String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
+                String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId(), tipoPaciente);
                 if (dateExpected != null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                     Date dataproximolev = new Date(dateExpected);
@@ -2254,7 +2254,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
-            String dateExpected = PatientManager.lastNextPickup(getHSession(), patientID);
+            String dateExpected = PatientManager.lastNextPickup(getHSession(), patientID, tipoPaciente);
             if (dateExpected != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);
@@ -3326,7 +3326,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         Prescription pre = localPatient.getCurrentPrescription(tipoPaciente);
         if (pre.getMotivocriacaoespecial().contains("Perda")) {
-            String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId());
+            String dateExpected = PatientManager.lastNextPickup(getHSession(), localPatient.getId(), tipoPaciente);
             if (dateExpected != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", localeEn);
                 Date dataproximolev = new Date(dateExpected);

@@ -4630,6 +4630,7 @@ public class ConexaoJDBC {
                 "inner join clinic c on c.id = p.clinic " +
                 "where pg_catalog.date(spt.pickupdate) >= '"+startDate+"'::date " +
                 "AND pg_catalog.date(spt.pickupdate) < ('"+endDate+"'::date + INTERVAL '1 day') " +
+                "AND spt.notes like '%Mobile%' " +
                 "GROUP BY 1,2,3,4,5,6,7,8,9 " +
                 "order by 7 asc";
 

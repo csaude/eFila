@@ -324,7 +324,8 @@ public class DownReferDialog extends GenericOthersGui {
                 pacienteReferido.setWorkphone(patient.getWorkPhone());
                 pacienteReferido.setRace(patient.getRace());
                 pacienteReferido.setUuid(patient.getUuidopenmrs());
-
+                pacienteReferido.setEstadopaciente("Activo");
+                pacienteReferido.setExclusaopaciente(false);
 
                 prescriptionDuration = prescription.getDuration();
 
