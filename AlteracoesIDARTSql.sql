@@ -71,6 +71,7 @@ ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varyin
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
 ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT NULL;
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -237,6 +238,13 @@ CREATE TABLE IF NOT EXISTS clinicsector (
 	clinicuuid varchar(255) NULL,
 	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id),
 	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS clinic_sector_type (
+	id int4 NOT NULL,
+	code varchar(255) NULL,
+	description varchar(255) NOT NULL,
+	CONSTRAINT clinic_sector_type_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS patient_sector (
@@ -624,6 +632,12 @@ INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesp
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262775, 1, 7117590, 'T', 7117300, 1, NULL, 2);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262780, 1, 7117500, 'T', 7117300, 1, NULL, 3);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262790, 1, 7117490, 'T', 7117300, 1, NULL, 4);
+
+INSERT INTO public.clinic_sector_type (id, description, code) values (1, 'Paragem Única', 'PARAGEM_UNICA');
+INSERT INTO public.clinic_sector_type (id, description, code) values (2, 'Dispensa Comunitária pelo Provedor', 'PROVEDOR');
+INSERT INTO public.clinic_sector_type (id, description, code) values (3, 'Agente Polivalente', 'APE');
+INSERT INTO public.clinic_sector_type (id, description, code) values (4, 'Clinica Móvel', 'CLINICA_MOVEL');
+INSERT INTO public.clinic_sector_type (id, description, code) values (5, 'Brigada Móvel', 'BRIGADA_MOVEL');
 
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
