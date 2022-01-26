@@ -580,6 +580,8 @@ INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructio
 INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117500, 14, '', '', 'T', '[DTG 10mg cp] Dolutegravir 10mg 90 Comp', 90, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S30ZX', 'Dia', '08S30ZX-fa05-4812-8354-ae21b58e366f');
 INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117490, 14, '', '', 'T', '[DTG 10mg cp] Dolutegravir 10mg 30 Comp', 30, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S30ZXi', 'Dia', '08S30ZXi-d6ed-484b-b980-4a68176f5860');
 
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117590, 14, '', '', 'T', '[ABC/3TC] Abacavir 120mg/Lamivudina 60mg 30 Comp', 30, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S01ZWi', 'Dia', '08S01ZW-ec-ec31-45aa-a74e-7238872483e8');
+
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117710, 'TPT - 3HP Adultos (>30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Adultos (>30kg)', 'TPT - 3HP Adultos (>30kg)', 'TB');
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117780, 'TPT - 3HP Crianças (< 30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Crianças (< 30kg)', 'TPT - 3HP Crianças (< 30kg)', 'TB');
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117580, 'TPT - INH300', true, 'e1d43e52-1d5f-11e0-b929-000c29ad1d07', 'TPT - INH300', 'TPT - INH300', 'TB');
@@ -589,6 +591,8 @@ INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenom
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6162660, 'TPT - INH100', true, 'e1d43e52-1d5f-11e0-b929-000c29ad1d07', 'TPT - INH100', 'TPT - INH100', 'TB');
 
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6158800, 'TDF+3TC PrEP', true, 'e1e59e0e-1d5f-11e0-b929-000c29ad1d07', 'TDF+3TC PrEP', 'TDF+3TC PrEP', 'PREP');
+
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (7117300, 'ABC+3TC+DTG (2DFCped+DTG10)', true, 'af15246d-30b8-4aff-8391-ca2b58e2c88b', 'ABC+3TC+DTG (2DFCped+DTG10)', 'X7APed', 'TARV');
 
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162470, 3, 6162450, 'T', 6117710, 1, NULL, 0);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162480, 1, 6117510, 'T', 6117710, 1, NULL, 1);
@@ -615,11 +619,16 @@ INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesp
 
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162730, 1, 41188, 'T', 6158800, 1, NULL, 0);
 
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262760, 1, (select id from drug where atccode_id = '08S01ZZ'), 'T', 7117300, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262770, 1, (select id from drug where atccode_id = '08S01ZW'), 'T', 7117300, 1, NULL, 1);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262775, 1, 7117590, 'T', 7117300, 1, NULL, 2);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262780, 1, 7117500, 'T', 7117300, 1, NULL, 3);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262790, 1, 7117490, 'T', 7117300, 1, NULL, 4);
 
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
 
- alter table drug add column uuidopenmrs varchar(255);
+ALTER TABLE drug ADD COLUMN uuidopenmrs varchar(255);
 
 update drug set uuidopenmrs='08S18W-7f-c2a7-4d27-95dc-564791951b5f' where atccode_id='08S18W';
 update drug set uuidopenmrs='08S18WI-4-70b1-4732-af8b-be24cb04aaa6' where atccode_id='08S18WI';
@@ -685,6 +694,5 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'out
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
 
-CREATE VIEW sync_temp_dispense_vw AS
-select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
+CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
 from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
