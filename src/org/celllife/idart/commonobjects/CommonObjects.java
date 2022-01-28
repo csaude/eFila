@@ -315,7 +315,7 @@ public class CommonObjects {
 	}
 
 	/**
-	 * Method populatePrescriptionDuration.
+	 * Method populateClinicSectorType.
 	 *
 	 * @param sess
 	 *            Session
@@ -325,10 +325,34 @@ public class CommonObjects {
 	public static void populateClinicSectorType(Session sess, CCombo combo) {
 
 		List<ClinicSectorType> sdList = AdministrationManager.getClinicSecrtorType(sess);
-
+		combo.add("");
 		if (sdList != null) {
 			for (ClinicSectorType s : sdList) {
 				combo.add(s.getDescription());
+			}
+		}
+
+		if (combo.getItemCount() > 0) {
+			// Set the default to the first item in the combo box
+			combo.setText(combo.getItem(0));
+		}
+
+	}
+
+	/**
+	 * Method populateClinicSectorType.
+	 *
+	 * @param sess
+	 *            Session
+	 * @param combo
+	 *            CCombo
+	 */
+	public static void populateClinicSectorBySectorType(Session sess,String sectorType, CCombo combo) {
+
+		List<ClinicSector> sdList = AdministrationManager.getClinicSectorBySectorType(sess, sectorType);
+		if (sdList != null) {
+			for (ClinicSector s : sdList) {
+				combo.add(s.getSectorname());
 			}
 		}
 

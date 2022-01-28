@@ -1689,6 +1689,12 @@ public class  AddPrescription extends GenericFormGui implements
 
                         Clinic clinic = AdministrationManager.getMainClinic(getHSession());
 
+                        String locationUuid = clinic.getUuid();
+
+                        if(patient.getUuidlocationopenmrs() != null) {
+                            locationUuid = patient.getUuidlocationopenmrs();
+                        }
+
                         String facility = clinic.getClinicName().trim();
                         String strFacility = null;
 
@@ -1703,7 +1709,7 @@ public class  AddPrescription extends GenericFormGui implements
                         }
                         // Location
 
-                        JSONObject strFacilityArray = new JSONObject( restClient.getOpenMRSResource("location/" + patient.getUuidlocationopenmrs()));
+                        JSONObject strFacilityArray = new JSONObject( restClient.getOpenMRSResource("location/" + locationUuid));
 
                         if(strFacilityArray.getString("uuid") != null)
                             strFacility = strFacilityArray.toString();

@@ -1193,6 +1193,25 @@ public class AdministrationManager {
     }
 
     /**
+     * Method getClinicSectorBySectorType.
+     *
+     * @param sess Session
+     * @return List<ClinicSectorType>
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<ClinicSector> getClinicSectorBySectorType(Session sess, String sectorType)
+            throws HibernateException {
+        List<ClinicSector> result = sess
+                .createQuery(
+                        "select s from ClinicSector as s where s.clinicSectorType.description = :sectorType  order by s.id")
+                .setString("sectorType", sectorType)
+                .list();
+
+        return result;
+    }
+
+    /**
      * Method getReasonForUpdate.
      *
      * @param sess Session
