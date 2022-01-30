@@ -26,13 +26,16 @@ public class ClinicSector {
     private String uuid;
 
     @OneToMany
-    @JoinColumn(name = "clinic")
     @IndexColumn(name = "clinicSectorIndex")
     private Set<PatientSector> patientSectors;
 
-    @ManyToOne
-    @JoinColumn(name = "clinic")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="clinic", referencedColumnName="uuid")
     private Clinic clinic;
+
+    @ManyToOne
+    @JoinColumn(name = "clinicSectorType")
+    private ClinicSectorType clinicSectorType;
 
     @Column(nullable = false)
     private String clinicuuid;
@@ -41,10 +44,11 @@ public class ClinicSector {
         super();
     }
 
-    public ClinicSector(Clinic clinic, String name, String telephone, String code) {
+    public ClinicSector(Clinic clinic,ClinicSectorType clinicSectorType, String name, String telephone, String code) {
         this.telephone = telephone;
         this.code = code;
         this.sectorname = name;
+        this.clinicSectorType = clinicSectorType;
         this.clinic = clinic;
         this.clinicuuid = clinic.getUuid();
         this.uuid = UUID.randomUUID().toString();
@@ -112,6 +116,14 @@ public class ClinicSector {
 
     public void setClinicuuid(String clinicuuid) {
         this.clinicuuid = clinicuuid;
+    }
+
+    public ClinicSectorType getClinicSectorType() {
+        return clinicSectorType;
+    }
+
+    public void setClinicSectorType(ClinicSectorType clinicSectorType) {
+        this.clinicSectorType = clinicSectorType;
     }
 
     @Override

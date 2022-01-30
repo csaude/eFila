@@ -1,105 +1,4 @@
--- ALTER TABLE drug DROP CONSTRAINT fk20a3c0633ef5cb;
--- ALTER TABLE regimendrugs DROP CONSTRAINT fk281dee12633d3b83;
--- ALTER TABLE clinic DROP CONSTRAINT fk78780108c18d4d76;
--- ALTER TABLE prescription DROP CONSTRAINT fk253af83a4e29eee7;
--- ALTER TABLE prescription DROP CONSTRAINT fk253af83a5e6aa99;
--- ALTER TABLE prescription DROP CONSTRAINT fk253af83a8877f9c1;
--- ALTER TABLE stocklevel DROP CONSTRAINT fk9d728e2e51a7a6d;
--- ALTER TABLE stock DROP CONSTRAINT fk4c806f6633d3b83;
--- ALTER TABLE stock DROP CONSTRAINT fk4c806f66ca88453;
-ALTER TABLE stock ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
-ALTER TABLE stocklevel ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS province character varying(255) COLLATE pg_catalog."default" DEFAULT  '';
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS district character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS subDistrict character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS code character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS facilityType character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE clinic ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default" DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer DEFAULT 1;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS mainclinicuuid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS jsonprescribeddrugs TEXT COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients RENAME COLUMN uuid TO uuidopenmrs;
-ALTER TABLE sync_temp_dispense ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS uuidopenmrs character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_dispense DROP CONSTRAINT sync_temp_dispense_pkey;
-ALTER TABLE sync_temp_dispense ADD CONSTRAINT sync_temp_dispense_pkey PRIMARY KEY (id, mainclinicname);
-ALTER TABLE sync_temp_dispense RENAME COLUMN linhaid TO linhanome;
-ALTER TABLE sync_temp_dispense RENAME COLUMN regimeid TO regimenome;
-ALTER TABLE sync_temp_dispense DROP COLUMN IF EXISTS sync_temp_dispenseid;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinic integer NOT NULL;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinicname character varying(255) COLLATE pg_catalog."default" NOT NULL;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinicuuid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS tipods character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS dispensasemestral integer NOT NULL DEFAULT 0;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS durationsentence character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS dc character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prep character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS ce character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS cpn character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS ctzpickup boolean DEFAULT False;
-ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAULT False;
-ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS modedispense character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptiondate timestamp with time zone NULL;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS duration integer DEFAULT 0;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionenddate timestamp with time zone NULL;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS regimenome character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS linhanome character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensatrimestral integer DEFAULT 0;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensasemestral integer DEFAULT 0;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS estadopaciente character varying(255) COLLATE pg_catalog."default" DEFAULT "Activo"::character varying;
-ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS exclusaopaciente boolean NOT NULL DEFAULT FALSE;
-ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
-ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
-ALTER TABLE patient ADD COLUMN IF NOT EXISTS uuidlocationopenmrs character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
-ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
-ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
-ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
-ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
-ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
-ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
-UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
-UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
-UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
-UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
-UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigoregime = null OR codigoregime = '';
-UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
-UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
-UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
-UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
-UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
-UPDATE identifiertype set name = 'NID CCR' where index = 4;
-UPDATE prescription set tipodoenca = 'TARV' where tipodoenca is null ;
-UPDATE patient set uuidlocationopenmrs = (select uuid from clinic where mainclinic = true) where uuidlocationopenmrs is null;
-DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
-DELETE FROM simpledomain WHERE description  = 'dispense_type';
-DELETE FROM simpledomain WHERE description  = 'dispense_mode';
-DELETE FROM simpledomain WHERE description  = 'disease_type';
-DELETE FROM simpledomain WHERE description  = 'Disease';
-DELETE FROM simpledomain WHERE description  = 'Period';
-DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
-DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
-DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
-
--- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
--- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
--- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
--- update stockcenter set stockcentername = 'CS Chabeco' where stockcentername = 'Unidade Sanitária';
--- update simpledomain set "value" = 'CS Chabeco' where "value" = 'Unidade Sanitária';
-
+-- APAGAR  A TABELA CLINIC SECTOR PRIMEIRO
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS country (
@@ -233,10 +132,19 @@ CREATE TABLE IF NOT EXISTS clinicsector (
 	sectorname varchar(255) NOT NULL,
 	telephone varchar(255) NULL,
 	uuid varchar(255) NULL,
-	clinic integer NOT NULL,
+	clinic varchar(255) NOT NULL,
+	clinicsectortype integer NOT NULL,
 	clinicuuid varchar(255) NULL,
 	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id),
-	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(id) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(uuid) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES clinic_sector_type(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS clinic_sector_type (
+	id int4 NOT NULL,
+	code varchar(255) NULL,
+	description varchar(255) NOT NULL,
+	CONSTRAINT clinic_sector_type_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS patient_sector (
@@ -312,6 +220,103 @@ CREATE TABLE IF NOT EXISTS sync_temp_clinic_information (
 );
 
 CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+
+ALTER TABLE stock ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
+ALTER TABLE stocklevel ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS province character varying(255) COLLATE pg_catalog."default" DEFAULT  '';
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS district character varying(255) COLLATE pg_catalog."default" DEFAULT '';
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS subDistrict character varying(255) COLLATE pg_catalog."default" DEFAULT '';
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS code character varying(255) COLLATE pg_catalog."default" DEFAULT '';
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS facilityType character varying(255) COLLATE pg_catalog."default" DEFAULT '';
+ALTER TABLE clinic ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default" DEFAULT '';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS state integer DEFAULT 1;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS mainclinicuuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS jsonprescribeddrugs TEXT COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients RENAME COLUMN uuid TO uuidopenmrs;
+ALTER TABLE sync_temp_dispense ALTER COLUMN id SET DEFAULT nextval('hibernate_sequence');
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS syncstatus character(1) COLLATE pg_catalog."default" DEFAULT 'P'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS syncuuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS uuidopenmrs character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_dispense DROP CONSTRAINT sync_temp_dispense_pkey;
+ALTER TABLE sync_temp_dispense ADD CONSTRAINT sync_temp_dispense_pkey PRIMARY KEY (id, mainclinicname);
+ALTER TABLE sync_temp_dispense RENAME COLUMN linhaid TO linhanome;
+ALTER TABLE sync_temp_dispense RENAME COLUMN regimeid TO regimenome;
+ALTER TABLE sync_temp_dispense DROP COLUMN IF EXISTS sync_temp_dispenseid;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinic integer NOT NULL;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinicname character varying(255) COLLATE pg_catalog."default" NOT NULL;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS mainclinicuuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS tipods character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS dispensasemestral integer NOT NULL DEFAULT 0;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS durationsentence character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS dc character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prep character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS ce character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS cpn character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS ctzpickup boolean DEFAULT False;
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAULT False;
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS modedispense character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptiondate timestamp with time zone NULL;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS duration integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionenddate timestamp with time zone NULL;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS regimenome character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS linhanome character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensatrimestral integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS dispensasemestral integer DEFAULT 0;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescricaoespecial character(1) COLLATE pg_catalog."default" DEFAULT 'F'::bpchar;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS motivocriacaoespecial character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS estadopaciente character varying(255) COLLATE pg_catalog."default" DEFAULT 'Activo'::character varying;
+ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS exclusaopaciente boolean NOT NULL DEFAULT FALSE;
+ALTER TABLE stockcenter ADD COLUMN IF NOT EXISTS clinicuuid character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE clinic ADD CONSTRAINT clinic_un_uuid UNIQUE (uuid);
+ALTER TABLE patient ADD CONSTRAINT patient_un_uuid UNIQUE (uuidopenmrs);
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS uuidlocationopenmrs character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS notas character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
+ALTER TABLE prescription ADD COLUMN IF NOT EXISTS tipodoenca character varying(255) COLLATE pg_catalog."default" DEFAULT 'TARV'::character varying;
+ALTER TABLE drug ADD COLUMN IF NOT EXISTS defaultTakePeriod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
+ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varying(255) COLLATE pg_catalog."default" DEFAULT 'Dia'::character varying;
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
+ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
+ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE clinicsector ADD CONSTRAINT clinicsector_un_uuid UNIQUE (uuid);
+ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT NULL DEFAULT 1;
+ALTER TABLE clinicsector ADD CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES public.clinic_sector_type (id);
+UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
+UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
+UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
+UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
+UPDATE regimeterapeutico set regimeesquema = regimeesquema || '_' where codigoregime = null OR codigoregime = '';
+UPDATE regimeterapeutico set active = false where codigoregime = null OR codigoregime = '' OR regimeesquema like '%d4T%';
+UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
+UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
+UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
+UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
+UPDATE identifiertype set name = 'NID CCR' where index = 4;
+UPDATE prescription set tipodoenca = 'TARV' where tipodoenca is null ;
+UPDATE patient set uuidlocationopenmrs = (select uuid from clinic where mainclinic = true) where uuidlocationopenmrs is null;
+DELETE FROM simpledomain WHERE description  = 'pharmacy_type';
+DELETE FROM simpledomain WHERE description  = 'dispense_type';
+DELETE FROM simpledomain WHERE description  = 'dispense_mode';
+DELETE FROM simpledomain WHERE description  = 'disease_type';
+DELETE FROM simpledomain WHERE description  = 'Disease';
+DELETE FROM simpledomain WHERE description  = 'Period';
+DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
+DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
+DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
+
+-- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
+-- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
+-- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
+-- update stockcenter set stockcentername = 'CS Chabeco' where stockcentername = 'Unidade Sanitária';
+-- update simpledomain set "value" = 'CS Chabeco' where "value" = 'Unidade Sanitária';
+
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
@@ -625,6 +630,12 @@ INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesp
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262780, 1, 7117500, 'T', 7117300, 1, NULL, 3);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262790, 1, 7117490, 'T', 7117300, 1, NULL, 4);
 
+INSERT INTO public.clinic_sector_type (id, description, code) values (1, 'Paragem Única', 'PARAGEM_UNICA');
+INSERT INTO public.clinic_sector_type (id, description, code) values (2, 'Dispensa Comunitária pelo Provedor', 'PROVEDOR');
+INSERT INTO public.clinic_sector_type (id, description, code) values (3, 'Agente Polivalente', 'APE');
+INSERT INTO public.clinic_sector_type (id, description, code) values (4, 'Clinica Móvel', 'CLINICA_MOVEL');
+INSERT INTO public.clinic_sector_type (id, description, code) values (5, 'Brigada Móvel', 'BRIGADA_MOVEL');
+
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
 
@@ -694,5 +705,4 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'out
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
 
-CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid
-from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;

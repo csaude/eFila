@@ -19,10 +19,7 @@ import org.hibernate.Transaction;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class RestFarmac {
 
@@ -389,7 +386,6 @@ public class RestFarmac {
                         String updateStatus = "{\"syncstatus\":\"U\"}";
 
                         int centralId = syncEpisode.getId();
-                        ;
 
                         EpisodeManager.saveSyncTempEpisode(syncEpisode);
 
@@ -514,6 +510,75 @@ public class RestFarmac {
         return response;
     }
 
+    public static String restPostClinic(String url, Clinic clinic, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        String path = url + "/clinic";
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        Random r = new Random();
+        int low = 1000;
+        int high = 50000;
+        int genId = r.nextInt(high-low) + low;
+
+        String clinicJSONObject = "{\"id\": \""+genId+"\", \"mainclinic\": \"" + false + "\", \"notes\": \"" + clinic.getNotes() + "\", "
+                + "\"code\":\"" + clinic.getCode() + "\", \"telephone\":\"" + clinic.getTelephone() + "\", "
+                + "\"clinicname\":\"" + clinic.getClinicName() + "\",\"province\":\"" + clinic.getProvince() + "\",\"district\":\"" + clinic.getDistrict() + "\", "
+                + "\"subdistrict\":\"" + clinic.getSubDistrict() + "\",\"uuid\":\"" + clinic.getUuid() + "\"}";
+
+        StringEntity inputAddDispense = new StringEntity(clinicJSONObject,"UTF-8");
+
+        inputAddDispense.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddDispense, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST POST - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST POST efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public static String restPostSectorClinico(String url, ClinicSector clinicSector, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        String path = url + "/clinicsector";
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        String clinicJSONObject = "{\"id\": \""+clinicSector.getId()+"\", \"code\": \"" + clinicSector.getCode() + "\", \"sectorname\": \"" + clinicSector.getSectorname() + "\", "
+                + "\"clinicsectortype\":\"" + clinicSector.getClinicSectorType().getId() + "\", \"telephone\":\"" + clinicSector.getTelephone() + "\", "
+                + "\"clinic\":\"" + clinicSector.getClinic().getUuid() + "\",\"clinicuuid\":\"" + clinicSector.getClinicuuid() + "\",\"uuid\":\"" + clinicSector.getUuid() + "\"}";
+
+        StringEntity inputAddDispense = new StringEntity(clinicJSONObject, "UTF-8");
+        inputAddDispense.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddDispense, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST POST - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST POST efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
     public static String restPutDispense(String url, SyncTempDispense syncTempDispense, PoolingHttpClientConnectionManager pool) throws Exception {
 
         String path = url + "/sync_temp_dispense?id=eq." + syncTempDispense.getId() + "&mainclinicname=eq." + syncTempDispense.getMainclinicname().replaceAll(" ","%20");
@@ -529,6 +594,67 @@ public class RestFarmac {
             String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
 
             httpResponse = ApiAuthRest.postgrestRequestPut(path, inputAddPatient, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST PUT - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST PUT efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+
+    }
+
+    public static String restPutClinic(String url, Clinic clinic, PoolingHttpClientConnectionManager pool) throws Exception {
+
+        String path = url + "/clinic?id=eq." + clinic.getId() + "&uuid=eq." + clinic.getUuid().replaceAll(" ","%20");
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        Gson g = new Gson();
+        String restObject = g.toJson(clinic);
+        StringEntity inputAddPatient = new StringEntity(restObject, "UTF-8");
+        inputAddPatient.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPut(path, inputAddPatient, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST PUT - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST PUT efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+
+    }
+
+    public static String restPutClinicSector(String url, ClinicSector clinicSector, PoolingHttpClientConnectionManager pool) throws Exception {
+
+        String path = url + "/clinicsector?id=eq." + clinicSector.getId() + "&uuid=eq." + clinicSector.getUuid().replaceAll(" ","%20");
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        String clinicJSONObject = "{\"code\": \"" + clinicSector.getCode() + "\", \"sectorname\": \"" + clinicSector.getSectorname() + "\", "
+                + "\"clinicsectortype\":\"" + clinicSector.getClinicSectorType().getId() + "\", \"telephone\":\"" + clinicSector.getTelephone() + "\"}";
+
+        StringEntity inputAddPatient = new StringEntity(clinicJSONObject, "UTF-8");
+        inputAddPatient.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddPatient, token, pool);
 
             if (httpResponse != null) {
                 if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
@@ -722,6 +848,69 @@ public class RestFarmac {
                 }
 
             }
+    }
+
+    public static void restPostLocalClinic(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        Clinic clinic = AdministrationManager.getMainClinic(sess);
+
+        String result = "";
+        String resultPut = "";
+                Session session = HibernateUtil.getNewSession();
+                try {
+                    session.beginTransaction();
+                    result = restPostClinic(url, clinic, pool);
+                    if(result.contains("409")) {
+                            log.info(new Date() + ": Farmacia " + clinic.getClinicName() + " ja existe - Resultado: " + resultPut);
+                    } else
+                    if (result.contains("Falha")) {
+                        log.error(new Date() + ": Ocorreu um erro ao enviar a farmacia " + clinic.getClinicName() + " Erro: " + result);
+                    } else {
+                        log.info(new Date() + ": Farmacia " + clinic.getClinicName() + " enviado com sucesso (" + result + ")");
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+    }
+
+    public static String restPostLocalClinicSector(Session sess, String url, PoolingHttpClientConnectionManager pool, List<ClinicSector> clinicSectors ) throws UnsupportedEncodingException {
+
+        String result = "";
+        String resultPut = "";
+        String devolveResultado = "";
+        if (clinicSectors.isEmpty())
+            log.trace(new Date() + " [US] INFO - Nenhum sector clinico encontrado para enviar");
+        else {
+            for (ClinicSector clinicSector : clinicSectors) {
+                try {
+                    result = restPostSectorClinico(url, clinicSector, pool);
+                    if (result.contains("409")) {
+                        resultPut = restPutClinicSector(url, clinicSector, pool);
+                        if (resultPut.contains("Falha")) {
+                            devolveResultado.concat(new Date() + ": Ocorreu um erro ao gravar o Sector Clinico " + clinicSector.getSectorname() + " Erro: " + resultPut + "\n");
+                            log.error(new Date() + ": Ocorreu um erro ao gravar o Sector Clinico " + clinicSector.getSectorname() + " Erro: " + resultPut);
+                        } else {
+                            devolveResultado.concat(new Date() + ": Actualizou o Sector Clinico " + clinicSector.getSectorname() + " - Resultado: " + resultPut + "\n");
+                            log.info(new Date() + ": Actualizou o Sector Clinico " + clinicSector.getSectorname() + " - Resultado: " + resultPut);
+                        }
+                    } else if (result.contains("Falha")) {
+                        devolveResultado.concat(new Date() + ": Ocorreu um erro ao enviar o Sector Clinico " + clinicSector.getSectorname() + " Erro: " + result + "\n");
+                        log.error(new Date() + ": Ocorreu um erro ao enviar o Sector Clinico " + clinicSector.getSectorname() + " Erro: " + result);
+                    } else {
+                        devolveResultado.concat(new Date() + ": Sector Clinico " + clinicSector.getSectorname() + " enviado com sucesso (" + result + ") \n");
+                        log.info(new Date() + ": Sector Clinico " + clinicSector.getSectorname() + " enviado com sucesso (" + result + ")");
+                    }
+                    break;
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                } finally {
+
+                    continue;
+                }
+
+            }
+        }
+            return devolveResultado;
     }
 
     public static void setPatientsFromRest(Session session) {

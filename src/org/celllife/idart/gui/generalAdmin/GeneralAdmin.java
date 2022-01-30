@@ -29,6 +29,7 @@ import org.celllife.idart.gui.SystemFunctionalityManager;
 import org.celllife.idart.gui.clinic.AddClinic;
 import org.celllife.idart.gui.clinic.DownloadClinic;
 import org.celllife.idart.gui.clinicSector.ManagePharmSector;
+import org.celllife.idart.gui.clinicSector.UploadClinicSector;
 import org.celllife.idart.gui.doctor.AddDoctor;
 import org.celllife.idart.gui.drug.AddDrug;
 import org.celllife.idart.gui.drug.DownloadDrugs;
@@ -189,9 +190,24 @@ public class GeneralAdmin extends GenericAdminGui {
                     btnImportPatientsOpenMRS.setEnabled(true);
                 }
 
-                // btnClinicsUpdate
+                // btnClinicSectorUpload
+                Button btnClinicSectorUpload = new Button(grpClinics, SWT.NONE);
+                btnClinicSectorUpload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 40, 235, 30));
+                btnClinicSectorUpload.setToolTipText(Messages.getString("GeneralAdmin.upload.clinic.sector.button.tooltip")); //$NON-NLS-1$
+
+                btnClinicSectorUpload.setText(Messages.getString("GeneralAdmin.upload.clinic.sector.button.title")); //$NON-NLS-1$
+                btnClinicSectorUpload.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                btnClinicSectorUpload.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(
+                            org.eclipse.swt.events.SelectionEvent e) {
+                        cmd_clinicSectorExport();
+                    }
+                });
+
+                // btnClinicsDownload
                 Button btnClinicsDownload = new Button(grpClinics, SWT.NONE);
-                btnClinicsDownload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 55, 235, 30));
+                btnClinicsDownload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 70, 235, 30));
                 btnClinicsDownload.setToolTipText(Messages.getString("GeneralAdmin.download.clinic.button.tooltip")); //$NON-NLS-1$
 
                 btnClinicsDownload.setText(Messages.getString("GeneralAdmin.download.clinic.button.title")); //$NON-NLS-1$
@@ -597,6 +613,22 @@ public class GeneralAdmin extends GenericAdminGui {
                 b.open();
             } else
                 new DownloadClinic(getShell());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cmd_clinicSectorExport() {
+        String url = CentralizationProperties.centralized_server_url;
+        try {
+            if (getServerStatus(url).contains("Red")) {
+                MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+                b.setText("Servidor Rest offline.");
+                b.setMessage(" Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                b.open();
+            } else
+                new UploadClinicSector(getShell());
 
         } catch (IOException e) {
             e.printStackTrace();

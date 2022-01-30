@@ -22,6 +22,7 @@ package org.celllife.idart.database.hibernate;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,7 +30,7 @@ import java.util.UUID;
 /**
  */
 @Entity
-public class Clinic {
+public class Clinic implements Serializable {
 
 	@Id
 	@GeneratedValue

@@ -446,12 +446,24 @@ public class AdministrationManager {
     public static ClinicSector getClinicSectorFromUUID(Session sess, String uuid) throws HibernateException {
 
         ClinicSector clinicSector = (ClinicSector) sess.createQuery(
-                "select c from ClinicSector as cs where cs.uuid = :uuid")
+                "select cs from ClinicSector as cs where cs.uuid = :uuid")
                 .setString("uuid", uuid).setMaxResults(1).uniqueResult();
         if (clinicSector == null) {
             log.warn("Clinic Sector [ "+ uuid +" ] not found");
         }
         return clinicSector;
+
+    }
+
+    public static ClinicSectorType getClinicSectorTypeByDescription(Session sess, String description) throws HibernateException {
+
+        ClinicSectorType clinicSectorType = (ClinicSectorType) sess.createQuery(
+                "select cst from ClinicSectorType as cst where cst.description = :description")
+                .setString("description", description).setMaxResults(1).uniqueResult();
+        if (clinicSectorType == null) {
+            log.warn("Clinic Sector Type[ "+ description +" ] nao foi encontrado");
+        }
+        return clinicSectorType;
 
     }
 
@@ -680,11 +692,11 @@ public class AdministrationManager {
         return false;
     }
 
-    public static boolean saveSector(Session session, String sectorName, String code, String telefone, Clinic clinic) {
+    public static boolean saveSector(Session session, String sectorName, String code, String telefone, Clinic clinic, ClinicSectorType clinicSectorType) {
         if (getSectorByName(session, sectorName) != null) {
             return false;
         } else {
-            ClinicSector clinicSector = new ClinicSector(clinic, sectorName,telefone, code);
+            ClinicSector clinicSector = new ClinicSector(clinic, clinicSectorType, sectorName, telefone, code);
             session.save(clinicSector);
 
             // log the transaction
@@ -701,12 +713,13 @@ public class AdministrationManager {
         }
     }
 
-    public static void updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone)
+    public static void updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone, ClinicSectorType clinicSectorType)
             throws HibernateException {
         log.info("Updating sector " + clinicSector.getSectorname());
         clinicSector.setSectorname(sectorname);
         clinicSector.setCode(code);
         clinicSector.setTelephone(telefone);
+        clinicSector.setClinicSectorType(clinicSectorType);
         s.update(clinicSector);
 
         // log the transaction
@@ -1156,6 +1169,43 @@ public class AdministrationManager {
         List<SimpleDomain> result = sess
                 .createQuery(
                         "select s from SimpleDomain as s where s.name='prescriptionDuration' order by s.id")
+                .list();
+
+        return result;
+    }
+
+    /**
+     * Method getClinicSectorType.
+     *
+     * @param sess Session
+     * @return List<ClinicSectorType>
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<ClinicSectorType> getClinicSecrtorType(Session sess)
+            throws HibernateException {
+        List<ClinicSectorType> result = sess
+                .createQuery(
+                        "select s from ClinicSectorType as s order by s.id")
+                .list();
+
+        return result;
+    }
+
+    /**
+     * Method getClinicSectorBySectorType.
+     *
+     * @param sess Session
+     * @return List<ClinicSectorType>
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<ClinicSector> getClinicSectorBySectorType(Session sess, String sectorType)
+            throws HibernateException {
+        List<ClinicSector> result = sess
+                .createQuery(
+                        "select s from ClinicSector as s where s.clinicSectorType.description = :sectorType  order by s.id")
+                .setString("sectorType", sectorType)
                 .list();
 
         return result;
