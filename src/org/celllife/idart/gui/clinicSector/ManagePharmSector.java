@@ -175,7 +175,7 @@ public class ManagePharmSector extends GenericFormGui {
             Label lblClinicSectorType = new Label(grpSectorInfo, SWT.NONE);
             lblClinicSectorType.setBounds(new Rectangle(30, 80, 125, 20));
             lblClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            lblClinicSectorType.setText(Messages.getString("patient.prescription.dialog.duration"));
+            lblClinicSectorType.setText("Tipo de Sector");
 
             cmbClinicSectorType = new CCombo(grpSectorInfo, SWT.BORDER | SWT.READ_ONLY);
             cmbClinicSectorType.setBounds(new Rectangle(185, 80, 220, 20));

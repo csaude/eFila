@@ -26,12 +26,11 @@ public class ClinicSector {
     private String uuid;
 
     @OneToMany
-    @JoinColumn(name = "clinic")
     @IndexColumn(name = "clinicSectorIndex")
     private Set<PatientSector> patientSectors;
 
-    @ManyToOne
-    @JoinColumn(name = "clinic")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="clinic", referencedColumnName="uuid")
     private Clinic clinic;
 
     @ManyToOne

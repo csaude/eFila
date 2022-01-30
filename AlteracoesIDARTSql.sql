@@ -1,4 +1,4 @@
-
+-- APAGAR  A TABELA CLINIC SECTOR PRIMEIRO
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS country (
@@ -132,10 +132,12 @@ CREATE TABLE IF NOT EXISTS clinicsector (
 	sectorname varchar(255) NOT NULL,
 	telephone varchar(255) NULL,
 	uuid varchar(255) NULL,
-	clinic integer NOT NULL,
+	clinic varchar(255) NOT NULL,
+	clinicsectortype integer NOT NULL,
 	clinicuuid varchar(255) NULL,
 	CONSTRAINT clinic_sector_pkey PRIMARY KEY (id),
-	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(id) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES clinic(uuid) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES clinic_sector_type(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS clinic_sector_type (
@@ -283,6 +285,7 @@ ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varyin
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
 ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE clinicsector ADD CONSTRAINT clinicsector_un_uuid UNIQUE (uuid);
 ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT NULL DEFAULT 1;
 ALTER TABLE clinicsector ADD CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES public.clinic_sector_type (id);
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
