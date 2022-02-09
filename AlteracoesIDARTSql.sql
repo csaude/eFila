@@ -706,3 +706,5 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
 
 CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+ALTER TABLE clinicsector DROP CONSTRAINT clinic_secto_clinic_fk;
+ALTER TABLE clinicsector ADD CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinicuuid) REFERENCES clinic (uuid);
