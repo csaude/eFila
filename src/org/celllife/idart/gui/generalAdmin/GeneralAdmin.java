@@ -33,6 +33,7 @@ import org.celllife.idart.gui.clinicSector.UploadClinicSector;
 import org.celllife.idart.gui.doctor.AddDoctor;
 import org.celllife.idart.gui.drug.AddDrug;
 import org.celllife.idart.gui.drug.DownloadDrugs;
+import org.celllife.idart.gui.patient.UploadPatient;
 import org.celllife.idart.gui.platform.GenericAdminGui;
 import org.celllife.idart.gui.platform.GenericFormGui;
 import org.celllife.idart.gui.regimeTerapeutico.AddRegimeTerapeutico;
@@ -173,26 +174,9 @@ public class GeneralAdmin extends GenericAdminGui {
                 });
             } else {
 
-                if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
-                    Button btnImportPatientsOpenMRS = new Button(grpClinics, SWT.NONE);
-                    btnImportPatientsOpenMRS.setText(Messages.getString("GeneralAdmin.button.openmrs.importPatients.title")); //$NON-NLS-1$
-                    btnImportPatientsOpenMRS.setToolTipText(Messages.getString("GeneralAdmin.button.openmrs.importPatients.tooltip")); //$NON-NLS-1$
-                    btnImportPatientsOpenMRS.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 100, 235, 27));
-                    btnImportPatientsOpenMRS.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-                    btnImportPatientsOpenMRS.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(
-                                org.eclipse.swt.events.SelectionEvent e) {
-                            MainPanel importPatients = new MainPanel();
-                            MainPanel.createAndShowGUI();
-                        }
-                    });
-                    btnImportPatientsOpenMRS.setEnabled(true);
-                }
-
                 // btnClinicSectorUpload
                 Button btnClinicSectorUpload = new Button(grpClinics, SWT.NONE);
-                btnClinicSectorUpload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 40, 235, 30));
+                btnClinicSectorUpload.setBounds(new org.eclipse.swt.graphics.Rectangle(60, 20, 210, 25));
                 btnClinicSectorUpload.setToolTipText(Messages.getString("GeneralAdmin.upload.clinic.sector.button.tooltip")); //$NON-NLS-1$
 
                 btnClinicSectorUpload.setText(Messages.getString("GeneralAdmin.upload.clinic.sector.button.title")); //$NON-NLS-1$
@@ -205,9 +189,24 @@ public class GeneralAdmin extends GenericAdminGui {
                     }
                 });
 
+                // btnPatientUpload
+                Button btnPatientUpload = new Button(grpClinics, SWT.NONE);
+                btnPatientUpload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 53, 235, 25));
+                btnPatientUpload.setToolTipText(Messages.getString("GeneralAdmin.upload.patient.clinic.sector.button.tooltip")); //$NON-NLS-1$
+
+                btnPatientUpload.setText(Messages.getString("GeneralAdmin.upload.patient.clinic.sector.button.title")); //$NON-NLS-1$
+                btnPatientUpload.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                btnPatientUpload.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(
+                            org.eclipse.swt.events.SelectionEvent e) {
+                        cmd_patientsExport();
+                    }
+                });
+
                 // btnClinicsDownload
                 Button btnClinicsDownload = new Button(grpClinics, SWT.NONE);
-                btnClinicsDownload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 70, 235, 30));
+                btnClinicsDownload.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 86, 235, 25));
                 btnClinicsDownload.setToolTipText(Messages.getString("GeneralAdmin.download.clinic.button.tooltip")); //$NON-NLS-1$
 
                 btnClinicsDownload.setText(Messages.getString("GeneralAdmin.download.clinic.button.title")); //$NON-NLS-1$
@@ -219,7 +218,23 @@ public class GeneralAdmin extends GenericAdminGui {
                         cmd_clinicsImport();
                     }
                 });
-
+                
+                  if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                    Button btnImportPatientsOpenMRS = new Button(grpClinics, SWT.NONE);
+                    btnImportPatientsOpenMRS.setText(Messages.getString("GeneralAdmin.button.openmrs.importPatients.title")); //$NON-NLS-1$
+                    btnImportPatientsOpenMRS.setToolTipText(Messages.getString("GeneralAdmin.button.openmrs.importPatients.tooltip")); //$NON-NLS-1$
+                    btnImportPatientsOpenMRS.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 119, 235, 25));
+                    btnImportPatientsOpenMRS.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                    btnImportPatientsOpenMRS.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(
+                                org.eclipse.swt.events.SelectionEvent e) {
+                            MainPanel importPatients = new MainPanel();
+                            MainPanel.createAndShowGUI();
+                        }
+                    });
+                    btnImportPatientsOpenMRS.setEnabled(true);
+                }
             }
         } else {
             Button btnImportPatientsOpenMRS = new Button(grpClinics, SWT.NONE);
@@ -529,7 +544,7 @@ public class GeneralAdmin extends GenericAdminGui {
         if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
             // btnPharmSector
             Button btnPharmSector = new Button(grpPharmacy, SWT.NONE);
-            btnPharmSector.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 10, 210, 25));
+            btnPharmSector.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 20, 210, 25));
             btnPharmSector.setToolTipText(Messages.getString("GeneralAdmin.button.pharmsector.tooltip")); //$NON-NLS-1$
             btnPharmSector.setText(Messages.getString("GeneralAdmin.button.pharmsector.title")); //$NON-NLS-1$
             btnPharmSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -544,7 +559,7 @@ public class GeneralAdmin extends GenericAdminGui {
 
         // btnUserPasswordStateManage
         Button btnUserPasswordStateManage = new Button(grpPharmacy, SWT.NONE);
-        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 40, 210, 25));
+        btnUserPasswordStateManage.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 53, 235, 25));
         btnUserPasswordStateManage.setToolTipText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.tooltip")); //$NON-NLS-1$
         btnUserPasswordStateManage.setText(Messages.getString("GeneralAdmin.button.UserPasswordStateManage.title")); //$NON-NLS-1$
         btnUserPasswordStateManage.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -558,7 +573,7 @@ public class GeneralAdmin extends GenericAdminGui {
 
         // btnManagePharmUsers
         Button btnManagePharmUsers = new Button(grpPharmacy, SWT.NONE);
-        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 70, 210, 25));
+        btnManagePharmUsers.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 86, 235, 25));
         btnManagePharmUsers.setToolTipText(Messages.getString("GeneralAdmin.button.pharmacy.tooltip")); //$NON-NLS-1$
         btnManagePharmUsers.setText(Messages.getString("GeneralAdmin.button.pharmacy.title")); //$NON-NLS-1$
         btnManagePharmUsers.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -572,7 +587,7 @@ public class GeneralAdmin extends GenericAdminGui {
 
         // btnPharmDetailsUpdate
         Button btnPharmDetailsUpdate = new Button(grpPharmacy, SWT.NONE);
-        btnPharmDetailsUpdate.setBounds(new org.eclipse.swt.graphics.Rectangle(65, 100, 210, 25));
+        btnPharmDetailsUpdate.setBounds(new org.eclipse.swt.graphics.Rectangle(35, 119, 235, 25));
         btnPharmDetailsUpdate.setToolTipText(Messages.getString("GeneralAdmin.button.pharmdetails.tooltip")); //$NON-NLS-1$
         btnPharmDetailsUpdate.setText(Messages.getString("GeneralAdmin.button.pharmdetails.title")); //$NON-NLS-1$
         btnPharmDetailsUpdate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -629,6 +644,22 @@ public class GeneralAdmin extends GenericAdminGui {
                 b.open();
             } else
                 new UploadClinicSector(getShell());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cmd_patientsExport() {
+        String url = CentralizationProperties.centralized_server_url;
+        try {
+            if (getServerStatus(url).contains("Red")) {
+                MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+                b.setText("Servidor Rest offline.");
+                b.setMessage(" Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                b.open();
+            } else
+                new UploadPatient(getShell());
 
         } catch (IOException e) {
             e.printStackTrace();

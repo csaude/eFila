@@ -221,8 +221,7 @@ public class DownReferDialog extends GenericOthersGui {
                 msgTxt = " Referido para Sector Clinico "+ clinicName;
             }
 
-
-            saveReferredPatient(patient, clinic, clinicSector, mainClinic, getHSession());
+            saveReferredPatient(patient, clinic, clinicSector, mainClinic, getHSession(), "Activo");
 
             getHSession().flush();
             tx.commit();
@@ -388,11 +387,10 @@ public class DownReferDialog extends GenericOthersGui {
         }
     }
 
-    public void saveReferredPatient(Patient patient, Clinic clinic, ClinicSector clinicSector, Clinic mainClinic, Session session) {
+    public void saveReferredPatient(Patient patient, Clinic clinic, ClinicSector clinicSector, Clinic mainClinic, Session session, String estadoPaciente) {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
         Prescription prescription = patient.getMostRecentPrescription("TARV");
-        String estadoPaciente = "Activo";
         String clinicOrSectorUuid = "";
         String clinicOrSectorName = "";
         int clinicOrSectorId = 0;
@@ -405,9 +403,6 @@ public class DownReferDialog extends GenericOthersGui {
             clinicOrSectorUuid = clinicSector.getUuid();
             clinicOrSectorName = clinicSector.getSectorname();
             clinicOrSectorId = clinicSector.getId();
-
-            if(clinicSector.getClinicSectorType().getCode().contains("PROVEDOR"))
-                estadoPaciente = "Faltoso";
         }
 
         if (prescription != null) {

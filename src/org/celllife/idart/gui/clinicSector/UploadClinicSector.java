@@ -111,8 +111,13 @@ public class UploadClinicSector extends GenericFormGui {
         lblInstructions.setFont(ResourceUtils
                 .getFont(iDartFont.VERASANS_8_ITALIC));
 
+        Label labelSector = new Label(grpClinicSearch, SWT.CENTER);
+        labelSector.setBounds(new Rectangle(20, 50, 125, 20));
+        labelSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        labelSector.setText("Tipo de Sector Clínico:");
+
         cmbClinicSectorType = new CCombo(grpClinicSearch, SWT.BORDER | SWT.READ_ONLY);
-        cmbClinicSectorType.setBounds(new Rectangle(145, 50, 220, 20));
+        cmbClinicSectorType.setBounds(new Rectangle(150, 50, 220, 20));
         cmbClinicSectorType.setEditable(false);
         cmbClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinicSectorType.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
@@ -123,7 +128,7 @@ public class UploadClinicSector extends GenericFormGui {
 
         // btnSearch
         btnSearch = new Button(grpClinicSearch, SWT.NONE);
-        btnSearch.setBounds(new Rectangle(157, 80, 152, 30));
+        btnSearch.setBounds(new Rectangle(150, 80, 152, 30));
         btnSearch.setText("Procurar");
         btnSearch.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
@@ -243,7 +248,7 @@ public class UploadClinicSector extends GenericFormGui {
 
 
         lnkSelectAllColumns = new Link(getShell(), SWT.NONE);
-        lnkSelectAllColumns.setBounds(new Rectangle(70, 230, 450, 20));
+        lnkSelectAllColumns.setBounds(new Rectangle(70, 230, 450, 30));
         lnkSelectAllColumns
                 .setText("Por favor, seleccione os sectores clínicos que pretende exportar " +
                         "ou <A>Seleccionar todas</A> colunas");
@@ -263,13 +268,14 @@ public class UploadClinicSector extends GenericFormGui {
 
         tblColumns = CheckboxTableViewer.newCheckList(getShell(), SWT.BORDER);
         tblColumns.getTable().setBounds(
-                new Rectangle(85, 250, 420, 150));
+                new Rectangle(85, 260, 420, 150));
         tblColumns.getTable().setFont(
                 ResourceUtils.getFont(iDartFont.VERASANS_8));
         tblColumns.setContentProvider(new ArrayContentProvider());
     }
 
     private void populateClinicSector() {
+        tblColumns.setInput(null);
         List<ClinicSector> clinicSectors = AdministrationManager.getClinicSectorBySectorType(getHSession(),cmbClinicSectorType.getText());
         tblColumns.setInput(clinicSectors);
 
