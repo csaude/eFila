@@ -62,6 +62,9 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
@@ -87,6 +90,18 @@ public class PharmacyApplication {
         // used for gui testing
         System.setProperty("org.eclipse.swtbot.search.defaultKey", iDartProperties.SWTBOT_KEY);
 
+//        try {
+//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(PharmacyApplication.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(PharmacyApplication.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(PharmacyApplication.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(PharmacyApplication.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
         log.info("");
         log.info("*********************");
         log.info("iDART " + iDartProperties.idartVersionNumber + " starting");
