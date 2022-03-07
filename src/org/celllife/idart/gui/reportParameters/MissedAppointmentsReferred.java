@@ -101,19 +101,6 @@ public class MissedAppointmentsReferred extends GenericReportGui {
         grpClinicSelection.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         grpClinicSelection.setBounds(new Rectangle(60, 79, 465, 114));
 
-//        lblClinic = new Label(grpClinicSelection, SWT.NONE);
-//        lblClinic.setBounds(new Rectangle(30, 25, 167, 20));
-//        lblClinic.setText("US");
-//        lblClinic.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-//
-//        cmbClinic = new CCombo(grpClinicSelection, SWT.BORDER);
-//        cmbClinic.setBounds(new Rectangle(202, 25, 160, 20));
-//        cmbClinic.setEditable(false);
-//        cmbClinic.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-//        cmbClinic.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
-//
-//        CommonObjects.populateClinics(getHSession(), cmbClinic);
-
         lblMinimumDaysLate = new Label(grpClinicSelection, SWT.NONE);
         lblMinimumDaysLate.setBounds(new Rectangle(31, 57, 147, 21));
         lblMinimumDaysLate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
@@ -201,17 +188,6 @@ public class MissedAppointmentsReferred extends GenericReportGui {
         int max = 0;
         int min = 0;
 
-//        if (cmbClinic.getText().equals("")) {
-//
-//            MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
-//                    | SWT.OK);
-//            missing.setText("Nenhuma US selecionada");
-//            missing
-//                    .setMessage("Nenhuma US selecionada. Por favor selecione a Unidade Sanitaria.");
-//            missing.open();
-//            viewReport = false;
-//
-//        }
         if(!iDARTUtil.isInPast( swtCal.getCalendar().getTime())){
             MessageBox incorrectData = new MessageBox(getShell(),
                     SWT.ICON_ERROR | SWT.OK);

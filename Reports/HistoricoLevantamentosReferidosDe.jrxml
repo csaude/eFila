@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="510"/>
+	<property name="ireport.x" value="415"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -73,9 +73,9 @@ inner join patient p on p.uuidopenmrs = spt.uuidopenmrs
 inner join clinic c on c.id = p.clinic
 where pg_catalog.date(spt.pickupdate) >= $P{date}::date
 AND pg_catalog.date(spt.pickupdate) < ($P{dateEnd}::date + INTERVAL '1 day')
-AND spt.notes like '%Mobile%'
+AND spt.notes like '%Mobile%' AND spt.syncstatus = 'I'
 GROUP BY 1,2,3,4,5,6,7,8
-order by 6 asc]]>
+order by 8,6 asc]]>
 	</queryString>
 	<field name="nid" class="java.lang.String"/>
 	<field name="nome" class="java.lang.String"/>

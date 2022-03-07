@@ -515,6 +515,7 @@ public class RestFarmac {
         String path = url + "/clinic";
         HttpResponse httpResponse = null;
         String response = null;
+        String facilitytype = "Unidade Sanitária";
 
         Random r = new Random();
         int low = 1000;
@@ -522,7 +523,7 @@ public class RestFarmac {
         int genId = r.nextInt(high-low) + low;
 
         String clinicJSONObject = "{\"id\": \""+genId+"\", \"mainclinic\": \"" + false + "\", \"notes\": \"" + clinic.getNotes() + "\", "
-                + "\"code\":\"" + clinic.getCode() + "\", \"telephone\":\"" + clinic.getTelephone() + "\", "
+                + "\"code\":\"" + clinic.getCode() + "\", \"telephone\":\"" + clinic.getTelephone() + "\", \"facilitytype\":\"" + facilitytype + "\", "
                 + "\"clinicname\":\"" + clinic.getClinicName() + "\",\"province\":\"" + clinic.getProvince() + "\",\"district\":\"" + clinic.getDistrict() + "\", "
                 + "\"subdistrict\":\"" + clinic.getSubDistrict() + "\",\"uuid\":\"" + clinic.getUuid() + "\"}";
 
@@ -696,7 +697,7 @@ public class RestFarmac {
                             }
                         } else {
                             if (result.contains("Falha")) {
-                                log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + resultPut);
+                                log.error(new Date() + ": Ocorreu um erro ao gravar o paciente com nid " + patientSync.getPatientid() + " Erro: " + result);
                             } else {
                                 confirmed = true;
                                 log.info(new Date() + ":Paciente com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
@@ -957,11 +958,18 @@ public class RestFarmac {
                 try {
                     sess.beginTransaction();
                     Prescription prescription = DadosPacienteFarmac.getPatientPrescritionFarmac(dispense);
-
+                    SyncTempPatient patient = AdministrationManager.getSyncTempPatienByUuidAndClinicUuid(sess, dispense.getUuidopenmrs(), dispense.getMainclinicuuid());
                     DadosPacienteFarmac.saveDispenseFarmacQty0(prescription, dispense);
                     DadosPacienteFarmac.setDispenseRestOpenmrs(sess, prescription, dispense);
                     dispense.setSyncstatus('I');
+
                     AdministrationManager.saveSyncTempDispense(sess, dispense);
+                    if(patient != null)
+                        if(patient.getEstadopaciente().contains("Faltoso") || patient.getEstadopaciente().contains("Abandono")){
+                            patient.setExclusaopaciente(true);
+                            AdministrationManager.saveSyncTempPatient(sess, patient);
+                        }
+
                     sess.getTransaction().commit();
                     sess.flush();
                     sess.clear(); // Clearing the session object

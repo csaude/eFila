@@ -79,6 +79,7 @@ public interface GenericReportGuiInterface {
     static String REPORT_DISPENSA_TRIMESTRAL = Messages.getString("reports.DispensaTrimestral");
     static String REPORT_DISPENSA_SEMESTRAL = Messages.getString("reports.DispensaSemestral");
     static String REPORT_MISSED_APPOINTMENTS_FROM_OTHER_PHARM = Messages.getString("reports.missedAppointmentsFromOthers");  //$NON-NLS-1$
+    static String REPORT_MISSED_APPOINTMENTS_APSS_FROM_OTHER_PHARM = Messages.getString("reports.missedAppointmentsAPSSFromOthers");  //$NON-NLS-1$
     static String REPORT_MISSED_APPOINTMENTS_NEW = Messages.getString("reports.missedAppointmentsNew");  //$NON-NLS-1$
     static String REPORT_MISSED_APPOINTMENTS_CHAMADAS = Messages.getString("reports.missedAppointmentsChamadas");  //$NON-NLS-1$
     static String REPORT_MISSED_APPOINTMENTS_APSS = Messages.getString("reports.missedAppointmentsApss");  //$NON-NLS-1$

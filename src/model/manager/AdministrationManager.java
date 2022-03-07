@@ -78,7 +78,7 @@ public class AdministrationManager {
             throws HibernateException {
 
         List<RegimeTerapeutico> result = sess.createQuery(
-                "select r from RegimeTerapeutico as r)").list();
+                "select r from RegimeTerapeutico as r").list();
 
         return result;
     }
@@ -142,6 +142,15 @@ public class AdministrationManager {
     public static List<SimpleDomain> getAllModoDispensa(Session sess)
             throws HibernateException {
         String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' order by s.id asc";
+        Query q = sess.createQuery(qString);
+        List<SimpleDomain> result = q.list();
+
+        return result;
+    }
+
+    public static List<SimpleDomain> getAllModoDispensaByDescriptionLike(Session sess, String description)
+            throws HibernateException {
+        String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' and s.value like '%" +description+"%' order by s.id asc";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -1685,7 +1694,7 @@ public class AdministrationManager {
             throws HibernateException {
 
         List<Motivomudanca> result = sess.createQuery(
-                "select r from Motivomudanca as r)").list();
+                "select r from Motivomudanca as r").list();
 
         return result;
     }
@@ -1701,7 +1710,7 @@ public class AdministrationManager {
     public static List<Motivomudanca> getAllMotivos(Session sess) throws HibernateException {
 
         List<Motivomudanca> result = sess.createQuery(
-                "select r from Motivomudanca as r)").list();
+                "select r from Motivomudanca as r").list();
 
         return result;
     }
@@ -1722,7 +1731,7 @@ public class AdministrationManager {
     public static List<SyncTempPatient> getAllSyncTempPatient(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "select sync from sync_temp_patients as sync)").list();
+                "select sync from sync_temp_patients as sync").list();
 
         return result;
     }
@@ -1731,7 +1740,7 @@ public class AdministrationManager {
     public static List<SyncTempPatient> getAllSyncTempPatientReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempPatient sync where sync.syncstatus = 'P' or sync.syncstatus is null)").list();
+                "from SyncTempPatient sync where sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus is null)").list();
 
         return result;
     }
@@ -1740,7 +1749,7 @@ public class AdministrationManager {
     public static List<SyncTempPatient> getAllSyncTempPatientReadyToSave(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempPatient sync where sync.syncstatus = 'I')").list();
+                "from SyncTempPatient sync where sync.syncstatus = 'I'").list();
 
         return result;
     }
@@ -1778,7 +1787,7 @@ public class AdministrationManager {
         result = (SyncTempDispense) sess.createQuery(
                 "select sync from SyncTempDispense sync where sync.patientid ='"+syncTempDispense.getPatientid()+"' " +
                         " and sync.prescriptionid ='"+syncTempDispense.getPrescriptionid()+"' " +
-                        " and pg_catalog.date(sync.pickupdate) = '"+ RestUtils.castDateToString(syncTempDispense.getPickupdate()) +"'").setMaxResults(1).uniqueResult();
+                        " and pg_catalog.date(sync.pickupdate = '"+ RestUtils.castDateToString(syncTempDispense.getPickupdate()) +"'").setMaxResults(1).uniqueResult();
 
         return result;
     }
@@ -1886,7 +1895,7 @@ public class AdministrationManager {
     public static List<SyncMobilePatient> getAllSyncMobilePatientReadyToSave(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncMobilePatient sync where sync.syncstatus = 'R')").list();
+                "from SyncMobilePatient sync where sync.syncstatus = 'R'").list();
 
         return result;
     }

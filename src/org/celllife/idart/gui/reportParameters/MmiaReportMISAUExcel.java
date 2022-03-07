@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.database.hibernate.User;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,6 +36,7 @@ public class MmiaReportMISAUExcel implements IRunnableWithProgress {
     private String reportFileName;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     StockCenter pharm = null;
+    Clinic c = null;
     private Date theStartDate;
     private Date theEndDate;
 
@@ -63,13 +65,14 @@ public class MmiaReportMISAUExcel implements IRunnableWithProgress {
 
     SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
-    public MmiaReportMISAUExcel(Shell parent, String reportFileName, Date theStartDate, Date theEndDate, StockCenter pharm) {
+    public MmiaReportMISAUExcel(Shell parent, String reportFileName, Date theStartDate, Date theEndDate, StockCenter pharm, Clinic c) {
         this.parent = parent;
         this.swtCal = swtCal;
         this.reportFileName = reportFileName;
         this.theStartDate = theStartDate;
         this.theEndDate = theEndDate;
         this.pharm = pharm;
+        this.c = c;
     }
 
     @Override
@@ -80,14 +83,13 @@ public class MmiaReportMISAUExcel implements IRunnableWithProgress {
             ConexaoJDBC con = new ConexaoJDBC();
             Map<String, Object> map = new HashMap<String, Object>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
             monitor.beginTask("Por Favor, aguarde ... ", 1);
 
             mmiaStocks = con.getStockMmmia(theStartDate, theEndDate, pharm);
             monitor.worked(1);
             mmiaRegimens = con.getRegimenMmmia(theStartDate, theEndDate);
             monitor.worked(1);
-            Map mapaDoMMIA = con.MMIA(dateFormat.format(theStartDate), dateFormat.format(theEndDate));
+            Map mapaDoMMIA = con.MMIA(dateFormat.format(theStartDate), dateFormat.format(theEndDate), c.getId());
 
             totalpacientestransito = Integer.parseInt(mapaDoMMIA.get("totalpacientestransito").toString());
             totalpacientesinicio = Integer.parseInt(mapaDoMMIA.get("totalpacientesinicio").toString());

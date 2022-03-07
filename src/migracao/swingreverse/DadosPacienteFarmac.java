@@ -308,9 +308,11 @@ public class DadosPacienteFarmac {
             tx = sess.beginTransaction();
             java.util.List<PackageDrugInfo> allPackagedDrugsListTemp = new ArrayList<PackageDrugInfo>();
 
+            Patient patient = PatientManager.getPatientfromUuid(sess, syncTempDispense.getUuidopenmrs());
             Drug drug = DrugManager.getDrug(sess, syncTempDispense.getDrugname());
             List<Stock> stockList = null;
             Stock stock = null;
+            int dipensedQty= 0;
 
             if (drug == null)
                 drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10));
@@ -332,10 +334,22 @@ public class DadosPacienteFarmac {
                 }
             }
 
+            if( patient.getCurrentClinic().getId() == clinic.getId()) {
+                String dipensedQtyString = syncTempDispense.getQtyinhand().replace("(", "").replace(")", "").trim();
+                if (!dipensedQtyString.isEmpty()) {
+                    int dipensedQtyAux = Integer.parseInt(dipensedQtyString);
+
+                    if (dipensedQtyAux < 12 && syncTempDispense.getWeekssupply() >= 4)
+                        dipensedQty = dipensedQtyAux * drug.getPackSize();
+                    else
+                        dipensedQty = dipensedQtyAux;
+                }
+            }
+
             PackageDrugInfo pditemp = new PackageDrugInfo();
             pditemp.setAmountPerTime(0);
             pditemp.setClinic(clinic.getClinicName());
-            pditemp.setDispensedQty(0);
+            pditemp.setDispensedQty(dipensedQty);
             pditemp.setBatchNumber("");
             pditemp.setFormLanguage1("");
             pditemp.setFormLanguage2("");
@@ -373,6 +387,7 @@ public class DadosPacienteFarmac {
             MessageBox errorBox = new MessageBox(null, SWT.OK | SWT.ICON_ERROR);
             errorBox.setText("Não pode salvar: Verificar Prescricao");
             errorBox.setMessage("Houve um problema ao salvar a Prescricao. Por favor, tente novamente.");
+            log.trace(he);
             if (tx != null) {
                 tx.rollback();
                 sess.close();
@@ -388,6 +403,8 @@ public class DadosPacienteFarmac {
         Set<Packages> packageses = new HashSet();
         packageses.clear();
         Date packDate = new Date();
+
+        Clinic maiClinic = AdministrationManager.getMainClinic(sess);
 
         Packages newPack = PackageManager.getLastPackageOnScript(prescription);
 
@@ -411,7 +428,7 @@ public class DadosPacienteFarmac {
         //int numPeriods = getSelectedWeekSupply();
         //getLog().info("getSelectedWeekSupply() called");
         // 1 mes tem 4 semanas
-        newPack.setWeekssupply(4);
+        newPack.setWeekssupply(packageDrugInfo.getWeeksSupply());
         /*
          * If the pharmacist is giving the drugs to the patient now, set the
          * dateLeft, dateReceived and pickupDate to today. Else ... set these
@@ -460,7 +477,7 @@ public class DadosPacienteFarmac {
 
         List<PatientSector> patientClinicSector = PatientManager.patientIsOpenInClinicSector(sess, prescription.getPatient());
 
-        if (patientClinicSector.size() > 0) {
+        if (patientClinicSector.size() > 0 || prescription.getPatient().getCurrentClinic().getId() == maiClinic.getId()) {
             PackageManager.savePackage(sess, newPack);
         }else{
             PackageManager.savePackageQty0(newPack);
@@ -473,12 +490,31 @@ public class DadosPacienteFarmac {
         // Add interoperability with OpenMRS through Rest Web Services
         Clinic clinic = AdministrationManager.getMainClinic(sess);
 
+        SyncTempPatient patient = AdministrationManager.getSyncTempPatienByUuidAndClinicUuid(sess, syncTempDispense.getUuidopenmrs(), syncTempDispense.getMainclinicuuid());
+
         if (syncTempDispense.getNotes().contains("FARMAC"))
             dispenseModeAnswer = "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
         else
             dispenseModeAnswer = "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
 
      //   String dispenseModeAnswer =  AdministrationManager.dispenseModUUID(sess, syncTempDispense.get);
+
+        if(patient != null){
+                if(!clinic.getUuid().equalsIgnoreCase(patient.getClinicuuid())){
+                    ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicuuid());
+
+                    if(clinicSector != null){
+                        if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
+                            dispenseModeAnswer = getDispenseMode(sess, "Provedor");
+                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
+                            dispenseModeAnswer = getDispenseMode(sess, "APE");
+                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
+                            dispenseModeAnswer = getDispenseMode(sess, "nica M");
+                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
+                            dispenseModeAnswer = getDispenseMode(sess, "Brigada");
+                    }
+                }
+        }
 
         boolean result = true;
         boolean postOpenMrsEncounterStatus = false;
@@ -738,6 +774,16 @@ public class DadosPacienteFarmac {
 
         return patient;
 
+    }
+
+    static String getDispenseMode(Session sess, String description){
+
+        List<SimpleDomain> simpleDomainList = AdministrationManager.getAllModoDispensaByDescriptionLike(sess, description);
+
+        if(simpleDomainList.isEmpty())
+            return "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
+        else
+            return simpleDomainList.get(0).getName();
     }
 
 }

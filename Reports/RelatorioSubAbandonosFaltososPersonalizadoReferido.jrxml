@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="defaultersReport_sub" pageWidth="668" pageHeight="595" orientation="Landscape" columnWidth="668" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="4.5949729863572255"/>
+	<property name="ireport.x" value="2091"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -30,60 +30,86 @@
 	<queryString>
 		<![CDATA[select
 pat.patientid as patID,
-(pat.lastname||', '|| pat.firstnames) as name,
- pat.nextofkinname as supportername,
+(pat.firstnames||', '|| pat.lastname) as name,
+pat.nextofkinname as supportername,
 pat.nextofkinphone as supporterphone,
 pat.cellphone as cellno,
-cl.clinicname as nomefarmacia,
-date_part('year',age(pat.dateofbirth)) as age,
-app.appointmentDate::date as dateexpected,
-($P{date}::date-app.appointmentDate::date)::integer as dayssinceexpected,
+pat.homephone as homeno,
+pat.workphone as workno,
+date_part('year',age(pat.dateofbirth))::Integer as age,
+pack.pickupdate as pickupdate,
+pack.dateexpectedstring as dateexpected,
+($P{date}::date-pack.dateexpectedstring)::integer as dayssinceexpected,
 CASE
-    WHEN (($P{date}::date-app.appointmentDate::date) > 59 AND app.visitdate::date IS NULL) THEN (app.appointmentDate::date + INTERVAL '60 days')
-    ELSE
-	CASE
-	    WHEN ((app.appointmentDate::date - app.visitdate::date) > 60) THEN (app.appointmentDate::date + INTERVAL '60 days')
-              ELSE null
-    	END
+    WHEN (($P{date}::date-pack.dateexpectedstring) > 59) THEN pack.dateexpectedstring + INTERVAL '61 days'
+    ELSE null
 END
   AS datelostfollowup,
-  CASE
-    WHEN (app.visitdate::date - app.appointmentdate::date) > 0 THEN app.visitdate::date
-    ELSE null
-  END
-  AS datereturn,
-max(app.appointmentDate) as ultimaData
-from patient as pat, appointment as app, patientidentifier as pi,identifiertype as idt,clinic as cl
-where app.patient = pat.id
+  pat.address1 ||
+case when ((pat.address2 is null)or(pat.address2 like ''))  then ''
+else ',' || pat.address2
+end
+||
+case when ((pat.address3 is null)or(pat.address3 like '')) then ''
+else ',' || pat.address3
+end
+as address,
+case when (presc.ptv = 'F' and presc.tb = 'F')  then 'Sim'
+else 'Nao'
+end as tarv,
+case when (presc.ptv <> 'F')  then 'Sim'
+else 'Nao'
+end as ptv,
+case when (presc.tb <> 'F')  then 'Sim'
+else 'Nao'
+end as tb,
+pack.dateexpectedstring as ultimaData,
+cl.clinicname as nomefarmacia
+FROM  (select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(to_date(pdit.dateexpectedstring, 'DD-Mon-YYYY')) dateexpectedstring, max(pa.id) packid,
+			  pat.id
+ 		from package pa
+		inner join packageddrugs pds on pds.parentpackage = pa.id
+		inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
+		inner join prescription pre on pre.id = pa.prescription
+		inner join patient pat ON pre.patient=pat.id
+	   	inner join clinic cl on cl.id = pat.clinic
+		INNER JOIN (SELECT MAX (startdate), patient
+					from episode
+					WHERE startdate <= $P{date}::date
+					GROUP BY 2) visit on visit.patient = pat.id
+		where pre.tipodoenca like '%ARV%' and cl.mainclinic = false and pg_catalog.date(pa.pickupdate) <= $P{date}::date
+	GROUP BY 5 order by 5) pack
+inner join prescription presc on presc.date::date = pack.predate::date and presc.patient=pack.id
+inner join patient pat on pat.id = presc.patient
+inner join patientidentifier pi on pi.value = pat.patientid
+inner join identifiertype idt on idt.id = pi.type_id
+inner join clinic cl on cl.id = pat.clinic
+where presc.tb = 'F'
+and presc.ptv = 'F'
+and presc.ccr = 'F'
 and idt.name = 'NID'
-and pi.value = pat.patientid
-and idt.id = pi.type_id
-and cl.id=pat.clinic
-and (app.visitDate::date > app.appointmentDate::date OR app.visitDate is null )
-and ($P{date}::date - app.appointmentDate::date) between $P{minDays} and $P{maxDays}
-and exists (select prescription.id
-from prescription
-where prescription.patient = pat.id
-and (($P{date} between prescription.date and prescription.endDate)or(($P{date} > prescription.date)) and (prescription.endDate is null)))
-and exists (select id from episode where episode.patient = pat.id
-and (($P{date} between episode.startdate and episode.stopdate)or(($P{date} > episode.startdate)) and (episode.stopdate is null)))
-and cl.mainclinic=false
-and app.visitdate is null
-group by 1,2,3,4,5,6,7,8,9,10,11
-order by patID asc]]>
+and (pack.dateexpectedstring < $P{date}::date and ($P{date}::date - pack.dateexpectedstring) between $P{minDays} and $P{maxDays})
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18
+order by age asc]]>
 	</queryString>
 	<field name="patid" class="java.lang.String"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="supportername" class="java.lang.String"/>
 	<field name="supporterphone" class="java.lang.String"/>
-	<field name="nomefarmacia" class="java.lang.String"/>
 	<field name="cellno" class="java.lang.String"/>
-	<field name="age" class="java.lang.Double"/>
+	<field name="homeno" class="java.lang.String"/>
+	<field name="workno" class="java.lang.String"/>
+	<field name="age" class="java.lang.Integer"/>
+	<field name="pickupdate" class="java.sql.Timestamp"/>
 	<field name="dateexpected" class="java.sql.Date"/>
 	<field name="dayssinceexpected" class="java.lang.Integer"/>
 	<field name="datelostfollowup" class="java.sql.Timestamp"/>
-	<field name="datereturn" class="java.sql.Date"/>
-	<field name="ultimadata" class="java.sql.Timestamp"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="tarv" class="java.lang.String"/>
+	<field name="ptv" class="java.lang.String"/>
+	<field name="tb" class="java.lang.String"/>
+	<field name="ultimadata" class="java.sql.Date"/>
+	<field name="nomefarmacia" class="java.lang.String"/>
 	<sortField name="dayssinceexpected"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -152,7 +178,7 @@ order by patID asc]]>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-13" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="19" width="622" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-13" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="19" width="659" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
@@ -176,19 +202,14 @@ order by patID asc]]>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement x="196" y="0" width="91" height="19"/>
+				<reportElement x="289" y="1" width="91" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateexpected})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="0" width="90" height="19"/>
+				<reportElement x="195" y="0" width="93" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datelostfollowup})]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="383" y="0" width="90" height="19"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datereturn})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{pickupdate})]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-29" stretchType="RelativeToBandHeight" mode="Opaque" x="567" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -213,6 +234,11 @@ order by patID asc]]>
 					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nomefarmacia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="384" y="1" width="90" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datelostfollowup})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

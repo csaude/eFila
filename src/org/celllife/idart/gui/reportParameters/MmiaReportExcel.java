@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.Prescription;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,6 +31,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
     private String reportFileName;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     StockCenter pharm = null;
+    Clinic clinic = null;
 
     private final String month;
     private final String year;
@@ -47,8 +49,12 @@ public class MmiaReportExcel implements IRunnableWithProgress {
     int totallinhas1;
     int totallinhas2;
     int totallinhas3;
+    int totallinhasDC1;
+    int totallinhasDC2;
+    int totallinhasDC3;
     int totalpacientesprep;
     int totalpacientesCE;
+    int totalpacientedc;
     int totalpacienteptv;
     int mesesdispensados;
     int pacientesEmTarv;
@@ -72,13 +78,14 @@ public class MmiaReportExcel implements IRunnableWithProgress {
 
     SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
-    public MmiaReportExcel(Shell parent, String reportFileName, String month, String year, StockCenter pharm) {
+    public MmiaReportExcel(Shell parent, String reportFileName, String month, String year, StockCenter pharm, Clinic clinic) {
         this.parent = parent;
         this.swtCal = swtCal;
         this.reportFileName = reportFileName;
         this.month = month;
         this.year = year;
         this.pharm = pharm;
+        this.clinic = clinic;
     }
 
     @Override
@@ -130,8 +137,8 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             mmiaRegimens = conn.getRegimenMmmiaActualizado(theStartDate, theEndDate);
             monitor.worked(1);
 
-            //Total de pacientes que levantaram arv 20 a 20
-            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), Prescription.TIPO_DOENCA_TARV);
+            //Total de pacientes que levantaram arv 20 a 21
+            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), Prescription.TIPO_DOENCA_TARV, clinic);
             Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5), Prescription.TIPO_DOENCA_TARV);
             Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4), Prescription.TIPO_DOENCA_TARV);
             Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3), Prescription.TIPO_DOENCA_TARV);
@@ -152,9 +159,14 @@ public class MmiaReportExcel implements IRunnableWithProgress {
              totallinhas2 = Integer.parseInt(mapaDoMMIA.get("totallinhas2").toString());
              totallinhas3 = Integer.parseInt(mapaDoMMIA.get("totallinhas3").toString());
 
+             totallinhasDC1 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC1").toString());
+             totallinhasDC2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC2").toString());
+             totallinhasDC3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC3").toString());
+
              totalpacientesppe = Integer.parseInt(mapaDoMMIA.get("totalpacientesppe").toString());
              totalpacientesprep = Integer.parseInt(mapaDoMMIA.get("totalpacientesprep").toString());
              totalpacientesCE = Integer.parseInt(mapaDoMMIA.get("totalpacientesCE").toString());
+             totalpacientedc = Integer.parseInt(mapaDoMMIA.get("totalpacientedc").toString());
 
              adultosEmTarv = Integer.parseInt(mapaDoMMIA.get("adultosEmTarv").toString());
              pediatrico04EmTARV = Integer.parseInt(mapaDoMMIA.get("pediatrico04EmTARV").toString());
@@ -373,6 +385,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
     public void fillOutRegimen(HSSFSheet sheet, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleAlignRight, int rowNum) {
         int i = 0;
         int totalDoentes = 0;
+        int totalDoentesDC = 0;
         HSSFRow row = null;
 
         for (MmiaRegimeTerapeutico xls : mmiaRegimens) {
@@ -398,7 +411,9 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             HSSFCell createCellTotalFarmaciaComunitaria = row.createCell(4);
             createCellTotalFarmaciaComunitaria.setCellValue(xls.getTotalDoentesFarmaciaComunitaria());
             createCellTotalFarmaciaComunitaria.setCellStyle(cellStyle);
+
             totalDoentes = totalDoentes + Integer.parseInt(xls.getTotalDoentes());
+            totalDoentesDC = totalDoentesDC + Integer.parseInt(xls.getTotalDoentesFarmaciaComunitaria());
         }
 
         // Last Row
@@ -411,15 +426,15 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             else
                 row = sheet.getRow(g);
             if (lastrow == g)
-                fillOutTotals(row, cellStyle, cellStyle, "Total Doentes", String.valueOf(totalDoentes));
+                fillOutTotals(row, cellStyle, cellStyle, "Total Doentes", String.valueOf(totalDoentes), String.valueOf(totalDoentesDC));
             else if (lastrow + 1 == g)
-                fillOutTotals(row, cellStyleAlignRight, cellStyle, "1as Linhas", String.valueOf(totallinhas1));
+                fillOutTotals(row, cellStyleAlignRight, cellStyle, "1as Linhas", String.valueOf(totallinhas1), String.valueOf(totallinhasDC1));
             else if (lastrow + 2 == g)
-                fillOutTotals(row, cellStyleAlignRight, cellStyle, "2as Linhas", String.valueOf(totallinhas2));
+                fillOutTotals(row, cellStyleAlignRight, cellStyle, "2as Linhas", String.valueOf(totallinhas2), String.valueOf(totallinhasDC2));
             else if (lastrow + 3 == g)
-                fillOutTotals(row, cellStyleAlignRight, cellStyle, "3as Linhas", String.valueOf(totallinhas3));
+                fillOutTotals(row, cellStyleAlignRight, cellStyle, "3as Linhas", String.valueOf(totallinhas3), String.valueOf(totallinhasDC3));
             else if (lastrow + 4 == g)
-                fillOutTotals(row, cellStyle, cellStyle, "Total Linhas", String.valueOf(totallinhas1 + totallinhas2 + totallinhas3));
+                fillOutTotals(row, cellStyle, cellStyle, "Total Linhas", String.valueOf(totallinhas1 + totallinhas2 + totallinhas3), String.valueOf(totallinhasDC1 + totallinhasDC2 + totallinhasDC3));
         }
 
         for (int i0 = 1; i0 < MmiaRegimeTerapeutico.class.getClass().getDeclaredFields().length; i0++) {
@@ -519,7 +534,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         row.setCellStyle(cellStyleRight);
     }
 
-    public void fillOutTotals(HSSFRow row, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleRight, String cellName, String cellValue) {
+    public void fillOutTotals(HSSFRow row, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleRight, String cellName, String cellValue1, String cellValue2) {
 
         HSSFCell createCellEmpty1 = row.createCell(1);
         createCellEmpty1.setCellStyle(cellStyle);
@@ -529,11 +544,12 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         createCell.setCellStyle(cellStyle);
 
         HSSFCell createCellValue = row.createCell(3);
-        createCellValue.setCellValue(cellValue);
+        createCellValue.setCellValue(cellValue1);
         createCellValue.setCellStyle(cellStyleRight);
 
         HSSFCell createCellEmpty2 = row.createCell(4);
-        createCellEmpty2.setCellStyle(cellStyle);
+        createCellEmpty2.setCellValue(cellValue2);
+        createCellEmpty2.setCellStyle(cellStyleRight);
 
     }
 

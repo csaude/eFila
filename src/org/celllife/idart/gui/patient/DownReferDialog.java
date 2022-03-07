@@ -53,6 +53,7 @@ public class DownReferDialog extends GenericOthersGui {
     private Label labelSector;
     private Label labelRefferedTimes;
     private Label labelReferredDate;
+    final static Logger log = Logger.getLogger(DownReferDialog.class);
 
     public DownReferDialog(Shell parent, Session session, Patient patient) {
         super(parent, session);
@@ -390,6 +391,7 @@ public class DownReferDialog extends GenericOthersGui {
     public void saveReferredPatient(Patient patient, Clinic clinic, ClinicSector clinicSector, Clinic mainClinic, Session session, String estadoPaciente) {
         // Adiciona paciente referido para a sincronizacao.
         SyncTempPatient pacienteReferido = null;
+        SyncTempPatient pacienteReferidoTemp = null;
         Prescription prescription = patient.getMostRecentPrescription("TARV");
         String clinicOrSectorUuid = "";
         String clinicOrSectorName = "";
@@ -419,6 +421,8 @@ public class DownReferDialog extends GenericOthersGui {
 
                 if (pacienteReferido == null)
                     pacienteReferido = new SyncTempPatient();
+
+                pacienteReferidoTemp = pacienteReferido;
 
                 pacienteReferido.setId(patient.getId());
                 pacienteReferido.setAccountstatus(Boolean.FALSE);
@@ -464,7 +468,6 @@ public class DownReferDialog extends GenericOthersGui {
                 pacienteReferido.setPrescricaoespecial(prescription.getPrescricaoespecial());
                 pacienteReferido.setMotivocriacaoespecial(prescription.getMotivocriacaoespecial());
 
-
                 if (!prescription.getPrescribedDrugs().isEmpty()) {
 
                     Map<String, Object> pd = new HashMap<String, Object>();
@@ -483,22 +486,41 @@ public class DownReferDialog extends GenericOthersGui {
                     pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());
                 pacienteReferido.setSyncstatus('P');
 
+                if(pacienteReferidoTemp.getPrescriptiondate() != null && estadoPaciente.equalsIgnoreCase("Faltoso")){
+                    if(!pacienteReferido.getPrescriptiondate().after(pacienteReferidoTemp.getPrescriptiondate())){
+                        pacienteReferido = pacienteReferidoTemp;
+                        if(pacienteReferidoTemp.getSyncstatus() != 'P')
+                        pacienteReferido.setSyncstatus('E');
+                        log.trace("Paciente com nid ["+patient.getPatientId()+"] Ja foi referido. A data da prescrição actual é a mesma que a última usada.");
+                    }
+                }
+
                 AdministrationManager.saveSyncTempPatient(session, pacienteReferido);
+                log.trace("Paciente com nid ["+patient.getPatientId()+"] Gravado com sucesso");
+
+            } else {
+                if(estadoPaciente.equalsIgnoreCase("Faltoso")){
+                    log.trace("Paciente com nid ["+patient.getPatientId()+"] não contém uma prescrição sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
+                } else {
+                    MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
+                            | SWT.OK);
+                    missing.setText("Prescrição sem dispensa");
+                    missing
+                            .setMessage("Este paciente contém uma prescriao sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
+                    missing.open();
+                }
+            }
+        } else {
+            if(estadoPaciente.equalsIgnoreCase("Faltoso")){
+                log.trace("Paciente com nid ["+patient.getPatientId()+"] não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
             } else {
                 MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
                         | SWT.OK);
-                missing.setText("Prescrição sem dispensa");
+                missing.setText("Paciente sem Prescrição");
                 missing
-                        .setMessage("Este paciente contém uma prescriao sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
+                        .setMessage("Este paciente não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
                 missing.open();
             }
-        } else {
-            MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
-                    | SWT.OK);
-            missing.setText("Paciente sem Prescrição");
-            missing
-                    .setMessage("Este paciente não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
-            missing.open();
         }
     }
 

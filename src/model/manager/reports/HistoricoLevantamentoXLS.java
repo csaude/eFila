@@ -8,6 +8,8 @@ public class HistoricoLevantamentoXLS {
 	
 	private String apelido;
 
+	private String telefone;
+
 	private String idade;
 	
 	private String tipoTarv;
@@ -129,5 +131,13 @@ public class HistoricoLevantamentoXLS {
 
 	public void setIdade(String idade) {
 		this.idade = idade;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
 	}
 }

@@ -1,9 +1,11 @@
 package model.manager.reports;
 
 
+import model.manager.AdministrationManager;
 import model.manager.excel.conversion.exceptions.ReportException;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.database.hibernate.User;
 import org.eclipse.swt.widgets.Shell;
@@ -38,9 +40,9 @@ public class MiaReportMISAU extends AbstractJasperReport {
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+            Clinic c = AdministrationManager.getMainClinic(getHSession());
             //Total de pacientes que levantaram arv 20 a 20
-            Map mapaDoMMIA = conn.MMIA(dateFormat.format(theStartDate),dateFormat.format(theEndDate));
+            Map mapaDoMMIA = conn.MMIA(dateFormat.format(theStartDate),dateFormat.format(theEndDate), c.getId());
 
             int totalpacientestransito = Integer.parseInt(mapaDoMMIA.get("totalpacientestransito").toString());
             int totalpacientesinicio = Integer.parseInt(mapaDoMMIA.get("totalpacientesinicio").toString());
