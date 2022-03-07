@@ -23,6 +23,7 @@ import model.manager.AdministrationManager;
 import model.manager.reports.MiaReport;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.platform.GenericReportGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
@@ -213,6 +214,7 @@ public class MmiaReport extends GenericReportGui {
 
 		StockCenter pharm = AdministrationManager.getStockCenter(getHSession(),
 				cmbStockCenter.getText());
+		Clinic clinic = AdministrationManager.getMainClinic(getHSession());
 
 		if (cmbStockCenter.getText().equals("")) {
 
@@ -237,7 +239,7 @@ public class MmiaReport extends GenericReportGui {
 		} else {
 			try {
 				MiaReport report = new MiaReport(
-						getShell(), pharm, cmbMonth.getText(), cmbYear.getText(), this.diseaseType);
+						getShell(), pharm, cmbMonth.getText(), cmbYear.getText(), this.diseaseType, clinic);
 				viewReport(report);
 			} catch (Exception e) {
 				getLog()
@@ -342,6 +344,7 @@ public class MmiaReport extends GenericReportGui {
 
 		StockCenter pharm = AdministrationManager.getStockCenter(getHSession(),
 				cmbStockCenter.getText());
+		Clinic clinic = AdministrationManager.getMainClinic(getHSession());
 
 		if (cmbStockCenter.getText().equals("")) {
 
@@ -367,7 +370,7 @@ public class MmiaReport extends GenericReportGui {
 
 			String reportNameFile = "Reports/MmiaReportMISAUActualizado.xls";
 			try {
-				MmiaReportExcel op = new MmiaReportExcel(parent, reportNameFile, cmbMonth.getText(), cmbYear.getText(),pharm);
+				MmiaReportExcel op = new MmiaReportExcel(parent, reportNameFile, cmbMonth.getText(), cmbYear.getText(),pharm, clinic);
 				new ProgressMonitorDialog(parent).run(true, true, op);
 
 				if (op.getList() == null ||

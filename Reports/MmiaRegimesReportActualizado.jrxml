@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaRegimesReportNovaVersao" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaRegimesReportNovaVersao" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Error" isIgnorePagination="true">
 	<property name="ireport.zoom" value="1.4483218986834392"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -23,31 +23,50 @@
 	<parameter name="totallinhas" class="java.lang.String"/>
 	<parameter name="pacientesEmTarv" class="java.lang.String"/>
 	<parameter name="diseaseType" class="java.lang.String"/>
+	<parameter name="totalpacientedc" class="java.lang.String"/>
+	<parameter name="totallinhasDC1" class="java.lang.String"/>
+	<parameter name="totallinhasDC2" class="java.lang.String"/>
+	<parameter name="totallinhasDC3" class="java.lang.String"/>
+	<parameter name="totallinhasDC" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) contagem
-FROM 	(select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id
+		<![CDATA[SELECT distinct regimen.regimeesquema,regimen.codigoregime, count(distinct regimen.contagem) contagem, count(distinct regimen.dccontagem) dccontagem FROM
+( SELECT  distinct rt.regimeesquema,rt.codigoregime, c.mainclinic, pds.amount,
+	CASE
+		WHEN (pds.amount <> 0) THEN pack.id
+		END contagem,
+		CASE
+		WHEN (c.mainclinic = false and pds.amount = 0) THEN pack.id
+		END dccontagem
+	FROM 	prescription p
+	inner join
+		(select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id
 		from package pa
-						inner join packageddrugs pds on pds.parentpackage = pa.id
-						inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
-						inner join prescription pre on pre.id = pa.prescription
-						inner join patient pat ON pre.patient=pat.id
-		where pds.amount <> 0 and (pg_catalog.date(pa.pickupdate) >= $P{date}::date and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date) and pre.tipodoenca like '%$P!{diseaseType}%'
-		GROUP BY 3 order by 3) pack
-
-		inner join prescription p on p.date = pack.predate and p.patient=pack.id
-		inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
-		inner join regimeterapeutico rt on rt.regimeid = p.regimeid
-		INNER JOIN (SELECT MAX (startdate),patient, episode.startreason
-					 from episode
-					 WHERE stopdate is null and startdate::date <= $P{dateEnd}::date
-					 GROUP BY 2,3
-					) visit on visit.patient = pack.id
-where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' and rt.tipodoenca like '%$P!{diseaseType}%' and p.tipodoenca like '%$P!{diseaseType}%'
-group by 1,2 order by 1]]>
+		inner join prescription pre on pre.id = pa.prescription
+		inner join patient pat ON pre.patient=pat.id
+		where (pg_catalog.date(pa.pickupdate) >= $P{date}::date
+								   and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date) and pre.tipodoenca like '%$P!{diseaseType}%'
+		GROUP BY 3 order by 3) pack on p.date = pack.predate and p.patient=pack.id
+	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
+	inner join packageddrugs pds on pds.parentpackage = pa.id
+	inner join clinic c on c.id = pa.clinic
+	inner join regimeterapeutico rt on rt.regimeid = p.regimeid
+	INNER JOIN (SELECT MAX (startdate),patient, episode.startreason
+				 from episode
+				 WHERE stopdate is null and startdate::date <= $P{dateEnd}::date
+				 GROUP BY 2,3
+				) visit on visit.patient = pack.id
+	where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' and rt.tipodoenca like '%$P!{diseaseType}%' and p.tipodoenca like '%$P!{diseaseType}%'
+ ) regimen
+ group by 1,2 order by 1]]>
 	</queryString>
 	<field name="regimeesquema" class="java.lang.String"/>
 	<field name="codigoregime" class="java.lang.String"/>
 	<field name="contagem" class="java.lang.Long"/>
+	<field name="dccontagem" class="java.lang.Long"/>
+	<variable name="total_paciente_dc" class="java.lang.Long" incrementType="Report" calculation="Highest">
+		<variableExpression><![CDATA[$F{dccontagem}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
 	<group name="total_pacientes">
 		<groupExpression><![CDATA[null]]></groupExpression>
 		<groupHeader>
@@ -221,6 +240,41 @@ group by 1,2 order by 1]]>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
+				<textField>
+					<reportElement x="315" y="0" width="50" height="23"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientedc}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="315" y="35" width="50" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="315" y="49" width="50" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="315" y="62" width="50" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="315" y="75" width="50" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -284,7 +338,14 @@ group by 1,2 order by 1]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Long"><![CDATA[$F{contagem}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{contagem} - $F{dccontagem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{dccontagem}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

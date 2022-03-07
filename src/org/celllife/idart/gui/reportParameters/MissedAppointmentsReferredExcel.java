@@ -113,17 +113,17 @@ public class MissedAppointmentsReferredExcel implements IRunnableWithProgress {
                     createCellNome.setCellValue(xls.getNome());
                     createCellNome.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(3);
+                    HSSFCell createCellEfectuouLigacao = row.createCell(3);
+                    createCellEfectuouLigacao.setCellValue(xls.getDataRegressoUnidadeSanitaria());
+                    createCellEfectuouLigacao.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(4);
                     createCellDataQueFaltouLevantamento.setCellValue(xls.getDataQueFaltouLevantamento());
                     createCellDataQueFaltouLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(4);
+                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(5);
                     createCellDataIdentificouAbandonoTarv.setCellValue(xls.getDataIdentificouAbandonoTarv());
                     createCellDataIdentificouAbandonoTarv.setCellStyle(cellStyle);
-
-                    HSSFCell createCellEfectuouLigacao = row.createCell(5);
-                    createCellEfectuouLigacao.setCellValue(xls.getDataRegressoUnidadeSanitaria());
-                    createCellEfectuouLigacao.setCellStyle(cellStyle);
 
                     HSSFCell createCellDataRegressoUnidadeSanitaria = row.createCell(6);
                     createCellDataRegressoUnidadeSanitaria.setCellValue(xls.getFarmaciaReferencia());

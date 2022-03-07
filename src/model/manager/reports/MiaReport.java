@@ -4,6 +4,7 @@ package model.manager.reports;
 import model.manager.excel.conversion.exceptions.ReportException;
 import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.dao.ConexaoJDBC;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.database.hibernate.User;
 import org.eclipse.swt.widgets.Shell;
@@ -25,13 +26,16 @@ public class MiaReport extends AbstractJasperReport {
     public static final String TARV_MIA_REPORT = "ARV";
 
     private String diseaseType;
+    private Clinic clinic;
 
-    public MiaReport(Shell parent, StockCenter stockCenter, String Month, String Year, String diseaseType) {
+
+    public MiaReport(Shell parent, StockCenter stockCenter, String Month, String Year, String diseaseType, Clinic clinic) {
         super(parent);
         this.stockCenter = stockCenter;
         this.month = Month;
         this.year = Year;
         this.diseaseType = diseaseType;
+        this.clinic = clinic;
     }
 
     @Override
@@ -84,7 +88,7 @@ public class MiaReport extends AbstractJasperReport {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             //Total de pacientes que levantaram arv 20 a 20
-            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), diseaseType);
+            Map mapaDoMMIA = conn.MMIAACTUALIZADO(dateFormat.format(theStartDate),dateFormat.format(theEndDate), diseaseType, clinic);
             Map mapaDoMMIAMes5  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth5), dateFormat.format(endMonth5), diseaseType);
             Map mapaDoMMIAMes4  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth4), dateFormat.format(endMonth4), diseaseType);
             Map mapaDoMMIAMes3  = conn.MMIA_Actualizado_Dispensas(dateFormat.format(startMonth3), dateFormat.format(endMonth3), diseaseType);
@@ -106,9 +110,14 @@ public class MiaReport extends AbstractJasperReport {
             int totallinhas2 = Integer.parseInt(mapaDoMMIA.get("totallinhas2").toString());
             int totallinhas3 = Integer.parseInt(mapaDoMMIA.get("totallinhas3").toString());
 
+            int totallinhasDC1 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC1").toString());
+            int totallinhasDC2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC2").toString());
+            int totallinhasDC3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC3").toString());
+
             int totalpacientesppe = Integer.parseInt(mapaDoMMIA.get("totalpacientesppe").toString());
             int totalpacientesprep = Integer.parseInt(mapaDoMMIA.get("totalpacientesprep").toString());
             int totalpacientesCE = Integer.parseInt(mapaDoMMIA.get("totalpacientesCE").toString());
+            int totalpacientedc = Integer.parseInt(mapaDoMMIA.get("totalpacientedc").toString());
 
             int adultosEmTarv = Integer.parseInt(mapaDoMMIA.get("adultosEmTarv").toString());
             int pediatrico04EmTARV = Integer.parseInt(mapaDoMMIA.get("pediatrico04EmTARV").toString());
@@ -180,10 +189,16 @@ public class MiaReport extends AbstractJasperReport {
             map.put("totallinhas3", String.valueOf(totallinhas3));
             map.put("totallinhas", String.valueOf(totallinhas3 + totallinhas2 + totallinhas1));
 
+            map.put("totallinhasDC1", String.valueOf(totallinhasDC1));
+            map.put("totallinhasDC2", String.valueOf(totallinhasDC2));
+            map.put("totallinhasDC3", String.valueOf(totallinhasDC3));
+            map.put("totallinhasDC", String.valueOf(totallinhasDC3 + totallinhasDC2 + totallinhasDC1));
+
             map.put("totalpacientesppe", String.valueOf(totalpacientesppe));
             map.put("totalpacientesCE", String.valueOf(totalpacientesCE));
             map.put("totalpacientesprep", String.valueOf(totalpacientesprep));
             map.put("pacientesEmTarv", String.valueOf(pacientesEmTarv));
+            map.put("totalpacientedc", String.valueOf(totalpacientedc));
 
             map.put("totalDSM5", String.valueOf(totalDSM5));
             map.put("totalDSM4", String.valueOf(totalDSM4));

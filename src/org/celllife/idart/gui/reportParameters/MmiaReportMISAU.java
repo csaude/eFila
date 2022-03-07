@@ -23,6 +23,7 @@ import model.manager.AdministrationManager;
 import model.manager.reports.MiaReportMISAU;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CommonObjects;
+import org.celllife.idart.database.hibernate.Clinic;
 import org.celllife.idart.database.hibernate.StockCenter;
 import org.celllife.idart.gui.platform.GenericReportGui;
 import org.celllife.idart.gui.utils.ResourceUtils;
@@ -199,6 +200,7 @@ public class MmiaReportMISAU extends GenericReportGui {
 	@Override
 	protected void cmdViewReportXlsWidgetSelected() {
 		StockCenter pharm = AdministrationManager.getStockCenter(getHSession(),cmbStockCenter.getText());
+		Clinic c = AdministrationManager.getMainClinic(getHSession());
 
 		if (cmbStockCenter.getText().equals("")) {
 
@@ -231,7 +233,7 @@ public class MmiaReportMISAU extends GenericReportGui {
 			Date theEndDate=  calendarEnd.getCalendar().getTime();
 			String reportNameFile = "Reports/MmiaReportMISAU.xls";
 			try {
-				MmiaReportMISAUExcel op = new MmiaReportMISAUExcel(parent, reportNameFile, theStartDate, theEndDate,pharm);
+				MmiaReportMISAUExcel op = new MmiaReportMISAUExcel(parent, reportNameFile, theStartDate, theEndDate,pharm, c);
 				new ProgressMonitorDialog(parent).run(true, true, op);
 
 				if (op.getList() == null ||

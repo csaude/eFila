@@ -285,9 +285,12 @@ ALTER TABLE prescribeddrugs ADD COLUMN IF NOT EXISTS takeperiod character varyin
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispensemodeanswer character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
 ALTER TABLE sync_openmrs_dispense ADD COLUMN IF NOT EXISTS dispennsedQty character varying(255) COLLATE pg_catalog."default" DEFAULT '30'::character varying;
 ALTER TABLE sync_temp_clinic_information ADD COLUMN IF NOT EXISTS uuid character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE clinicsector DROP CONSTRAINT clinic_secto_clinic_fk;
 ALTER TABLE clinicsector ADD CONSTRAINT clinicsector_un_uuid UNIQUE (uuid);
 ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT NULL DEFAULT 1;
+ALTER TABLE clinicsector ALTER COLUMN clinic TYPE character varying(255);
 ALTER TABLE clinicsector ADD CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES public.clinic_sector_type (id);
+ALTER TABLE clinicsector ADD CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES public.clinic(uuid);
 UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
@@ -632,7 +635,7 @@ INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesp
 
 INSERT INTO public.clinic_sector_type (id, description, code) values (1, 'Paragem Única', 'PARAGEM_UNICA');
 INSERT INTO public.clinic_sector_type (id, description, code) values (2, 'Dispensa Comunitária pelo Provedor', 'PROVEDOR');
-INSERT INTO public.clinic_sector_type (id, description, code) values (3, 'Agente Polivalente', 'APE');
+INSERT INTO public.clinic_sector_type (id, description, code) values (3, 'Agente Polivalente Elementar', 'APE');
 INSERT INTO public.clinic_sector_type (id, description, code) values (4, 'Clinica Móvel', 'CLINICA_MOVEL');
 INSERT INTO public.clinic_sector_type (id, description, code) values (5, 'Brigada Móvel', 'BRIGADA_MOVEL');
 
@@ -692,6 +695,45 @@ update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'out
 update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
 update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
 
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Jan','Jan') where substr(dateexpectedstring,4,3)='Jan';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Fev','Feb') where substr(dateexpectedstring,4,3)='Fev';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Mar','Mar') where substr(dateexpectedstring,4,3)='Mar';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Abr','Apr') where substr(dateexpectedstring,4,3)='Abr';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Mai','May') where substr(dateexpectedstring,4,3)='Mai';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Jun','Jun') where substr(dateexpectedstring,4,3)='Jun';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Jul','Jul') where substr(dateexpectedstring,4,3)='Jul';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Ago','Aug') where substr(dateexpectedstring,4,3)='Ago';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Set','Sep') where substr(dateexpectedstring,4,3)='Set';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Out','Oct') where substr(dateexpectedstring,4,3)='Out';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Nov','Nov') where substr(dateexpectedstring,4,3)='Nov';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'Dez','Dec') where substr(dateexpectedstring,4,3)='Dez';
+
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'jan','Jan') where substr(datainiciotarv,4,3)='jan';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'fev','Feb') where substr(datainiciotarv,4,3)='fev';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'mar','Mar') where substr(datainiciotarv,4,3)='mar';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'abr','Apr') where substr(datainiciotarv,4,3)='abr';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'mai','May') where substr(datainiciotarv,4,3)='mai';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'jun','Jun') where substr(datainiciotarv,4,3)='jun';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'jul','Jul') where substr(datainiciotarv,4,3)='jul';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'ago','Aug') where substr(datainiciotarv,4,3)='ago';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'set','Sep') where substr(datainiciotarv,4,3)='set';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'out','Oct') where substr(datainiciotarv,4,3)='out';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'nov','Nov') where substr(datainiciotarv,4,3)='nov';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'dez','Dec') where substr(datainiciotarv,4,3)='dez';
+
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Jan','Jan') where substr(datainiciotarv,4,3)='Jan';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Fev','Feb') where substr(datainiciotarv,4,3)='Fev';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Mar','Mar') where substr(datainiciotarv,4,3)='Mar';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Abr','Apr') where substr(datainiciotarv,4,3)='Abr';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Mai','May') where substr(datainiciotarv,4,3)='Mai';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Jun','Jun') where substr(datainiciotarv,4,3)='Jun';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Jul','Jul') where substr(datainiciotarv,4,3)='Jul';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Ago','Aug') where substr(datainiciotarv,4,3)='Ago';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Set','Sep') where substr(datainiciotarv,4,3)='Set';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Out','Oct') where substr(datainiciotarv,4,3)='Out';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Nov','Nov') where substr(datainiciotarv,4,3)='Nov';
+update sync_temp_patients set datainiciotarv=replace(datainiciotarv,'Dez','Dec') where substr(datainiciotarv,4,3)='Dez';
+
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'mar','Mar') where substr(dateexpectedstring,4,3)='mar';
@@ -705,6 +747,17 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'out
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'nov','Nov') where substr(dateexpectedstring,4,3)='nov';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'dez','Dec') where substr(dateexpectedstring,4,3)='dez';
 
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Jan','Jan') where substr(dateexpectedstring,4,3)='Jan';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Fev','Feb') where substr(dateexpectedstring,4,3)='Fev';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Mar','Mar') where substr(dateexpectedstring,4,3)='Mar';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Abr','Apr') where substr(dateexpectedstring,4,3)='Abr';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Mai','May') where substr(dateexpectedstring,4,3)='Mai';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Jun','Jun') where substr(dateexpectedstring,4,3)='Jun';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Jul','Jul') where substr(dateexpectedstring,4,3)='Jul';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Ago','Aug') where substr(dateexpectedstring,4,3)='Ago';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Set','Sep') where substr(dateexpectedstring,4,3)='Set';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Out','Oct') where substr(dateexpectedstring,4,3)='Out';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Nov','Nov') where substr(dateexpectedstring,4,3)='Nov';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'Dez','Dec') where substr(dateexpectedstring,4,3)='Dez';
+
 CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
-ALTER TABLE clinicsector DROP CONSTRAINT clinic_secto_clinic_fk;
-ALTER TABLE clinicsector ADD CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinicuuid) REFERENCES clinic (uuid);

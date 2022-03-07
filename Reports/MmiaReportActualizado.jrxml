@@ -100,6 +100,11 @@
 	<parameter name="diseaseType" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="totalpacientedc" class="java.lang.String"/>
+	<parameter name="totallinhasDC1" class="java.lang.String"/>
+	<parameter name="totallinhasDC2" class="java.lang.String"/>
+	<parameter name="totallinhasDC3" class="java.lang.String"/>
+	<parameter name="totallinhasDC" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
 distinct d.id,
@@ -180,11 +185,20 @@ order by atccode_id asc]]>
 					<subreportParameter name="monthStart">
 						<subreportParameterExpression><![CDATA[$P{monthStart}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="totallinhasDC2">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDC2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDC3">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDC3}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="pacientesEmTarv">
 						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="username">
 						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDC1">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDC1}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhas2">
 						<subreportParameterExpression><![CDATA[$P{totallinhas2}]]></subreportParameterExpression>
@@ -198,8 +212,14 @@ order by atccode_id asc]]>
 					<subreportParameter name="path">
 						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="totalpacientedc">
+						<subreportParameterExpression><![CDATA[$P{totalpacientedc}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="totallinhas">
 						<subreportParameterExpression><![CDATA[$P{totallinhas}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDC">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDC}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression class="java.lang.String"><![CDATA[($P{path} + java.io.File.separator+ "MmiaRegimesReportActualizado.jasper")]]></subreportExpression>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoLevantamentos" pageWidth="1190" pageHeight="595" orientation="Landscape" columnWidth="1130" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HistoricoLevantamentos" pageWidth="1270" pageHeight="595" orientation="Landscape" columnWidth="1210" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="384"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -62,6 +62,7 @@
 	<field name="nid" class="java.lang.String"/>
 	<field name="nome" class="java.lang.String"/>
 	<field name="apelido" class="java.lang.String"/>
+	<field name="cellphone" class="java.lang.String"/>
 	<field name="tipotarv" class="java.lang.String"/>
 	<field name="regime" class="java.lang.String"/>
 	<field name="idade" class="java.lang.Integer"/>
@@ -151,7 +152,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("yyyy")).format($P{date})]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-1" mode="Opaque" x="1" y="100" width="1127" height="1" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-1" mode="Opaque" x="1" y="100" width="1209" height="1" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
@@ -197,13 +198,13 @@
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="0" y="138" width="1128" height="1" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-8" mode="Opaque" x="0" y="138" width="1209" height="1" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="468" y="103" width="62" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="540" y="103" width="62" height="32" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -242,19 +243,19 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).format($P{date})+ "  à  "+ (new SimpleDateFormat("dd-MM-yyyy")).format($P{dateEnd})]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="1" y="54" width="1127" height="1"/>
+				<reportElement x="1" y="54" width="1209" height="1"/>
 				<graphicElement>
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="1" y="78" width="1127" height="1"/>
+				<reportElement x="1" y="78" width="1209" height="1"/>
 				<graphicElement>
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="1" y="97" width="1127" height="1"/>
+				<reportElement x="1" y="97" width="1209" height="1"/>
 				<graphicElement>
 					<pen lineWidth="2.0"/>
 				</graphicElement>
@@ -317,13 +318,13 @@
 				<text><![CDATA[NID]]></text>
 			</staticText>
 			<line>
-				<reportElement x="1" y="0" width="1127" height="1"/>
+				<reportElement x="1" y="0" width="1209" height="1"/>
 				<graphicElement>
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="1128" y="0" width="1" height="140" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="1209" y="0" width="1" height="140" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
@@ -342,7 +343,7 @@
 				<text><![CDATA[ORD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="534" y="103" width="113" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="607" y="103" width="113" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -357,25 +358,25 @@
 				<text><![CDATA[REGIME TERAPÉUTICO]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="532" y="101" width="1" height="38" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="604" y="102" width="1" height="35" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="734" y="99" width="1" height="38" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="808" y="101" width="1" height="37" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="818" y="102" width="1" height="35" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="893" y="101" width="1" height="37" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="938" y="103" width="89" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="1017" y="103" width="89" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -390,7 +391,7 @@
 				<text><![CDATA[DATA LEVANT.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="1032" y="103" width="94" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="1112" y="103" width="94" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -405,13 +406,13 @@
 				<text><![CDATA[DATA PRÓX. LEVANT.]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="650" y="101" width="1" height="38" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="723" y="101" width="1" height="36" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="652" y="103" width="79" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="726" y="104" width="79" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -426,13 +427,13 @@
 				<text><![CDATA[TIPO DE DISPENSA]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="464" y="100" width="1" height="40" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-3" mode="Opaque" x="538" y="101" width="1" height="36" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_drug" mode="Opaque" x="391" y="103" width="70" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_drug" mode="Opaque" x="467" y="102" width="68" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -447,13 +448,13 @@
 				<text><![CDATA[TIPO PACIENTE]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="936" y="101" width="1" height="38" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="1014" y="101" width="1" height="36" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="736" y="103" width="80" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="811" y="102" width="80" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -468,13 +469,13 @@
 				<text><![CDATA[PROVENIÊNCIA]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="1029" y="100" width="1" height="38" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-2" mode="Opaque" x="1108" y="101" width="1" height="36" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Transparent" x="820" y="103" width="114" height="32" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="st_openingBalance-2" mode="Transparent" x="897" y="103" width="114" height="32" forecolor="#000000" backcolor="#FFFFFF">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -509,6 +510,27 @@
 				</textElement>
 				<text><![CDATA[IDADE]]></text>
 			</staticText>
+			<line>
+				<reportElement key="line-3" mode="Opaque" x="463" y="101" width="1" height="36" forecolor="#000000" backcolor="#000000"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="st_drug" mode="Opaque" x="391" y="103" width="70" height="32" forecolor="#000000" backcolor="#FFFFFF">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[CONTACTO]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -520,7 +542,7 @@
 	<detail>
 		<band height="28">
 			<line>
-				<reportElement key="line-22" mode="Opaque" x="0" y="27" width="1128" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-22" mode="Opaque" x="0" y="27" width="1209" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<textField>
@@ -543,7 +565,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nome}+" "+$F{apelido}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="466" y="2" width="64" height="25">
+				<reportElement x="540" y="0" width="64" height="25">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -552,7 +574,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipotarv}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="534" y="1" width="113" height="26">
+				<reportElement x="607" y="1" width="113" height="26">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -561,29 +583,20 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{regime}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="938" y="0" width="89" height="27"/>
+				<reportElement x="1017" y="2" width="89" height="25"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datalevantamento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1032" y="0" width="94" height="27">
+				<reportElement x="1112" y="0" width="94" height="27">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dataproximolevantamento})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="652" y="0" width="79" height="27">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipodispensa}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="2" y="2" width="25" height="25">
@@ -596,25 +609,25 @@
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="532" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="604" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="818" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="893" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="734" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="808" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="650" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="723" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
@@ -644,19 +657,19 @@
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="936" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="1014" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-20" mode="Opaque" x="464" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-20" mode="Opaque" x="538" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="392" y="1" width="70" height="26">
+				<reportElement x="467" y="1" width="70" height="26">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -666,26 +679,26 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{startreason}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="1029" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="1108" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="1128" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="1209" y="0" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="820" y="2" width="114" height="24"/>
+				<reportElement x="897" y="1" width="114" height="24"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{modedispense}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="735" y="3" width="80" height="20"/>
+				<reportElement x="811" y="1" width="80" height="23"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -706,6 +719,31 @@
 					<font size="8" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{idade}.toString()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-20" mode="Opaque" x="463" y="1" width="1" height="27" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="727" y="0" width="79" height="27">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipodispensa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="2" width="74" height="24">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cellphone}.toString()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band/>
