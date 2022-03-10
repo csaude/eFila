@@ -303,15 +303,20 @@ public class DadosPacienteFarmac {
 
         User user = AdministrationManager.getUserByName(sess, "admin");
 
+        if(user == null)
+            user = LocalObjects.getUser(HibernateUtil.getNewSession());
+
         try {
             // Prescriotion Duration
             tx = sess.beginTransaction();
             java.util.List<PackageDrugInfo> allPackagedDrugsListTemp = new ArrayList<PackageDrugInfo>();
 
             Patient patient = PatientManager.getPatientfromUuid(sess, syncTempDispense.getUuidopenmrs());
+            SyncTempPatient tempPatient = AdministrationManager.getSyncTempPatienByUuidAndClinicUuid(sess, syncTempDispense.getUuidopenmrs(), syncTempDispense.getMainclinicuuid());
             Drug drug = DrugManager.getDrug(sess, syncTempDispense.getDrugname());
             List<Stock> stockList = null;
             Stock stock = null;
+            String dispenseModeAnswer = "";
             int dipensedQty= 0;
 
             if (drug == null)
@@ -346,6 +351,27 @@ public class DadosPacienteFarmac {
                 }
             }
 
+            //   String dispenseModeAnswer =  AdministrationManager.dispenseModUUID(sess, syncTempDispense.get);
+
+            if(tempPatient != null){
+                if(!clinic.getUuid().equalsIgnoreCase(tempPatient.getClinicuuid())){
+                    ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, tempPatient.getClinicuuid());
+
+                    if(clinicSector != null){
+                        if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
+                            dispenseModeAnswer = getDispenseModeDescription(sess, "Provedor");
+                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
+                            dispenseModeAnswer = getDispenseModeDescription(sess, "APE");
+                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
+                            dispenseModeAnswer = getDispenseModeDescription(sess, "nica M");
+                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
+                            dispenseModeAnswer = getDispenseModeDescription(sess, "Brigada");
+                    }
+                }
+            }
+
+
+
             PackageDrugInfo pditemp = new PackageDrugInfo();
             pditemp.setAmountPerTime(0);
             pditemp.setClinic(clinic.getClinicName());
@@ -374,6 +400,7 @@ public class DadosPacienteFarmac {
             pditemp.setDateExpectedString(syncTempDispense.getDateexpectedstring());
             pditemp.setPickupDate(syncTempDispense.getPickupdate());
             pditemp.setNotes("");
+            pditemp.setModeDispense(dispenseModeAnswer);
             allPackagedDrugsListTemp.add(pditemp);
 
             savePackageAndPackagedDrugsWhithFarmacQty0(true, allPackagedDrugsListTemp, prescription, clinic, sess);
@@ -383,11 +410,7 @@ public class DadosPacienteFarmac {
             sess.close();
 
         } catch (HibernateException he) {
-
-            MessageBox errorBox = new MessageBox(null, SWT.OK | SWT.ICON_ERROR);
-            errorBox.setText("Não pode salvar: Verificar Prescricao");
-            errorBox.setMessage("Houve um problema ao salvar a Prescricao. Por favor, tente novamente.");
-            log.trace(he);
+            log.trace("Houve um problema ao salvar a Prescricao. Por favor, tente novamente." + he);
             if (tx != null) {
                 tx.rollback();
                 sess.close();
@@ -493,27 +516,27 @@ public class DadosPacienteFarmac {
         SyncTempPatient patient = AdministrationManager.getSyncTempPatienByUuidAndClinicUuid(sess, syncTempDispense.getUuidopenmrs(), syncTempDispense.getMainclinicuuid());
 
         if (syncTempDispense.getNotes().contains("FARMAC"))
-            dispenseModeAnswer = "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
+            dispenseModeAnswer = getDispenseMode(sess, "FARMAC");
         else
-            dispenseModeAnswer = "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
-
-     //   String dispenseModeAnswer =  AdministrationManager.dispenseModUUID(sess, syncTempDispense.get);
+            dispenseModeAnswer = getDispenseMode(sess, "Privada");
 
         if(patient != null){
-                if(!clinic.getUuid().equalsIgnoreCase(patient.getClinicuuid())){
-                    ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicuuid());
+            ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicuuid());
+            if(clinicSector != null){
+                if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
+                    dispenseModeAnswer = getDispenseMode(sess, "Provedor");
+                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
+                    dispenseModeAnswer = getDispenseMode(sess, "APE");
+                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
+                    dispenseModeAnswer = getDispenseMode(sess, "Clínica");
+                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
+                    dispenseModeAnswer = getDispenseMode(sess, "Brigada");
+            }
 
-                    if(clinicSector != null){
-                        if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
-                            dispenseModeAnswer = getDispenseMode(sess, "Provedor");
-                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
-                            dispenseModeAnswer = getDispenseMode(sess, "APE");
-                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
-                            dispenseModeAnswer = getDispenseMode(sess, "nica M");
-                            else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
-                            dispenseModeAnswer = getDispenseMode(sess, "Brigada");
-                    }
-                }
+            if(patient.getEstadopaciente().equalsIgnoreCase("Faltoso") || patient.getEstadopaciente().equalsIgnoreCase("Abandono")){
+                dispenseModeAnswer = getDispenseMode(sess, "Provedor");
+            }
+
         }
 
         boolean result = true;
@@ -784,6 +807,16 @@ public class DadosPacienteFarmac {
             return "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
         else
             return simpleDomainList.get(0).getName();
+    }
+
+    static String getDispenseModeDescription(Session sess, String description){
+
+        List<SimpleDomain> simpleDomainList = AdministrationManager.getAllModoDispensaByDescriptionLike(sess, description);
+
+        if(simpleDomainList.isEmpty())
+            return "";
+        else
+            return simpleDomainList.get(0).getValue();
     }
 
 }

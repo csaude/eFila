@@ -969,7 +969,6 @@ public class RestFarmac {
                             patient.setExclusaopaciente(true);
                             AdministrationManager.saveSyncTempPatient(sess, patient);
                         }
-
                     sess.getTransaction().commit();
                     sess.flush();
                     sess.clear(); // Clearing the session object
