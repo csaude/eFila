@@ -1855,7 +1855,7 @@ public class AdministrationManager {
 
         SyncTempPatient result;
 
-        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicuuid = '" + clinicUuid + "' and sync.uuidopenmrs = '" + uuid + "'").list();
+        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicuuid = '" + clinicUuid + "' and sync.uuidopenmrs = '" + uuid + "' order by id desc").list();
 
         if (patientIdentifiers.isEmpty())
             result = null;
