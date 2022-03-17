@@ -107,7 +107,7 @@ public class MissedAppointmentsAPSSExcel implements IRunnableWithProgress {
 
                 HSSFRow daysPeriod = sheet.getRow(11);
                 HSSFCell daysCell = daysPeriod.createCell(5);
-                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate);
+                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate+ "dias de falta.");
                 daysCell.setCellStyle(cellStyle);
 
                 for(int i=15; i<= sheet.getLastRowNum(); i++)

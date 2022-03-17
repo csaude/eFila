@@ -229,7 +229,7 @@ public class Search extends GenericOthersGui {
                 searchList = SearchManager.getSystemFuntionalityList(getHSession(), this);
                 break;
             case CommonObjects.SECTOR:
-                searchList = SearchManager.getSectorList(getHSession(), this);
+                searchList = SearchManager.loadClinicSector(getHSession(), this);
                 break;
         }
     }
@@ -345,13 +345,11 @@ public class Search extends GenericOthersGui {
             public void keyReleased(KeyEvent e) {
 				// check for CTRL key pressed so that uses can copy
                 // if (e.stateMask == SWT.CTRL)
-                SearchManager.minimiseSearch(getTblSearch(), searchBar
-                        .getText().trim(), searchList, searchType);
+                SearchManager.minimiseSearch(getTblSearch(), searchBar.getText().trim(), searchList, searchType);
+                TableItem[]  tableitems1 = getTblSearch().getItems();
+                if ((e.character == SWT.CR) || (e.character == (char) iDartProperties.intValueOfAlternativeBarcodeEndChar)) {
 
-                if ((e.character == SWT.CR)
-                        || (e.character == (char) iDartProperties.intValueOfAlternativeBarcodeEndChar)) {
-
-                    TableItem[] tableitems = getTblSearch().getItems();
+                    TableItem[]  tableitems = getTblSearch().getItems();
                     for (int i = 0; i < tableitems.length; i++) {
                         String tableItem_i = tableitems[i].getText();
                         String searchtxt = searchBar.getText();
@@ -366,7 +364,6 @@ public class Search extends GenericOthersGui {
                     }
 
                 }
-
             }
         });
     }

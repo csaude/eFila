@@ -77,7 +77,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 	@Override
 	protected void createCompHeader() {
-		String headerTxt = ("Redefinção da senha e estado do Usuário");
+		String headerTxt = ("Redefinção da senha e estado do Utilizador");
 		iDartImage icoImage = iDartImage.PHARMACYUSER;
 		buildCompHeader(headerTxt, icoImage);
 		
@@ -98,7 +98,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 
 			MessageBox msg = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-			msg.setText("Redefinição da senha e estado Usuário");
+			msg.setText("Redefinição da senha e estado Utilizador");
 			msg.setMessage("Tem certeza de que deseja redefinir a senha e estado deste usuário?");
 			option = msg.open();
 
@@ -180,7 +180,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 	@Override
 	protected void createShell() {
-		String shellText = "Redefinção da senha e estado do Usuário";
+		String shellText = "Redefinção da senha e estado do Utilizador";
 		Rectangle bounds = new Rectangle(25, 0, 800, 400);
 		buildShell(shellText, bounds);
 		
@@ -203,7 +203,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 		Label lblUser = new Label(grpUserInfo, SWT.NONE);
 		lblUser.setBounds(new Rectangle(30, 20, 125, 20));
 		lblUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-		lblUser.setText("* Usuário:");
+		lblUser.setText("* Utilizador:");
 		txtUser = new Text(grpUserInfo, SWT.BORDER);
 		txtUser.setBounds(new Rectangle(185, 20, 130, 20));
 		txtUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));

@@ -1660,7 +1660,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         }
 
         // Set the date of birth  Bug iDART-86
-        SimpleDateFormat sdf = new SimpleDateFormat("d-MMMM-yyyy"); //$NON-NLS-1$
+        SimpleDateFormat sdf = new SimpleDateFormat("d-MMMM-yyyy", Locale.ENGLISH); //$NON-NLS-1$
         Date theDate = null;//Data de Nascimento
         try {
             theDate = sdf.parse(cmbDOBDay.getText() + "-" //$NON-NLS-1$
