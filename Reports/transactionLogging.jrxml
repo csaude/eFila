@@ -156,7 +156,7 @@ order by transactiondate desc]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Usuário]]></text>
+				<text><![CDATA[Utilizador]]></text>
 			</staticText>
 			<line direction="BottomUp">
 				<reportElement key="line-52" x="1" y="77" width="534" height="1"/>

@@ -365,7 +365,7 @@ public class DownReferDialog extends GenericOthersGui {
         }
 
         labelRefferedTimes = new Label(grpReferredType, SWT.NONE);
-        labelRefferedTimes.setBounds(new Rectangle(10, 102, 190, 20));
+        labelRefferedTimes.setBounds(new Rectangle(10, 102, 195, 20));
         labelRefferedTimes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         labelRefferedTimes.setText("Primeira vez a referir para outra Farmacia?");
 
