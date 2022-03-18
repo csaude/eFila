@@ -99,7 +99,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 			MessageBox msg = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_QUESTION);
 			msg.setText("Redefinição da senha e estado Utilizador");
-			msg.setMessage("Tem certeza de que deseja redefinir a senha e estado deste usuário?");
+			msg.setMessage("Tem certeza de que deseja redefinir a senha e estado deste Utilizador?");
 			option = msg.open();
 
 			if(option == SWT.YES)
@@ -212,7 +212,7 @@ public class UserStatePasswordManage extends GenericFormGui {
 
 		btnSearch = new Button(grpUserInfo, SWT.NONE);
 		btnSearch.setBounds(new org.eclipse.swt.graphics.Rectangle(350, 20, 120, 30));
-		btnSearch.setToolTipText("Pressione este botão para procurar um usuário.");
+		btnSearch.setToolTipText("Pressione este botão para procurar um Utilizador.");
 		btnSearch.setText("Procurar"); //$NON-NLS-1$
 		btnSearch.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		btnSearch.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {

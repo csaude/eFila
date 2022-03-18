@@ -177,7 +177,7 @@ public class ManagePharmUsers extends GenericFormGui {
         rdBtnAddUser = new Button(grpAddOrConfigureUser, SWT.RADIO);
         rdBtnAddUser.setBounds(new Rectangle(20, 12, 160, 30));
         rdBtnAddUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        rdBtnAddUser.setText("Adicionar novo usuário");
+        rdBtnAddUser.setText("Adicionar novo Utilizador");
 
 //        if (!LocalObjects.getUser(getHSession()).isAdmin())
 //            rdBtnAddUser.setSelection(false);
@@ -197,7 +197,7 @@ public class ManagePharmUsers extends GenericFormGui {
         rdBtnUpdateUser = new Button(grpAddOrConfigureUser, SWT.RADIO);
         rdBtnUpdateUser.setBounds(new Rectangle(195, 12, 180, 30));
         rdBtnUpdateUser.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        rdBtnUpdateUser.setText("Actualizar usuário actual");
+        rdBtnUpdateUser.setText("Actualizar Utilizador actual");
         rdBtnUpdateUser.setSelection(false);
         rdBtnUpdateUser
                 .addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -397,7 +397,7 @@ public class ManagePharmUsers extends GenericFormGui {
 
         Label confLabel = new Label(grpUserRoles, SWT.NONE);
         confLabel.setBounds(new Rectangle(40, 10, 150, 15));
-        confLabel.setText("Configure o tipo de usuário:");
+        confLabel.setText("Configure o tipo de Utilizador:");
         confLabel.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
         rdBtnStudy = new Button(grpUserRoles, SWT.RADIO);
@@ -451,7 +451,7 @@ public class ManagePharmUsers extends GenericFormGui {
 
         if (!checkedClinic) {
             MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            b.setMessage("Todos os usuários precisam ter acesso a pelo menos uma unidade sanitária. \n\n"
+            b.setMessage("Todos os Utilizadors precisam ter acesso a pelo menos uma unidade sanitária. \n\n"
                     + "Por favor, selecione pelo menos uma unidade sanitária e tentar salvar novamente.");
             b.setText("Nenhum acesso a US concedido");
 
@@ -462,8 +462,8 @@ public class ManagePharmUsers extends GenericFormGui {
 
         if ((tipo_user.getText() == null || tipo_user.getText().isEmpty())) {
             MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            b.setMessage("Seleccione o Perfil do usuário. ");
-            b.setText("Seleccione o perfil do usuário");
+            b.setMessage("Seleccione o Perfil do Utilizador. ");
+            b.setText("Seleccione o perfil do Utilizador");
 
             b.open();
             return false;
@@ -472,7 +472,7 @@ public class ManagePharmUsers extends GenericFormGui {
         if (txtUser.getText().trim().equals("")) {
 
             MessageBox b = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-            b.setMessage("O nome de usuário não pode ficar em branco");
+            b.setMessage("O nome de Utilizador não pode ficar em branco");
             b.setText("Faltando Informação");
             b.open();
             txtUser.setFocus();
@@ -563,7 +563,7 @@ public class ManagePharmUsers extends GenericFormGui {
                 MessageBox m = new MessageBox(getShell(), SWT.YES | SWT.NO
                         | SWT.ICON_QUESTION);
                 m.setText("Adicioar Utilizador");
-                m.setMessage("Tem certeza de que deseja adicionar este usuário sem acesso a qualquer uma das unidade sanitárias ?");
+                m.setMessage("Tem certeza de que deseja adicionar este Utilizador sem acesso a qualquer uma das unidade sanitárias ?");
                 option = m.open();
             }
             if (option == SWT.YES) {
@@ -586,7 +586,7 @@ public class ManagePharmUsers extends GenericFormGui {
                     // before we try anything, lets ask the user for their password
                     String confirm = "ATENÇÃO:Vocé só deve executar esta acção se tiver certeza de que vocé deseja "
                             + (isAddNotUpdate ? "adicionar" : "actualizar")
-                            + " este usuário. O usuário que realizou esta acção, bem como a hora atual, será gravado no log de transações.";
+                            + " este Utilizador. O Utilizador que realizou esta acção, bem como a hora atual, será gravado no log de transações.";
 
                     if (isAddNotUpdate) {
 
@@ -633,9 +633,9 @@ public class ManagePharmUsers extends GenericFormGui {
                         MessageBox m = new MessageBox(getShell(), SWT.OK
                                 | SWT.ICON_WARNING);
                         m.setText(" Utilizador Duplicado");
-                        m.setMessage("O usuário'".concat(txtUser.getText())
+                        m.setMessage("O Utilizador'".concat(txtUser.getText())
                                 .concat("' já existe na base de dados. ")
-                                .concat("\n\nPor favor, escolhe outro nome do usuário."));
+                                .concat("\n\nPor favor, escolhe outro nome do Utilizador."));
                         m.open();
                     }
                 } catch (HibernateException he) {

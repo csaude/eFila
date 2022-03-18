@@ -76,7 +76,7 @@ public class ConfirmWithPasswordDialog extends Dialog {
 		this(
 				parent,
 				"Por favor insira a sua senha ",
-				"ATENÇÃO: Você só deve executar esta acção se tiver certeza de que deseja remover as informações da base de dados PERMANENTEMENTE. O usuário que realizou esta acção, bem como a hora atual, será gravado no log de transações.",
+				"ATENÇÃO: Você só deve executar esta acção se tiver certeza de que deseja remover as informações da base de dados PERMANENTEMENTE. O Utilizador que realizou esta acção, bem como a hora atual, será gravado no log de transações.",
 				sess);
 	}
 

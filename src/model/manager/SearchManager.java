@@ -1438,7 +1438,7 @@ public class SearchManager {
 
         List<User> userList = null;
         String itemText[];
-        search.getTableColumn1().setText("Nome do usuário");
+        search.getTableColumn1().setText("Nome do Utilizador");
         search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
