@@ -702,7 +702,7 @@ public class AdministrationManager {
     }
 
     public static boolean saveSector(Session session, String sectorName, String code, String telefone, Clinic clinic, ClinicSectorType clinicSectorType) {
-        if (getSectorByName(session, sectorName) != null) {
+        if (getSectorByName(session, sectorName) != null || getSectorByCode(session, code) != null) {
             return false;
         } else {
             ClinicSector clinicSector = new ClinicSector(clinic, clinicSectorType, sectorName, telefone, code);
@@ -722,26 +722,40 @@ public class AdministrationManager {
         }
     }
 
-    public static void updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone, ClinicSectorType clinicSectorType)
+    public static boolean updateSector(Session s, ClinicSector clinicSector, String code, String sectorname, String telefone, ClinicSectorType clinicSectorType)
             throws HibernateException {
         log.info("Updating sector " + clinicSector.getSectorname());
-        clinicSector.setSectorname(sectorname);
-        clinicSector.setCode(code);
-        clinicSector.setTelephone(telefone);
-        clinicSector.setClinicSectorType(clinicSectorType);
-        s.update(clinicSector);
+        ClinicSector nameSector = getSectorByName(s, sectorname);
+        ClinicSector codeSector = getSectorByCode(s, code);
 
-        // log the transaction
-        Logging logging = new Logging();
-        logging.setIDart_User(LocalObjects.getUser(s));
-        logging.setItemId(String.valueOf(clinicSector.getId()));
-        logging.setModified('Y');
-        logging.setTransactionDate(new Date());
-        logging.setTransactionType("Updated Clinic Sector");
-        logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
-                + ": changed.");
-        s.save(logging);
+        if (codeSector != null ) {
+            if(!codeSector.getId().equals(clinicSector.getId()))
+                return false;
+        }
 
+        if (nameSector != null) {
+            if (!nameSector.getId().equals(clinicSector.getId()))
+                return false;
+        }
+
+            clinicSector.setSectorname(sectorname);
+            clinicSector.setCode(code);
+            clinicSector.setTelephone(telefone);
+            clinicSector.setClinicSectorType(clinicSectorType);
+            s.update(clinicSector);
+
+            // log the transaction
+            Logging logging = new Logging();
+            logging.setIDart_User(LocalObjects.getUser(s));
+            logging.setItemId(String.valueOf(clinicSector.getId()));
+            logging.setModified('Y');
+            logging.setTransactionDate(new Date());
+            logging.setTransactionType("Updated Clinic Sector");
+            logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
+                    + ": changed.");
+            s.save(logging);
+
+            return true;
     }
 
     /**
@@ -847,12 +861,21 @@ public class AdministrationManager {
     public static ClinicSector getSectorByName(Session sess, String sectorname)
             throws HibernateException {
 
-        ClinicSector clinicSector = (ClinicSector) sess
+        return (ClinicSector) sess
                 .createQuery(
                         "select sector from ClinicSector as sector where sector.sectorname = :sectorname")
                 .setString("sectorname", sectorname).setMaxResults(1)
                 .uniqueResult();
-        return clinicSector;
+    }
+
+    public static ClinicSector getSectorByCode(Session sess, String code)
+            throws HibernateException {
+
+        return (ClinicSector) sess
+                .createQuery(
+                        "select sector from ClinicSector as sector where sector.code = :code")
+                .setString("code", code).setMaxResults(1)
+                .uniqueResult();
     }
 
     /**
@@ -1929,8 +1952,10 @@ public class AdministrationManager {
     }
 
     public static List<ClinicSector> getParagemUnica(Session sess) {
-        String query = "from ClinicSector";
-        List<ClinicSector> result = sess.createQuery(query).list();
+        String qString = "from ClinicSector";
+        Query q = sess.createQuery(qString);
+        List<ClinicSector> result = q.list();
+
         return result;
     }
 

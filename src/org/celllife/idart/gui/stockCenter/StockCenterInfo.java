@@ -198,7 +198,7 @@ public class StockCenterInfo extends GenericFormGui {
 		grpSelectStockCenter.setBounds(new Rectangle(40, 100, 720, 120));
 		grpSelectStockCenter.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 		grpSelectStockCenter
-		.setText("Detalhes da farmácia (relacionados ao local onde o estoque é mantido)"); 
+		.setText("Detalhes da farmácia (relacionados ao local onde o stock é mantido)");
 
 		rdBtnAddStockCenter = new Button(grpSelectStockCenter, SWT.RADIO);
 		rdBtnAddStockCenter.setBounds(new Rectangle(105, 25, 150, 30));

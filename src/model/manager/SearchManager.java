@@ -841,6 +841,7 @@ public class SearchManager {
     public static void minimiseSearch(Table t, String searchString,
                                       List<? extends Object> fullList, int classid) {
         t.removeAll();
+        t.clearAll();
         for (int i = 0; i < fullList.size(); i++) {
             int found1 = 0;
             int found2 = 0;
@@ -860,7 +861,6 @@ public class SearchManager {
                         newStrings[1] = nClinic.getProvince();
                         tableItem.setText(newStrings);
                     }
-
                     break;
 
                 case CommonObjects.CLINIC:
@@ -873,8 +873,21 @@ public class SearchManager {
                         newStrings[0] = theClinic.getClinicName();
                         tableItem.setText(newStrings);
                     }
-
                     break;
+
+                case CommonObjects.SECTOR:
+                    ClinicSector clinicSector = (ClinicSector) fullList.get(i);
+                    found1 = clinicSector.getCode().toUpperCase().indexOf(searchString.toUpperCase());
+                    found2 = clinicSector.getSectorname().toUpperCase().indexOf(searchString.toUpperCase());
+                    if (found1 != -1 || found2 != -1) {
+                        TableItem tableItem = new TableItem(Search.tblSearch, SWT.NONE);
+                        String[] newStrings = new String[2];
+                        newStrings[0] = clinicSector.getCode();
+                        newStrings[1] = clinicSector.getSectorname();
+                        tableItem.setText(newStrings);
+                    }
+                    break;
+
                 case CommonObjects.DOCTOR:
                     Doctor theDoctor = (Doctor) fullList.get(i);
 
@@ -895,7 +908,6 @@ public class SearchManager {
                         tableItem.setText(newStrings);
                     }
                     break;
-                /* Adicionado por colaco 10.01.2020: Adicionado o filto de pesquisa de Regimes Terapeuticos */
 
                 case CommonObjects.DRUG:
                     Drug drug = (Drug) fullList.get(i);
@@ -944,7 +956,7 @@ public class SearchManager {
                         tableItem.setText(newStrings);
                     }
                     break;
-//                            Inicio
+
                 case CommonObjects.REGIMEN:
                     RegimeTerapeutico regName = (RegimeTerapeutico) fullList.get(i);
                     found1 = regName.getRegimeesquema().toUpperCase().indexOf(
@@ -974,9 +986,6 @@ public class SearchManager {
                         tableItem.setText(newStrings);
                     }
                     break;
-
-
-//                              Fim
 
                 case CommonObjects.STOCK:
                     Stock theStock = (Stock) fullList.get(i);
@@ -1429,7 +1438,7 @@ public class SearchManager {
 
         List<User> userList = null;
         String itemText[];
-        search.getTableColumn1().setText("Nome do usuário");
+        search.getTableColumn1().setText("Nome do Utilizador");
         search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
@@ -1563,12 +1572,14 @@ public class SearchManager {
         return functionalities;
     }
 
-    public static List<ClinicSector> getSectorList(Session hSession, Search search) {
+
+    public static List<ClinicSector> loadClinicSector(Session sess, Search search)
+            throws HibernateException {
 
         listTableEntries = new ArrayList<SearchEntry>();
         comparator = new TableComparator();
 
-        List<ClinicSector> clinicSectors = null;
+        List<ClinicSector> clinicSectorList = null;
         String itemText[];
         search.getTableColumn1().setText("Código");
         search.getTableColumn1().addSelectionListener(new SelectionAdapter() {
@@ -1577,6 +1588,7 @@ public class SearchManager {
                 cmdColOneSelected();
             }
         });
+
         search.getTableColumn2().setText("Sector Clínico");
         search.getTableColumn2().addSelectionListener(new SelectionAdapter() {
             @Override
@@ -1585,29 +1597,28 @@ public class SearchManager {
             }
         });
 
-        search.getShell().setText("Seleccione ... ");
+        search.getShell().setText("Seleccione o Sector Clínico...");
+        clinicSectorList = AdministrationManager.getParagemUnica(sess);
 
-        clinicSectors = AdministrationManager.getParagemUnica(hSession);
-
-//        Collections.sort(clinicSectors);
-
-        Iterator<ClinicSector> iter = new ArrayList<ClinicSector>(clinicSectors).iterator();
-        TableItem[] t = new TableItem[clinicSectors.size()];
+        Iterator<ClinicSector> iter = new ArrayList<>(clinicSectorList).iterator();
+        TableItem[] t = new TableItem[clinicSectorList.size()];
 
         int i = 0;
-        while (iter.hasNext()) {
-            ClinicSector atc = iter.next();
+        while (iter.hasNext()){
+            ClinicSector clinicSector = iter.next();
             t[i] = new TableItem(search.getTblSearch(), SWT.NONE);
             itemText = new String[2];
-            itemText[0] = atc.getCode();
-            itemText[1] = atc.getSectorname();
+            itemText[0] = clinicSector.getCode();
+            itemText[1] = clinicSector.getSectorname();
             t[i].setText(itemText);
             listTableEntries.add(new SearchEntry(itemText[0], itemText[1]));
             i++;
         }
+
         comparator.setColumn(TableComparator.COL1_NAME);
         redrawTable();
-        return clinicSectors;
+        return clinicSectorList;
     }
+
 
 }

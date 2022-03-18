@@ -116,7 +116,7 @@ public class StockArrives extends GenericFormGui implements iDARTChangeListener{
 		btnAddStock = new Button(grpStockTable, SWT.NONE);
 		btnAddStock.setBounds(new org.eclipse.swt.graphics.Rectangle(245, 380,160, 30));
 		btnAddStock.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-		btnAddStock.setText("Adicionar Estoque");
+		btnAddStock.setText("Adicionar Stock");
 		btnAddStock
 		.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			@Override

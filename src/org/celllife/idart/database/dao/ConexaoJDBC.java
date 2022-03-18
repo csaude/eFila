@@ -313,41 +313,41 @@ public class ConexaoJDBC {
                 + " 	inner join episode ep on ep.id = pack.episode "
                 + " 	where p.tipodoenca like '%" + diseaseType + "%'";
 
-        String queryDC = " SELECT  distinct p.patient, "
-                + " 		p.reasonforupdate,  "
-                + " 		p.dispensatrimestral, "
-                + " 		p.dispensasemestral,  "
-                + " 		p.prep, "
-                + " 		p.ptv, "
-                + " 		p.dc, "
-                + " 		p.ppe, "
-                + " 		p.ce, "
-                + " 		p.tipodoenca, "
-                + " 		l.linhanome, "
-                + " 		pa.clinic, "
-                + " 		EXTRACT(year FROM age('" + endDate + "',pack.dateofbirth)) :: int dateofbirth,  "
-                + " 		ep.startreason,  "
-                + " 		COALESCE(pack.weekssupply,0) weekssupply  "
-                + " FROM  "
-                + " ( "
-                + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply, "
-                + " 			pat.id, max(visit.id) episode "
-                + " 	from package pa  "
-                + " 	inner join packageddrugs pds on pds.parentpackage = pa.id  "
-                + " 	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id  "
-                + " 	inner join prescription pre on pre.id = pa.prescription  "
-                + " 	inner join patient pat ON pre.patient=pat.id  "
-                + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
-                + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' "
-                + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount = 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%' and pa.clinic <> "+clinic.getId()
-                + " 	GROUP BY 5 order by 5) pack  "
-                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
-                + " 	inner join patient pat on pat.id = pack.id  "
-                + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate "
-                + " 	inner join linhat l on l.linhaid = p.linhaid  "
-                + " 	inner join episode ep on ep.id = pack.episode "
-                + " 	where p.tipodoenca like '%" + diseaseType + "%' and pa.clinic <> "+clinic.getId();
+        String queryDC = " SELECT  distinct p.patient, \n"
+                + " 		p.reasonforupdate,  \n"
+                + " 		p.dispensatrimestral,\n "
+                + " 		p.dispensasemestral,  \n"
+                + " 		p.prep,\n "
+                + " 		p.ptv, \n"
+                + " 		p.dc, \n"
+                + " 		p.ppe, \n"
+                + " 		p.ce, \n"
+                + " 		p.tipodoenca, \n"
+                + " 		l.linhanome, \n"
+                + " 		pa.clinic, \n"
+                + " 		EXTRACT(year FROM age('" + endDate + "',pack.dateofbirth)) :: int dateofbirth,  \n"
+                + " 		ep.startreason,  \n"
+                + " 		COALESCE(pack.weekssupply,0) weekssupply  \n"
+                + " FROM  \n"
+                + " ( \n"
+                + " 	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply, \n"
+                + " 			pat.id, max(visit.id) episode \n"
+                + " 	from package pa  \n"
+                + " 	inner join packageddrugs pds on pds.parentpackage = pa.id  \n"
+                + " 	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id  \n"
+                + " 	inner join prescription pre on pre.id = pa.prescription  \n"
+                + " 	inner join patient pat ON pre.patient=pat.id  \n"
+                + " 	INNER JOIN (SELECT MAX (startdate), patient, id  \n"
+                + " 				from episode WHERE stopdate is null and startdate <= '" + endDate + "' \n"
+                + " 				GROUP BY 2,3) visit on visit.patient = pat.id  \n"
+                + " 	where pds.amount = 0 and pg_catalog.date(pa.pickupdate) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate) <= '" + endDate + "' and pre.tipodoenca like '%" + diseaseType + "%' and pat.clinic <> "+clinic.getId()
+                + " 	GROUP BY 5 order by 5) pack  \n"
+                + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  \n"
+                + " 	inner join patient pat on pat.id = pack.id  \n"
+                + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate \n"
+                + " 	inner join linhat l on l.linhaid = p.linhaid  \n"
+                + " 	inner join episode ep on ep.id = pack.episode \n"
+                + " 	where p.tipodoenca like '%" + diseaseType + "%' and pat.clinic <> "+clinic.getId();
 
         int totalpacientestransito = 0;
         int totalpacientesinicio = 0;
@@ -904,7 +904,8 @@ public class ConexaoJDBC {
                             "    GROUP BY 3 order by 3) pack on p.date = pack.predate and p.patient=pack.id " +
                             "inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate " +
                             "inner join packageddrugs pds on pds.parentpackage = pa.id " +
-                            "inner join clinic c on c.id = pa.clinic " +
+                            "inner join patient pat ON p.patient=pat.id " +
+                            "inner join clinic c on c.id = pat.clinic " +
                             "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
                             "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
                             "           from episode " +
@@ -6062,7 +6063,7 @@ public class ConexaoJDBC {
                     " and idt.name = 'NID'" +
                     " and (pack.dateexpectedstring < '"+ data +"'::date and ('"+ data +"'::date - pack.dateexpectedstring) between "+ minimumDate +" and "+ maximumDate +")" +
                     " group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18" +
-                    " order by age asc";
+                    " order by nomefarmacia asc";
 
             ResultSet rs = st.executeQuery(query);
 
@@ -6081,6 +6082,7 @@ public class ConexaoJDBC {
                     chamadaTelefonica.setTarv(rs.getString("tarv"));
                     chamadaTelefonica.setTb(rs.getString("tb"));
                     chamadaTelefonica.setSmi(rs.getString("ptv"));
+                    chamadaTelefonica.setFarmacia(rs.getString("nomefarmacia"));
 
                     chamadaTelefonicaXLS.add(chamadaTelefonica);
                 }

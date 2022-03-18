@@ -292,52 +292,59 @@ public class DownReferDialog extends GenericOthersGui {
         Group grpReferredType = new Group(getShell(), SWT.NONE);
         grpReferredType.setBounds(new Rectangle(70, 130, 400, 180));
 
-        labelSectorType = new Label(grpReferredType, SWT.CENTER);
-        labelSectorType.setBounds(new Rectangle(10, 12, 80, 20));
+        labelSectorType = new Label(grpReferredType, SWT.NONE);
+        labelSectorType.setBounds(new Rectangle(10, 12, 150, 20));
         labelSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         labelSectorType.setText("Tipo Sector Clínico:");
         labelSectorType.setVisible(false);
 
         cmbClinicSectorType = new CCombo(grpReferredType, SWT.BORDER);
         cmbClinicSectorType.setEditable(false);
-        cmbClinicSectorType.setBounds(new Rectangle(155, 12, 170, 20));
+        cmbClinicSectorType.setBounds(new Rectangle(175, 12, 170, 20));
         cmbClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinicSectorType.setVisible(false);
         CommonObjects.populateClinicSectorType(getHSession(), cmbClinicSectorType);
         cmbClinicSectorType.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
+
+                if(cmbClinicSectorType.getText().contains("provedor")){
+                    labelSector.setText("Provedor de Referência:");
+                }else{
+                    labelSector.setText("Sector Clínico de Referência:");
+                }
+
                 String newItems[] = {};
                 cmbClinicSector.setItems(newItems);
                 CommonObjects.populateClinicSectorBySectorType(getHSession(),cmbClinicSectorType.getText(), cmbClinicSector);
             }
         });
 
-        labelSector = new Label(grpReferredType, SWT.CENTER);
-        labelSector.setBounds(new Rectangle(10, 42, 125, 20));
+        labelSector = new Label(grpReferredType, SWT.NONE);
+        labelSector.setBounds(new Rectangle(10, 42, 150, 20));
         labelSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         labelSector.setText("Sector Clínico de Referência:");
         labelSector.setVisible(false);
 
         cmbClinicSector = new CCombo(grpReferredType, SWT.BORDER);
-        cmbClinicSector.setBounds(new Rectangle(155, 42, 170, 20));
+        cmbClinicSector.setBounds(new Rectangle(175, 42, 170, 20));
         cmbClinicSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinicSector.setEditable(false);
         cmbClinicSector.setVisible(false);
 
 
-        label = new Label(grpReferredType, SWT.CENTER);
-        label.setBounds(new Rectangle(10, 42, 100, 20));
+        label = new Label(grpReferredType, SWT.NONE);
+        label.setBounds(new Rectangle(10, 42, 150, 20));
         label.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         label.setText("Farmacia de Referência:");
 
         cmbClinic = new CCombo(grpReferredType, SWT.BORDER);
-        cmbClinic.setBounds(new Rectangle(155, 42, 170, 20));
+        cmbClinic.setBounds(new Rectangle(175, 42, 170, 20));
         cmbClinic.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinic.setEditable(false);
         CommonObjects.populateClinics(getHSession(), cmbClinic, false);
 
-        labelReferredDate = new Label(grpReferredType, SWT.CENTER);
-        labelReferredDate.setBounds(new Rectangle(10, 72, 80, 20));
+        labelReferredDate = new Label(grpReferredType, SWT.NONE);
+        labelReferredDate.setBounds(new Rectangle(10, 72, 150, 20));
         labelReferredDate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         labelReferredDate.setText("Data da Referência:");
 
@@ -347,7 +354,7 @@ public class DownReferDialog extends GenericOthersGui {
                 new DateInputValidator(DateRuleFactory.between(startDate,
                         true,
                         new Date(), true, true)));
-        btnDownReferredDate.setBounds(new Rectangle(155, 72, 170, 20));
+        btnDownReferredDate.setBounds(new Rectangle(175, 72, 170, 20));
         btnDownReferredDate.setText("Data");
         btnDownReferredDate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         btnDownReferredDate.setToolTipText("Preccione o botão para seleccionar a data.");
@@ -357,8 +364,8 @@ public class DownReferDialog extends GenericOthersGui {
             showMessage(MessageDialog.ERROR, "Error", e.getMessage());
         }
 
-        labelRefferedTimes = new Label(grpReferredType, SWT.CENTER);
-        labelRefferedTimes.setBounds(new Rectangle(10, 102, 175, 20));
+        labelRefferedTimes = new Label(grpReferredType, SWT.NONE);
+        labelRefferedTimes.setBounds(new Rectangle(10, 102, 195, 20));
         labelRefferedTimes.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         labelRefferedTimes.setText("Primeira vez a referir para outra Farmacia?");
 
@@ -366,10 +373,10 @@ public class DownReferDialog extends GenericOthersGui {
         compRadio.setBounds(new Rectangle(10, 132, 170, 20));
 
         btnYes = new Button(grpReferredType, SWT.RADIO);
-        btnYes.setBounds(new Rectangle(190, 102, 80, 20));
+        btnYes.setBounds(new Rectangle(245, 102, 50, 20));
         btnYes.setText("Sim");
         Button btnNo = new Button(grpReferredType, SWT.RADIO);
-        btnNo.setBounds(new Rectangle(250, 102, 80, 20));
+        btnNo.setBounds(new Rectangle(295, 102, 50, 20));
         btnNo.setText("Nao");
         btnYes.setSelection(true);
     }

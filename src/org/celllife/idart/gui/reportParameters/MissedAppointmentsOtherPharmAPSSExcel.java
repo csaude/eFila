@@ -70,7 +70,6 @@ public class MissedAppointmentsOtherPharmAPSSExcel implements IRunnableWithProgr
                 cellStyle.setBorderRight(BorderStyle.THIN);
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
-
                 HSSFRow healthFacility = sheet.getRow(10);
                 HSSFCell healthFacilityCell = healthFacility.createCell(2);
                 healthFacilityCell.setCellValue(LocalObjects.currentClinic.getClinicName());
@@ -89,11 +88,10 @@ public class MissedAppointmentsOtherPharmAPSSExcel implements IRunnableWithProgr
 
                 HSSFRow daysPeriod = sheet.getRow(11);
                 HSSFCell daysCell = daysPeriod.createCell(5);
-                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate);
+                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate+ " dias de falta ao levantamento de ARV's.");
                 daysCell.setCellStyle(cellStyle);
 
-                for(int i=15; i<= sheet.getLastRowNum(); i++)
-                {
+                for(int i=15; i<= sheet.getLastRowNum(); i++){
                     HSSFRow row = sheet.getRow(i);
                     deleteRow(sheet,row);
                 }
@@ -127,64 +125,68 @@ public class MissedAppointmentsOtherPharmAPSSExcel implements IRunnableWithProgr
                     createCellEndereco.setCellValue(xls.getEndereco());
                     createCellEndereco.setCellStyle(cellStyle);
 
-                    HSSFCell createCellTarv = row.createCell(6);
+                    HSSFCell createCellNomeFarmacia = row.createCell(6);
+                    createCellNomeFarmacia.setCellValue(xls.getFarmacia());
+                    createCellNomeFarmacia.setCellStyle(cellStyle);
+
+                    HSSFCell createCellTarv = row.createCell(7);
                     createCellTarv.setCellValue(xls.getTarv());
                     createCellTarv.setCellStyle(cellStyle);
 
-                    HSSFCell createCellTb = row.createCell(7);
+                    HSSFCell createCellTb = row.createCell(8);
                     createCellTb.setCellValue(xls.getTb());
                     createCellTb.setCellStyle(cellStyle);
 
-                    HSSFCell createCellSmi = row.createCell(8);
+                    HSSFCell createCellSmi = row.createCell(9);
                     createCellSmi.setCellValue(xls.getSmi());
                     createCellSmi.setCellStyle(cellStyle);
 
-                    HSSFCell apoio = row.createCell(9);
+                    HSSFCell apoio = row.createCell(10);
                     apoio.setCellValue("");
                     apoio.setCellStyle(cellStyle);
 
-                    HSSFCell reintegracao = row.createCell(10);
-                    reintegracao.setCellValue("");
+                    HSSFCell reintegracao = row.createCell(11);
+                    reintegracao.setCellValue("    ");
                     reintegracao.setCellStyle(cellStyle);
 
-                    HSSFCell incontactavel = row.createCell(11);
-                    incontactavel.setCellValue("");
+                    HSSFCell incontactavel = row.createCell(12);
+                    incontactavel.setCellValue("    ");
                     incontactavel.setCellStyle(cellStyle);
 
-                    HSSFCell esqueceuData = row.createCell(12);
-                    esqueceuData.setCellValue("");
+                    HSSFCell esqueceuData = row.createCell(13);
+                    esqueceuData.setCellValue("    ");
                     esqueceuData.setCellStyle(cellStyle);
 
-                    HSSFCell estaDoente = row.createCell(13);
-                    estaDoente.setCellValue("");
+                    HSSFCell estaDoente = row.createCell(14);
+                    estaDoente.setCellValue("    ");
                     estaDoente.setCellStyle(cellStyle);
 
-                    HSSFCell transporte = row.createCell(14);
-                    transporte.setCellValue("");
+                    HSSFCell transporte = row.createCell(15);
+                    transporte.setCellValue("    ");
                     transporte.setCellStyle(cellStyle);
 
-                    HSSFCell viagem = row.createCell(15);
-                    viagem.setCellValue("");
+                    HSSFCell viagem = row.createCell(16);
+                    viagem.setCellValue("    ");
                     viagem.setCellStyle(cellStyle);
 
-                    HSSFCell obito = row.createCell(16);
-                    obito.setCellValue("");
+                    HSSFCell obito = row.createCell(17);
+                    obito.setCellValue("    ");
                     obito.setCellStyle(cellStyle);
 
-                    HSSFCell retornou = row.createCell(17);
-                    retornou.setCellValue("");
+                    HSSFCell retornou = row.createCell(18);
+                    retornou.setCellValue("    ");
                     retornou.setCellStyle(cellStyle);
 
-                    HSSFCell visitado = row.createCell(18);
-                    visitado.setCellValue("");
+                    HSSFCell visitado = row.createCell(19);
+                    visitado.setCellValue("    ");
                     visitado.setCellStyle(cellStyle);
 
-                    HSSFCell observacao = row.createCell(19);
-                    observacao.setCellValue("");
+                    HSSFCell observacao = row.createCell(20);
+                    observacao.setCellValue("    ");
                     observacao.setCellStyle(cellStyle);
 
-                    HSSFCell responsavel = row.createCell(20);
-                    responsavel.setCellValue("");
+                    HSSFCell responsavel = row.createCell(21);
+                    responsavel.setCellValue("    ");
                     responsavel.setCellStyle(cellStyle);
 
                     monitor.subTask("Carregando : " + i + " de " + chamadaTelefonicaXLSs.size() + "...");
@@ -198,9 +200,9 @@ public class MissedAppointmentsOtherPharmAPSSExcel implements IRunnableWithProgr
                     }
                 }
 
-                for(int i0 = 1; i0 < RegistoChamadaTelefonicaXLS.class.getClass().getDeclaredFields().length; i0++) {
-                    sheet.autoSizeColumn(i0);
-                }
+//                for(int i0 = 1; i0 < RegistoChamadaTelefonicaXLS.class.getClass().getDeclaredFields().length; i0++) {
+//                    sheet.autoSizeColumn(i0);
+//                }
 
                 monitor.done();
                 currentXls.close();

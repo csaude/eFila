@@ -17,9 +17,12 @@ import org.celllife.idart.gui.utils.iDartImage;
 import org.celllife.idart.messages.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class ManagePharmSector extends GenericFormGui {
@@ -45,6 +48,8 @@ public class ManagePharmSector extends GenericFormGui {
     private ClinicSector localClinicSector;
 
     private Button btnSearch;
+
+    private Label lblSectorName;
 
 
     /**
@@ -80,7 +85,7 @@ public class ManagePharmSector extends GenericFormGui {
     private void createCompInstructions() {
         Composite compInstructions = new Composite(getShell(), SWT.NONE);
         compInstructions.setLayout(null);
-        compInstructions.setBounds(new Rectangle(200, 79, 530, 25));
+        compInstructions.setBounds(new Rectangle(100, 79, 530, 25));
 
         Label lblInstructions = new Label(compInstructions, SWT.CENTER);
         lblInstructions.setBounds(new Rectangle(0, 0, 600, 25));
@@ -95,35 +100,35 @@ public class ManagePharmSector extends GenericFormGui {
     private void createGrpAddOrConfigureSector() {
 
         Group grpAddOrConfigureUser = new Group(getShell(), SWT.NONE);
-        grpAddOrConfigureUser.setBounds(new Rectangle(225, 130, 400, 50));
+        grpAddOrConfigureUser.setBounds(new Rectangle(160, 130, 500, 50));
 
         rdBtnAddSector = new Button(grpAddOrConfigureUser, SWT.RADIO);
         rdBtnAddSector.setBounds(new Rectangle(20, 12, 160, 30));
         rdBtnAddSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnAddSector.setText("Adicionar novo Sector Clínico");
         rdBtnAddSector.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(
-                            org.eclipse.swt.events.SelectionEvent e) {
-                        if (rdBtnAddSector.getSelection()) {
-                            cmdAddWidgetSelected();
-                        }
-                    }
-                });
+            @Override
+            public void widgetSelected(
+                    org.eclipse.swt.events.SelectionEvent e) {
+                if (rdBtnAddSector.getSelection()) {
+                    cmdAddWidgetSelected();
+                }
+            }
+        });
 
         rdBtnUpdateSector = new Button(grpAddOrConfigureUser, SWT.RADIO);
-        rdBtnUpdateSector.setBounds(new Rectangle(195, 12, 180, 30));
+        rdBtnUpdateSector.setBounds(new Rectangle(240, 12, 180, 30));
         rdBtnUpdateSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-        rdBtnUpdateSector.setText("Actualizar usuário actual");
+        rdBtnUpdateSector.setText("Actualizar Sector Clínico");
         rdBtnUpdateSector.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(
-                            org.eclipse.swt.events.SelectionEvent e) {
-                        if (rdBtnUpdateSector.getSelection()) {
-                            cmdUpdateWidgetSelected();
-                        }
-                    }
-                });
+            @Override
+            public void widgetSelected(
+                    org.eclipse.swt.events.SelectionEvent e) {
+                if (rdBtnUpdateSector.getSelection()) {
+                    cmdUpdateWidgetSelected();
+                }
+            }
+        });
 
     }
 
@@ -153,47 +158,55 @@ public class ManagePharmSector extends GenericFormGui {
                 }
             });
         }
-            // lblSectorCode & txtCode
-            Label lblSectorCode = new Label(grpSectorInfo, SWT.NONE);
-            lblSectorCode.setBounds(new Rectangle(30, 20, 125, 20));
-            lblSectorCode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            lblSectorCode.setText("* Código:");
-            txtCode = new Text(grpSectorInfo, SWT.BORDER);
-            txtCode.setBounds(new Rectangle(185, 20, 220, 20));
-            txtCode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        // lblSectorCode & txtCode
+        Label lblSectorCode = new Label(grpSectorInfo, SWT.NONE);
+        lblSectorCode.setBounds(new Rectangle(30, 20, 125, 20));
+        lblSectorCode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblSectorCode.setText("* Código:");
+        txtCode = new Text(grpSectorInfo, SWT.BORDER);
+        txtCode.setBounds(new Rectangle(185, 20, 220, 20));
+        txtCode.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
-            // lblSectorName & txtSectorName
-            Label lblSectorName = new Label(grpSectorInfo, SWT.NONE);
-            lblSectorName.setBounds(new Rectangle(30, 50, 125, 20));
-            lblSectorName.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            lblSectorName.setText("* Nome do Sector:");
-            txtSectorName = new Text(grpSectorInfo, SWT.BORDER);
-            txtSectorName.setBounds(new Rectangle(185, 50, 220, 20));
-            txtSectorName.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        // ClinicSectorType
+        Label lblClinicSectorType = new Label(grpSectorInfo, SWT.NONE);
+        lblClinicSectorType.setBounds(new Rectangle(30, 50, 125, 20));
+        lblClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblClinicSectorType.setText("Tipo de Sector");
 
-            // ClinicSectorType
-            Label lblClinicSectorType = new Label(grpSectorInfo, SWT.NONE);
-            lblClinicSectorType.setBounds(new Rectangle(30, 80, 125, 20));
-            lblClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            lblClinicSectorType.setText("Tipo de Sector");
+        cmbClinicSectorType = new CCombo(grpSectorInfo, SWT.BORDER | SWT.READ_ONLY);
+        cmbClinicSectorType.setBounds(new Rectangle(185, 50, 220, 20));
+        cmbClinicSectorType.setEditable(false);
+        cmbClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        cmbClinicSectorType.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
+        cmbClinicSectorType.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
+        CommonObjects.populateClinicSectorType(getHSession(), cmbClinicSectorType);
+        cmbClinicSectorType.setVisibleItemCount(cmbClinicSectorType.getItemCount());
+        cmbClinicSectorType.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (cmbClinicSectorType.getText().contains("Provedor"))
+                    lblSectorName.setText("* Nome do Provedor:");
+                else
+                    lblSectorName.setText("* Nome do Sector:");
+            }
+        });
 
-            cmbClinicSectorType = new CCombo(grpSectorInfo, SWT.BORDER | SWT.READ_ONLY);
-            cmbClinicSectorType.setBounds(new Rectangle(185, 80, 220, 20));
-            cmbClinicSectorType.setEditable(false);
-            cmbClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            cmbClinicSectorType.setBackground(ResourceUtils.getColor(iDartColor.WHITE));
-            cmbClinicSectorType.setForeground(ResourceUtils.getColor(iDartColor.BLACK));
-            CommonObjects.populateClinicSectorType(getHSession(), cmbClinicSectorType);
-            cmbClinicSectorType.setVisibleItemCount(cmbClinicSectorType.getItemCount());
+        // lblSectorName & txtSectorName
+        lblSectorName = new Label(grpSectorInfo, SWT.NONE);
+        lblSectorName.setBounds(new Rectangle(30, 80, 125, 20));
+        lblSectorName.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblSectorName.setText("* Nome do Sector:");
+        txtSectorName = new Text(grpSectorInfo, SWT.BORDER);
+        txtSectorName.setBounds(new Rectangle(185, 80, 220, 20));
+        txtSectorName.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
-            // lblTelephonne & txtTelephonne
-            Label lblTelephonne = new Label(grpSectorInfo, SWT.NONE);
-            lblTelephonne.setBounds(new Rectangle(30, 110, 125, 20));
-            lblTelephonne.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-            lblTelephonne.setText(" Telefone:");
-            txtTelephone = new Text(grpSectorInfo, SWT.BORDER);
-            txtTelephone.setBounds(new Rectangle(185, 110, 220, 20));
-            txtTelephone.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        // lblTelephonne & txtTelephonne
+        Label lblTelephonne = new Label(grpSectorInfo, SWT.NONE);
+        lblTelephonne.setBounds(new Rectangle(30, 110, 125, 20));
+        lblTelephonne.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+        lblTelephonne.setText(" Telefone:");
+        txtTelephone = new Text(grpSectorInfo, SWT.BORDER);
+        txtTelephone.setBounds(new Rectangle(185, 110, 220, 20));
+        txtTelephone.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
 
     }
 
@@ -229,6 +242,11 @@ public class ManagePharmSector extends GenericFormGui {
         txtTelephone.setText("");
         cmbClinicSectorType.setText("");
         txtCode.setFocus();
+        if(!isAddNotUpdate){
+            btnSearch.setEnabled(true);
+            enableFields(false);
+        }
+
     }
 
     @Override
@@ -240,7 +258,7 @@ public class ManagePharmSector extends GenericFormGui {
     @Override
     protected void createCompHeader() {
         String headerTxt = (isAddNotUpdate ? "Adicionar Novo Sector Clínico"
-                : "Actalizar Sector Clínico Corrente");
+                : "Actualizar Sector Clínico Corrente");
         iDartImage icoImage = iDartImage.PHARMACYUSER;
         buildCompHeader(headerTxt, icoImage);
     }
@@ -256,43 +274,43 @@ public class ManagePharmSector extends GenericFormGui {
 
         if (fieldsOk()) {
 
-                Clinic clinic = AdministrationManager.getMainClinic(getHSession());
-                ClinicSectorType clinicSectorType = AdministrationManager.getClinicSectorTypeByDescription(getHSession(), cmbClinicSectorType.getText());
-                Transaction tx = null;
+            Clinic clinic = AdministrationManager.getMainClinic(getHSession());
+            ClinicSectorType clinicSectorType = AdministrationManager.getClinicSectorTypeByDescription(getHSession(), cmbClinicSectorType.getText());
+            Transaction tx = null;
 
-                try {
-                    tx = getHSession().beginTransaction();
+            try {
+                tx = getHSession().beginTransaction();
 
-                    if (isAddNotUpdate) {
+                if (isAddNotUpdate) {
 
-                        if (isAddNotUpdate && AdministrationManager.saveSector(getHSession(), txtSectorName.getText(), txtCode.getText(), txtTelephone.getText(), clinic, clinicSectorType)) {
-                            getHSession().flush();
-                            tx.commit();
+                    if (isAddNotUpdate && AdministrationManager.saveSector(getHSession(), txtSectorName.getText(), txtCode.getText(), txtTelephone.getText(), clinic, clinicSectorType)) {
+                        getHSession().flush();
+                        tx.commit();
 
-                            MessageBox m = new MessageBox(getShell(), SWT.OK
-                                    | SWT.ICON_INFORMATION);
-                            m.setText("Novo Sector Clínico foi Adicionada");
-                            m.setMessage("Um novo Sector Clínico '".concat(
-                                    txtSectorName.getText()).concat(
-                                    "' foi adicionada ao sistema."));
-                            m.open();
-                            cmdCancelWidgetSelected();
+                        MessageBox m = new MessageBox(getShell(), SWT.OK
+                                | SWT.ICON_INFORMATION);
+                        m.setText("Novo Sector Clínico foi Adicionada");
+                        m.setMessage("Um novo Sector Clínico '".concat(
+                                txtSectorName.getText()).concat(
+                                "' foi adicionada ao sistema."));
+                        m.open();
+                        cmdCancelWidgetSelected();
 
-                        }else {
-                            MessageBox m = new MessageBox(getShell(), SWT.OK
-                                    | SWT.ICON_INFORMATION);
-                            m.setText("O Sector Clínico que pretende adicionar ja existe.");
-                            m.setMessage("Existe um Sector Clínico com o nome '".concat(
-                                    txtSectorName.getText()).concat(
-                                    "' no sistema."));
-                            m.open();
-                            txtSectorName.setFocus();
-                        }
-                    } else if (!isAddNotUpdate) {
+                    } else {
+                        MessageBox m = new MessageBox(getShell(), SWT.OK
+                                | SWT.ICON_INFORMATION);
+                        m.setText("O Sector Clínico que pretende adicionar ja existe.");
+                        m.setMessage("Existe um Sector Clínico com o nome '".concat(
+                                txtSectorName.getText()).concat(
+                                "' ou com o código '".concat(
+                                        txtCode.getText()).concat("' no sistema.")));
+                        m.open();
+                        txtSectorName.setFocus();
+                    }
+                } else if (!isAddNotUpdate) {
 
-                        // if new password has been filled in, change password
-                        AdministrationManager.updateSector(getHSession(),localClinicSector, txtCode.getText(),txtSectorName.getText(),txtTelephone.getText(), clinicSectorType);
-
+                    // if new password has been filled in, change password
+                    if (AdministrationManager.updateSector(getHSession(), localClinicSector, txtCode.getText(), txtSectorName.getText(), txtTelephone.getText(), clinicSectorType)) {
                         getHSession().flush();
                         tx.commit();
                         MessageBox m = new MessageBox(getShell(), SWT.OK
@@ -303,33 +321,45 @@ public class ManagePharmSector extends GenericFormGui {
                         m.open();
                         cmdCancelWidgetSelected();
                     } else {
-                        if (tx != null) {
-                            tx.rollback();
-                        }
                         MessageBox m = new MessageBox(getShell(), SWT.OK
-                                | SWT.ICON_WARNING);
-                        m.setText(" Sector Clínico Duplicada");
-                        m.setMessage("O Sector Clínico'".concat(txtSectorName.getText())
-                                .concat("' já existe na base de dados. ")
-                                .concat("\n\nPor favor, escolhe outro nome doSector Clínico."));
+                                | SWT.ICON_INFORMATION);
+                        m.setText("O Sector Clínico que pretende adicionar ja existe.");
+                        m.setMessage("Existe um Sector Clínico com o nome '".concat(
+                                txtSectorName.getText()).concat(
+                                "' ou com o código '".concat(
+                                        txtCode.getText()).concat("' no sistema.")));
                         m.open();
+                        txtSectorName.setFocus();
                     }
-                } catch (HibernateException he) {
+
+                } else {
                     if (tx != null) {
                         tx.rollback();
                     }
                     MessageBox m = new MessageBox(getShell(), SWT.OK
                             | SWT.ICON_WARNING);
-                    m.setText("Problem Saving To Database");
-                    m
-                            .setMessage(isAddNotUpdate ? "O Sector Clínico '".concat(
-                                    txtSectorName.getText()).concat(
-                                    "' não foi gravada. ").concat(
-                                    "\n\nPor favor tente de novamente.")
-                                    : "O Sector Clínico não pode ser alterada. Por favor, tente novamente");
+                    m.setText(" Sector Clínico Duplicada");
+                    m.setMessage("O Sector Clínico'".concat(txtSectorName.getText())
+                            .concat("' já existe na base de dados. ")
+                            .concat("\n\nPor favor, escolhe outro nome/codigo do Sector Clínico."));
                     m.open();
-                    getLog().error(he);
                 }
+            } catch (HibernateException he) {
+                if (tx != null) {
+                    tx.rollback();
+                }
+                MessageBox m = new MessageBox(getShell(), SWT.OK
+                        | SWT.ICON_WARNING);
+                m.setText("Problem Saving To Database");
+                m
+                        .setMessage(isAddNotUpdate ? "O Sector Clínico '".concat(
+                                txtSectorName.getText()).concat(
+                                "' não foi gravada. ").concat(
+                                "\n\nPor favor tente de novamente.")
+                                : "O Sector Clínico não pode ser alterada. Por favor, tente novamente");
+                m.open();
+                getLog().error(he);
+            }
 
         }
 
@@ -347,7 +377,9 @@ public class ManagePharmSector extends GenericFormGui {
 
     @Override
     protected void enableFields(boolean enable) {
-
+        txtSectorName.setEnabled(enable);
+        txtTelephone.setEnabled(enable);
+        cmbClinicSectorType.setEnabled(enable);
     }
 
     @Override
@@ -370,15 +402,18 @@ public class ManagePharmSector extends GenericFormGui {
         createCompHeader();
         createGrpUserInfo();
         txtCode.setFocus();
+        txtSectorName.setEnabled(false);
+        txtTelephone.setEnabled(false);
+        cmbClinicSectorType.setEnabled(false);
     }
 
     private void cmdSearchSectorWidgetSelected() {
 
-        Search sectorSearch = new Search(getHSession(), getShell(), CommonObjects.SECTOR);
+        Search sectorSearch = new Search(getHSession(), getShell(), CommonObjects.SECTOR,false, txtCode.getText());
 
         if (sectorSearch.getValueSelected() != null) {
 
-            localClinicSector = AdministrationManager.getSectorByName(getHSession(), sectorSearch.getValueSelected()[1]);
+            localClinicSector = AdministrationManager.getSectorByCode(getHSession(), sectorSearch.getValueSelected()[0]);
             btnSearch.setEnabled(false);
             enableFields(true);
             txtCode.setText(localClinicSector.getCode());

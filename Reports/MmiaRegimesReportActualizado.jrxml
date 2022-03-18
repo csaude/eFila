@@ -29,35 +29,37 @@
 	<parameter name="totallinhasDC3" class="java.lang.String"/>
 	<parameter name="totallinhasDC" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT distinct regimen.regimeesquema,regimen.codigoregime, count(distinct regimen.contagem) contagem, count(distinct regimen.dccontagem) dccontagem FROM
+		<![CDATA[SELECT distinct regimen.regimeesquema,regimen.codigoregime, count(distinct regimen.contagem) contagem,
+          count(distinct regimen.dccontagem) dccontagem FROM
 ( SELECT  distinct rt.regimeesquema,rt.codigoregime, c.mainclinic, pds.amount,
-	CASE
-		WHEN (pds.amount <> 0) THEN pack.id
-		END contagem,
-		CASE
-		WHEN (c.mainclinic = false and pds.amount = 0) THEN pack.id
-		END dccontagem
-	FROM 	prescription p
-	inner join
-		(select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id
-		from package pa
-		inner join prescription pre on pre.id = pa.prescription
-		inner join patient pat ON pre.patient=pat.id
-		where (pg_catalog.date(pa.pickupdate) >= $P{date}::date
-								   and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date) and pre.tipodoenca like '%$P!{diseaseType}%'
-		GROUP BY 3 order by 3) pack on p.date = pack.predate and p.patient=pack.id
-	inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
-	inner join packageddrugs pds on pds.parentpackage = pa.id
-	inner join clinic c on c.id = pa.clinic
-	inner join regimeterapeutico rt on rt.regimeid = p.regimeid
-	INNER JOIN (SELECT MAX (startdate),patient, episode.startreason
-				 from episode
-				 WHERE stopdate is null and startdate::date <= $P{dateEnd}::date
-				 GROUP BY 2,3
-				) visit on visit.patient = pack.id
-	where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' and rt.tipodoenca like '%$P!{diseaseType}%' and p.tipodoenca like '%$P!{diseaseType}%'
- ) regimen
- group by 1,2 order by 1]]>
+  CASE
+      WHEN (pds.amount <> 0) THEN pack.id
+  END contagem,
+  CASE
+      WHEN (c.mainclinic = false and pds.amount = 0) THEN pack.id
+  END dccontagem
+FROM prescription p
+inner join
+  (select max(pre.date) predate, max(pa.pickupdate) pickupdate, pat.id
+   from package pa
+   inner join prescription pre on pre.id = pa.prescription
+   inner join patient pat ON pre.patient=pat.id
+   where (pg_catalog.date(pa.pickupdate) >= $P{date}::date
+          and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date) and pre.tipodoenca like '%$P!{diseaseType}%'
+   GROUP BY 3 order by 3) pack on p.date = pack.predate and p.patient=pack.id
+inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
+inner join packageddrugs pds on pds.parentpackage = pa.id
+inner join patient pat ON p.patient=pat.id
+inner join clinic c on c.id = pat.clinic
+inner join regimeterapeutico rt on rt.regimeid = p.regimeid
+INNER JOIN (SELECT MAX (startdate),patient, episode.startreason
+          from episode
+          WHERE stopdate is null and startdate::date <= $P{dateEnd}::date
+          GROUP BY 2,3
+) visit on visit.patient = pack.id
+where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' and rt.tipodoenca like '%$P!{diseaseType}%' and p.tipodoenca like '%$P!{diseaseType}%'
+) regimen
+group by 1,2 order by 1;]]>
 	</queryString>
 	<field name="regimeesquema" class="java.lang.String"/>
 	<field name="codigoregime" class="java.lang.String"/>

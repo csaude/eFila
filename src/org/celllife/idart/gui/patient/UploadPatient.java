@@ -97,7 +97,7 @@ public class UploadPatient extends GenericFormGui {
     @Override
     protected void createShell() {
 
-        String shellTxt = "Exportar Lista de Faltosos";
+        String shellTxt = "Carregar e Exportar Lista de Faltosos";
         Rectangle bounds = new Rectangle(100, 100, 600, 560);
 
         // Parent Generic Methods ------
@@ -112,7 +112,7 @@ public class UploadPatient extends GenericFormGui {
 
     @Override
     protected void createCompHeader() {
-        String headerTxt = "Exportar Lista de Faltosos";
+        String headerTxt = "Carregar e Exportar Lista de Faltosos";
         iDartImage icoImage = iDartImage.CLINIC;
         buildCompHeader(headerTxt, icoImage);
         Rectangle bounds = getCompHeader().getBounds();

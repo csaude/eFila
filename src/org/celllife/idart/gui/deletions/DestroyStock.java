@@ -292,7 +292,7 @@ public class DestroyStock extends GenericFormGui {
 		.setText("A quantia recebida, distribuída, destruída para cada lote em um \n" +
 				"stock é mostrado em embalagens com o número de unidades entre parênteses \n"+
 				"isto é, '10(5)' significa 10 pacotes e 5 unidades soltas, enquanto que '10' significa 10 pacotes e nenhuma unidade solta. \n" +
-				"\n Nota: esta tabela não mostra ajustes de estoque.");
+				"\n Nota: esta tabela não mostra ajustes de stock.");
 		lblBatchTableInfo.setForeground(ResourceUtils.getColor(iDartColor.RED));
 
 		createTblStock(grpBatchInfo);

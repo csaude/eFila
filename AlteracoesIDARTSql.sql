@@ -291,7 +291,7 @@ ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT N
 ALTER TABLE clinicsector ALTER COLUMN clinic TYPE character varying(255);
 ALTER TABLE clinicsector ADD CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES public.clinic_sector_type (id);
 ALTER TABLE clinicsector ADD CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES public.clinic(uuid);
-UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Desconhecido';
+-- UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Referrido para P.U';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
 UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
@@ -311,8 +311,8 @@ DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
 DELETE FROM simpledomain WHERE description  = 'Period';
 DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
-DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
-DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
+-- DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
+-- DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
 
 -- UPDATE drug set active = false, name = name || ' (Inactivo)', atccode_id = '[inactivo]' where atccode_id is null or atccode_id = '';
 -- update clinic set clinicname = 'Centro de Saude' where mainclinic = true;
@@ -526,7 +526,7 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'inh_pro
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TARV','TARV');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','TB','TB');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer, 'Disease','PREP','PREP');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Disease','PREP','PREP');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Dia','Dia');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'Period','Semana','Semana');
@@ -537,8 +537,8 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Dispensa MensSemestral (DS)');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_type','dispense_type','Outro');
 
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
-INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Inicio CCR');
+-- INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
+-- INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Inicio CCR');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','4b51ace2-f778-4f54-bdaa-be2b350b7499','Farmácia Pública - Hora Normal');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','1309d08a-5c73-4429-8f4b-43a551952858','Farmácia Pública - Fora Hora Normal');
@@ -588,7 +588,7 @@ INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructio
 INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117500, 14, '', '', 'T', '[DTG 10mg cp] Dolutegravir 10mg 90 Comp', 90, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S30ZX', 'Dia', '08S30ZX-fa05-4812-8354-ae21b58e366f');
 INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117490, 14, '', '', 'T', '[DTG 10mg cp] Dolutegravir 10mg 30 Comp', 30, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S30ZXi', 'Dia', '08S30ZXi-d6ed-484b-b980-4a68176f5860');
 
-INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117590, 14, '', '', 'T', '[ABC/3TC] Abacavir 120mg/Lamivudina 60mg 30 Comp', 30, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S01ZWi', 'Dia', '08S01ZW-ec-ec31-45aa-a74e-7238872483e8');
+INSERT INTO public.drug (id, form, dispensinginstructions1, dispensinginstructions2, modified, name, packsize, sidetreatment, defaultamnt, defaulttimes, stockcode, pediatric, active, tipodoenca, atccode_id, defaulttakeperiod, uuidopenmrs) VALUES (7117590, 14, '', '', 'T', '[ABC/3TC] Abacavir 120mg/Lamivudina 60mg 30 Comp', 30, 'F', 1, 1, NULL, NULL, true, 'TARV', '08S01ZWi', 'Dia', '08S01ZWi-527b-4c8c-9282-21826775e25b');
 
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117710, 'TPT - 3HP Adultos (>30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Adultos (>30kg)', 'TPT - 3HP Adultos (>30kg)', 'TB');
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6117780, 'TPT - 3HP Crianças (< 30kg)', true, 'bce7d965-3396-4667-8294-aa5260c26334', 'TPT - 3HP Crianças (< 30kg)', 'TPT - 3HP Crianças (< 30kg)', 'TB');
@@ -638,6 +638,8 @@ INSERT INTO public.clinic_sector_type (id, description, code) values (2, 'Dispen
 INSERT INTO public.clinic_sector_type (id, description, code) values (3, 'Agente Polivalente Elementar', 'APE');
 INSERT INTO public.clinic_sector_type (id, description, code) values (4, 'Clinica Móvel', 'CLINICA_MOVEL');
 INSERT INTO public.clinic_sector_type (id, description, code) values (5, 'Brigada Móvel', 'BRIGADA_MOVEL');
+
+
 
 ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";

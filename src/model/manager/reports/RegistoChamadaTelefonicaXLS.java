@@ -18,6 +18,8 @@ public class RegistoChamadaTelefonicaXLS {
 	
 	private String smi;
 
+	private String farmacia;
+
 	public String getNome() {
 		return nome;
 	}
@@ -80,5 +82,13 @@ public class RegistoChamadaTelefonicaXLS {
 
 	public void setSmi(String smi) {
 		this.smi = smi;
+	}
+
+	public String getFarmacia() {
+		return farmacia;
+	}
+
+	public void setFarmacia(String farmacia) {
+		this.farmacia = farmacia;
 	}
 }
