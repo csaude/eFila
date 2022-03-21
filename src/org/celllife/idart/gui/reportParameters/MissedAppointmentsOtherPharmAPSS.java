@@ -85,7 +85,7 @@ public class MissedAppointmentsOtherPharmAPSS extends GenericReportGui {
 	 */
 	@Override
 	protected void createShell() {
-		buildShell(REPORT_MISSED_APPOINTMENTS_APSS_FROM_OTHER_PHARM, new Rectangle(100, 50, 600,
+		buildShell(REPORT_MISSED_APPOINTMENTS_APSS_FROM_OTHER_PHARM, new Rectangle(100, 50, 760,
 				510));
 		// create the composites
 		createMyGroups();
@@ -115,7 +115,7 @@ public class MissedAppointmentsOtherPharmAPSS extends GenericReportGui {
 		grpClinicSelection = new Group(getShell(), SWT.NONE);
 		grpClinicSelection.setText("Configuração do Relatório de Faltosos e/ou Abandonos");
 		grpClinicSelection.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-		grpClinicSelection.setBounds(new Rectangle(60, 79, 465, 114));
+		grpClinicSelection.setBounds(new Rectangle(140, 79, 465, 114));
 
 		lblClinic = new Label(grpClinicSelection, SWT.NONE);
 		lblClinic.setBounds(new Rectangle(30, 25, 167, 20));
@@ -164,7 +164,7 @@ public class MissedAppointmentsOtherPharmAPSS extends GenericReportGui {
 		grpDateRange = new Group(getShell(), SWT.NONE);
 		grpDateRange.setText("Seleccione a data de reporte:");
 		grpDateRange.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-		grpDateRange.setBounds(new Rectangle(142, 214, 309, 211));
+		grpDateRange.setBounds(new Rectangle(220, 214, 309, 211));
 
 		swtCal = new SWTCalendar(grpDateRange);
 		swtCal.setBounds(40, 40, 220, 160);

@@ -291,7 +291,7 @@ ALTER TABLE clinicsector ADD COLUMN IF NOT EXISTS clinicsectortype integer NOT N
 ALTER TABLE clinicsector ALTER COLUMN clinic TYPE character varying(255);
 ALTER TABLE clinicsector ADD CONSTRAINT clinicsectortype_fk_1 FOREIGN KEY (clinicsectortype) REFERENCES public.clinic_sector_type (id);
 ALTER TABLE clinicsector ADD CONSTRAINT clinic_secto_clinic_fk FOREIGN KEY (clinic) REFERENCES public.clinic(uuid);
--- UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Referrido para P.U';
+UPDATE simpledomain set value = 'Voltou da Referencia' where name = 'activation_reason' and value = 'Referrido para P.U';
 UPDATE clinic set uuid = uuid_generate_v1() where mainclinic = true and (uuid is null or uuid = '');
 UPDATE stockcenter set clinicuuid = (select uuid from clinic where mainclinic = true) where preferred = true;
 UPDATE regimeterapeutico set regimeesquema = REPLACE(regimeesquema, '_', '' );
