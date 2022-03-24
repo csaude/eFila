@@ -68,7 +68,7 @@ public class DownReferDialog extends GenericOthersGui {
     private void createGrpSelectDownRefferal() {
 
         Group grpAddOrConfigureUser = new Group(getShell(), SWT.NONE);
-        grpAddOrConfigureUser.setBounds(new Rectangle(70, 80, 400, 50));
+        grpAddOrConfigureUser.setBounds(new Rectangle(50, 80, 450, 50));
 
         rdBtnDownReferredDDD = new Button(grpAddOrConfigureUser, SWT.RADIO);
         rdBtnDownReferredDDD.setBounds(new Rectangle(20, 12, 160, 30));
@@ -92,7 +92,7 @@ public class DownReferDialog extends GenericOthersGui {
         });
 
         rdBtnDownReferredDC = new Button(grpAddOrConfigureUser, SWT.RADIO);
-        rdBtnDownReferredDC.setBounds(new Rectangle(195, 12, 180, 30));
+        rdBtnDownReferredDC.setBounds(new Rectangle(260, 12, 180, 30));
         rdBtnDownReferredDC.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         rdBtnDownReferredDC.setText("Para Dispensa Comunitária");
         rdBtnDownReferredDC.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
@@ -290,7 +290,7 @@ public class DownReferDialog extends GenericOthersGui {
 
     private void createContents() {
         Group grpReferredType = new Group(getShell(), SWT.NONE);
-        grpReferredType.setBounds(new Rectangle(70, 130, 400, 180));
+        grpReferredType.setBounds(new Rectangle(50, 130, 450, 180));
 
         labelSectorType = new Label(grpReferredType, SWT.NONE);
         labelSectorType.setBounds(new Rectangle(10, 12, 150, 20));
@@ -300,7 +300,7 @@ public class DownReferDialog extends GenericOthersGui {
 
         cmbClinicSectorType = new CCombo(grpReferredType, SWT.BORDER);
         cmbClinicSectorType.setEditable(false);
-        cmbClinicSectorType.setBounds(new Rectangle(175, 12, 170, 20));
+        cmbClinicSectorType.setBounds(new Rectangle(185, 12, 170, 20));
         cmbClinicSectorType.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinicSectorType.setVisible(false);
         CommonObjects.populateClinicSectorType(getHSession(), cmbClinicSectorType);
@@ -326,7 +326,7 @@ public class DownReferDialog extends GenericOthersGui {
         labelSector.setVisible(false);
 
         cmbClinicSector = new CCombo(grpReferredType, SWT.BORDER);
-        cmbClinicSector.setBounds(new Rectangle(175, 42, 170, 20));
+        cmbClinicSector.setBounds(new Rectangle(185, 42, 170, 20));
         cmbClinicSector.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinicSector.setEditable(false);
         cmbClinicSector.setVisible(false);
@@ -338,7 +338,7 @@ public class DownReferDialog extends GenericOthersGui {
         label.setText("Farmacia de Referência:");
 
         cmbClinic = new CCombo(grpReferredType, SWT.BORDER);
-        cmbClinic.setBounds(new Rectangle(175, 42, 170, 20));
+        cmbClinic.setBounds(new Rectangle(185, 42, 170, 20));
         cmbClinic.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         cmbClinic.setEditable(false);
         CommonObjects.populateClinics(getHSession(), cmbClinic, false);
@@ -354,7 +354,7 @@ public class DownReferDialog extends GenericOthersGui {
                 new DateInputValidator(DateRuleFactory.between(startDate,
                         true,
                         new Date(), true, true)));
-        btnDownReferredDate.setBounds(new Rectangle(175, 72, 170, 20));
+        btnDownReferredDate.setBounds(new Rectangle(185, 72, 170, 20));
         btnDownReferredDate.setText("Data");
         btnDownReferredDate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
         btnDownReferredDate.setToolTipText("Preccione o botão para seleccionar a data.");
@@ -373,10 +373,10 @@ public class DownReferDialog extends GenericOthersGui {
         compRadio.setBounds(new Rectangle(10, 132, 170, 20));
 
         btnYes = new Button(grpReferredType, SWT.RADIO);
-        btnYes.setBounds(new Rectangle(245, 102, 50, 20));
+        btnYes.setBounds(new Rectangle(265, 102, 50, 20));
         btnYes.setText("Sim");
         Button btnNo = new Button(grpReferredType, SWT.RADIO);
-        btnNo.setBounds(new Rectangle(295, 102, 50, 20));
+        btnNo.setBounds(new Rectangle(315, 102, 50, 20));
         btnNo.setText("Nao");
         btnYes.setSelection(true);
     }

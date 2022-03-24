@@ -242,11 +242,6 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 cellStyleFixedTotals.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                 cellStyleFixedTotals.setFont(font);
 
-                HSSFRow healthFacility = sheet.getRow(3);
-                HSSFCell healthFacilityCell = healthFacility.createCell(3);
-                healthFacilityCell.setCellValue(LocalObjects.currentClinic.getClinicName());
-                healthFacilityCell.setCellStyle(cellStyle);
-
                 HSSFRow reportStartDate = sheet.getRow(1);
                 HSSFCell reportStartDateCell = reportStartDate.createCell(9);
                 reportStartDateCell.setCellValue(sdf.format(theStartDate));
@@ -256,6 +251,11 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 HSSFCell reportEndDateCell = reportEndDate.createCell(9);
                 reportEndDateCell.setCellValue(sdf.format(theEndDate));
                 reportEndDateCell.setCellStyle(cellStyle);
+
+                HSSFRow healthFacility = sheet.getRow(3);
+                HSSFCell healthFacilityCell = healthFacility.createCell(3);
+                healthFacilityCell.setCellValue(LocalObjects.currentClinic.getClinicName());
+                healthFacilityCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(3);
                 HSSFCell reportYearCell = reportYear.createCell(9);
@@ -282,6 +282,35 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 fillOutStrocks(sheet, cellStyle, cellStyleAlignRight, 6);
                 Thread.sleep(5);
                 monitor.worked(1);
+
+                int rowNumber = mmiaStocks.size() + 6;
+                HSSFRow centerRow = null;
+
+                if (sheet.getRow(rowNumber) == null)
+                    centerRow = sheet.createRow(rowNumber);
+                else
+                    centerRow = sheet.getRow(rowNumber);
+
+                HSSFCell createCellCodeTiltle = centerRow.createCell(1);
+                createCellCodeTiltle.setCellValue("Código");
+                createCellCodeTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCellRegimeTerapeuticoTiltle = centerRow.createCell(2);
+                createCellRegimeTerapeuticoTiltle.setCellValue("REGIME TERAPÊUTICO");
+                createCellRegimeTerapeuticoTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCelltotalPacienteTiltle = centerRow.createCell(3);
+                createCelltotalPacienteTiltle.setCellValue("Total Doentes");
+                createCelltotalPacienteTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCellTotalFarmaciaComunitariaTiltle = centerRow.createCell(4);
+                createCellTotalFarmaciaComunitariaTiltle.setCellValue("Farmacia Comunitária");
+                createCellTotalFarmaciaComunitariaTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCellPacienntesTARVTiltle = centerRow.createCell(5);
+                createCellPacienntesTARVTiltle.setCellValue("Tipo de doentes em TARV");
+                createCellPacienntesTARVTiltle.setCellStyle(cellStyleFixedTotals);
+
 
                 monitor.subTask("Carregando : " + i++ + " de " + 3 + "...");
                 fillOutStatisticResume(sheet, cellStyle, cellStyleFixedTotals, cellStyleAlignRight, mmiaStocks.size() + 7);
@@ -406,6 +435,28 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         int totalDoentesDC = 0;
         HSSFRow row = null;
 
+        HSSFFont font = workbook.createFont();
+        font.setBold(true);
+
+        HSSFCellStyle cellStyleAlignRLeft = workbook.createCellStyle();
+        cellStyleAlignRLeft.setBorderBottom(BorderStyle.THIN);
+        cellStyleAlignRLeft.setBorderTop(BorderStyle.THIN);
+        cellStyleAlignRLeft.setBorderLeft(BorderStyle.THIN);
+        cellStyleAlignRLeft.setBorderRight(BorderStyle.THIN);
+        cellStyleAlignRLeft.setAlignment(HorizontalAlignment.RIGHT);
+        cellStyleAlignRLeft.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        HSSFCellStyle cellStyleTotals = workbook.createCellStyle();
+        cellStyleTotals.setBorderBottom(BorderStyle.THIN);
+        cellStyleTotals.setBorderTop(BorderStyle.THIN);
+        cellStyleTotals.setBorderLeft(BorderStyle.THIN);
+        cellStyleTotals.setBorderRight(BorderStyle.THIN);
+        cellStyleTotals.setAlignment(HorizontalAlignment.CENTER);
+        cellStyleTotals.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyleTotals.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+        cellStyleTotals.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cellStyleTotals.setFont(font);
+
 
         for (MmiaRegimeTerapeutico xls : mmiaRegimens) {
             i = rowNum++;
@@ -436,30 +487,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         }
 
         // Last Row
-
         int lastrow = ++i;
-
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-
-        HSSFCellStyle cellStyleAlignRLeft = workbook.createCellStyle();
-        cellStyleAlignRLeft.setBorderBottom(BorderStyle.THIN);
-        cellStyleAlignRLeft.setBorderTop(BorderStyle.THIN);
-        cellStyleAlignRLeft.setBorderLeft(BorderStyle.THIN);
-        cellStyleAlignRLeft.setBorderRight(BorderStyle.THIN);
-        cellStyleAlignRLeft.setAlignment(HorizontalAlignment.RIGHT);
-        cellStyleAlignRLeft.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        HSSFCellStyle cellStyleTotals = workbook.createCellStyle();
-        cellStyleTotals.setBorderBottom(BorderStyle.THIN);
-        cellStyleTotals.setBorderTop(BorderStyle.THIN);
-        cellStyleTotals.setBorderLeft(BorderStyle.THIN);
-        cellStyleTotals.setBorderRight(BorderStyle.THIN);
-        cellStyleTotals.setAlignment(HorizontalAlignment.CENTER);
-        cellStyleTotals.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyleTotals.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
-        cellStyleTotals.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cellStyleTotals.setFont(font);
 
         for (int g = lastrow; g <= lastrow + 4; g++) {
             if (sheet.getRow(g) == null)
@@ -535,7 +563,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
 
         fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 5");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM5));
-        fillOutOthers(sheet.getRow(a).createCell(8), cellStyle, "Ajuste");
+        fillOutOthers(sheet.getRow(a).createCell(8), cellStyleLabel, "Ajuste");
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyle, roundedAjuste+" %");
 
         fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 4");
@@ -568,6 +596,8 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyle, String.valueOf(totalGeral));
 
         fillOutOthers(sheet.createRow(rowNum++).createCell(5), cellStyleAlignRight, " Observações: ");
+
+        sheet.autoSizeColumn(5);
 
     }
 
