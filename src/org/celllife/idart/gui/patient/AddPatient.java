@@ -2615,7 +2615,8 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
                     if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
                         if (!oldPatient.getUuidopenmrs().trim().isEmpty()) {
-                            if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs()) || !oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
+                            if (oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs()) || oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
+
                                 List<SyncOpenmrsDispense> syncOpenmrsDispenseList = PrescriptionManager.getAllSyncOpenmrsDispenseReadyToSaveByUUID(getHSession(), oldPatient.getUuidopenmrs());
 
                                 if (!syncOpenmrsDispenseList.isEmpty()) {
@@ -2632,6 +2633,15 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                                     syncTempPatient.setPatientid(localPatient.getPatientId());
                                     syncTempPatient.setUuid(localPatient.getUuidopenmrs());
                                     syncTempPatient.setCellphone(localPatient.getCellphone());
+                                    syncTempPatient.setDatainiciotarv(localPatient.getAttributeByName("ARV Start Date").getValue());
+                                    syncTempPatient.setFirstnames(localPatient.getFirstNames());
+                                    syncTempPatient.setLastname(localPatient.getLastname());
+                                    syncTempPatient.setAddress3(localPatient.getAddress3());
+                                    syncTempPatient.setAddress2(localPatient.getAddress2());
+                                    syncTempPatient.setAddress1(localPatient.getAddress1());
+                                    syncTempPatient.setDateofbirth(localPatient.getDateOfBirth());
+                                    syncTempPatient.setSex(localPatient.getSex());
+                                    syncTempPatient.setSyncstatus('U');
                                     AdministrationManager.saveSyncTempPatient(getHSession(), syncTempPatient);
                                 }
 

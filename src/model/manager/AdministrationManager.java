@@ -1763,7 +1763,7 @@ public class AdministrationManager {
     public static List<SyncTempPatient> getAllSyncTempPatientReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempPatient sync where sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus is null)").list();
+                "from SyncTempPatient sync where sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus = 'U' or sync.syncstatus is null)").list();
 
         return result;
     }
@@ -1786,7 +1786,7 @@ public class AdministrationManager {
         return result;
     }
 
-    // Devolve a lista de todos pacientes referidos prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado)
+    // Devolve a lista de todas dispensas de pacientes referidos prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado)
     public static List<SyncTempDispense> getAllSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
@@ -1860,13 +1860,26 @@ public class AdministrationManager {
     // Devolve a lista de todos pacientes referidos por uuid
     public static SyncTempPatient getSyncTempPatienByUuid(Session sess, String uuid) throws HibernateException {
 
-        SyncTempPatient result;
-
+        SyncTempPatient result = null;
+        Date maxDate = RestUtils.castStringToDate("1900-01-01");
         List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.uuidopenmrs = '" + uuid + "'").list();
 
-        if (patientIdentifiers.isEmpty())
-            result = null;
-        else
+        if (!patientIdentifiers.isEmpty())
+            for(SyncTempPatient p : (List<SyncTempPatient>) patientIdentifiers){
+                try{
+                    if(p.getPrescriptiondate() != null)
+                        if(p.getPrescriptiondate().after(maxDate)){
+                            result = p;
+                            maxDate = p.getPrescriptiondate();
+                        }
+                }catch (Exception e){
+                    log.trace("Prescrição sem data de registo do Paciente: "+ p.getPatientid());
+                }finally {
+                    continue;
+                }
+            }
+
+        if(result == null)
             result = (SyncTempPatient) patientIdentifiers.get(0);
 
         return result;

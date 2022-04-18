@@ -565,6 +565,9 @@ public class RestClient {
             return;
         }
 
+        if(dispense.getProvider().trim().isEmpty())
+            dispense.setProvider("Provedor Desconhecido");
+
         String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(dispense.getProvider(), " ", "%20"));
 
         String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(dispense.getStrFacility(), " ", "%20"));

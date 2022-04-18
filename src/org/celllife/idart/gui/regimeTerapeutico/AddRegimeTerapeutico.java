@@ -291,9 +291,9 @@ public class AddRegimeTerapeutico extends GenericFormGui {
         txtRegimeEspecifico.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.character == SWT.CR) {
-                    //	cmdSearchWidgetSelected();
-                }
+            if (e.character == SWT.CR) {
+                //	cmdSearchWidgetSelected();
+            }
             }
         });
     }
