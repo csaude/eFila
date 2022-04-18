@@ -3105,6 +3105,9 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         return;
                     }
 
+                    if(providerWithNoAccents.trim().isEmpty())
+                        providerWithNoAccents = "Provedor Desconhecido";
+
                     String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
                     String providerUuid = "";
 
