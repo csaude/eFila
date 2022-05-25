@@ -300,6 +300,7 @@ UPDATE regimeterapeutico set active = false where codigoregime = null OR codigor
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
 UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
 UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
+UPDATE drug SET sidetreatment = 'F' WHERE tipodoenca = 'TARV';
 UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
 UPDATE identifiertype set name = 'NID CCR' where index = 4;
 UPDATE prescription set tipodoenca = 'TARV' where tipodoenca is null ;
@@ -319,7 +320,6 @@ DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
 -- update stockcenter set stockcentername = 'CS Chabeco' where stockcentername = 'Unidade Sanitária';
 -- update simpledomain set "value" = 'CS Chabeco' where "value" = 'Unidade Sanitária';
-
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
@@ -370,7 +370,7 @@ INSERT INTO district (id, code, name, province ) VALUES (28, '13', 'Vilanculo', 
 INSERT INTO district (id, code, name, province ) VALUES (29, '14', 'Zavala', 3);
 
 INSERT INTO district (id, code, name, province ) VALUES (30, '01', 'Bilene', 4);
-INSERT INTO district (id, code, name, province ) VALUES (31, '02', 'Chibuto', 4);/Users/colaco/Documents/Projectos/Applications/SIFMOZ/SIFMOZ-Frontend/iDMED/src/pages/Error404.vue
+INSERT INTO district (id, code, name, province ) VALUES (31, '02', 'Chibuto', 4);
 INSERT INTO district (id, code, name, province ) VALUES (32, '03', 'Chicualacuala', 4);
 INSERT INTO district (id, code, name, province ) VALUES (33, '04', 'Chigubo', 4);
 INSERT INTO district (id, code, name, province ) VALUES (34, '05', 'Chókwè', 4);
@@ -601,9 +601,7 @@ INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenom
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (6158800, 'TDF+3TC PrEP', true, 'e1e59e0e-1d5f-11e0-b929-000c29ad1d07', 'TDF+3TC PrEP', 'TDF+3TC PrEP', 'PREP');
 
 INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (7117300, 'ABC+3TC+DTG (2DFCped+DTG10)', true, 'af15246d-30b8-4aff-8391-ca2b58e2c88b', 'ABC+3TC+DTG (2DFCped+DTG10)', 'X7APed', 'TARV');
--- INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (7117301, '2as Optimizadas ATV/r+TDF+3TC+DTG', true, '', '2as Optimizadas ATV/r+TDF+3TC+DTG', '2Op4', 'TARV');
-
-
+INSERT INTO public.regimeterapeutico (regimeid, regimeesquema, active, regimenomeespecificado, regimeesquemaidart, codigoregime, tipodoenca) VALUES (7117301, 'ATV/r+TDF+3TC+DTG', true, 'f42849f8-8c0a-4dcb-a589-792a9ea8b2ce', 'ATV/r+TDF+3TC+DTG', '2Op4', 'TARV');
 
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162470, 3, 6162450, 'T', 6117710, 1, NULL, 0);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6162480, 1, 6117510, 'T', 6117710, 1, NULL, 1);
@@ -636,8 +634,8 @@ INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesp
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262780, 1, 7117500, 'T', 7117300, 1, NULL, 3);
 INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6262790, 1, 7117490, 'T', 7117300, 1, NULL, 4);
 
--- INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6362791, 1, (select id from drug where atccode_id = '08S18W'), 'T', 7117301, 1, NULL, 0);
--- INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6462792, 1, (select id from drug where atccode_id = '08S30WZ'), 'T', 7117301, 1, NULL, 1);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6362791, 1, (select id from drug where atccode_id = '08S18W'), 'T', 7117301, 1, NULL, 0);
+INSERT INTO public.regimendrugs (id, amtpertime, drug, modified, regimen, timesperday, notes, regimendrugsindex) VALUES (6462792, 1, (select id from drug where atccode_id = '08S30WZ'), 'T', 7117301, 1, NULL, 1);
 
 
 INSERT INTO public.clinic_sector_type (id, description, code) values (1, 'Paragem Única', 'PARAGEM_UNICA');
@@ -652,6 +650,8 @@ ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
 
 ALTER TABLE drug ADD COLUMN uuidopenmrs varchar(255);
+
+UPDATE regimeterapeutico SET regimenomeespecificado = 'af15246d-30b8-4aff-8391-ca2b58e2c88b' where codigoregime = 'X6APed'
 
 update drug set uuidopenmrs='08S18W-7f-c2a7-4d27-95dc-564791951b5f' where atccode_id='08S18W';
 update drug set uuidopenmrs='08S18WI-4-70b1-4732-af8b-be24cb04aaa6' where atccode_id='08S18WI';
