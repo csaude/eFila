@@ -482,7 +482,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             createCellTotalFarmaciaComunitaria.setCellValue(xls.getTotalDoentesFarmaciaComunitaria());
             createCellTotalFarmaciaComunitaria.setCellStyle(cellStyle);
 
-            totalDoentes = totalDoentes + Integer.parseInt(xls.getTotalDoentes());
+            totalDoentes = totalDoentes + Integer.parseInt(xls.getTotalDoentes()) - Integer.parseInt(xls.getTotalDoentesPREP());
             totalDoentesDC = totalDoentesDC + Integer.parseInt(xls.getTotalDoentesFarmaciaComunitaria());
         }
 

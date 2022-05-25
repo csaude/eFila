@@ -10,6 +10,8 @@ public class MmiaRegimeTerapeutico {
 
     private String totalDoentesFarmaciaComunitaria;
 
+    private String totalDoentesPREP;
+
     public String getCodigo() {
         return codigo;
     }
@@ -40,5 +42,13 @@ public class MmiaRegimeTerapeutico {
 
     public void setTotalDoentesFarmaciaComunitaria(String totalDoentesFarmaciaComunitaria) {
         this.totalDoentesFarmaciaComunitaria = totalDoentesFarmaciaComunitaria;
+    }
+
+    public String getTotalDoentesPREP() {
+        return totalDoentesPREP;
+    }
+
+    public void setTotalDoentesPREP(String totalDoentesPREP) {
+        this.totalDoentesPREP = totalDoentesPREP;
     }
 }

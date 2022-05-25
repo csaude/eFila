@@ -300,6 +300,7 @@ UPDATE regimeterapeutico set active = false where codigoregime = null OR codigor
 UPDATE regimeterapeutico SET regimenomeespecificado = 'cf05347e-063c-4896-91a4-097741cf6be6' WHERE regimeesquema LIKE 'ABC+3TC+LPV/r%';
 UPDATE sync_openmrs_dispense SET notas='Removido do iDART', syncstatus='W' where syncstatus='P' AND prescription NOT IN (select id from prescription);
 UPDATE drug SET defaultTakePeriod = 'Dia' WHERE defaultTakePeriod is null;
+UPDATE drug SET sidetreatment = 'F' WHERE tipodoenca = 'TARV';
 UPDATE prescribeddrugs SET takeperiod = 'Dia' WHERE takeperiod is null;
 UPDATE identifiertype set name = 'NID CCR' where index = 4;
 UPDATE prescription set tipodoenca = 'TARV' where tipodoenca is null ;
@@ -319,7 +320,6 @@ DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
 -- update nationalclinics set facilityname = 'CS Chabeco' where facilityname = 'Unidade Sanitária';
 -- update stockcenter set stockcentername = 'CS Chabeco' where stockcentername = 'Unidade Sanitária';
 -- update simpledomain set "value" = 'CS Chabeco' where "value" = 'Unidade Sanitária';
-
 
 INSERT INTO country (id, code, name) VALUES (1, '01', 'Moçambique');
 INSERT INTO country (id, code, name) VALUES (2, '02', 'Angola');
@@ -650,6 +650,8 @@ ALTER TABLE users DROP COLUMN IF EXISTS "role";
 ALTER TABLE users DROP COLUMN IF EXISTS "permission";
 
 ALTER TABLE drug ADD COLUMN uuidopenmrs varchar(255);
+
+UPDATE regimeterapeutico SET regimenomeespecificado = 'af15246d-30b8-4aff-8391-ca2b58e2c88b' where codigoregime = 'X6APed'
 
 update drug set uuidopenmrs='08S18W-7f-c2a7-4d27-95dc-564791951b5f' where atccode_id='08S18W';
 update drug set uuidopenmrs='08S18WI-4-70b1-4732-af8b-be24cb04aaa6' where atccode_id='08S18WI';
