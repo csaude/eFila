@@ -61,14 +61,15 @@ public class AdministrationManager {
     }
 
 
-    public static Doctor getMostUsedDoctor( Session sess) throws HibernateException, SQLException, ClassNotFoundException {
+    public static Doctor getMostUsedDoctor(Session sess) throws HibernateException, SQLException, ClassNotFoundException {
 
         ConexaoJDBC conexaoJDBC = new ConexaoJDBC();
         int doctorId = conexaoJDBC.idMostUsedDoctor();
         Doctor result = (Doctor) sess.createQuery(
-                 "select d from Doctor as d where d.id = "+ doctorId).uniqueResult();
+                "select d from Doctor as d where d.id = " + doctorId).uniqueResult();
         return result;
     }
+
     /**
      * Devolve lista de regimes para alimentar o combobox no formulario de
      * prescricao
@@ -92,7 +93,7 @@ public class AdministrationManager {
             throws HibernateException {
 
         List<RegimeTerapeutico> result = sess.createQuery(
-                "select r from RegimeTerapeutico as r where r.tipoDoenca = '"+ diseaseType +"'").list();
+                "select r from RegimeTerapeutico as r where r.tipoDoenca = '" + diseaseType + "'").list();
 
         return result;
     }
@@ -150,7 +151,7 @@ public class AdministrationManager {
 
     public static List<SimpleDomain> getAllModoDispensaByDescriptionLike(Session sess, String description)
             throws HibernateException {
-        String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' and s.value like '%" +description+"%' order by s.id asc";
+        String qString = "select s from SimpleDomain as s where s.description = 'dispense_mode' and s.value like '%" + description + "%' order by s.id asc";
         Query q = sess.createQuery(qString);
         List<SimpleDomain> result = q.list();
 
@@ -238,7 +239,7 @@ public class AdministrationManager {
                 linha = lt.get(i);
                 if (linha.getLinhanome().equals(linhat)) {
                     break;
-                }else linha = lt.get(0);
+                } else linha = lt.get(0);
             }
         }
         return linha;
@@ -458,7 +459,7 @@ public class AdministrationManager {
                 "select cs from ClinicSector as cs where cs.uuid = :uuid")
                 .setString("uuid", uuid).setMaxResults(1).uniqueResult();
         if (clinicSector == null) {
-            log.warn("Clinic Sector [ "+ uuid +" ] not found");
+            log.warn("Clinic Sector [ " + uuid + " ] not found");
         }
         return clinicSector;
 
@@ -470,7 +471,7 @@ public class AdministrationManager {
                 "select cst from ClinicSectorType as cst where cst.description = :description")
                 .setString("description", description).setMaxResults(1).uniqueResult();
         if (clinicSectorType == null) {
-            log.warn("Clinic Sector Type[ "+ description +" ] nao foi encontrado");
+            log.warn("Clinic Sector Type[ " + description + " ] nao foi encontrado");
         }
         return clinicSectorType;
 
@@ -637,7 +638,7 @@ public class AdministrationManager {
     /**
      * This method saves the Nationalclinic objects passed to it
      *
-     * @param sess         Session
+     * @param sess      Session
      * @param theClinic
      * @throws HibernateException
      */
@@ -728,8 +729,8 @@ public class AdministrationManager {
         ClinicSector nameSector = getSectorByName(s, sectorname);
         ClinicSector codeSector = getSectorByCode(s, code);
 
-        if (codeSector != null ) {
-            if(!codeSector.getId().equals(clinicSector.getId()))
+        if (codeSector != null) {
+            if (!codeSector.getId().equals(clinicSector.getId()))
                 return false;
         }
 
@@ -738,24 +739,24 @@ public class AdministrationManager {
                 return false;
         }
 
-            clinicSector.setSectorname(sectorname);
-            clinicSector.setCode(code);
-            clinicSector.setTelephone(telefone);
-            clinicSector.setClinicSectorType(clinicSectorType);
-            s.update(clinicSector);
+        clinicSector.setSectorname(sectorname);
+        clinicSector.setCode(code);
+        clinicSector.setTelephone(telefone);
+        clinicSector.setClinicSectorType(clinicSectorType);
+        s.update(clinicSector);
 
-            // log the transaction
-            Logging logging = new Logging();
-            logging.setIDart_User(LocalObjects.getUser(s));
-            logging.setItemId(String.valueOf(clinicSector.getId()));
-            logging.setModified('Y');
-            logging.setTransactionDate(new Date());
-            logging.setTransactionType("Updated Clinic Sector");
-            logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
-                    + ": changed.");
-            s.save(logging);
+        // log the transaction
+        Logging logging = new Logging();
+        logging.setIDart_User(LocalObjects.getUser(s));
+        logging.setItemId(String.valueOf(clinicSector.getId()));
+        logging.setModified('Y');
+        logging.setTransactionDate(new Date());
+        logging.setTransactionType("Updated Clinic Sector");
+        logging.setMessage("Updated Clinic Sector " + clinicSector.getSectorname()
+                + ": changed.");
+        s.save(logging);
 
-            return true;
+        return true;
     }
 
     /**
@@ -829,6 +830,7 @@ public class AdministrationManager {
         }
         return false;
     }
+
     /**
      * Returns a string list of the Usernames for the StockCenter
      *
@@ -1011,7 +1013,7 @@ public class AdministrationManager {
     }
 
     public static void updateUserRoles(Session s, User u,
-                                         Set<Role> roleSet) throws HibernateException {
+                                       Set<Role> roleSet) throws HibernateException {
 
         log.info("Updating Role access for user " + u.getUsername());
         String oldClinicAccessStr = getClinicAccessString(u);
@@ -1144,9 +1146,9 @@ public class AdministrationManager {
 
 
         if (domainList.size() > 0) {
-            for(SimpleDomain sd : domainList){
+            for (SimpleDomain sd : domainList) {
 
-                if(sd.getValue().equalsIgnoreCase(value)){
+                if (sd.getValue().equalsIgnoreCase(value)) {
                     return sd.getName();
                 }
             }
@@ -1333,6 +1335,7 @@ public class AdministrationManager {
         List<String> result = q.list();
         return result;
     }
+
     /**
      * Method to get a NationalClinic based on given fields
      *
@@ -1808,9 +1811,9 @@ public class AdministrationManager {
     public static SyncTempDispense getSyncTempDispense(Session sess, SyncTempDispense syncTempDispense) throws HibernateException {
         SyncTempDispense result;
         result = (SyncTempDispense) sess.createQuery(
-                "select sync from SyncTempDispense sync where sync.patientid ='"+syncTempDispense.getPatientid()+"' " +
-                        " and sync.prescriptionid ='"+syncTempDispense.getPrescriptionid()+"' " +
-                        " and pg_catalog.date(sync.pickupdate = '"+ RestUtils.castDateToString(syncTempDispense.getPickupdate()) +"'").setMaxResults(1).uniqueResult();
+                "select sync from SyncTempDispense sync where sync.patientid ='" + syncTempDispense.getPatientid() + "' " +
+                        " and sync.prescriptionid ='" + syncTempDispense.getPrescriptionid() + "' " +
+                        " and pg_catalog.date(sync.pickupdate = '" + RestUtils.castDateToString(syncTempDispense.getPickupdate()) + "'").setMaxResults(1).uniqueResult();
 
         return result;
     }
@@ -1819,7 +1822,7 @@ public class AdministrationManager {
     public static SyncTempPatient getSyncTempPatienByNIDandClinicNameUuid(Session sess, String nid, String clinicUuid) throws HibernateException {
         SyncTempPatient result;
 
-        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicuuid = '" + clinicUuid + "' and sync.patientid = '" + nid+"'").list();
+        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicuuid = '" + clinicUuid + "' and sync.patientid = '" + nid + "'").list();
 
         if (patientIdentifiers.isEmpty())
             result = null;
@@ -1833,7 +1836,7 @@ public class AdministrationManager {
     public static SyncTempPatient getSyncTempPatienByNIDandClinicName(Session sess, String nid, String clinicname) throws HibernateException {
         SyncTempPatient result;
 
-        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicname = '" + clinicname + "' and sync.patientid = '" + nid+"'").list();
+        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.mainclinicname = '" + clinicname + "' and sync.patientid = '" + nid + "'").list();
 
         if (patientIdentifiers.isEmpty())
             result = null;
@@ -1847,7 +1850,7 @@ public class AdministrationManager {
     public static SyncTempPatient getSyncTempPatienByNID(Session sess, String nid) throws HibernateException {
         SyncTempPatient result;
 
-        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.patientid = '" + nid+"'").list();
+        List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.patientid = '" + nid + "'").list();
 
         if (patientIdentifiers.isEmpty())
             result = null;
@@ -1865,22 +1868,23 @@ public class AdministrationManager {
         List patientIdentifiers = sess.createQuery("from SyncTempPatient sync where sync.uuidopenmrs = '" + uuid + "'").list();
 
         if (!patientIdentifiers.isEmpty())
-            for(SyncTempPatient p : (List<SyncTempPatient>) patientIdentifiers){
-                try{
-                    if(p.getPrescriptiondate() != null)
-                        if(p.getPrescriptiondate().after(maxDate)){
+            for (SyncTempPatient p : (List<SyncTempPatient>) patientIdentifiers) {
+                try {
+                    if (p.getPrescriptiondate() != null)
+                        if (p.getPrescriptiondate().after(maxDate)) {
                             result = p;
                             maxDate = p.getPrescriptiondate();
                         }
-                }catch (Exception e){
-                    log.trace("Prescrição sem data de registo do Paciente: "+ p.getPatientid());
-                }finally {
+                } catch (Exception e) {
+                    log.trace("Prescrição sem data de registo do Paciente: " + p.getPatientid());
+                } finally {
                     continue;
                 }
             }
 
-        if(result == null)
-            result = (SyncTempPatient) patientIdentifiers.get(0);
+        if (result == null)
+            if (!patientIdentifiers.isEmpty())
+                result = (SyncTempPatient) patientIdentifiers.get(0);
 
         return result;
 
@@ -1921,7 +1925,7 @@ public class AdministrationManager {
     // Devolve a lista de dispensa de pacientes referidos por id
     public static List<SyncTempDispense> getAllSyncTempDispenseByuuid(Session sess, String uuid) throws HibernateException {
 
-        List  result;
+        List result;
         result = sess.createQuery("from SyncTempDispense sync where sync.uuidopenmrs = '" + uuid + "'").list();
         return result;
 
@@ -1938,9 +1942,9 @@ public class AdministrationManager {
 
     public static Role getRoleByDescription(Session sess, String description) throws HibernateException {
         Role role = (Role) sess
-                    .createQuery("select role from Role as role where role.description = :description")
-                    .setString("description", description).setMaxResults(1)
-                    .uniqueResult();
+                .createQuery("select role from Role as role where role.description = :description")
+                .setString("description", description).setMaxResults(1)
+                .uniqueResult();
         return role;
     }
 
@@ -1973,7 +1977,7 @@ public class AdministrationManager {
     }
 
     public static void saveSystemFuntionality(Session session, SystemFunctionality functionality) {
-        if (functionality.getId()  == null ||  functionality.getId() <= 0) {
+        if (functionality.getId() == null || functionality.getId() <= 0) {
 
             session.save(functionality);
 
@@ -1983,10 +1987,10 @@ public class AdministrationManager {
             logging.setModified('Y');
             logging.setTransactionDate(new Date());
             logging.setTransactionType("Added New Functionality");
-            logging.setMessage("Added New Functionality: " + functionality.getId()+" -> " + functionality.getDescription());
+            logging.setMessage("Added New Functionality: " + functionality.getId() + " -> " + functionality.getDescription());
             session.save(logging);
 
-        }else {
+        } else {
             session.update(functionality);
             Logging logging = new Logging();
             logging.setIDart_User(LocalObjects.getUser(session));
@@ -1994,14 +1998,14 @@ public class AdministrationManager {
             logging.setModified('Y');
             logging.setTransactionDate(new Date());
             logging.setTransactionType("Updated Functionality");
-            logging.setMessage("Updated Functionality: " + functionality.getId()+" -> "+ functionality.getDescription());
+            logging.setMessage("Updated Functionality: " + functionality.getId() + " -> " + functionality.getDescription());
             session.save(logging);
 
         }
     }
 
     public static void saveRole(Session session, Role role) {
-        if (role.getId()  == null || role.getId() <= 0) {
+        if (role.getId() == null || role.getId() <= 0) {
 
             session.save(role);
 
@@ -2014,7 +2018,7 @@ public class AdministrationManager {
             logging.setMessage("Added New role " + role.getDescription());
             session.save(logging);
 
-        }else {
+        } else {
             session.update(role);
 
             Logging logging = new Logging();
@@ -2023,7 +2027,7 @@ public class AdministrationManager {
             logging.setModified('Y');
             logging.setTransactionDate(new Date());
             logging.setTransactionType("Updated a role");
-            logging.setMessage("Updated role: " +role.getId()+" -> "+ role.getDescription());
+            logging.setMessage("Updated role: " + role.getId() + " -> " + role.getDescription());
             session.save(logging);
         }
 

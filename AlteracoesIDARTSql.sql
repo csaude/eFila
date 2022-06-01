@@ -312,6 +312,8 @@ DELETE FROM simpledomain WHERE description  = 'disease_type';
 DELETE FROM simpledomain WHERE description  = 'Disease';
 DELETE FROM simpledomain WHERE description  = 'Period';
 DELETE FROM simpledomain WHERE description  = 'inh_prophylaxis';
+DELETE FROM simpledomain WHERE value  = 'Reinicio' and name = 'activation_reason';
+DELETE FROM simpledomain WHERE value  = 'Voltou da Referencia' and name = 'activation_reason';
 -- DELETE FROM simpledomain WHERE value  = 'Referrido para P.U';
 -- DELETE FROM simpledomain WHERE value  = 'Inicio CCR';
 
@@ -539,6 +541,8 @@ INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispens
 
 -- INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Referrido para P.U');
 -- INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Inicio CCR');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Voltou da Referencia');
+INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'','activation_reason','Reinicio');
 
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','4b51ace2-f778-4f54-bdaa-be2b350b7499','Farmácia Pública - Hora Normal');
 INSERT INTO simpledomain VALUES (NEXTVAL('hibernate_sequence')::integer,'dispense_mode','1309d08a-5c73-4429-8f4b-43a551952858','Farmácia Pública - Fora Hora Normal');
