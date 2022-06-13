@@ -1747,6 +1747,12 @@ public class AdministrationManager {
         s.saveOrUpdate(syncTempPatient);
     }
 
+    public static void updateSyncTempPatient(Session s, SyncTempPatient syncTempPatient)
+            throws HibernateException {
+
+        s.update(syncTempPatient);
+    }
+
     public static void saveSyncTempDispense(Session s, SyncTempDispense syncTempDispense)
             throws HibernateException {
 
@@ -2002,6 +2008,30 @@ public class AdministrationManager {
             session.save(logging);
 
         }
+    }
+
+    public static void updateLastEpisode( Session session, SyncTempPatient syncTempPatient){
+        Patient patient = PatientManager.getPatientfromUuid(session, syncTempPatient.getUuidopenmrs());
+        Episode episode = null;
+        try {
+            if(patient != null){
+                episode = patient.getMostRecentEpisode();
+                if(episode != null) {
+                    Clinic clinic = getClinicbyUuid(session, syncTempPatient.getClinicuuid());
+                    if(clinic != null){
+                        episode.setClinic(clinic);
+                        episode.setStopNotes("Contra Referido para "+ syncTempPatient.getClinicname());
+                        session.update(episode);
+                    } else {
+                        episode.setStopNotes("Farmácia de Referência não foi carregada - Contra Referido para "+ syncTempPatient.getClinicname());
+                        session.update(episode);
+                    }
+                }
+            }
+        }catch (Exception e){
+            log.trace(e);
+        }
+
     }
 
     public static void saveRole(Session session, Role role) {
