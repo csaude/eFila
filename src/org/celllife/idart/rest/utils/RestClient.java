@@ -80,43 +80,41 @@ public class RestClient {
 
         String customizedDosage = null;
 
-
             List<String> obsGroups = new ArrayList<>();
 
-            for (PrescribedDrugs pb : prescribedDrugs){
-                String formulationString = "{\"" +
-                                                "person\":\"" + nidUuid + "\"," +
-                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                                "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
-                                                "\"value\":\"" + pb.getDrug().getUuidopenmrs() + "\"," +
-                                                "\"comment\":\"IDART\"" +
-                                            "}";
-              //  System.out.println(pb.getDispensedQty());
-                String quantityString =     "{\"" +
-                                                "person\":\"" + nidUuid + "\"," +
-                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                                "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
-                                                "\"value\":\"" + dispennsedQty + "\"," +
-                                                "\"comment\":\"IDART\"" +
-                                            "}";
+            for (PackagedDrugs pg: packagedDrugs){
+                        String formulationString = "{\"" +
+                                "person\":\"" + nidUuid + "\"," +
+                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
+                                "\"value\":\"" + pg.getStock().getDrug().getUuidopenmrs() + "\"," +
+                                "\"comment\":\"IDART\"" +
+                                "}";
+                        String quantityString = "{\"" +
+                                "person\":\"" + nidUuid + "\"," +
+                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
+                                "\"value\":\"" + dispennsedQty + "\"," +
+                                "\"comment\":\"IDART\"" +
+                                "}";
 
-                String dosageString =       "{\"" +
-                                                "person\":\"" + nidUuid + "\"," +
-                                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                                "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
-                                                "\"value\":\"" + pb.getTimesPerDay() + "\"," +
-                                                "\"comment\":\"IDART\"" +
-                                            "}";
+                        String dosageString = "{\"" +
+                                "person\":\"" + nidUuid + "\"," +
+                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
+                                "\"value\":\"" + pg.getStock().getDrug().getDefaultTimes() + "\"," +
+                                "\"comment\":\"IDART\"" +
+                                "}";
 
-                String obsGroup = "{\"" +
-                                        "person\":\"" + nidUuid + "\"," +
-                                        "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                        "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
-                                        "\"comment\":\"IDART\"," +
-                                        "\"groupMembers\": [" + formulationString +","+ quantityString +"," + dosageString + "]"+
-                                    "}";
+                        String obsGroup = "{\"" +
+                                "person\":\"" + nidUuid + "\"," +
+                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                                "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
+                                "\"comment\":\"IDART\"," +
+                                "\"groupMembers\": [" + formulationString + "," + quantityString + "," + dosageString + "]" +
+                                "}";
 
-                obsGroups.add(obsGroup);
+                        obsGroups.add(obsGroup);
             }
 
             String obsGroupsJson = null;
@@ -204,7 +202,6 @@ public class RestClient {
                         tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID_2X;
                     }
                 }
-
 
                 if (prescription.getReasonForUpdate().startsWith("I"))
                     tipoPrescricao = iDartProperties.FILT_TPT_INITIAL_FOLLOW_UP_UUID;

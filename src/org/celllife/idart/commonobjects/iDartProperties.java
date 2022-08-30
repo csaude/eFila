@@ -43,7 +43,9 @@ public class iDartProperties {
 	public static final String REST_GET_LOCATION = "location?q=";
 	
 	public static final String ENCOUNTER_PATIENT = "encounter?patient=";
-	
+
+	public static final String PROGRAM_ENROLLMENT_PATIENT = "programenrollment?patient=";
+
 	public static final String REST_CONCEPT = "&concept=";
 	
 	public static final String FORM_FILA = "49857ace-1a92-4980-8313-1067714df151";
@@ -185,7 +187,7 @@ public class iDartProperties {
 
 	public static int logoutTime = -1;
 
-	public static String idartVersionNumber = "2.7.0";
+	public static String idartVersionNumber = "2.8.0";
 
 	public static boolean nextAppointmentDateOnLabels = true;
 

@@ -170,20 +170,20 @@ order by atccode_id asc]]>
 					<subreportParameter name="monthEnd">
 						<subreportParameterExpression><![CDATA[$P{monthEnd}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="dateEnd">
-						<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="diseaseType">
 						<subreportParameterExpression><![CDATA[$P{diseaseType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="dateEnd">
+						<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="date">
 						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="dataelaboracao">
-						<subreportParameterExpression><![CDATA[$P{dataelaboracao}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="monthStart">
 						<subreportParameterExpression><![CDATA[$P{monthStart}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="dataelaboracao">
+						<subreportParameterExpression><![CDATA[$P{dataelaboracao}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhasDC2">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC2}]]></subreportParameterExpression>
@@ -191,11 +191,11 @@ order by atccode_id asc]]>
 					<subreportParameter name="totallinhasDC3">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC3}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="pacientesEmTarv">
-						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="username">
 						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="pacientesEmTarv">
+						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhasDC1">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC1}]]></subreportParameterExpression>

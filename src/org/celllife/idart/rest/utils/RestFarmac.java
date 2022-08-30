@@ -46,6 +46,76 @@ public class RestFarmac {
         ApiAuthRest.setPassword(prop.getProperty("rest_access_password"));
     }
 
+    public static String restGetAllPatientsModified(String url, Clinic mainClinic, PoolingHttpClientConnectionManager pool) {
+        HttpResponse response = null;
+
+        Session sess = HibernateUtil.getNewSession();
+        Transaction tx = sess.beginTransaction();
+
+        String path = url + "/sync_temp_patients?modified=eq.T&mainclinicuuid=eq." + mainClinic.getUuid();
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+            ;
+
+            response = ApiAuthRest.postgrestRequestGetAll(path, token, pool);
+
+            InputStream in = response.getEntity().getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+            StringBuilder str = new StringBuilder();
+            SyncTempPatient syncTempPatient = null;
+            String line = null;
+            String objectString = null;
+            JSONObject jsonObj = null;
+            Gson gson = null;
+
+
+            while ((line = reader.readLine()) != null) {
+                str.append(line + "\n");
+
+                if (line.startsWith("[{"))
+                    line = line.replace("[{", "{");
+                if (line.endsWith("}]"))
+                    line = line.replace("}]", "}");
+
+                objectString = line;
+                if (objectString.contains("{")) {
+                    jsonObj = new JSONObject(objectString);
+                    gson = new Gson();
+                    try {
+                        syncTempPatient = gson.fromJson(jsonObj.toString(), SyncTempPatient.class);
+
+                        String updateStatus = "{\"modified\":\"F\"}";
+                        AdministrationManager.updateSyncTempPatient(sess, syncTempPatient);
+                        AdministrationManager.updateLastEpisode(sess, syncTempPatient);
+                        restPatchPatient(url, syncTempPatient, updateStatus, pool);
+                        log.trace(" Paciente [" + syncTempPatient + "] contra refrido para " + syncTempPatient.getClinicname() + " Actualizado com sucesso");
+                        log.info(" Paciente [" + syncTempPatient + "] contra refrido para " + syncTempPatient.getClinicname() + " Actualizado com sucesso");
+                        break;
+                    } catch (Exception e) {
+                        assert tx != null;
+                        tx.rollback();
+                        log.error(" Ocorreu um erro ao gravar a actualizacão do Paciente [" + syncTempPatient + "] contra refrido para " + syncTempPatient.getClinicname());
+                        log.trace(" Ocorreu um erro ao gravar a actualizacão do Paciente [" + syncTempPatient + "] contra refrido para " + syncTempPatient.getClinicname());
+                    } finally {
+
+                        continue;
+                    }
+                }
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assert tx != null;
+        tx.commit();
+        sess.flush();
+        sess.close();
+
+        return response.getStatusLine().toString();
+    }
+
     public static String restGeAllPatients(String url, Clinic refClinic, PoolingHttpClientConnectionManager pool) {
         HttpResponse response = null;
 

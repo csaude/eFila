@@ -659,20 +659,20 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             return;
         } else {*/
 
-            java.util.List<PackageDrugInfo> allPackagedDrugsList = new ArrayList<PackageDrugInfo>();
-            // remove pdis with none dispensed
-            for (int i = 0; i < tblPrescriptionInfo.getItemCount(); i++) {
-                java.util.List<PackageDrugInfo> pdiList = (java.util.List<PackageDrugInfo>) tblPrescriptionInfo.getItem(i)
-                        .getData();
-                Iterator<PackageDrugInfo> it = pdiList.iterator();
-                while (it.hasNext()) {
-                    PackageDrugInfo pdi = it.next();
-                    if (pdi.getDispensedQty() != 0) {
-                        pdi.setDispenseDate(newPack.getPackDate());
-                        pdi.setWeeksSupply(getSelectedWeekSupply());
-                        pdi.setDispensedForLaterPickup(!dispenseNow);
-                        pdi.setPickupDate(dispenseNow ? new Date() : null);
-                        pdi.setModeDispense(cmbDispenseMode.getText());
+        java.util.List<PackageDrugInfo> allPackagedDrugsList = new ArrayList<PackageDrugInfo>();
+        // remove pdis with none dispensed
+        for (int i = 0; i < tblPrescriptionInfo.getItemCount(); i++) {
+            java.util.List<PackageDrugInfo> pdiList = (java.util.List<PackageDrugInfo>) tblPrescriptionInfo.getItem(i)
+                    .getData();
+            Iterator<PackageDrugInfo> it = pdiList.iterator();
+            while (it.hasNext()) {
+                PackageDrugInfo pdi = it.next();
+                if (pdi.getDispensedQty() != 0) {
+                    pdi.setDispenseDate(newPack.getPackDate());
+                    pdi.setWeeksSupply(getSelectedWeekSupply());
+                    pdi.setDispensedForLaterPickup(!dispenseNow);
+                    pdi.setPickupDate(dispenseNow ? new Date() : null);
+                    pdi.setModeDispense(cmbDispenseMode.getText());
                         /*if (rdBtnNoAppointmentDate.getSelection())
                             pdi.setInhPickup(false);
                         else
@@ -682,19 +682,19 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                             pdi.setCtzPickup(false);
                         else
                             pdi.setCtzPickup(true);*/
-                        allPackagedDrugsList.add(pdi);
-                    }
+                    allPackagedDrugsList.add(pdi);
                 }
             }
+        }
 
-            Set<AccumulatedDrugs> accumDrugSet = getAccumDrugsToSave();
-            if (fieldsOkay(allPackagedDrugsList) && ((allPackagedDrugsList.size() > 0) || (accumDrugSet.size() > 0))) {
-                submitForm(dispenseNow, allPackagedDrugsList);
-                getLog().info("submitForm() called");
+        Set<AccumulatedDrugs> accumDrugSet = getAccumDrugsToSave();
+        if (fieldsOkay(allPackagedDrugsList) && ((allPackagedDrugsList.size() > 0) || (accumDrugSet.size() > 0))) {
+            submitForm(dispenseNow, allPackagedDrugsList);
+            getLog().info("submitForm() called");
 
-                initialiseSearchList();
-                clearForm();
-            }
+            initialiseSearchList();
+            clearForm();
+        }
         //}
     }
 
@@ -715,14 +715,14 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
         if (localPatient != null) {
             PatientHistoryReport report = null;
-            if(tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV))
-                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
-            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT))
-                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILT);
-            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))
-                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_PREP);
+            if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV))
+                report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
+            else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT))
+                report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILT);
+            else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))
+                report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_PREP);
 
-            if(report == null)
+            if (report == null)
                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
 
             viewReport(report);
@@ -2117,11 +2117,11 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             rdBtnTARVPrescription.setSelection(true);
             rdBtnTBPrescription.setSelection(false);
             rdBtnPREPPrescription.setSelection(false);
-        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
+        } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP)) {
             rdBtnTARVPrescription.setSelection(false);
             rdBtnTBPrescription.setSelection(false);
             rdBtnPREPPrescription.setSelection(true);
-        } else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+        } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
             rdBtnTARVPrescription.setSelection(false);
             rdBtnTBPrescription.setSelection(true);
             rdBtnPREPPrescription.setSelection(false);
@@ -2195,12 +2195,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
 
 
-            if(newPack.getPrescription().getReasonForUpdate().contains("Fim")){
+            if (newPack.getPrescription().getReasonForUpdate().contains("Fim")) {
                 btnNextAppDate.setEnabled(false);
                 btnNextAppDate.setVisible(false);
                 txtNextAppDate.setVisible(false);
                 lblNextAppointment.setVisible(false);
-            }else{
+            } else {
                 lblNextAppointment.setVisible(true);
             }
 
@@ -2428,10 +2428,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (theForm.getFormLanguage1().equals("")) // is a cream, no amount
             // per time
             {
-                tableEntry[1] = theForm.getActionLanguage1() + " " + pd.getTimesPerDay() + " vezes por "+pd.getTakePeriod();
+                tableEntry[1] = theForm.getActionLanguage1() + " " + pd.getTimesPerDay() + " vezes por " + pd.getTakePeriod();
             } else {
                 tableEntry[1] = theForm.getActionLanguage1() + " " + tempAmtPerTime + " " + theForm.getFormLanguage1()
-                        + " " + pd.getTimesPerDay() + " vezes por "+pd.getTakePeriod();
+                        + " " + pd.getTimesPerDay() + " vezes por " + pd.getTakePeriod();
             }
             tableEntry[2] = "0";
             tableEntry[4] = "0";
@@ -2825,7 +2825,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             newPack.setPickupDate(new Date());
         }
 
-        if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP))
+        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP))
             checkOpenmrs = false;
 
         newPack.setPackageId(newPack.getPrescription().getPrescriptionId() + "-" + lblIndex.getText());
@@ -2974,7 +2974,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                     // to be added
                 } else {
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty ,regimenAnswer,
+                            facility, iDartProperties.FORM_FILA, providerWithNoAccents, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                 }
             } else {
@@ -3105,7 +3105,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         return;
                     }
 
-                    if(providerWithNoAccents.trim().isEmpty())
+                    if (providerWithNoAccents.trim().isEmpty())
                         providerWithNoAccents = "Provedor Desconhecido";
 
                     String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
@@ -3142,8 +3142,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                         return;
 
-                    } else{
-                        if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                    } else {
+                        if (newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
                             strFacilityUuid = newPack.getPrescription().getPatient().getUuidlocationopenmrs();
                         else
                             strFacilityUuid = strFacility.substring(21, 57);
@@ -3174,17 +3174,17 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         m.open();
 
                         return;
-                    } else{
+                    } else {
                         providerUuid = response.substring(21, 57);
                     }
                     try {
-                        if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)){
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
                                     strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID, iDartProperties.FILT_DISPENSED_TYPE_UUID, iDartProperties.FILT_TPT_FOLLOW_UP_UUID,
                                     regimenAnswer, prescribedDrugs, iDartProperties.FILT_NEXT_APOINTMENT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
-                        }else if(newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")){
+                        } else if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("Prep")) {
                             // to add
-                        }else{
+                        } else {
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
                                     strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
@@ -3339,12 +3339,12 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        if(pre.getReasonForUpdate().contains("Fim")){
+        if (pre.getReasonForUpdate().contains("Fim")) {
             btnNextAppDate.setEnabled(false);
             btnNextAppDate.setVisible(false);
             txtNextAppDate.setVisible(false);
             lblNextAppointment.setVisible(false);
-        }else{
+        } else {
             lblNextAppointment.setVisible(true);
         }
 
@@ -3470,6 +3470,15 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
         Transaction tx = null;
         Map<Object, Integer> labelQuantities = new HashMap<Object, Integer>();
         try {
+
+            if (rdBtnDispenseLater.getSelection()) {
+                MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+                m.setText("Seleccionou a opcao para dispensa a posterior");
+                m.setMessage("Seleccionou a opcao para dispensa a posterior, por favor, seleccione Dipensar directamente ao paciente");
+
+                m.open();
+            }
+
             ConexaoJDBC conn = new ConexaoJDBC();
             if (conn.dispensadonoperiodo(allPackagedDrugsList.get(0).getPatientId()) && rdBtnTARVPrescription.getSelection()) {
                 log.trace("Num of Days: " + dias);
@@ -3615,50 +3624,50 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         }
                     }
 
-                    savePackageAndPackagedDrugs(dispenseNow, allPackagedDrugsList);
-                    getLog().info("savePackageAndPackagedDrugs() called");
-                    setNextAppointmentDate();
+                        savePackageAndPackagedDrugs(dispenseNow, allPackagedDrugsList);
 
-                    if (allPackagedDrugsList.size() > 0) {
+                        getLog().info("savePackageAndPackagedDrugs() called");
+                        setNextAppointmentDate();
 
-                        // This map keeps a track of drugs dispensed in separate
-                        // batches
-                        Map<String, String> drugNames = new HashMap<String, String>();
+                        if (allPackagedDrugsList.size() > 0) {
 
-                        // Update pdi's to include accum drugs
-                        for (PackageDrugInfo info : allPackagedDrugsList) {
+                            // This map keeps a track of drugs dispensed in separate
+                            // batches
+                            Map<String, String> drugNames = new HashMap<String, String>();
 
-                            info.setQtyInHand(PackageManager.getQuantityDispensedForLabel(newPack.getAccumulatedDrugs(),
-                                    info.getDispensedQty(), info.getDrugName(),
-                                    info.getPackagedDrug().getStock().getDrug().getPackSize(), false, true));
+                            // Update pdi's to include accum drugs
+                            for (PackageDrugInfo info : allPackagedDrugsList) {
 
-                            labelQuantities.put(info, 1);
-                            // set the String that will print out on each drug
-                            // label
-                            // to indicate
-                            // (<amount dispensed> + <accumulated amount>)
+                                info.setQtyInHand(PackageManager.getQuantityDispensedForLabel(newPack.getAccumulatedDrugs(),
+                                        info.getDispensedQty(), info.getDrugName(),
+                                        info.getPackagedDrug().getStock().getDrug().getPackSize(), false, true));
 
-                            if (drugNames.containsKey(info.getDrugName())) {
-                                // not first batch, exclude pillcount value
-                                info.setSummaryQtyInHand(PackageManager.getQuantityDispensedForLabel(
-                                        newPack.getAccumulatedDrugs(), info.getDispensedQty(), info.getDrugName(),
-                                        info.getDispensedQty(), false, false));
-                            } else {
+                                labelQuantities.put(info, 1);
+                                // set the String that will print out on each drug
+                                // label
+                                // to indicate
+                                // (<amount dispensed> + <accumulated amount>)
 
-                                info.setSummaryQtyInHand(PackageManager.getQuantityDispensedForLabel(
-                                        newPack.getAccumulatedDrugs(), info.getDispensedQty(), info.getDrugName(),
-                                        info.getDispensedQty(), false, true));
+                                if (drugNames.containsKey(info.getDrugName())) {
+                                    // not first batch, exclude pillcount value
+                                    info.setSummaryQtyInHand(PackageManager.getQuantityDispensedForLabel(
+                                            newPack.getAccumulatedDrugs(), info.getDispensedQty(), info.getDrugName(),
+                                            info.getDispensedQty(), false, false));
+                                } else {
+
+                                    info.setSummaryQtyInHand(PackageManager.getQuantityDispensedForLabel(
+                                            newPack.getAccumulatedDrugs(), info.getDispensedQty(), info.getDrugName(),
+                                            info.getDispensedQty(), false, true));
+                                }
+                                drugNames.put(info.getDrugName(), "test");
+
+                                TemporaryRecordsManager.savePackageDrugInfosToDB(getHSession(), allPackagedDrugsList);
+
                             }
-                            drugNames.put(info.getDrugName(), "test");
-
-                            TemporaryRecordsManager.savePackageDrugInfosToDB(getHSession(), allPackagedDrugsList);
-
                         }
+                        getHSession().flush();
+                        tx.commit();
                     }
-                    getHSession().flush();
-                    tx.commit();
-                }
-
 
                 Vector<String> vMedicamentos = new Vector<String>();
 
@@ -3696,7 +3705,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 if (dataInicioNoutroServico != null)
                     dataNoutroServico = format2.format(dataInicioNoutroServico);
 
-            }
+        }
 
         } catch (HibernateException he) {// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             getLog().error("Problem with Saving this package", he);
@@ -3824,7 +3833,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 errorLog.setPrescription(newPack.getPrescription());
                 errorLog.setPickupdate(newPack.getPickupDate());
                 errorLog.setReturnpickupdate(dtNextPickUp);
-                errorLog.setErrordescription("["+newPack.getPrescription().getTipoDoenca()+"] - "+ error);
+                errorLog.setErrordescription("[" + newPack.getPrescription().getTipoDoenca() + "] - " + error);
                 errorLog.setDatacreated(new Date());
                 OpenmrsErrorLogManager.saveOpenmrsRestLog(sess, errorLog);
             }

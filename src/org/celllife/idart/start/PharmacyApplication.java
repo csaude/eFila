@@ -321,6 +321,7 @@ public class PharmacyApplication {
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
                                 RestFarmac.restPostEpisodes(sess, url, pool);
                                 RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
+                                RestFarmac.restGetAllPatientsModified(url, mainClinic, pool);
                             } else if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
                                 RestFarmac.restGeAllPatients(url, mainClinic, pool);
                                 RestFarmac.restPostDispenses(sess, url, pool);
