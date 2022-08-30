@@ -1401,6 +1401,45 @@ public class AddPatientOpenMrs extends GenericFormGui implements iDARTChangeList
 
                     localPatient.setUuidopenmrs(personUuid);
 
+                    JSONObject locationUuid = null;
+
+                    String patientEncounterLocation = new RestClient().getOpenMRSResource(iDartProperties.PROGRAM_ENROLLMENT_PATIENT+personUuid+"&v=default");
+
+                    JSONObject jsonEncounterObject = new org.json.JSONObject(patientEncounterLocation);
+
+                    JSONArray locationUuidObject = jsonEncounterObject.getJSONArray("results");
+
+                    try{
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date enrolmentDate = dateFormat.parse("1900-01-01");
+
+                        if(locationUuidObject != null){
+                            for (int i = 0; i < locationUuidObject.length(); i++) {
+                                if (locationUuidObject.getJSONObject(i).get("dateCompleted").toString().equalsIgnoreCase("null")){
+                                    if(enrolmentDate.before(dateFormat.parse(locationUuidObject.getJSONObject(i).getString("dateEnrolled")))){
+                                        enrolmentDate = dateFormat.parse(locationUuidObject.getJSONObject(i).getString("dateEnrolled"));
+                                        locationUuid  = locationUuidObject.getJSONObject(i);
+                                    }
+                                }
+                            }
+
+                            if(locationUuid != null){
+                                JSONObject uuidObject = locationUuid.getJSONObject("location");
+
+                                if(uuidObject != null){
+                                    String uuid = uuidObject.getString("uuid");
+                                    localPatient.setUuidlocationopenmrs(uuid);
+                                }
+                            }
+                        }
+                    }catch (Exception e){
+                        localPatient.setUuidlocationopenmrs(JdbcProperties.location);
+                        e.printStackTrace();
+                    }
+
+                    if(localPatient.getUuidlocationopenmrs() == null)
+                        localPatient.setUuidlocationopenmrs(JdbcProperties.location);
+
                     log.trace(" O patient " + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " foi enviado ao Openmrs com Sucesso");
                     PatientManager.savePatient(getHSession(), localPatient);
 
