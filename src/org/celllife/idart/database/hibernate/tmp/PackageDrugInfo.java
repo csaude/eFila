@@ -86,6 +86,8 @@ public class PackageDrugInfo {
 
 	private boolean sideTreatment;
 
+	private  String flagIdentifier;
+
 	@ManyToOne
 	@JoinColumn(name = "cluser", nullable = false)
 	private User cluser;
@@ -394,6 +396,14 @@ public class PackageDrugInfo {
 	 */
 	public int getStockId() {
 		return stockId;
+	}
+
+	public String getFlagIdentifier() {
+		return flagIdentifier;
+	}
+
+	public void setFlagIdentifier(String flagIdentifier) {
+		this.flagIdentifier = flagIdentifier;
 	}
 
 	/**
