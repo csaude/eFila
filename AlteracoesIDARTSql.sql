@@ -817,3 +817,10 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M12
 
 
 CREATE VIEW sync_temp_dispense_vw AS select sync_temp_dispense.*, sync_temp_patients.clinicuuid clinicuuid from sync_temp_dispense inner join sync_temp_patients on sync_temp_patients.uuidopenmrs = sync_temp_dispense.uuidopenmrs;
+
+CREATE OR REPLACE VIEW public.patient_last_sync_tmp_dispense_vw
+AS
+SELECT DISTINCT ON (uuidopenmrs)
+       std.*, stp.clinicuuid clinicuuid
+FROM   sync_temp_dispense std inner join sync_temp_patients stp on stp.uuidopenmrs = std.uuidopenmrs
+ORDER  BY uuidopenmrs, pickupdate DESC;
