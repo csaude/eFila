@@ -19,6 +19,9 @@ public class CentralizationProperties {
 
     public static String pharmacy_type = "U";
 
+    public static String last_dispense_before_reference = "L";
+    public static String last_dispense_after_reference = "N";
+
     public static String rest_access_username = "postgres";
 
     public static String rest_access_password = "postgres";

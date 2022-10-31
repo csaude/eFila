@@ -1804,11 +1804,20 @@ public class AdministrationManager {
         return result;
     }
 
-    // Devolve a lista de todos dispensas locais prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado L- Last Local Dispense)
+    // Devolve a lista de todos dispensas locais prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado L- Last Local Dispense, N- Last Local Dispense After Reference)
     public static List<SyncTempDispense> getAllLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
                 "from SyncTempDispense sync where sync.syncstatus = 'L' order by sync.date asc").list();
+
+        return result;
+    }
+
+    // Devolve a lista de todos dispensas locais prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado, I-Importado L- Last Local Dispense before Reference, N- Last Local Dispense After Reference)
+    public static List<SyncTempDispense> getAllLastLocalSyncTempDispenseReadyToSend(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncTempDispense sync where sync.syncstatus = 'N' order by sync.date asc").list();
 
         return result;
     }

@@ -39,8 +39,12 @@ public class TemporaryRecordsManager {
                     log.trace("Erro 1: " + e.getMessage());
                 }
                 //Para farmac Insere dispensas para US
-                if (CentralizationProperties.centralization.equalsIgnoreCase("on") && CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
-                    savePackageDrugInfosFarmac(pdi, 'P');
+                if (CentralizationProperties.centralization.equalsIgnoreCase("on") ) {
+                    if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")){
+                        savePackageDrugInfosFarmac(pdi, 'P');
+                    } else if (pdi.getFlagIdentifier().equalsIgnoreCase("Sim")) {
+                        savePackageDrugInfosFarmac(pdi, 'N');
+                    }
                 }
             }
         }
@@ -137,7 +141,7 @@ public class TemporaryRecordsManager {
                 tx.rollback();
                 sess.close();
             }
-            log.trace("Error Sync Farmac or FP:" + e);
+            log.trace("Error Sync Farmac or FP dispense: " + e);
         }
 
         return true;
