@@ -212,12 +212,19 @@ public class PharmacyApplication {
                 startEkapaJob(scheduler);
                 startSmsJobs(scheduler);
 
-                if (CentralizationProperties.centralization.equalsIgnoreCase("on"))
+                if (CentralizationProperties.centralization.equalsIgnoreCase("on")) {
+
                     startRestFarmacThread(executorService);
 
+                    startRestReferedPatientLastDispenseThread(executorService);
+
+                }
+
                 if ((CentralizationProperties.centralization.equalsIgnoreCase("on") && CentralizationProperties.pharmacy_type.equalsIgnoreCase("U"))
-                        || CentralizationProperties.centralization.equalsIgnoreCase("off"))
+                        || CentralizationProperties.centralization.equalsIgnoreCase("off")) {
+
                     startRestOpenMRSThread(executorService);
+                }
 
                 try {
                     Role role = LocalObjects.getUser(HibernateUtil.getNewSession()).getRoleSet().iterator().next();
@@ -301,6 +308,10 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
+                log.info("");
+                log.info("*********************");
+                log.info("Open DDD Thread ");
+
                 Session sess = HibernateUtil.getNewSession();
                 Transaction tx = sess.beginTransaction();
 
@@ -317,7 +328,7 @@ public class PharmacyApplication {
 
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
                                 RestFarmac.restPostPatients(sess, url, pool);
-                                RestFarmac.restPostLocalDispenses(sess, url, pool);
+                                RestFarmac.restPostLocalDispenses(sess, url, pool, CentralizationProperties.last_dispense_before_reference);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
                                 RestFarmac.restPostEpisodes(sess, url, pool);
                                 RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
@@ -346,8 +357,10 @@ public class PharmacyApplication {
                     sess.close();
                     log.trace(new Date() + " : [FARMAC REST] Erro " + e.getMessage());
                 }
-
+                log.info("*********************");
+                log.info("Close DDD Thread");
             }
+
         }, 0, synctime, TimeUnit.SECONDS);
 
     }
@@ -365,6 +378,10 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
+                log.info("");
+                log.info("*********************");
+                log.info("Open OpenMRS Thread ");
+
                 Session session = HibernateUtil.getNewSession();
 
                 try {
@@ -386,9 +403,51 @@ public class PharmacyApplication {
                 }
                 session.clear();
                 session.close();
-
+                log.info("*********************");
+                log.info("Close OpenMRS Thread");
             }
         }, 0, synctime, TimeUnit.SECONDS);
+
+    }
+
+    public static void startRestReferedPatientLastDispenseThread(ScheduledExecutorService executorService) {
+
+        final String url = CentralizationProperties.centralized_server_url;
+        final PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
+        int synctime = 30;
+
+        executorService.scheduleWithFixedDelay(new Runnable() {
+            public void run() {
+                log.info("*********************");
+                log.info("Open DDD Last Dispense Thread ");
+
+                Session sess = HibernateUtil.getNewSession();
+                Transaction tx = sess.beginTransaction();
+
+                try {
+                    if (getServerStatus(url).contains("Red")) {
+                        log.trace("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                        log.info("Servidor Rest offline, verifique a sua internet ou contacte o administrador");
+                    } else {
+                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                            RestFarmac.restPostLocalDispenses(sess, url, pool, CentralizationProperties.last_dispense_after_reference);
+                        }
+                    }
+                    assert tx != null;
+                    tx.commit();
+                    sess.flush();
+                    sess.close();
+                } catch (IOException e) {
+                    assert tx != null;
+                    tx.rollback();
+                    sess.close();
+                    log.trace(new Date() + " : [FP Dispense Error on REST - POST] Erro " + e.getMessage());
+                }
+                log.info("*********************");
+                log.info("Close DDD Last Dispense Thread ");
+            }
+        }, 0, synctime, TimeUnit.SECONDS);
+
 
     }
 
