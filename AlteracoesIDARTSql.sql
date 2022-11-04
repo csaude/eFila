@@ -825,3 +825,11 @@ SELECT DISTINCT ON (uuidopenmrs)
        std.*, stp.clinicuuid clinicuuid
 FROM   sync_temp_dispense std inner join sync_temp_patients stp on stp.uuidopenmrs = std.uuidopenmrs
 ORDER  BY uuidopenmrs, pickupdate DESC;
+
+CREATE OR REPLACE VIEW public.patient_us_sync_tmp_dispense_vw
+AS
+SELECT DISTINCT ON (uuidopenmrs)
+       std.*, stp.clinicuuid clinicuuid
+FROM   sync_temp_dispense std inner join sync_temp_patients stp on stp.uuidopenmrs = std.uuidopenmrs
+where std.syncstatus in ('N')
+ORDER  BY uuidopenmrs, pickupdate DESC;
