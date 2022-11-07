@@ -4501,7 +4501,7 @@ public class ConexaoJDBC {
             for (int j = 0; j < v.size() - 1; j++) {
                 condicao += v.get(j) + "\' , \'";
             }
-
+            
             condicao += v.get(v.size() - 1) + "\')";
         }
 
@@ -4730,14 +4730,17 @@ public class ConexaoJDBC {
                 "        END AS tipodispensa, " +
                 "pg_catalog.date(spt.pickupdate) as dataLevantamento, " +
                 "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataproximolevantamento, " +
-                "c.clinicname as referencia " +
+                "CASE "+
+			    "WHEN (spt.notes like '%Mobile%' AND spt.syncstatus = 'I') THEN c.clinicname "+
+			    "WHEN spt.syncstatus = 'M' OR spt.syncstatus = 'M' THEN spt.mainclinicname "+
+                "END AS referencia "+
                 "from sync_temp_dispense spt " +
                 "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs " +
                 "inner join clinic c on c.id = p.clinic " +
                 "where pg_catalog.date(spt.pickupdate) >= '" + startDate + "'::date " +
                 "AND pg_catalog.date(spt.pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') " +
-                "AND spt.notes like '%Mobile%' AND spt.syncstatus = 'I'" +
-                "GROUP BY 1,2,3,4,5,6,7,8,9 " +
+                "AND (spt.notes like '%Mobile%' AND spt.syncstatus = 'I') OR (spt.syncstatus = 'M' OR spt.syncstatus = 'M')" +
+                "GROUP BY 1,2,3,4,5,6,7,8,9" +
                 "order by 9,7 asc";
 
         List<HistoricoLevantamentoXLS> levantamentoXLSs = new ArrayList<HistoricoLevantamentoXLS>();
