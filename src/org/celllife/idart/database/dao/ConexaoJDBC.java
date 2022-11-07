@@ -898,11 +898,14 @@ public class ConexaoJDBC {
                     iDartProperties.hibernatePassword);
             String query = "    SELECT distinct regimen.regimeesquema,regimen.codigoregime, count(regimen.pacienteprep) totalpacientesprep, " +
                     "           count(distinct regimen.contagem) totalpacientes, " +
+                    "           count(distinct regimen.uscontagem) totalpacientesus, " +
                     "           count(distinct regimen.dccontagem) totalpacientesdc FROM " +
                     "( SELECT  distinct rt.regimeesquema,rt.codigoregime, c.mainclinic, pds.amount, " +
                     "   CASE " +
-                    "       WHEN (pds.amount <> 0) THEN pack.id\n" +
+                    "       WHEN ( c.mainclinic = true and pds.amount <> 0) THEN pack.id " +
                     "   END contagem, " +
+                    "   CASE " +
+                    "       WHEN ( c.mainclinic = false and pds.amount > 0 ) THEN pack.id END uscontagem, " +
                     "   CASE  " +
                     "       WHEN (c.mainclinic = false and pds.amount = 0) THEN pack.id " +
                     "   END dccontagem, " +
@@ -945,6 +948,7 @@ public class ConexaoJDBC {
                     mmiaRegimeTerapeutico.setCodigo(rs.getString("codigoregime"));
                     mmiaRegimeTerapeutico.setRegimeTerapeutico(rs.getString("regimeesquema"));
                     mmiaRegimeTerapeutico.setTotalDoentes(String.valueOf(rs.getInt("totalpacientes")));
+                    mmiaRegimeTerapeutico.setTotalDoentesUnidadeSanitaria(String.valueOf(rs.getInt("totalpacientesus")));
                     mmiaRegimeTerapeutico.setTotalDoentesFarmaciaComunitaria(String.valueOf(rs.getInt("totalpacientesdc")));
                     mmiaRegimeTerapeutico.setTotalDoentesPREP(String.valueOf(rs.getInt("totalpacientesprep")));
                     mmiaRegimenXLSList.add(mmiaRegimeTerapeutico);
