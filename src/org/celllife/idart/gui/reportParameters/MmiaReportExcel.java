@@ -307,7 +307,11 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 createCellTotalFarmaciaComunitariaTiltle.setCellValue("Farmacia Comunitária");
                 createCellTotalFarmaciaComunitariaTiltle.setCellStyle(cellStyleFixedTotals);
 
-                HSSFCell createCellPacienntesTARVTiltle = centerRow.createCell(5);
+                HSSFCell createCellTotalFarmaciaUnidadeSanitariaTiltle = centerRow.createCell(5);
+                createCellTotalFarmaciaUnidadeSanitariaTiltle.setCellValue("Farmácia da Unidade Sanitária");
+                createCellTotalFarmaciaUnidadeSanitariaTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCellPacienntesTARVTiltle = centerRow.createCell(6);
                 createCellPacienntesTARVTiltle.setCellValue("Tipo de doentes em TARV");
                 createCellPacienntesTARVTiltle.setCellStyle(cellStyleFixedTotals);
 
@@ -433,6 +437,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         int i = 0;
         int totalDoentes = 0;
         int totalDoentesDC = 0;
+        int totalDoentesUS =0;
         HSSFRow row = null;
 
         HSSFFont font = workbook.createFont();
@@ -482,8 +487,13 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             createCellTotalFarmaciaComunitaria.setCellValue(xls.getTotalDoentesFarmaciaComunitaria());
             createCellTotalFarmaciaComunitaria.setCellStyle(cellStyle);
 
+            HSSFCell createCellTotalFarmaciaUnidadeSaniaria = row.createCell(5);
+            createCellTotalFarmaciaUnidadeSaniaria.setCellValue(xls.getTotalDoentesUnidadeSanitaria());
+            createCellTotalFarmaciaUnidadeSaniaria.setCellStyle(cellStyle);
+
             totalDoentes = totalDoentes + Integer.parseInt(xls.getTotalDoentes()) - Integer.parseInt(xls.getTotalDoentesPREP());
             totalDoentesDC = totalDoentesDC + Integer.parseInt(xls.getTotalDoentesFarmaciaComunitaria());
+            totalDoentesUS = totalDoentesUS + Integer.parseInt(xls.getTotalDoentesUnidadeSanitaria());
         }
 
         // Last Row

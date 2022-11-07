@@ -8,6 +8,8 @@ public class MmiaRegimeTerapeutico {
 
     private String totalDoentes;
 
+    private String totalDoentesUnidadeSanitaria;
+
     private String totalDoentesFarmaciaComunitaria;
 
     private String totalDoentesPREP;
@@ -50,5 +52,13 @@ public class MmiaRegimeTerapeutico {
 
     public void setTotalDoentesPREP(String totalDoentesPREP) {
         this.totalDoentesPREP = totalDoentesPREP;
+    }
+
+    public String getTotalDoentesUnidadeSanitaria() {
+        return totalDoentesUnidadeSanitaria;
+    }
+
+    public void setTotalDoentesUnidadeSanitaria(String totalDoentesUnidadeSanitaria) {
+        this.totalDoentesUnidadeSanitaria = totalDoentesUnidadeSanitaria;
     }
 }
