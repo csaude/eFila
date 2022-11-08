@@ -30,6 +30,8 @@ public class HistoricoLevantamentoXLS {
 
 	private String clinic;
 
+	private String dispenseSyncStatus;
+
 	public String getPatientIdentifier() {
 		return patientIdentifier;
 	}
@@ -139,5 +141,13 @@ public class HistoricoLevantamentoXLS {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
+	}
+
+	public String getDispenseSyncStatus() {
+		return dispenseSyncStatus;
+	}
+
+	public void setDispenseSyncStatus(String dispenseSyncStatus) {
+		this.dispenseSyncStatus = dispenseSyncStatus;
 	}
 }

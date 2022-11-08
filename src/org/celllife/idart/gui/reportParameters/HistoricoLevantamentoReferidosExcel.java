@@ -76,12 +76,12 @@ public class HistoricoLevantamentoReferidosExcel implements IRunnableWithProgres
                 healthFacilityCell.setCellStyle(cellStyle);
 
                 HSSFRow reportPeriod = sheet.getRow(10);
-                HSSFCell reportPeriodCell = reportPeriod.createCell(6);
+                HSSFCell reportPeriodCell = reportPeriod.createCell(9);
                 reportPeriodCell.setCellValue(sdf.format(theStartDate) + " à " + sdf.format(theEndDate));
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(11);
-                HSSFCell reportYearCell = reportYear.createCell(6);
+                HSSFCell reportYearCell = reportYear.createCell(9);
                 reportYearCell.setCellValue(sdfYear.format(theStartDate));
                 reportYearCell.setCellStyle(cellStyle);
 
@@ -130,6 +130,10 @@ public class HistoricoLevantamentoReferidosExcel implements IRunnableWithProgres
                     HSSFCell createCellReferencia = row.createCell(8);
                     createCellReferencia.setCellValue(xls.getClinic());
                     createCellReferencia.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDispenseSyncStatus = row.createCell(9);
+                    createCellDispenseSyncStatus.setCellValue(xls.getDispenseSyncStatus());
+                    createCellDispenseSyncStatus.setCellStyle(cellStyle);
 
                     // Optionally add subtasks
                     monitor.subTask("Carregando : " + i + " de " + historicoLevantamentoReferidoXLS.size() + "...");
