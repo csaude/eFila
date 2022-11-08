@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaRegimesReportNovaVersao" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Error" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.4483218986834392"/>
+	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="date" class="java.util.Date">
@@ -28,6 +28,10 @@
 	<parameter name="totallinhasDC2" class="java.lang.String"/>
 	<parameter name="totallinhasDC3" class="java.lang.String"/>
 	<parameter name="totallinhasDC" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS1" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS2" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS3" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT distinct
    regimen.regimeesquema,
@@ -37,62 +41,40 @@
    count(distinct regimen.dccontagem) dccontagem
 FROM
    (
-      SELECT distinct
-         rt.regimeesquema,
-         rt.codigoregime,
-         c.mainclinic,
-         pds.amount,
-          CASE WHEN ( c.mainclinic = true and pds.amount <> 0 ) THEN pack.id END contagem,
-         CASE WHEN ( c.mainclinic = false and pds.amount > 0 ) THEN pack.id END uscontagem,
-         CASE WHEN ( c.mainclinic = false and pds.amount = 0 ) THEN pack.id END dccontagem
-      FROM
-         prescription p inner join
-            (
-               select
-                  max(pre.date) predate,
-                  max(pa.pickupdate) pickupdate,
-	 			  max(visit.id) episode,
-                  pat.id
-               from
-                  package pa inner join packageddrugs pds on pds.parentpackage = pa.id
-				  inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
-                  inner join prescription pre on pre.id = pa.prescription
-                  inner join patient pat ON pre.patient = pat.id
-				 INNER JOIN (
-						   SELECT
-							  MAX (startdate),
-							  patient,
-							  id
-						   from
-							  episode
-						   WHERE startdate::date <= $P{dateEnd}::date
-							GROUP BY 2, 3 )visit on visit.patient = pat.id
-               where
-                  (
-                     pg_catalog.date(pa.pickupdate) >= $P{date}::date and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date
-                  )
-                  and
-                  (
-                     pre.tipodoenca like '%ARV%' or pre.tipodoenca = 'PREP'
-                  )
-               GROUP BY 4
-               order by 4
-            ) pack on p.date = pack.predate and p.patient = pack.id
-         inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
-         inner join packageddrugs pds on pds.parentpackage = pa.id
-         inner join patient pat ON p.patient = pat.id
-         inner join clinic c on c.id = pat.clinic
-         inner join regimeterapeutico rt on rt.regimeid = p.regimeid
-	     inner join episode visit on visit.id = pack.episode
-      where
-         visit.startreason not like '%nsito%'
-         and visit.startreason not like '%ternidade%'
-         and
-         (
-            rt.tipodoenca like '%ARV%'
-            or rt.tipodoenca = 'PREP'
-         )
-   ) regimen
+ SELECT  distinct p.patient,
+ rt.regimeesquema,
+ rt.codigoregime,
+ CASE WHEN ( c.mainclinic = true and pds.amount <> 0 ) THEN pack.id END contagem,
+ CASE WHEN ( c.mainclinic = false and pds.amount > 0 ) THEN pack.id END uscontagem,
+ CASE WHEN ( c.mainclinic = false and pds.amount = 0 ) THEN pack.id END dccontagem,
+ EXTRACT(year FROM age($P{dateEnd}::date,pack.dateofbirth)) :: int dateofbirth,
+ ep.startreason,
+ COALESCE(pack.weekssupply,0) weekssupply
+ FROM   (
+	 select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,
+	 pat.id, max(visit.id) episode
+	 from package pa
+	 inner join packageddrugs pds on pds.parentpackage = pa.id
+	 inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
+	 inner join prescription pre on pre.id = pa.prescription
+	 inner join patient pat ON pre.patient=pat.id
+	 INNER JOIN (SELECT MAX (startdate), patient, id
+				 from episode WHERE startdate <= $P{dateEnd}::date
+				 GROUP BY 2,3) visit on visit.patient = pat.id
+	 where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= $P{date}::date
+	 and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date
+	 and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')
+	 GROUP BY 5 order by 5) pack
+	 inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id
+	 inner join patient pat on pat.id = pack.id
+	 inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
+	 inner join packageddrugs pds on pds.parentpackage = pa.id
+	 inner join regimeterapeutico rt on rt.regimeid = p.regimeid
+	 inner join linhat l on l.linhaid = p.linhaid
+	 inner join episode ep on ep.id = pack.episode
+	 inner join clinic c on c.id = pat.clinic
+	 where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(rt.tipodoenca like '%ARV%' OR rt.tipodoenca = 'PREP')
+	    ) regimen
 group by
    1,
    2
@@ -120,9 +102,9 @@ order by
 			<band/>
 		</groupHeader>
 		<groupFooter>
-			<band height="92">
+			<band height="254">
 				<staticText>
-					<reportElement mode="Opaque" x="158" y="0" width="52" height="23" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="158" y="0" width="54" height="23" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -135,19 +117,19 @@ order by
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement x="140" y="23" width="225" height="1"/>
+					<reportElement x="156" y="23" width="212" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="156" y="0" width="1" height="23" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="156" y="0" width="1" height="24" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="365" y="0" width="1" height="24" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="368" y="0" width="1" height="24" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
@@ -159,93 +141,93 @@ order by
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="263" y="75" width="51" height="16" backcolor="#E4E4F4"/>
+					<reportElement mode="Opaque" x="213" y="75" width="50" height="16" backcolor="#E4E4F4"/>
 					<textElement/>
 					<text><![CDATA[]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="267" y="35" width="43" height="13"/>
+					<reportElement x="213" y="35" width="50" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhas1}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="1" y="62" width="263" height="12" backcolor="#AFCAF5"/>
+					<reportElement mode="Opaque" x="1" y="62" width="211" height="12" backcolor="#AFCAF5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[3ª Linhas   ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="1" y="49" width="263" height="12" backcolor="#AFCAF5"/>
+					<reportElement mode="Opaque" x="1" y="49" width="211" height="12" backcolor="#AFCAF5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[2ª Linhas   ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="138" y="75" width="126" height="16" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="62" y="75" width="150" height="16" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="1" y="24" width="364" height="11" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement mode="Opaque" x="1" y="24" width="367" height="11" forecolor="#FFFFFF" backcolor="#000000"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Linhas Terapêuicas]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="137" y="75" width="1" height="17" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="61" y="75" width="1" height="17" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement x="267" y="77" width="43" height="13"/>
+					<reportElement x="213" y="76" width="50" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhas}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="1" y="48" width="365" height="1"/>
+					<reportElement x="1" y="48" width="367" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement x="267" y="49" width="43" height="12"/>
+					<reportElement x="213" y="50" width="50" height="11"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhas2}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="74" width="365" height="1"/>
+					<reportElement x="0" y="74" width="368" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement x="267" y="62" width="43" height="12"/>
+					<reportElement x="213" y="62" width="50" height="12"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhas3}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="1" y="35" width="263" height="13" backcolor="#AFCAF5"/>
+					<reportElement mode="Opaque" x="1" y="35" width="211" height="13" backcolor="#AFCAF5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[1ª Linhas   ]]></text>
 				</staticText>
 				<line>
-					<reportElement x="1" y="61" width="364" height="1"/>
+					<reportElement x="1" y="61" width="367" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
@@ -257,13 +239,13 @@ order by
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement x="137" y="91" width="229" height="1"/>
+					<reportElement x="62" y="91" width="306" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="365" y="24" width="1" height="68" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="368" y="24" width="1" height="68" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
@@ -281,59 +263,121 @@ order by
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement mode="Opaque" x="315" y="0" width="50" height="23" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="316" y="0" width="51" height="22" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientedc}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="315" y="35" width="50" height="13"/>
+					<reportElement x="315" y="35" width="52" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC1}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="315" y="49" width="50" height="12"/>
+					<reportElement x="315" y="49" width="52" height="12"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC2}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="315" y="62" width="50" height="12"/>
+					<reportElement x="315" y="62" width="52" height="12"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC3}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="315" y="75" width="50" height="15"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC}]]></textFieldExpression>
-				</textField>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="213" y="0" width="1" height="23" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="212" y="0" width="1" height="23" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement mode="Opaque" x="266" y="0" width="47" height="21" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="266" y="0" width="47" height="22" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Long"><![CDATA[$V{totalPacientesUs}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement key="line-3" mode="Opaque" x="212" y="35" width="1" height="13" forecolor="#000000" backcolor="#000000"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-3" mode="Opaque" x="212" y="49" width="1" height="12" forecolor="#000000" backcolor="#000000"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-3" mode="Opaque" x="212" y="62" width="1" height="12" forecolor="#000000" backcolor="#000000"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-3" mode="Opaque" x="212" y="75" width="1" height="15" forecolor="#000000" backcolor="#000000"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="266" y="75" width="47" height="15" backcolor="#E4E4F4"/>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="316" y="76" width="51" height="14" backcolor="#E4E4F4"/>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
 				<textField>
-					<reportElement mode="Opaque" x="216" y="0" width="47" height="21" backcolor="#D0D8FC"/>
+					<reportElement x="316" y="76" width="51" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Long"><![CDATA[$V{totalPacientesEmTARV}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="267" y="35" width="46" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDDUS1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="267" y="50" width="46" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDDUS2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="267" y="62" width="46" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDDUS3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="266" y="76" width="47" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDDUS}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="213" y="0" width="50" height="22" backcolor="#D0D8FC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{pacientesEmTarv}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -362,7 +406,7 @@ order by
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="0" y="20" width="365" height="1"/>
+				<reportElement x="0" y="20" width="368" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
@@ -374,13 +418,13 @@ order by
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="365" y="0" width="1" height="21" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-3" mode="Opaque" x="368" y="0" width="1" height="21" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="61" y="0" width="152" height="20"/>
+				<reportElement x="61" y="0" width="151" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -401,20 +445,20 @@ order by
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{contagem}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="315" y="0" width="50" height="20"/>
+				<reportElement x="316" y="0" width="51" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{dccontagem}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="213" y="1" width="1" height="20" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-3" mode="Opaque" x="212" y="0" width="1" height="20" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="267" y="1" width="43" height="19"/>
+				<reportElement x="266" y="1" width="47" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>

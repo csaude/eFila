@@ -263,6 +263,7 @@ public class DadosPacienteFarmac {
                     newPD.setModified(syncTempDispense.getModified());
                     newPD.setPrescription(prescription);
                     newPD.setTimesPerDay(syncTempDispense.getTimesperday());
+                    newPD.setTakePeriod(drug.getDefaultTakePeriod());
                     prescribedDrugsList.add(newPD);
 
                     prescription.setPrescribedDrugs(prescribedDrugsList);

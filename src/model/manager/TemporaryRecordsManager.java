@@ -35,16 +35,17 @@ public class TemporaryRecordsManager {
             if (pdi.getId() == 0) {
                 try {
                     s.save(pdi);
+
+                    //Para farmac Insere dispensas para US
+                    if (CentralizationProperties.centralization.equalsIgnoreCase("on") ) {
+                        if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")){
+                            savePackageDrugInfosFarmac(pdi, 'P');
+                        } else if (pdi.getFlagIdentifier().equalsIgnoreCase("Sim")) {
+                            savePackageDrugInfosFarmac(pdi, 'N');
+                        }
+                    }
                 } catch (Exception e) {
                     log.trace("Erro 1: " + e.getMessage());
-                }
-                //Para farmac Insere dispensas para US
-                if (CentralizationProperties.centralization.equalsIgnoreCase("on") ) {
-                    if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")){
-                        savePackageDrugInfosFarmac(pdi, 'P');
-                    } else if (pdi.getFlagIdentifier().equalsIgnoreCase("Sim")) {
-                        savePackageDrugInfosFarmac(pdi, 'N');
-                    }
                 }
             }
         }

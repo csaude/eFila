@@ -2,28 +2,28 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaReportMISAU" pageWidth="640" pageHeight="842" columnWidth="580" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isIgnorePagination="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.1586575189467514"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="table">
+	<style name="table" isDefault="false">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+	<style name="table_TH" isDefault="false" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+	<style name="table_CH" isDefault="false" mode="Opaque" backcolor="#BFE1FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table_TD" isDefault="false" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
@@ -105,6 +105,10 @@
 	<parameter name="totallinhasDC2" class="java.lang.String"/>
 	<parameter name="totallinhasDC3" class="java.lang.String"/>
 	<parameter name="totallinhasDC" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS1" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS2" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS3" class="java.lang.String"/>
+	<parameter name="totallinhasDDUS" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
 distinct d.id,
@@ -143,47 +147,56 @@ order by atccode_id asc]]>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement x="0" y="29" width="365" height="1"/>
+					<reportElement x="0" y="29" width="369" height="1"/>
 					<graphicElement>
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="62" y="2" width="150" height="27" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="61" y="2" width="150" height="26" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[REGIME TERAPÊUTICO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="213" y="2" width="49" height="27" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="214" y="2" width="50" height="26" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total doentes]]></text>
 				</staticText>
 				<subreport>
-					<reportElement x="0" y="31" width="366" height="21"/>
+					<reportElement x="0" y="31" width="368" height="21"/>
 					<subreportParameter name="totalpacientesfarmacia">
 						<subreportParameterExpression><![CDATA[$P{totalpacientesfarmacia}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="monthEnd">
 						<subreportParameterExpression><![CDATA[$P{monthEnd}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="diseaseType">
-						<subreportParameterExpression><![CDATA[$P{diseaseType}]]></subreportParameterExpression>
+					<subreportParameter name="totallinhasDDUS3">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDDUS3}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="dateEnd">
 						<subreportParameterExpression><![CDATA[$P{dateEnd}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter name="diseaseType">
+						<subreportParameterExpression><![CDATA[$P{diseaseType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDDUS2">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDDUS2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDDUS1">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDDUS1}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="date">
 						<subreportParameterExpression><![CDATA[$P{date}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="monthStart">
-						<subreportParameterExpression><![CDATA[$P{monthStart}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="dataelaboracao">
 						<subreportParameterExpression><![CDATA[$P{dataelaboracao}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="monthStart">
+						<subreportParameterExpression><![CDATA[$P{monthStart}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhasDC2">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC2}]]></subreportParameterExpression>
@@ -191,11 +204,11 @@ order by atccode_id asc]]>
 					<subreportParameter name="totallinhasDC3">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC3}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="username">
-						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="pacientesEmTarv">
 						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="username">
+						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhasDC1">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC1}]]></subreportParameterExpression>
@@ -214,6 +227,9 @@ order by atccode_id asc]]>
 					</subreportParameter>
 					<subreportParameter name="totalpacientedc">
 						<subreportParameterExpression><![CDATA[$P{totalpacientedc}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totallinhasDDUS">
+						<subreportParameterExpression><![CDATA[$P{totallinhasDDUS}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhas">
 						<subreportParameterExpression><![CDATA[$P{totallinhas}]]></subreportParameterExpression>
@@ -303,7 +319,7 @@ order by atccode_id asc]]>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="18" width="103" height="13" backcolor="#D0D8FC">
+					<reportElement mode="Opaque" x="370" y="18" width="102" height="13" backcolor="#D0D8FC">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -313,7 +329,7 @@ order by atccode_id asc]]>
 					<text><![CDATA[ Novos]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="32" width="103" height="13" backcolor="#D0D8FC">
+					<reportElement mode="Opaque" x="370" y="32" width="102" height="13" backcolor="#D0D8FC">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -323,7 +339,7 @@ order by atccode_id asc]]>
 					<text><![CDATA[ Manutenção]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="46" width="103" height="13" backcolor="#D0D8FC">
+					<reportElement mode="Opaque" x="370" y="46" width="102" height="13" backcolor="#D0D8FC">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -333,7 +349,7 @@ order by atccode_id asc]]>
 					<text><![CDATA[ Alteração]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="74" width="103" height="13" backcolor="#D0D8FC">
+					<reportElement mode="Opaque" x="370" y="74" width="102" height="13" backcolor="#D0D8FC">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -421,7 +437,7 @@ order by atccode_id asc]]>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="1" width="208" height="16" forecolor="#FFFFFF" backcolor="#000000">
+					<reportElement mode="Opaque" x="370" y="1" width="207" height="16" forecolor="#FFFFFF" backcolor="#000000">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -431,7 +447,7 @@ order by atccode_id asc]]>
 					<text><![CDATA[Tipo de doentes em TARV]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="60" width="103" height="13" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="370" y="60" width="102" height="13" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Justified" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -455,7 +471,7 @@ order by atccode_id asc]]>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="369" y="88" width="208" height="15" forecolor="#FFFFFF" backcolor="#000000">
+					<reportElement mode="Opaque" x="370" y="88" width="207" height="15" forecolor="#FFFFFF" backcolor="#000000">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -514,7 +530,7 @@ order by atccode_id asc]]>
 					<text><![CDATA[ Pediátricos 10 aos 14 anos]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-4" mode="Opaque" x="368" y="1" width="1" height="424" forecolor="#000000" backcolor="#000000">
+					<reportElement key="line-4" mode="Opaque" x="369" y="1" width="1" height="424" forecolor="#000000" backcolor="#000000">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
@@ -687,13 +703,13 @@ order by atccode_id asc]]>
 					<reportElement x="369" y="342" width="122" height="1"/>
 				</line>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="365" y="1" width="1" height="29" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="368" y="1" width="1" height="29" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="315" y="2" width="50" height="27" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="316" y="2" width="51" height="26" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -714,49 +730,49 @@ order by atccode_id asc]]>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientestransito}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="475" y="32" width="99" height="13"/>
+					<reportElement x="475" y="32" width="97" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesmanter}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="475" y="46" width="99" height="13"/>
+					<reportElement x="475" y="46" width="98" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesalterar}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="474" y="74" width="100" height="13"/>
+					<reportElement x="475" y="74" width="99" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientestransferidoDe}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="473" y="104" width="100" height="14"/>
+					<reportElement x="475" y="104" width="99" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesadulto}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="473" y="119" width="101" height="14"/>
+					<reportElement x="475" y="119" width="99" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientes04}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="474" y="135" width="101" height="14"/>
+					<reportElement x="475" y="135" width="98" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientes59}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="474" y="150" width="100" height="14"/>
+					<reportElement x="475" y="150" width="99" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -777,7 +793,7 @@ order by atccode_id asc]]>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientesprep}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="474" y="211" width="100" height="14"/>
+					<reportElement x="475" y="211" width="99" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -1065,13 +1081,13 @@ order by atccode_id asc]]>
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="262" y="2" width="1" height="28" forecolor="#000000" backcolor="#000000"/>
+					<reportElement key="line-3" mode="Opaque" x="264" y="1" width="1" height="29" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Opaque" x="265" y="2" width="48" height="27" backcolor="#D0D8FC"/>
+					<reportElement mode="Opaque" x="266" y="2" width="47" height="26" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -1163,7 +1179,7 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_drug" mode="Opaque" x="61" y="93" width="152" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
+				<reportElement key="st_drug" mode="Opaque" x="62" y="93" width="149" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1234,13 +1250,13 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="214" y="92" width="1" height="26" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-3" mode="Opaque" x="212" y="92" width="1" height="27" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="314" y="92" width="1" height="26" forecolor="#000000" backcolor="#000000"/>
+				<reportElement key="line-3" mode="Opaque" x="314" y="92" width="1" height="27" forecolor="#000000" backcolor="#000000"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0"/>
 				</graphicElement>
@@ -1391,7 +1407,7 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_facilityName" mode="Transparent" x="3" y="74" width="57" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_facilityName" mode="Transparent" x="3" y="74" width="47" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1429,7 +1445,7 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_drug" mode="Opaque" x="2" y="93" width="58" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
+				<reportElement key="st_drug" mode="Opaque" x="2" y="93" width="57" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1485,7 +1501,7 @@ MAPA MENSAL DE INFORMAÇÃO ARV]]></text>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="st_openingBalance-2" mode="Opaque" x="215" y="93" width="48" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
+				<reportElement key="st_openingBalance-2" mode="Opaque" x="214" y="93" width="49" height="25" forecolor="#000000" backcolor="#D0D8FC"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

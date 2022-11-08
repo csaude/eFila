@@ -114,6 +114,10 @@ public class MiaReport extends AbstractJasperReport {
             int totallinhasDC2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC2").toString());
             int totallinhasDC3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC3").toString());
 
+            int totallinhasDDUS1 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS1").toString());
+            int totallinhasDDUS2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS2").toString());
+            int totallinhasDDUS3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS3").toString());
+
             int totalpacientesppe = Integer.parseInt(mapaDoMMIA.get("totalpacientesppe").toString());
             int totalpacientesprep = Integer.parseInt(mapaDoMMIA.get("totalpacientesprep").toString());
             int totalpacientesCE = Integer.parseInt(mapaDoMMIA.get("totalpacientesCE").toString());
@@ -193,6 +197,11 @@ public class MiaReport extends AbstractJasperReport {
             map.put("totallinhasDC2", String.valueOf(totallinhasDC2));
             map.put("totallinhasDC3", String.valueOf(totallinhasDC3));
             map.put("totallinhasDC", String.valueOf(totallinhasDC3 + totallinhasDC2 + totallinhasDC1));
+
+            map.put("totallinhasDDUS1", String.valueOf(totallinhasDDUS1));
+            map.put("totallinhasDDUS2", String.valueOf(totallinhasDDUS2));
+            map.put("totallinhasDDUS3", String.valueOf(totallinhasDDUS3));
+            map.put("totallinhasDDUS", String.valueOf(totallinhasDDUS1 + totallinhasDDUS2 + totallinhasDDUS3));
 
             map.put("totalpacientesppe", String.valueOf(totalpacientesppe));
             map.put("totalpacientesCE", String.valueOf(totalpacientesCE));

@@ -56,6 +56,9 @@ public class MmiaReportExcel implements IRunnableWithProgress {
     int totallinhasDC1;
     int totallinhasDC2;
     int totallinhasDC3;
+    int totallinhasDDUS1;
+    int totallinhasDDUS2;
+    int totallinhasDDUS3;
     int totalpacientesprep;
     int totalpacientesCE;
     int totalpacientedc;
@@ -166,6 +169,10 @@ public class MmiaReportExcel implements IRunnableWithProgress {
              totallinhasDC1 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC1").toString());
              totallinhasDC2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC2").toString());
              totallinhasDC3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDC3").toString());
+
+             totallinhasDDUS1 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS1").toString());
+             totallinhasDDUS2 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS2").toString());
+             totallinhasDDUS3 = Integer.parseInt(mapaDoMMIA.get("totallinhasDDUS3").toString());
 
              totalpacientesppe = Integer.parseInt(mapaDoMMIA.get("totalpacientesppe").toString());
              totalpacientesprep = Integer.parseInt(mapaDoMMIA.get("totalpacientesprep").toString());
@@ -303,13 +310,13 @@ public class MmiaReportExcel implements IRunnableWithProgress {
                 createCelltotalPacienteTiltle.setCellValue("Total Doentes");
                 createCelltotalPacienteTiltle.setCellStyle(cellStyleFixedTotals);
 
-                HSSFCell createCellTotalFarmaciaComunitariaTiltle = centerRow.createCell(4);
-                createCellTotalFarmaciaComunitariaTiltle.setCellValue("Farmacia Comunitária");
-                createCellTotalFarmaciaComunitariaTiltle.setCellStyle(cellStyleFixedTotals);
-
-                HSSFCell createCellTotalFarmaciaUnidadeSanitariaTiltle = centerRow.createCell(5);
-                createCellTotalFarmaciaUnidadeSanitariaTiltle.setCellValue("Farmácia da Unidade Sanitária");
+                HSSFCell createCellTotalFarmaciaUnidadeSanitariaTiltle = centerRow.createCell(4);
+                createCellTotalFarmaciaUnidadeSanitariaTiltle.setCellValue("Farmácia US");
                 createCellTotalFarmaciaUnidadeSanitariaTiltle.setCellStyle(cellStyleFixedTotals);
+
+                HSSFCell createCellTotalFarmaciaComunitariaTiltle = centerRow.createCell(5);
+                createCellTotalFarmaciaComunitariaTiltle.setCellValue("Farmácia Comunitária");
+                createCellTotalFarmaciaComunitariaTiltle.setCellStyle(cellStyleFixedTotals);
 
                 HSSFCell createCellPacienntesTARVTiltle = centerRow.createCell(6);
                 createCellPacienntesTARVTiltle.setCellValue("Tipo de doentes em TARV");
@@ -483,13 +490,13 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             createCelltotalPaciente.setCellValue(xls.getTotalDoentes());
             createCelltotalPaciente.setCellStyle(cellStyle);
 
-            HSSFCell createCellTotalFarmaciaComunitaria = row.createCell(4);
-            createCellTotalFarmaciaComunitaria.setCellValue(xls.getTotalDoentesFarmaciaComunitaria());
-            createCellTotalFarmaciaComunitaria.setCellStyle(cellStyle);
-
-            HSSFCell createCellTotalFarmaciaUnidadeSaniaria = row.createCell(5);
+            HSSFCell createCellTotalFarmaciaUnidadeSaniaria = row.createCell(4);
             createCellTotalFarmaciaUnidadeSaniaria.setCellValue(xls.getTotalDoentesUnidadeSanitaria());
             createCellTotalFarmaciaUnidadeSaniaria.setCellStyle(cellStyle);
+
+            HSSFCell createCellTotalFarmaciaComunitaria = row.createCell(5);
+            createCellTotalFarmaciaComunitaria.setCellValue(xls.getTotalDoentesFarmaciaComunitaria());
+            createCellTotalFarmaciaComunitaria.setCellStyle(cellStyle);
 
             totalDoentes = totalDoentes + Integer.parseInt(xls.getTotalDoentes()) - Integer.parseInt(xls.getTotalDoentesPREP());
             totalDoentesDC = totalDoentesDC + Integer.parseInt(xls.getTotalDoentesFarmaciaComunitaria());
@@ -499,21 +506,23 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         // Last Row
         int lastrow = ++i;
 
-        for (int g = lastrow; g <= lastrow + 4; g++) {
+        for (int g = lastrow; g <= lastrow + 5; g++) {
             if (sheet.getRow(g) == null)
                 row = sheet.createRow(g);
             else
                 row = sheet.getRow(g);
             if (lastrow == g)
-                fillOutTotals(row, cellStyleTotals, cellStyle, "Total Doentes", String.valueOf(totalDoentes), String.valueOf(totalDoentesDC));
+                fillOutTotals(row, cellStyleTotals, cellStyle, "Total Doentes", String.valueOf(totalDoentes), String.valueOf(totalDoentesDC), String.valueOf(totalDoentesUS));
             else if (lastrow + 1 == g)
-                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "1as Linhas", String.valueOf(totallinhas1), String.valueOf(totallinhasDC1));
+                fillOutTotals(row, cellStyleTotals, cellStyle, "Linhas Terapêuticas", String.valueOf(""), String.valueOf(""), String.valueOf(""));
             else if (lastrow + 2 == g)
-                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "2as Linhas", String.valueOf(totallinhas2), String.valueOf(totallinhasDC2));
+                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "1as Linhas", String.valueOf(totallinhas1), String.valueOf(totallinhasDC1), String.valueOf(totallinhasDDUS1));
             else if (lastrow + 3 == g)
-                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "3as Linhas", String.valueOf(totallinhas3), String.valueOf(totallinhasDC3));
+                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "2as Linhas", String.valueOf(totallinhas2), String.valueOf(totallinhasDC2), String.valueOf(totallinhasDDUS2));
             else if (lastrow + 4 == g)
-                fillOutTotals(row, cellStyleTotals, cellStyle, "Total Linhas", String.valueOf(totallinhas1 + totallinhas2 + totallinhas3), String.valueOf(totallinhasDC1 + totallinhasDC2 + totallinhasDC3));
+                fillOutTotals(row, cellStyleAlignRLeft, cellStyle, "3as Linhas", String.valueOf(totallinhas3), String.valueOf(totallinhasDC3), String.valueOf(totallinhasDDUS3));
+            else if (lastrow + 5 == g)
+                fillOutTotals(row, cellStyleTotals, cellStyle, "Total Linhas", String.valueOf(totallinhas1 + totallinhas2 + totallinhas3), String.valueOf(totallinhasDC1 + totallinhasDC2 + totallinhasDC3), String.valueOf(totallinhasDDUS1 + totallinhasDDUS2 + totallinhasDDUS3));
         }
 
         for (int i0 = 1; i0 < MmiaRegimeTerapeutico.class.getClass().getDeclaredFields().length; i0++) {
@@ -524,90 +533,90 @@ public class MmiaReportExcel implements IRunnableWithProgress {
     public void fillOutStatisticResume(HSSFSheet sheet, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleLabel, HSSFCellStyle cellStyleAlignRight, int rowNum) {
         int a;
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Novos");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesinicio));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Novos");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesinicio));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Manutenção");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesmanter));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Manutenção");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesmanter));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Alteração");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesalterar));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Alteração");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesalterar));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Trânsito");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientestransito));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Trânsito");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientestransito));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Transferências");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientestransferidoDe));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Transferências");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientestransferidoDe));
 
-        fillOutOthers(sheet.createRow(rowNum++).createCell(5), cellStyleLabel, "Faixa Etária dos Pacientes TARV");
+        fillOutOthers(sheet.createRow(rowNum++).createCell(6), cellStyleLabel, "Faixa Etária dos Pacientes TARV");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Adultos");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(adultosEmTarv));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Adultos");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(adultosEmTarv));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Pediátricos 0 aos 4 anos");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(pediatrico04EmTARV));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Pediátricos 0 aos 4 anos");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(pediatrico04EmTARV));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Pediátricos 5 aos 9 anos");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(pediatrico59EmTARV));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Pediátricos 5 aos 9 anos");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(pediatrico59EmTARV));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Pediátricos 10 aos 14 anos");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(pediatrico1014EmTARV));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Pediátricos 10 aos 14 anos");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(pediatrico1014EmTARV));
 
-        fillOutOthers(sheet.createRow(rowNum++).createCell(5), cellStyleLabel, "Profilaxia");
+        fillOutOthers(sheet.createRow(rowNum++).createCell(6), cellStyleLabel, "Profilaxia");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "PPE");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesppe));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "PPE");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesppe));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "PrEP");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesprep));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "PrEP");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesprep));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Criança Exposta");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalpacientesCE));
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Criança Exposta");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalpacientesCE));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleAlignRight, "Total de pacientes em TARV na US:");
-        fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, "Ver Resumo Mensal");
+        fillOutOthers(sheet.createRow(a = rowNum++).createCell(6), cellStyleAlignRight, "Total de pacientes em TARV na US:");
+        fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, "Ver Resumo Mensal");
 
-        fillOutOthers(sheet.createRow(rowNum++).createCell(5), cellStyleLabel, "Tipo de Dispensa");
+        fillOutOthers(sheet.createRow(3 + rowNum++).createCell(5), cellStyleLabel, "Tipo de Dispensa");
 
-        fillOutOthers(sheet.createRow(rowNum++).createCell(6), cellStyleLabel, "Dispensa Semestral (DS)");
+        fillOutOthers(sheet.createRow(3 + rowNum++).createCell(6), cellStyleLabel, "Dispensa Semestral (DS)");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 5");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "Mês - 5");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM5));
         fillOutOthers(sheet.getRow(a).createCell(8), cellStyleLabel, "Ajuste");
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyle, roundedAjuste+" %");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 4");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "Mês - 4");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM4));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 3");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "Mês - 3");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM3));
         fillOutOthers(sheet.getRow(a).createCell(7), cellStyleLabel, "Dispensa Trimestral (DT)");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 2");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "Mês - 2");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM2));
         fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalDTM2));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "Mês - 1");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "Mês - 1");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDSM1));
         fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalDTM1));
         fillOutOthers(sheet.getRow(a).createCell(8), cellStyleLabel, "Dispensa Mensal (DM)");
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyleLabel, "Total");
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyle, "No Mês");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyle, "No Mês");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(pacientesdispensadosparaDS));
         fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(pacientesdispensadosparaDT));
         fillOutOthers(sheet.getRow(a).createCell(8), cellStyle, String.valueOf(pacientesdispensadosparaDM));
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyle, String.valueOf(totalMes));
 
-        fillOutOthers(sheet.createRow(a = rowNum++).createCell(5), cellStyleLabel, "Total de Pacientes c/ Tratamento");
+        fillOutOthers(sheet.createRow(a = 3 + rowNum++).createCell(5), cellStyleLabel, "Total de Pacientes c/ Tratamento");
         fillOutOthers(sheet.getRow(a).createCell(6), cellStyle, String.valueOf(totalDS));
         fillOutOthers(sheet.getRow(a).createCell(7), cellStyle, String.valueOf(totalDT));
         fillOutOthers(sheet.getRow(a).createCell(8), cellStyle, String.valueOf(pacientesdispensadosparaDM));
         fillOutOthers(sheet.getRow(a).createCell(9), cellStyle, String.valueOf(totalGeral));
 
-        fillOutOthers(sheet.createRow(rowNum++).createCell(5), cellStyleAlignRight, " Observações: ");
+        fillOutOthers(sheet.createRow(6 + rowNum++).createCell(6), cellStyleAlignRight, "Observações:");
 
-        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
 
     }
 
@@ -616,7 +625,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         row.setCellStyle(cellStyleRight);
     }
 
-    public void fillOutTotals(HSSFRow row, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleRight, String cellName, String cellValue1, String cellValue2) {
+    public void fillOutTotals(HSSFRow row, HSSFCellStyle cellStyle, HSSFCellStyle cellStyleRight, String cellName, String cellValue1, String cellValue2, String cellValue3) {
 
         HSSFCell createCellEmpty1 = row.createCell(1);
         createCellEmpty1.setCellStyle(cellStyle);
@@ -630,8 +639,12 @@ public class MmiaReportExcel implements IRunnableWithProgress {
         createCellValue.setCellStyle(cellStyleRight);
 
         HSSFCell createCellEmpty2 = row.createCell(4);
-        createCellEmpty2.setCellValue(cellValue2);
+        createCellEmpty2.setCellValue(cellValue3);
         createCellEmpty2.setCellStyle(cellStyleRight);
+
+        HSSFCell createCellEmpty3 = row.createCell(5);
+        createCellEmpty3.setCellValue(cellValue2);
+        createCellEmpty3.setCellStyle(cellStyleRight);
 
     }
 
