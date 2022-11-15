@@ -242,7 +242,7 @@ public class PackageProcessingReportGUI extends GenericReportGui {
 	protected void cmdViewReportWidgetSelected() {
 		if (fieldsOk()) {
 			Clinic c = AdministrationManager.getClinic(getHSession(), cmbClinic
-					.getText().trim());
+					.getText());
 
 			PackageProcessingReport report = new PackageProcessingReport(
 					getShell(), c, calendarStart.getCalendar().getTime(),

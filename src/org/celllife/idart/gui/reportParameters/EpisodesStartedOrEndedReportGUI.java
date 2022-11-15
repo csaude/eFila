@@ -361,7 +361,7 @@ public class EpisodesStartedOrEndedReportGUI extends GenericReportGui {
 
 		else {
 			Clinic c = AdministrationManager.getClinic(getHSession(), cmbClinic
-					.getText().trim());
+					.getText());
 
 			EpisodesStartedOrEndedReport report = new EpisodesStartedOrEndedReport(
 					getShell(),

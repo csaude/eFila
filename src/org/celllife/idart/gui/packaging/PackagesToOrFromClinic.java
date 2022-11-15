@@ -407,7 +407,7 @@ public class PackagesToOrFromClinic extends GenericReportGui {
 			return;
 
 		Clinic c = AdministrationManager.getClinic(getHSession(), cmbClinic
-				.getText().trim());
+				.getText());
 
 		PackageProcessingReport report = new PackageProcessingReport(
 				getShell(), c, btnScanDate.getDate(),

@@ -1,5 +1,6 @@
 package model.manager.reports;
 
+import migracao.entidades.PersonName;
 import model.manager.PackageManager;
 import model.manager.excel.conversion.exceptions.ReportException;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
@@ -88,13 +89,15 @@ public class PackageProcessingReport extends AbstractJasperReport {
 
 		if (lifeStage.equals(PackageLifeStage.PICKED_UP)
 				|| lifeStage.equals(PackageLifeStage.SCANNED_OUT)) {
-			header = new String[] { "index", "date",
+			header = new String[]{"index", "date",
 					"patientInfo", "drugsAndQuantities", "prescriptionInfo",
-					"packageId", };
+					"packageId",};
 			int counter = 1;
 			String dateStr = "";
 			String lastDateStr = "";
 			for (Packages p : packageList) {
+				try {
+
 				Prescription pre = p.getPrescription();
 				Patient pat = pre.getPatient();
 				dateStr = packDateFormat.format(lifeStage.getPackageDate(p));
@@ -118,24 +121,33 @@ public class PackageProcessingReport extends AbstractJasperReport {
 						+ pat.getLastname()
 						+ "\nDOB: "
 						+ new SimpleDateFormat("dd/MM/yyyy ").format(pat
-								.getDateOfBirth())
-								+ "\n"
-								+ iDARTUtil.getSexString(pat.getSex()) : pat
-								.getPatientId();
+						.getDateOfBirth())
+						+ "\n"
+						+ iDARTUtil.getSexString(pat.getSex()) : pat
+						.getPatientId();
 				packageString[3] = PackageManager.getLongPackageContentsString(
 						hSession, p);
 				packageString[4] = "Prescribed By: "
-					+ pre.getDoctor().getFullname()
-					+ "\n("
-					+ p.getPackageId()
-					.charAt(p.getPackageId().length() - 1)
-					+ " of "
-					+ (pre.getDuration() >= 4 ? (pre.getDuration() / 4)
-							+ " months)" : pre.getDuration() + " weeks)");
+						+ pre.getDoctor().getFullname()
+						+ "\n("
+						+ p.getPackageId()
+						.charAt(p.getPackageId().length() - 1)
+						+ " of "
+						+ (pre.getDuration() >= 4 ? (pre.getDuration() / 4)
+						+ " months)" : pre.getDuration() + " weeks)");
 				packageString[5] = p.getPackageId();
 
-								returnList.add(packageString);
-			}
+				returnList.add(packageString);
+				} catch (Exception e) {
+					System.err.println("Dados do paciente em falta: (NID) [" +p.getPrescription().getPatient().getPatientId()+ "] Error: "+e.getLocalizedMessage());
+					log.error("Dados do paciente em falta: (NID) [" +p.getPrescription().getPatient().getPatientId()+ "] Verifique os dados demograficos do Paciente: ");
+					break;
+
+				} finally {
+
+					continue;
+				}
+		}
 
 		} else {
 			header = new String[] { "date", "packageid", "patientname",

@@ -80,93 +80,109 @@ public class RestClient {
 
         String customizedDosage = null;
 
-            List<String> obsGroups = new ArrayList<>();
+        List<String> obsGroups = new ArrayList<>();
 
-            for (PackagedDrugs pg: packagedDrugs){
-                        String formulationString = "{\"" +
-                                "person\":\"" + nidUuid + "\"," +
-                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
-                                "\"value\":\"" + pg.getStock().getDrug().getUuidopenmrs() + "\"," +
-                                "\"comment\":\"IDART\"" +
-                                "}";
-                        String quantityString = "{\"" +
-                                "person\":\"" + nidUuid + "\"," +
-                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
-                                "\"value\":\"" + dispennsedQty + "\"," +
-                                "\"comment\":\"IDART\"" +
-                                "}";
+        for (PackagedDrugs pg : packagedDrugs) {
 
-                        String dosageString = "{\"" +
-                                "person\":\"" + nidUuid + "\"," +
-                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
-                                "\"value\":\"" + pg.getStock().getDrug().getDefaultTimes() + "\"," +
-                                "\"comment\":\"IDART\"" +
-                                "}";
-
-                        String obsGroup = "{\"" +
-                                "person\":\"" + nidUuid + "\"," +
-                                "\"obsDatetime\":\"" + encounterDatetime + "\"," +
-                                "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
-                                "\"comment\":\"IDART\"," +
-                                "\"groupMembers\": [" + formulationString + "," + quantityString + "," + dosageString + "]" +
-                                "}";
-
-                        obsGroups.add(obsGroup);
-            }
-
-            String obsGroupsJson = null;
-
-            String dispenseMod = "";
-
-            for (String group : obsGroups){
-                if (!iDARTUtil.stringHasValue(obsGroupsJson))
-                    obsGroupsJson = group;
-                else {
-                    obsGroupsJson = obsGroupsJson + "," + group;
+            for (PrescribedDrugs pd : prescribedDrugs) {
+                try {
+                    if (pd.getDrug().getAtccode().trim().equalsIgnoreCase(pg.getStock().getDrug().getAtccode().trim())) {
+                        customizedDosage = getPosologyFromDrug(pd);
+                        break;
+                    }
+                } catch (Exception e) {
+                    log.error("O medicamento prescrito [" + pd.getDrug().getName() + "] nao contem posologia");
+                } finally {
+                    continue;
                 }
 
+
             }
 
-            //Dispensed amount
-            packSize = String.valueOf(packagedDrugs.get(0).getAmount());
 
-            //posologia
-            dosage = String.valueOf(prescribedDrugs.get(0).getTimesPerDay());
+            String formulationString = "{\"" +
+                    "person\":\"" + nidUuid + "\"," +
+                    "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                    "\"concept\":\"7956cd89-2ef6-4d25-90f9-f8940507eee8\"," +
+                    "\"value\":\"" + pg.getStock().getDrug().getUuidopenmrs() + "\"," +
+                    "\"comment\":\"IDART\"" +
+                    "}";
+            String quantityString = "{\"" +
+                    "person\":\"" + nidUuid + "\"," +
+                    "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                    "\"concept\":\"e1de2ca0-1d5f-11e0-b929-000c29ad1d07\"," +
+                    "\"value\":\"" + pg.getAmount() + "\"," +
+                    "\"comment\":\"IDART\"" +
+                    "}";
 
-            customizedDosage = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(0).getAmtPerTime()))
-                    + iDartProperties.COMP + dosage + iDartProperties.VEZES_DIA;
+            String dosageString = "{\"" +
+                    "person\":\"" + nidUuid + "\"," +
+                    "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                    "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
+                    "\"value\":\"" + customizedDosage + "\"," +
+                    "\"comment\":\"IDART\"" +
+                    "}";
 
-            if(!answerDispenseModeUuid.isEmpty()){
-                dispenseMod = "{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"},";
+            String obsGroup = "{\"" +
+                    "person\":\"" + nidUuid + "\"," +
+                    "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                    "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
+                    "\"comment\":\"IDART\"," +
+                    "\"groupMembers\": [" + formulationString + "," + quantityString + "," + dosageString + "]" +
+                    "}";
+
+            obsGroups.add(obsGroup);
+        }
+
+        String obsGroupsJson = null;
+
+        String dispenseMod = "";
+
+        for (String group : obsGroups) {
+            if (!iDARTUtil.stringHasValue(obsGroupsJson))
+                obsGroupsJson = group;
+            else {
+                obsGroupsJson = obsGroupsJson + "," + group;
             }
 
-            inputAddPerson = new StringEntity(
-                    "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
-                            + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
-                            + "\"obs\":["
-                            + "{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},"
-                            + "{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\",\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},"
-                            + "{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},"
-                            + "{\"person\":\"" + nidUuid + "\","
-                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
-                            + dispenseMod
-                            + obsGroupsJson
-                            + "]"
-                            + "}"
-                    , "UTF-8");
+        }
 
-            System.out.println(IOUtils.toString(inputAddPerson.getContent()));
+        //Dispensed amount
+        packSize = String.valueOf(packagedDrugs.get(0).getAmount());
+
+        //posologia
+        dosage = String.valueOf(prescribedDrugs.get(0).getTimesPerDay());
+
+        customizedDosage = iDartProperties.TOMAR + String.valueOf((int) (prescribedDrugs.get(0).getAmtPerTime()))
+                + iDartProperties.COMP + dosage + iDartProperties.VEZES_DIA;
+
+        if (!answerDispenseModeUuid.isEmpty()) {
+            dispenseMod = "{\"person\":\"" + nidUuid + "\","
+                    + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"},";
+        }
+
+        inputAddPerson = new StringEntity(
+                "{\"encounterDatetime\": \"" + encounterDatetime + "\", \"patient\": \"" + nidUuid + "\", \"encounterType\": \"" + encounterType + "\", "
+                        + "\"location\":\"" + strFacilityUuid + "\", \"form\":\"" + filaUuid + "\", \"encounterProviders\":[{\"provider\":\"" + providerUuid + "\", \"encounterRole\":\"a0b03050-c99b-11e0-9572-0800200c9a66\"}], "
+                        + "\"obs\":["
+                        + "{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + regimeUuid + "\",\"value\":\"" + strRegimenAnswerUuid + "\", \"comment\":\"IDART\"},"
+                        + "{\"person\":\"" + nidUuid + "\",\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispensedAmountUuid + "\",\"value\":\"" + packSize + "\",\"comment\":\"IDART\"},"
+                        + "{\"person\":\"" + nidUuid + "\","
+                        + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dosageUuid + "\",\"value\":\"" + customizedDosage + "\",\"comment\":\"IDART\"},"
+                        + "{\"person\":\"" + nidUuid + "\","
+                        + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"},"
+                        + dispenseMod
+                        + obsGroupsJson
+                        + "]"
+                        + "}"
+                , "UTF-8");
+
+        System.out.println(IOUtils.toString(inputAddPerson.getContent()));
 
         inputAddPerson.setContentType("application/json");
         //log.info("AddPerson = " + ApiAuthRest.getRequestPost("encounter",inputAddPerson));
         return ApiAuthRest.getRequestPost("encounter", inputAddPerson);
     }
-
 
     public boolean postOpenMRSEncounterFILT(String encounterDatetime, String nidUuid, String encounterType, String strFacilityUuid,
                                             String filtUuid, String providerUuid, String regimeFiltUuid, String tipoDispensaUuid, String seguimentoFiltUuid,
@@ -196,9 +212,9 @@ public class RestClient {
                 else if (prescription.getDispensaSemestral() == 1)
                     tipoDispensa = iDartProperties.FILT_SEMESTRAL_DISPENSED_TYPE_UUID;
                 else {
-                    if (iDARTUtil.is1XOpenMRS(prop.getProperty("openMRSVersion"))){
+                    if (iDARTUtil.is1XOpenMRS(prop.getProperty("openMRSVersion"))) {
                         tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID_1X;
-                    }else {
+                    } else {
                         tipoDispensa = iDartProperties.FILT_MONTHLY_DISPENSED_TYPE_UUID_2X;
                     }
                 }
@@ -212,14 +228,14 @@ public class RestClient {
                 else
                     tipoPrescricao = iDartProperties.FILT_TPT_CONTINUE_FOLLOW_UP_UUID;
 
-                if(!answerDispenseModeUuid.isEmpty()){
+                if (!answerDispenseModeUuid.isEmpty()) {
                     dispenseMod = " {\"person\":\"" + nidUuid + "\","
                             + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + dispenseModeUuid + "\",\"value\":\"" + answerDispenseModeUuid + "\",\"comment\":\"IDART\"}";
                 }
 
-                if(!prescription.getReasonForUpdate().contains("Fim")){
+                if (!prescription.getReasonForUpdate().contains("Fim")) {
                     dataProximoLev = ", {\"person\":\"" + nidUuid + "\","
-                                + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}";
+                            + "\"obsDatetime\":\"" + encounterDatetime + "\",\"concept\":\"" + returnVisitUuid + "\",\"value\":\"" + strNextPickUp + "\",\"comment\":\"IDART\"}";
                 }
 
                 inputAddPerson = new StringEntity(
@@ -256,9 +272,9 @@ public class RestClient {
 
         String patientIdentifierConceptUid = null;
 
-        if (patientIdentifierType.equalsIgnoreCase("NID")){
+        if (patientIdentifierType.equalsIgnoreCase("NID")) {
             patientIdentifierConceptUid = "e2b966d0-1d5f-11e0-b929-000c29ad1d07";
-        }else if (patientIdentifierType.equalsIgnoreCase("PREP")){
+        } else if (patientIdentifierType.equalsIgnoreCase("PREP")) {
             patientIdentifierConceptUid = "bce7c891-27e9-42ec-abb0-aec3a641175e";
         }
 
@@ -395,10 +411,10 @@ public class RestClient {
                                 String patientIdentifier;
                                 String patientIdentifierType;
 
-                                if (patient.patientHasNID()){
+                                if (patient.patientHasNID()) {
                                     patientIdentifier = patient.getPatientNIDIdentifier().getValue();
                                     patientIdentifierType = "NID";
-                                }else {
+                                } else {
                                     patientIdentifier = patient.getPatientPREPIdentifier().getValue();
                                     patientIdentifierType = "PREP";
                                 }
@@ -562,7 +578,7 @@ public class RestClient {
             return;
         }
 
-        if(dispense.getProvider().trim().isEmpty())
+        if (dispense.getProvider().trim().isEmpty())
             dispense.setProvider("Provedor Desconhecido");
 
         String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(dispense.getProvider(), " ", "%20"));
@@ -574,8 +590,8 @@ public class RestClient {
             log.trace(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
-        } else{
-            if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+        } else {
+            if (newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
                 strFacilityUuid = newPack.getPrescription().getPatient().getUuidlocationopenmrs();
             else
                 strFacilityUuid = strFacility.substring(21, 57);
@@ -621,6 +637,31 @@ public class RestClient {
             log.trace("Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
         }
+    }
+
+    private String getPosologyFromDrug(PrescribedDrugs pd) {
+
+        String defaultPosology = iDartProperties.TOMAR + String.valueOf(pd.getAmtPerTime())
+                + iDartProperties.COMP + pd.getTimesPerDay() + iDartProperties.VEZES_DIA;
+
+        double totalTake = pd.getTimesPerDay() * pd.getAmtPerTime();
+
+        if (totalTake == 1)
+            defaultPosology = "0-0-1";
+        else if (totalTake == 2)
+            defaultPosology = "1-0-1";
+        else if (totalTake == 3)
+            defaultPosology = "1-0-2";
+        else if (totalTake == 4)
+            defaultPosology = "2-0-2";
+        else if (totalTake == 6)
+            defaultPosology = "3-0-3";
+        else if (totalTake > 1 && totalTake < 2)
+            defaultPosology = "1-0-0.5";
+        else if (totalTake > 2 && totalTake < 3)
+            defaultPosology = "1-0-1.5";
+
+        return defaultPosology;
     }
 
     public static void saveErroLog(Packages newPack, Date dtNextPickUp, String error) {
