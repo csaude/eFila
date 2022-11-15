@@ -1725,7 +1725,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
             epViewer = new EpisodeViewer(getHSession(), getShell(), localPatient, true);
             epViewer.addChangeListener(this);
 
-            Clinic clinic = AdministrationManager.getClinic(getHSession(), cmbClinic.getText().trim());
+            Clinic clinic = AdministrationManager.getClinic(getHSession(), cmbClinic.getText());
 
             localPatient.setClinic(clinic);
 

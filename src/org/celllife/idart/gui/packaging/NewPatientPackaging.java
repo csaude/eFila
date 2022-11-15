@@ -3877,7 +3877,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             if (pat.getMostRecentEpisode().getStartReason().contains("eferido para")) {
                 referedPatientLabel.setText(referredPatientText);
             } else
-                referedPatientLabel.setText("zxfyguifxzfxfg");
+                referedPatientLabel.setText("");
 
     }
 

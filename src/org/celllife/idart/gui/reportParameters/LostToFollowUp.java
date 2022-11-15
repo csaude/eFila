@@ -210,7 +210,7 @@ public class LostToFollowUp extends GenericReportGui {
     protected void cmdViewReportWidgetSelected() {
         if (fieldsOk()) {
             Clinic c = AdministrationManager.getClinic(getHSession(), cmbClinic
-                    .getText().trim());
+                    .getText());
 
             LostToFollowUpReport report = new LostToFollowUpReport(
                     getShell(), c.getClinicName(), calendarStart.getCalendar().getTime(),

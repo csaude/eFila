@@ -1690,7 +1690,7 @@ iDARTChangeListener {
 		"Packages To Patients: User chose 'Scanned Packages Report'");
 
 		Clinic c = AdministrationManager.getClinic(getHSession(), cmbClinic
-				.getText().trim());
+				.getText());
 
 		if (btnCaptureDate.getDate() == null) {
 			btnCaptureDate.setDate(new Date());
