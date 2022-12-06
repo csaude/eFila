@@ -75,28 +75,24 @@ public class RestClient {
         String packSize = null;
 
         String dosage;
-
-        String dosage_1;
+        List<Integer> pds = new ArrayList<>();
+        int pdid = -1;
 
         String customizedDosage = null;
 
         List<String> obsGroups = new ArrayList<>();
 
         for (PackagedDrugs pg : packagedDrugs) {
-
             for (PrescribedDrugs pd : prescribedDrugs) {
                 try {
-                    if (pd.getDrug().getAtccode().trim().equalsIgnoreCase(pg.getStock().getDrug().getAtccode().trim())) {
+                    if (pd.getDrug().getAtccode().trim().equalsIgnoreCase(pg.getStock().getDrug().getAtccode().trim()) && !pds.contains(pd.getId())) {
+                        pds.add(pd.getId());
                         customizedDosage = getPosologyFromDrug(pd);
                         break;
                     }
                 } catch (Exception e) {
                     log.error("O medicamento prescrito [" + pd.getDrug().getName() + "] nao contem posologia");
-                } finally {
-                    continue;
                 }
-
-
             }
 
 
@@ -119,6 +115,14 @@ public class RestClient {
                     "person\":\"" + nidUuid + "\"," +
                     "\"obsDatetime\":\"" + encounterDatetime + "\"," +
                     "\"concept\":\"e1de28ae-1d5f-11e0-b929-000c29ad1d07\"," +
+                    "\"value\":\"outraPosologia\"," +
+                    "\"comment\":\"IDART\"" +
+                    "}";
+
+            String posology = "{\"" +
+                    "person\":\"" + nidUuid + "\"," +
+                    "\"obsDatetime\":\"" + encounterDatetime + "\"," +
+                    "\"concept\":\"a46a603e-788d-4edc-9465-5f2fa69f060e\"," +
                     "\"value\":\"" + customizedDosage + "\"," +
                     "\"comment\":\"IDART\"" +
                     "}";
@@ -128,7 +132,7 @@ public class RestClient {
                     "\"obsDatetime\":\"" + encounterDatetime + "\"," +
                     "\"concept\":\"5ad593a4-bea2-4eef-ac88-11654e79d9da\"," +
                     "\"comment\":\"IDART\"," +
-                    "\"groupMembers\": [" + formulationString + "," + quantityString + "," + dosageString + "]" +
+                    "\"groupMembers\": [" + formulationString + "," + quantityString + "," + dosageString + "," + posology + "]" +
                     "}";
 
             obsGroups.add(obsGroup);
@@ -641,27 +645,25 @@ public class RestClient {
 
     private String getPosologyFromDrug(PrescribedDrugs pd) {
 
-        String defaultPosology = iDartProperties.TOMAR + String.valueOf(pd.getAmtPerTime())
+//        double totalTake = pd.getTimesPerDay() * pd.getAmtPerTime();
+//
+//        if (totalTake == 1)
+//            defaultPosology = "0-0-1";
+//        else if (totalTake == 2)
+//            defaultPosology = "1-0-1";
+//        else if (totalTake == 3)
+//            defaultPosology = "1-0-2";
+//        else if (totalTake == 4)
+//            defaultPosology = "2-0-2";
+//        else if (totalTake == 6)
+//            defaultPosology = "3-0-3";
+//        else if (totalTake > 1 && totalTake < 2)
+//            defaultPosology = "1-0-0.5";
+//        else if (totalTake > 2 && totalTake < 3)
+//            defaultPosology = "1-0-1.5";
+
+        return iDartProperties.TOMAR + String.valueOf(pd.getAmtPerTime())
                 + iDartProperties.COMP + pd.getTimesPerDay() + iDartProperties.VEZES_DIA;
-
-        double totalTake = pd.getTimesPerDay() * pd.getAmtPerTime();
-
-        if (totalTake == 1)
-            defaultPosology = "0-0-1";
-        else if (totalTake == 2)
-            defaultPosology = "1-0-1";
-        else if (totalTake == 3)
-            defaultPosology = "1-0-2";
-        else if (totalTake == 4)
-            defaultPosology = "2-0-2";
-        else if (totalTake == 6)
-            defaultPosology = "3-0-3";
-        else if (totalTake > 1 && totalTake < 2)
-            defaultPosology = "1-0-0.5";
-        else if (totalTake > 2 && totalTake < 3)
-            defaultPosology = "1-0-1.5";
-
-        return defaultPosology;
     }
 
     public static void saveErroLog(Packages newPack, Date dtNextPickUp, String error) {

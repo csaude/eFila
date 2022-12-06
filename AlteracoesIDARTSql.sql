@@ -261,7 +261,7 @@ ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS motivocriacaoespecial ch
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS ctzpickup boolean DEFAULT False;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS inhpickup boolean DEFAULT False;
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS modedispense character varying(255) COLLATE pg_catalog."default" DEFAULT ''::character varying;
-ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS flagidentifier character varying(255) COLLATE pg_catalog."default" DEFAULT 'Nao'::character varying;
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS flagidentifier character varying(255) COLLATE pg_catalog."default" DEFAULT 'Nao';
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptiondate timestamp with time zone NULL;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS duration integer DEFAULT 0;
 ALTER TABLE sync_temp_patients ADD COLUMN IF NOT EXISTS prescriptionenddate timestamp with time zone NULL;
