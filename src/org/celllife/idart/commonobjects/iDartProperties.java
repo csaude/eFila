@@ -103,7 +103,7 @@ public class iDartProperties {
 	
 	public static final String SPACE = " ";
 	
-	public static final String VEZES_DIA = " vezes por dia";
+	public static final String VEZES_DIA = " vez(es) por dia";
 
 	public static final String SWTBOT_KEY = "org.eclipse.swtbot.widget.key";
 

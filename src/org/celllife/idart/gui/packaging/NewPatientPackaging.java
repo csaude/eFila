@@ -686,6 +686,8 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 
                     if (lastEpisode.getStartReason().contains("eferido para")) {
                         pdi.setFlagIdentifier("Sim");
+                    }else{
+                        pdi.setFlagIdentifier("Nao");
                     }
                     /*if (rdBtnNoAppointmentDate.getSelection())
                             pdi.setInhPickup(false);
