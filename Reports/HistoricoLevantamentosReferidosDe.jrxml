@@ -79,6 +79,7 @@
 from sync_temp_dispense spt
 inner join patient p on p.uuidopenmrs = spt.uuidopenmrs
 inner join clinic c on c.id = p.clinic
+where pg_catalog.date(spt.pickupdate) >= $P{date}::date AND pg_catalog.date(spt.pickupdate) < ($P{dateEnd}::date + INTERVAL '1 day')
 GROUP BY 1,2,3,4,5,6,7,8,9
 order by 8,6 asc]]>
 	</queryString>

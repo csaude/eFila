@@ -385,9 +385,10 @@ public class PharmacyApplication {
                 Session session = HibernateUtil.getNewSession();
 
                 try {
-                    if (getServerStatus(url).contains("Red"))
+                    if (getServerStatus(url).contains("Red")) {
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
-                    else {
+                        log.error(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
+                    }else {
                         User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
 
                         assert currentUser != null;
@@ -400,6 +401,7 @@ public class PharmacyApplication {
                     }
                 } catch (IOException e) {
                     log.trace(new Date() + " : Erro " + e.getMessage());
+                    log.error(new Date() + " : Erro " + e.getMessage());
                 }
                 session.clear();
                 session.close();

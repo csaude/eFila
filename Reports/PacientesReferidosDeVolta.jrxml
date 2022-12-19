@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6963904734899635"/>
-	<property name="ireport.x" value="131"/>
-	<property name="ireport.y" value="16"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -40,51 +40,35 @@
 		<defaultValueExpression><![CDATA["C://Users//colaco.nhango//Documents//GitHub//IdartHarmonized//Reports"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select distinct
-p.patientid as nid,
-p.firstnames ||' '||p.lastname as nome,
-extract(year FROM age(current_date, p.dateofbirth))::integer as idade,
-c.clinicname as facilityName,
-referidos.clinicname as referencialClinic,
-referidos.ultimaReferencia,
-referidos.ultimoLev,
-e.startnotes as notas,
-Max(e.startdate) as dataRetorno
-from Patient as p
-inner join clinic c on c.id = p.clinic
-inner join prescription pr on pr.patient = p.id
-inner join episode e on e.patient = p.id
-inner join (
-select distinct Max(e.id) id, e.patient,  c.clinicname,
-Max(e.startdate) ultimaReferencia, Max(pa.pickupdate) ultimoLev
-from episode e
-inner join clinic c on c.id = e.clinic
-inner join prescription pr on pr.patient = e.patient
-inner join package pa on pa.prescription = pr.id
-inner join packageddrugs pd on pd.parentpackage = pa.id
-where e.startdate < ($P{dateEnd}::date::date + INTERVAL '1 day')
-and pd.amount = 0
-and e.startreason like '%eferido%'
-group by 2,3
-order by 2 asc
-) referidos on referidos.patient = p.id
-inner join (
-select distinct Max(e.id) id, e.patient,  c.clinicname,
-Max(e.startdate) ultimaReferencia
-from episode e
-inner join clinic c on c.id = e.clinic
-where  e.startdate >= $P{date}::date::date
-AND e.startdate < ($P{dateEnd}::date::date + INTERVAL '1 day')
-and e.startreason like '%Voltou%'
-AND c.mainclinic = true
-group by 2,3
-order by 2 asc
-) retornados on retornados.patient = referidos.patient and e.id = retornados.id
-where
-pg_catalog.date(pr.date) < ($P{dateEnd}::date::date + INTERVAL '1 day')
-AND c.mainclinic = true
-group by 1,2,3,4,5,6,7,8
-order by p.patientid asc]]>
+		<![CDATA[ SELECT stp.patientid as nid,
+    std.uuidopenmrs,
+    stp.clinicuuid,
+    concat(stp.firstnames, ' ', stp.lastname) AS nome,
+    date_part('year'::text, age(stp.dateofbirth))::integer AS idade,
+    max(stp.prescriptiondate::date) AS ultimaReferencia,
+    max(std.dispensedate::date) AS ultimoLev,
+    to_date(std.dateexpectedstring::text, 'DD Mon YYYY'::text) AS nextpickupdate,
+    stp.clinicname as referencialClinic,
+    stp.mainclinicname as facilityName,
+    cl.district,
+    cl.province,
+    ste.startdate as dataRetorno,
+    ste.stopreason as notas
+   FROM sync_temp_patients stp
+     JOIN clinic cl ON cl.uuid::text = stp.clinicuuid::text
+     JOIN ( SELECT max(sync_temp_episode.startdate) AS startdate,
+            sync_temp_episode.patientuuid,
+            sync_temp_episode.clinicuuid
+           FROM sync_temp_episode
+          GROUP BY sync_temp_episode.patientuuid, sync_temp_episode.clinicuuid) steaux ON steaux.patientuuid::text = stp.uuidopenmrs::text AND steaux.clinicuuid::text = cl.uuid::text
+     JOIN sync_temp_episode ste ON ste.patientuuid::text = steaux.patientuuid::text AND ste.startdate = steaux.startdate AND ste.clinicuuid::text = cl.uuid::text
+     LEFT JOIN ( SELECT max(sync_temp_dispense.dispensedate) AS dispensedate,
+            sync_temp_dispense.uuidopenmrs
+           FROM sync_temp_dispense
+          GROUP BY sync_temp_dispense.uuidopenmrs) stdaux ON stdaux.uuidopenmrs::text = ste.patientuuid::text
+     LEFT JOIN sync_temp_dispense std ON std.uuidopenmrs::text = stdaux.uuidopenmrs::text AND std.dispensedate = stdaux.dispensedate
+	 where  ste.startdate >= $P{date}::date::date  AND ste.startdate < ($P{dateEnd}::date::date + INTERVAL '1 day')
+  GROUP BY stp.patientid, std.uuidopenmrs, stp.clinicuuid, (concat(stp.firstnames, ' ', stp.lastname)), (date_part('year'::text, age(stp.dateofbirth))::integer), (to_date(std.dateexpectedstring::text, 'DD Mon YYYY'::text)), stp.clinicname, stp.mainclinicname, cl.district, cl.province, ste.startdate, ste.stopreason, ste.startnotes;]]>
 	</queryString>
 	<field name="nid" class="java.lang.String"/>
 	<field name="nome" class="java.lang.String"/>
@@ -418,7 +402,7 @@ order by p.patientid asc]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{ultimolev})]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="507" y="1" width="124" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>

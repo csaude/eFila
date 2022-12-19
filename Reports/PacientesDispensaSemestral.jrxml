@@ -63,7 +63,7 @@
 			ELSE 'Transporte'
 		END  tipods
 FROM  (
-	select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pdit.dateexpectedstring) dateexpectedstring, max(visit.id) episode,
+	select max(pre.date) predate, max(pa.pickupdate) pickupdate, pdit.dateexpectedstring dateexpectedstring, max(visit.id) episode,
 	pat.id 	from package pa
 	inner join packageddrugs pds on pds.parentpackage = pa.id
 	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
@@ -72,12 +72,12 @@ FROM  (
 	INNER JOIN (SELECT MAX (startdate), patient, id
 				from episode WHERE stopdate is null and startdate <= $P{dateEnd}
 				GROUP BY 2,3) visit on visit.patient = pat.id
-	where pre.tipodoenca like '%ARV' and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{dateStart} and pg_catalog.date(pa.pickupdate) <= $P{dateEnd})
+	where pre.tipodoenca like '%ARV' and pre.dispensasemestral = 1 and pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate) >= $P{dateStart} and pg_catalog.date(pa.pickupdate) <= $P{dateEnd})
 	OR (pg_catalog.date(pa.pickupdate) < $P{dateStart} and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) > $P{dateEnd}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dateEnd}::timestamp - pa.pickupdate::timestamp))::integer)/30)::date >= $P{dateStart}
 		and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day', $P{dateEnd}::timestamp - pa.pickupdate::timestamp))::integer)/30)::date <= $P{dateEnd}
 	   ))
-	   GROUP BY 5 order by 5) pack
+	   GROUP BY 3, 5 order by 5) pack
 	   inner join prescription p on p.date = pack.predate and p.patient=pack.id
 	   inner join patient pat on pat.id = pack.id
 	   inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
