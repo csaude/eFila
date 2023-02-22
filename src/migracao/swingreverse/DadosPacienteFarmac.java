@@ -402,6 +402,7 @@ public class DadosPacienteFarmac {
             pditemp.setPickupDate(syncTempDispense.getPickupdate());
             pditemp.setNotes("");
             pditemp.setModeDispense(dispenseModeAnswer);
+            pditemp.setFlagIdentifier("Nao");
             allPackagedDrugsListTemp.add(pditemp);
 
             savePackageAndPackagedDrugsWhithFarmacQty0(true, allPackagedDrugsListTemp, prescription, clinic, sess);

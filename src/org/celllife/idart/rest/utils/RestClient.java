@@ -433,6 +433,7 @@ public class RestClient {
                             PatientManager.savePatient(session, patient);
                         } else
                             log.trace(new Date() + ": O Paciente [" + patientToSave.getFirstnames() + " " + patientToSave.getLastname() + " com NID: " + patientToSave.getPatientid() + "] foi removido");
+                            log.info(new Date() + ": O Paciente [" + patientToSave.getFirstnames() + " " + patientToSave.getLastname() + " com NID: " + patientToSave.getPatientid() + "] foi removido");
 
                         patientToSave.setSyncstatus('E');
                         PatientManager.saveSyncOpenmrsPatien(session, patientToSave);
@@ -446,15 +447,18 @@ public class RestClient {
                         session.getTransaction().rollback();
                         session.close();
                         log.trace(new Date() + ": Erro ao gravar informacao do Paciente [" + patientToSave.getFirstnames() + " " + patientToSave.getLastname() + " com NID: " + patientToSave.getPatientid() + "] verifique o acesso do user ao openmrs ou contacte o administrador");
+                        log.info(new Date() + ": Erro ao gravar informacao do Paciente [" + patientToSave.getFirstnames() + " " + patientToSave.getLastname() + " com NID: " + patientToSave.getPatientid() + "] verifique o acesso do user ao openmrs ou contacte o administrador");
                     } finally {
                         continue;
                     }
                 }
             } else {
                 log.trace(new Date() + ": INFO - Nenhumm paciente por enviar foi encontrado");
+                log.info(new Date() + ": INFO - Nenhumm paciente por enviar foi encontrado");
             }
         } catch (Exception e) {
             log.trace("Error :" + e);
+            log.info("Error :" + e);
         }
     }
 
@@ -474,6 +478,7 @@ public class RestClient {
                             restFilaToOpenMRS(session, dispense);
                         } else {
                             log.trace(new Date() + ": INFO - A Prescrição com o codigo: [" + dispense.getPrescription().getPrescriptionId() + "] foi removido");
+                            log.info(new Date() + ": INFO - A Prescrição com o codigo: [" + dispense.getPrescription().getPrescriptionId() + "] foi removido");
                             dispense.setSyncstatus('E');
                         }
                         PrescriptionManager.saveSyncOpenmrsPatienFila(session, dispense);
@@ -486,15 +491,18 @@ public class RestClient {
                         session.getTransaction().rollback();
                         session.close();
                         log.trace(new Date() + ": INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPrescription().getPatient().getPatientId() + "], verifique o acesso do user ao openmrs ou contacte o administrador");
+                        log.info(new Date() + ": INFO - Erro ao gravar levantamento do Paciente com NID: [" + dispense.getPrescription().getPatient().getPatientId() + "], verifique o acesso do user ao openmrs ou contacte o administrador");
                     } finally {
                         continue;
                     }
                 }
             } else {
                 log.trace(new Date() + ": INFO - Nenhumm levantamento enviado para Openmrs foi encontrado");
+                log.info(new Date() + ": INFO - Nenhumm levantamento enviado para Openmrs foi encontrado");
             }
         } catch (Exception e) {
             log.trace("Error :" + e);
+            log.info("Error :" + e);
         }
     }
 
@@ -552,6 +560,7 @@ public class RestClient {
             msgError = " O NID [" + dispense.getNid() + "] foi alterado no OpenMRS ou não possui UUID."
                     + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.";
             log.trace(new Date() + msgError);
+            log.info(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         }
@@ -560,6 +569,7 @@ public class RestClient {
             msgError = " O paciente [" + patient.getPatientId() + " ] "
                     + " Tem um UUID [" + patient.getUuidopenmrs() + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .";
             log.trace(new Date() + msgError);
+            log.info(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         }
@@ -577,6 +587,7 @@ public class RestClient {
             msgError = " O NID [" + dispense.getNid() + " com o uuid (" + dispense.getUuid() + ")]  não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. " +
                     " ou contem o UUID inactivo/inexistente. Actualize primeiro o estado do paciente no OpenMRS..";
             log.trace(new Date() + msgError);
+            log.info(new Date() + msgError);
 
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
@@ -592,6 +603,7 @@ public class RestClient {
         if (strFacility.length() < 50 && newPack.getPrescription().getPatient().getUuidlocationopenmrs() == null) {
             msgError = " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + dispense.getNid() + " ].";
             log.trace(new Date() + msgError);
+            log.info(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         } else {
@@ -604,6 +616,7 @@ public class RestClient {
         if (response.length() < 50) {
             msgError = " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + dispense.getNid() + " ].";
             log.trace(new Date() + msgError);
+            log.info(new Date() + msgError);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
             return;
         } else providerUuid = response.substring(21, 57);
@@ -625,6 +638,7 @@ public class RestClient {
             }
 
             log.trace("Criou o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
+            log.info("Criou o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
 
             if (postOpenMrsEncounterStatus) {
                 dispense.setSyncstatus('E');
@@ -639,6 +653,7 @@ public class RestClient {
                     "\nHouve um problema ao salvar o pacote de medicamentos para o paciente " + dispense.getNid() +
                     ". " + "Por favor contacte o Administrador.";
             log.trace("Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
+            log.info("Nao foi criado o fila no openmrs para o paciente " + dispense.getNid() + ": " + postOpenMrsEncounterStatus);
             saveErroLog(newPack, RestUtils.castStringToDatePattern(dispense.getStrNextPickUp()), msgError);
         }
     }
