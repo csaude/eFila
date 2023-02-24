@@ -157,6 +157,7 @@ public class ConexaoJDBC {
         if (rs != null) {
             while (rs.next()) {
                 boolean nonuspatient = rs.getString("startreason").contains("nsito") || rs.getString("startreason").contains("ternidade");
+                boolean pacientePPE = rs.getString("startreason").contains("PPE");
                 boolean pacienteTARV = rs.getString("tipodoenca").contains("ARV");
                 boolean pacientePREP = rs.getString("tipodoenca").equalsIgnoreCase("PREP");
 
@@ -222,7 +223,7 @@ public class ConexaoJDBC {
                 if (!nonuspatient && pacienteTARV && !rs.getString("dc").equalsIgnoreCase("F")) {
                     totalpacientedc++;
                 }
-                if (!nonuspatient && pacienteTARV && !rs.getString("ppe").equalsIgnoreCase("F")) {
+                if (!nonuspatient && pacientePPE && !rs.getString("ppe").equalsIgnoreCase("F")) {
                     totalpacientesppe++;
                 }
                 if (!nonuspatient && pacienteTARV && !rs.getString("ce").equalsIgnoreCase("F")) {
@@ -289,9 +290,7 @@ public class ConexaoJDBC {
                 + " 		p.reasonforupdate,  "
                 + " 		p.dispensatrimestral, "
                 + " 		p.dispensasemestral,  "
-                + " 		p.prep, "
                 + " 		p.ptv, "
-                + " 		p.dc, "
                 + " 		p.ppe, "
                 + " 		p.ce, "
                 + " 		p.tipodoenca, "
@@ -303,34 +302,29 @@ public class ConexaoJDBC {
                 + " FROM  "
                 + " ( "
                 + " 	select max(pre.date) predate, max(pa.pickupdate::timestamp::date) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply, "
-                + " 			pat.id, max(visit.id) episode "
+                + " 			pat.id, max(visit.id) episode, clin.id clinic "
                 + " 	from package pa  "
                 + " 	inner join packageddrugs pds on pds.parentpackage = pa.id  "
                 + " 	inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id  "
                 + " 	inner join prescription pre on pre.id = pa.prescription  "
                 + " 	inner join patient pat ON pre.patient=pat.id  "
-                + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
+                + "     inner join clinic clin on clin.clinicname = pdit.clinic "
+                + " 	INNER JOIN (SELECT MAX (startdate), patient, id, clinic  "
                 + " 				from episode WHERE startdate <= '" + endDate + "' "
-                + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <= '" + endDate + "".concat(arvAndprepFirstCondition)
-                + " 	GROUP BY 5 order by 5) pack  "
+                + " 				GROUP BY 2,3,4) visit on visit.patient = pat.id  "
+                + " 	where clin.mainclinic = true and pds.amount <> 0 and pdit.flagidentifier = 'Nao'"
+                + "       and pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <= '" + endDate + "".concat(arvAndprepFirstCondition)
+                + " 	GROUP BY 5, 7 order by 5) pack  "
                 + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
                 + " 	inner join package pa on pa.prescription = p.id and pa.pickupdate::timestamp::date = pack.pickupdate::timestamp::date "
                 + " 	inner join linhat l on l.linhaid = p.linhaid  "
                 + " 	inner join regimeterapeutico rt on rt.regimeid = p.regimeid  "
                 + " 	inner join episode ep on ep.id = pack.episode "
+                + "     inner join clinic c on c.id = pack.clinic"
                 + "".concat(arvAndprepSecondCondition);
 
         String queryDC = " SELECT  distinct p.patient, \n"
-                + " 		p.reasonforupdate,  \n"
-                + " 		p.dispensatrimestral,\n "
-                + " 		p.dispensasemestral,  \n"
-                + " 		p.prep,\n "
-                + " 		p.ptv, \n"
-                + " 		p.dc, \n"
-                + " 		p.ppe, \n"
-                + " 		p.ce, \n"
                 + " 		p.tipodoenca, \n"
                 + " 		l.linhanome, \n"
                 + " 		pat.clinic, \n"
@@ -363,11 +357,6 @@ public class ConexaoJDBC {
                 + " 		p.reasonforupdate,  "
                 + " 		p.dispensatrimestral, "
                 + " 		p.dispensasemestral,  "
-                + " 		p.prep, "
-                + " 		p.ptv, "
-                + " 		p.dc, "
-                + " 		p.ppe, "
-                + " 		p.ce, "
                 + " 		p.tipodoenca, "
                 + " 		l.linhanome, "
                 + " 		pa.clinic, "
@@ -386,7 +375,8 @@ public class ConexaoJDBC {
                 + " 	INNER JOIN (SELECT MAX (startdate), patient, id  "
                 + " 				from episode WHERE startdate <= '" + endDate + "' "
                 + " 				GROUP BY 2,3) visit on visit.patient = pat.id  "
-                + " 	where pds.amount <> 0 and pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <= '" + endDate + "".concat(arvAndprepFirstCondition).concat(" and pat.clinic <> " + clinic.getId())
+                + " 	where pds.amount <> 0 and pdit.flagidentifier = 'Sim'"
+                + "     and pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <= '" + endDate + "".concat(arvAndprepFirstCondition).concat(" and pat.clinic <> " + clinic.getId())
                 + " 	GROUP BY 5 order by 5) pack  "
                 + " 	inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id  "
                 + " 	inner join patient pat on pat.id = pack.id  "
@@ -438,6 +428,7 @@ public class ConexaoJDBC {
         if (rs != null) {
             while (rs.next()) {
                 boolean nonuspatient = rs.getString("startreason").contains("nsito") || rs.getString("startreason").contains("ternidade");
+                boolean pacientPPE = rs.getString("startreason").contains("PPE") ;
                 boolean pacienteTARV = rs.getString("tipodoenca").contains("ARV");
                 boolean pacientePREP = rs.getString("tipodoenca").equalsIgnoreCase("PREP");
                 // Paciente Transito ou Inicio na Maternidade
@@ -483,7 +474,7 @@ public class ConexaoJDBC {
                     totalpacienteptv++;
                 }
 
-                if (!nonuspatient && pacienteTARV && !rs.getString("ppe").equalsIgnoreCase("F")) {
+                if (!nonuspatient && pacientPPE && !rs.getString("ppe").equalsIgnoreCase("F")) {
                     totalpacientesppe++;
                 }
                 if (!nonuspatient && pacienteTARV && !rs.getString("ce").equalsIgnoreCase("F")) {
@@ -559,16 +550,16 @@ public class ConexaoJDBC {
         map.put("pacientesdispensadosparaDS", pacientesdispensadosparaDS);
         map.put("mesesdispensados", mesesdispennsados / 4);
         map.put("totalpacientesppe", totalpacientesppe);
-        map.put("totallinhas1", totallinhas1 - totallinhasDDUS1);
-        map.put("totallinhas2", totallinhas2 - totallinhasDDUS2);
-        map.put("totallinhas3", totallinhas3 - totallinhasDDUS3);
+        map.put("totallinhas1", totallinhas1);
+        map.put("totallinhas2", totallinhas2 );
+        map.put("totallinhas3", totallinhas3);
         map.put("totallinhasDC1", totallinhasDC1);
         map.put("totallinhasDC2", totallinhasDC2);
         map.put("totallinhasDC3", totallinhasDC3);
         map.put("totallinhasDDUS1", totallinhasDDUS1);
         map.put("totallinhasDDUS2", totallinhasDDUS2);
         map.put("totallinhasDDUS3", totallinhasDDUS3);
-        map.put("totallinhas", totallinhas1 + totallinhas2 + totallinhas3 - (totallinhasDDUS1 + totallinhasDDUS2 + totallinhasDDUS3));
+        map.put("totallinhas", totallinhas1 + totallinhas2 + totallinhas3);
         map.put("totallinhasdc", totallinhasDC1 + totallinhasDC2 + totallinhasDC3);
         map.put("totallinhasDDUS", totallinhasDDUS1 + totallinhasDDUS2 + totallinhasDDUS3);
         map.put("totalpacientesprep", totalpacientesprep);
@@ -900,27 +891,28 @@ public class ConexaoJDBC {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
 
-            String query = " SELECT  distinct rt.regimeesquema,rt.codigoregime, count(distinct p.patient) as totalpacientes " +
-                    "FROM (select max(pre.date) predate, max(pa.pickupdate::timestamp::date) pickupdate, pat.id " +
-                    "from package pa " +
-                    "inner join packageddrugs pds on pds.parentpackage = pa.id " +
-                    "inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id " +
-                    "inner join prescription pre on pre.id = pa.prescription " +
-                    "inner join patient pat ON pre.patient=pat.id " +
-                    "where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <=   '" + endDate + "') " +
-                    " OR (pg_catalog.date(pa.pickupdate::timestamp::date) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >   '" + endDate + "' " +
-                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' " +
-                    "  and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <=   '" + endDate + "')) " +
-                    "GROUP BY 3 order by 3) pack " +
-                    "inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id " +
-                    "inner join package pa on pa.prescription = p.id and pa.pickupdate::timestamp::date = pack.pickupdate::timestamp::date " +
-                    "inner join regimeterapeutico rt on rt.regimeid = p.regimeid " +
-                    "INNER JOIN (SELECT MAX (startdate),patient, episode.startreason " +
-                    "    from episode WHERE stopdate is null and startdate <=   '" + endDate + "' " +
-                    "    GROUP BY 2,3 " +
-                    ") visit on visit.patient = pack.id " +
-                    "where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' " +
-                    "group by 1,2 order by 1";
+            String query = " SELECT  distinct rt.regimeesquema,rt.codigoregime, \n" +
+                    "           count(distinct p.patient) as totalpacientes \n" +
+                    "        FROM (select max(pre.date) predate, max(pa.pickupdate::timestamp::date) pickupdate, pat.id \n" +
+                    "               from package pa \n" +
+                    "               inner join packageddrugs pds on pds.parentpackage = pa.id \n" +
+                    "               inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id \n" +
+                    "               inner join prescription pre on pre.id = pa.prescription \n" +
+                    "               inner join patient pat ON pre.patient=pat.id \n" +
+                    "               where pds.amount <> 0 and ((pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "' and pg_catalog.date(pa.pickupdate::timestamp::date) <=   '" + endDate + "') \n" +
+                    "                   OR (pg_catalog.date(pa.pickupdate::timestamp::date) < '" + startDate + "' and pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY')) >   '" + endDate + "' \n" +
+                    "                   and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date >= '" + startDate + "' \n" +
+                    "                   and (pa.pickupdate + (INTERVAL '1 month'*(date_part('day',   '" + endDate + "'::timestamp - pa.pickupdate::timestamp)/30)::integer))::date <=   '" + endDate + "')) \n" +
+                    "               GROUP BY 3 order by 3) pack \n" +
+                    "       inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id \n" +
+                    "       inner join package pa on pa.prescription = p.id and pa.pickupdate::timestamp::date = pack.pickupdate::timestamp::date \n" +
+                    "       inner join regimeterapeutico rt on rt.regimeid = p.regimeid \n" +
+                    "       INNER JOIN (SELECT MAX (startdate),patient, episode.startreason \n" +
+                    "                   from episode WHERE stopdate is null and startdate <=   '" + endDate + "' \n" +
+                    "                   GROUP BY 2,3 \n" +
+                    "       ) visit on visit.patient = pack.id \n" +
+                    "       where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' \n" +
+                    "       group by 1,2 order by 1 \n";
 
             ResultSet rs = st.executeQuery(query);
 
@@ -962,52 +954,58 @@ public class ConexaoJDBC {
         try {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
-            String query = "  SELECT distinct\n" +
+            String query = " SELECT distinct\n" +
                     "   regimen.regimeesquema,\n" +
                     "   regimen.codigoregime,\n" +
-                    "   count(regimen.pacienteprep) totalpacientesprep,\n" +
                     "   count(distinct regimen.contagem) totalpacientes,\n" +
                     "   count(distinct regimen.uscontagem) totalpacientesus,\n" +
-                    "   count(distinct regimen.dccontagem) totalpacientesdc\n" +
+                    "   count(distinct regimen.dccontagem) totalpacientesdc,\n" +
+                    "   count(distinct regimen.pacienteprep) totalpacientesprep\n" +
                     "FROM\n" +
                     "   (\n" +
-                    " SELECT  distinct p.patient,    \n" +
-                    " rt.regimeesquema,\n" +
-                    " rt.codigoregime,\n" +
-                    " CASE WHEN ( c.mainclinic = true and pds.amount <> 0 ) THEN pack.id END contagem,\n" +
-                    " CASE WHEN ( c.mainclinic = false and pds.amount > 0 ) THEN pack.id END uscontagem,\n" +
-                    " CASE WHEN ( c.mainclinic = false and pds.amount = 0 ) THEN pack.id END dccontagem,\n" +
-                    " CASE WHEN ( rt.tipodoenca = 'PREP' ) THEN 1 END pacienteprep,   \n" +
-                    " EXTRACT(year FROM age('" + endDate + "'::date,pack.dateofbirth)) :: int dateofbirth,   \n" +
-                    " ep.startreason,   \n" +
-                    " COALESCE(pack.weekssupply,0) weekssupply   \n" +
-                    " FROM   (  \n" +
-                    " select max(pre.date) predate, max(pa.pickupdate::timestamp::date) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,  \n" +
-                    " pat.id, max(visit.id) episode  \n" +
-                    " from package pa   \n" +
-                    " inner join packageddrugs pds on pds.parentpackage = pa.id   \n" +
-                    " inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id   \n" +
-                    " inner join prescription pre on pre.id = pa.prescription   \n" +
-                    " inner join patient pat ON pre.patient=pat.id   \n" +
-                    " INNER JOIN (SELECT MAX (startdate), patient, id   \n" +
-                    " from episode WHERE startdate <= '" + endDate + "'  \n" +
-                    " GROUP BY 2,3) visit on visit.patient = pat.id   \n" +
-                    " where pds.amount <> 0 and pg_catalog.date(pa.pickupdate::timestamp::date) >= '" + startDate + "'::date \n" +
-                    " and pg_catalog.date(pa.pickupdate::timestamp::date) <= '" + endDate + "'::date \n" +
-                    " and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')  \n" +
-                    " GROUP BY 5 order by 5) pack   \n" +
-                    " inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id   \n" +
-                    " inner join patient pat on pat.id = pack.id   \n" +
-                    " inner join package pa on pa.prescription = p.id and pa.pickupdate::timestamp::date = pack.pickupdate::timestamp::date  \n" +
-                    " inner join packageddrugs pds on pds.parentpackage = pa.id\n" +
-                    " inner join regimeterapeutico rt on rt.regimeid = p.regimeid\n" +
-                    " inner join linhat l on l.linhaid = p.linhaid   \n" +
-                    " inner join episode ep on ep.id = pack.episode\n" +
-                    " inner join clinic c on c.id = pat.clinic\n" +
-                    " where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(rt.tipodoenca like '%ARV%' OR rt.tipodoenca = 'PREP') \n" +
-                    "    ) regimen\n" +
-                    " group by 1,2 " +
-                    " order by 1";
+                    " SELECT  distinct p.patient, pat.patientid,\n" +
+                    " pack.regimeesquema,\n" +
+                    " pack.codigoregime,\n" +
+                    " pack.linhanome,\n" +
+                    " CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount <> 0 ) THEN pack.id END contagem,\n" +
+                    " CASE WHEN ( pack.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,\n" +
+                    " CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount = 0 ) THEN pack.id END dccontagem,\n" +
+                    " CASE WHEN ( p.tipodoenca = 'PREP' ) THEN 1 END pacienteprep,\n" +
+                    " EXTRACT(year FROM age( '" + endDate + "'::date,pack.dateofbirth)) :: int dateofbirth,\n" +
+                    " ep.startreason,\n" +
+                    " ep.episodedate,\n" +
+                    " COALESCE(pack.weekssupply,0) weekssupply,\n" +
+                    "\t   ep.clinic as clinicDispense,\n" +
+                    "\t   c.id as patclinic\n" +
+                    " FROM   (\n" +
+                    "\t select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,\n" +
+                    "\t pat.id, pdit.flagidentifier, rt.regimeesquema, rt.codigoregime, l.linhanome\n" +
+                    "\t from package pa\n" +
+                    "\t inner join packageddrugs pds on pds.parentpackage = pa.id\n" +
+                    "\t inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id\n" +
+                    "\t inner join prescription pre on pre.id = pa.prescription\n" +
+                    "\t inner join regimeterapeutico rt on rt.regimeid = pre.regimeid\n" +
+                    "\t inner join linhat l on l.linhaid = pre.linhaid\n" +
+                    "\t inner join patient pat ON pre.patient=pat.id\n" +
+                    "\t where pg_catalog.date(pa.pickupdate) >= '" + startDate + "'::date\n" +
+                    "\t and pg_catalog.date(pa.pickupdate) <=  '" + endDate + "'::date\n" +
+                    "\t and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')\n" +
+                    "\t GROUP BY 5,6,7,8,9 order by 5) pack\n" +
+                    "\t inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id\n" +
+                    "\t inner join patient pat on pat.id = pack.id\n" +
+                    "\t inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate\n" +
+                    "\t inner join packageddrugs pds on pds.parentpackage = pa.id\n" +
+                    "\t INNER JOIN (SELECT MAX (startdate) episodedate, startreason, patient, id, clinic\n" +
+                    "\t\t\t from episode WHERE startdate <=  '" + endDate + "'::date\n" +
+                    "\t\t\t GROUP BY 2,3,4,5) ep on ep.patient = pat.id and ep.episodedate < pack.predate\n" +
+                    "\t inner join clinic c on c.id = ep.clinic\n" +
+                    "\t where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(p.tipodoenca like '%ARV%' OR p.tipodoenca = 'PREP')\n" +
+                    "\t    ) regimen\n" +
+                    "group by\n" +
+                    "   1,\n" +
+                    "   2\n" +
+                    "order by\n" +
+                    "   1";
 
 
             ResultSet rs = st.executeQuery(query);
