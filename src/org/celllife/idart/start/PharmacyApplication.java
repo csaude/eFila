@@ -356,6 +356,7 @@ public class PharmacyApplication {
                     tx.rollback();
                     sess.close();
                     log.trace(new Date() + " : [FARMAC REST] Erro " + e.getMessage());
+                    log.info(new Date() + " : [FARMAC REST] Erro " + e.getMessage());
                 }
                 log.info("*********************");
                 log.info("Close DDD Thread");
@@ -385,9 +386,11 @@ public class PharmacyApplication {
                 Session session = HibernateUtil.getNewSession();
 
                 try {
-                    if (getServerStatus(url).contains("Red"))
+                    if (getServerStatus(url).contains("Red")) {
                         log.trace(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
-                    else {
+                        log.error(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
+                        log.info(new Date() + " :Servidor OpenMRS offline, verifique a conexao com OpenMRS ou contacte o administrador");
+                    }else {
                         User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
 
                         assert currentUser != null;
@@ -400,6 +403,8 @@ public class PharmacyApplication {
                     }
                 } catch (IOException e) {
                     log.trace(new Date() + " : Erro " + e.getMessage());
+                    log.error(new Date() + " : Erro " + e.getMessage());
+                    log.info(new Date() + " : Erro " + e.getMessage());
                 }
                 session.clear();
                 session.close();
@@ -442,6 +447,7 @@ public class PharmacyApplication {
                     tx.rollback();
                     sess.close();
                     log.trace(new Date() + " : [FP Dispense Error on REST - POST] Erro " + e.getMessage());
+                    log.info(new Date() + " : [FP Dispense Error on REST - POST] Erro " + e.getMessage());
                 }
                 log.info("*********************");
                 log.info("Close DDD Last Dispense Thread ");
