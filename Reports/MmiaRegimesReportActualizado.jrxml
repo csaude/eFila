@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaRegimesReportNovaVersao" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Error" isIgnorePagination="true">
 	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="279"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="date" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -33,7 +33,9 @@
 	<parameter name="totallinhasDDUS3" class="java.lang.String"/>
 	<parameter name="totallinhasDDUS" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT distinct
+		<![CDATA[
+
+SELECT distinct
    regimen.regimeesquema,
    regimen.codigoregime,
    count(distinct regimen.contagem) contagem,
@@ -41,39 +43,42 @@
    count(distinct regimen.dccontagem) dccontagem
 FROM
    (
- SELECT  distinct p.patient,
- rt.regimeesquema,
- rt.codigoregime,
- CASE WHEN ( c.mainclinic = true and pds.amount <> 0 ) THEN pack.id END contagem,
- CASE WHEN ( c.mainclinic = false and pds.amount > 0 ) THEN pack.id END uscontagem,
- CASE WHEN ( c.mainclinic = false and pds.amount = 0 ) THEN pack.id END dccontagem,
- EXTRACT(year FROM age($P{dateEnd}::date,pack.dateofbirth)) :: int dateofbirth,
+ SELECT  distinct p.patient, pat.patientid,
+ pack.regimeesquema,
+ pack.codigoregime,
+ pack.linhanome,
+ CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount <> 0 ) THEN pack.id END contagem,
+ CASE WHEN ( pack.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,
+ CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount = 0 ) THEN pack.id END dccontagem,
+ EXTRACT(year FROM age( $P{dateEnd}::date,pack.dateofbirth)) :: int dateofbirth,
  ep.startreason,
- COALESCE(pack.weekssupply,0) weekssupply
+ ep.episodedate,
+ COALESCE(pack.weekssupply,0) weekssupply,
+	   ep.clinic as clinicDispense,
+	   c.id as patclinic
  FROM   (
 	 select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,
-	 pat.id, max(visit.id) episode
+	 pat.id, pdit.flagidentifier, rt.regimeesquema, rt.codigoregime, l.linhanome
 	 from package pa
 	 inner join packageddrugs pds on pds.parentpackage = pa.id
 	 inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
 	 inner join prescription pre on pre.id = pa.prescription
+	 inner join regimeterapeutico rt on rt.regimeid = pre.regimeid
+	 inner join linhat l on l.linhaid = pre.linhaid
 	 inner join patient pat ON pre.patient=pat.id
-	 INNER JOIN (SELECT MAX (startdate), patient, id
-				 from episode WHERE startdate <= $P{dateEnd}::date
-				 GROUP BY 2,3) visit on visit.patient = pat.id
-	 where pds.amount <> 0 and pg_catalog.date(pa.pickupdate) >= $P{date}::date
-	 and pg_catalog.date(pa.pickupdate) <= $P{dateEnd}::date
+	 where pg_catalog.date(pa.pickupdate) >= $P{date}::date
+	 and pg_catalog.date(pa.pickupdate) <=  $P{dateEnd}::date
 	 and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')
-	 GROUP BY 5 order by 5) pack
+	 GROUP BY 5,6,7,8,9 order by 5) pack
 	 inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id
 	 inner join patient pat on pat.id = pack.id
 	 inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
 	 inner join packageddrugs pds on pds.parentpackage = pa.id
-	 inner join regimeterapeutico rt on rt.regimeid = p.regimeid
-	 inner join linhat l on l.linhaid = p.linhaid
-	 inner join episode ep on ep.id = pack.episode
-	 inner join clinic c on c.id = pat.clinic
-	 where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(rt.tipodoenca like '%ARV%' OR rt.tipodoenca = 'PREP')
+	 INNER JOIN (SELECT MAX (startdate) episodedate, startreason, patient, id, clinic
+			 from episode WHERE startdate <=  $P{dateEnd}::date
+			 GROUP BY 2,3,4,5) ep on ep.patient = pat.id and ep.episodedate < pack.predate
+	 inner join clinic c on c.id = ep.clinic
+	 where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(p.tipodoenca like '%ARV%' OR p.tipodoenca = 'PREP')
 	    ) regimen
 group by
    1,
@@ -86,7 +91,7 @@ order by
 	<field name="contagem" class="java.lang.Long"/>
 	<field name="uscontagem" class="java.lang.Long"/>
 	<field name="dccontagem" class="java.lang.Long"/>
-	<variable name="total_paciente_dc" class="java.lang.Long" incrementType="Report" calculation="Highest">
+	<variable name="total_paciente_dc" class="java.lang.Long" incrementType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{dccontagem}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
@@ -130,12 +135,6 @@ order by
 				</line>
 				<line>
 					<reportElement key="line-3" mode="Opaque" x="368" y="0" width="1" height="24" forecolor="#000000" backcolor="#000000"/>
-					<graphicElement fill="Solid">
-						<pen lineWidth="2.0"/>
-					</graphicElement>
-				</line>
-				<line>
-					<reportElement key="line-3" mode="Opaque" x="264" y="-1" width="1" height="23" forecolor="#000000" backcolor="#000000"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="2.0"/>
 					</graphicElement>
@@ -263,13 +262,6 @@ order by
 					</graphicElement>
 				</line>
 				<textField>
-					<reportElement mode="Opaque" x="316" y="0" width="51" height="22" backcolor="#D0D8FC"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacientedc}]]></textFieldExpression>
-				</textField>
-				<textField>
 					<reportElement x="315" y="35" width="52" height="13"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
@@ -372,13 +364,26 @@ order by
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totallinhasDDUS}]]></textFieldExpression>
 				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="316" y="0" width="51" height="22" backcolor="#D0D8FC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Long"><![CDATA[$V{total_paciente_dc}]]></textFieldExpression>
+				</textField>
 				<textField>
 					<reportElement mode="Opaque" x="213" y="0" width="50" height="22" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{pacientesEmTarv}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Long"><![CDATA[$V{totalPacientesEmTARV}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement key="line-3" mode="Opaque" x="264" y="-1" width="1" height="23" forecolor="#000000" backcolor="#000000"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>

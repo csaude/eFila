@@ -1772,7 +1772,16 @@ public class AdministrationManager {
     public static List<SyncTempPatient> getAllSyncTempPatientReadyToSend(Session sess) throws HibernateException {
         List result;
         result = sess.createQuery(
-                "from SyncTempPatient sync where sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus = 'U' or sync.syncstatus is null)").list();
+                "from SyncTempPatient sync where sync.estadopaciente <> 'Faltoso' and sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus = 'U' or sync.syncstatus is null)").list();
+
+        return result;
+    }
+
+    // Devolve a lista de todos pacientes carregados prontos para ser enviado (Estado do paciente P- Pronto, E- Exportado)
+    public static List<SyncTempPatient> getAllSyncTempMissedPickupPatientReadyToSend(Session sess) throws HibernateException {
+        List result;
+        result = sess.createQuery(
+                "from SyncTempPatient sync where sync.estadopaciente = 'Faltoso' and sync.exclusaopaciente = false and (sync.syncstatus = 'P' or sync.syncstatus = 'U' or sync.syncstatus is null)").list();
 
         return result;
     }

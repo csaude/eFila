@@ -655,6 +655,7 @@ public class ConexaoJDBC {
                     "   drug.name , " +
                     "   drug.packsize , " +
                     "   drug.packsize || ' ' || form.formlanguage1 as packform , " +
+                    "   drug.report_order , " +
                     "   MAX(to_char(stock.expirydate,'MM/YYYY')) as mindate " +
                     " FROM " +
                     "   drug " +
@@ -669,8 +670,8 @@ public class ConexaoJDBC {
                     " AND " +
                     "   pg_catalog.date(stock.expirydate) >= '" + dataInicial + "'" +
                     " AND drug.tipodoenca like '%ARV%'" +
-                    " GROUP BY 1,2,3,4,5 " +
-                    " ORDER BY drug.atccode_id asc ";
+                    " GROUP BY 1,2,3,4,5,6 " +
+                    " ORDER BY drug.report_order asc ";
 
             ResultSet rs = st.executeQuery(query);
 
@@ -891,7 +892,7 @@ public class ConexaoJDBC {
             conecta(iDartProperties.hibernateUsername,
                     iDartProperties.hibernatePassword);
 
-            String query = " SELECT  distinct rt.regimeesquema,rt.codigoregime, \n" +
+            String query = " SELECT  distinct rt.regimeesquema, rt.codigoregime, rt.report_order, \n" +
                     "           count(distinct p.patient) as totalpacientes \n" +
                     "        FROM (select max(pre.date) predate, max(pa.pickupdate::timestamp::date) pickupdate, pat.id \n" +
                     "               from package pa \n" +
@@ -912,7 +913,7 @@ public class ConexaoJDBC {
                     "                   GROUP BY 2,3 \n" +
                     "       ) visit on visit.patient = pack.id \n" +
                     "       where visit.startreason not like '%ansito%' and visit.startreason not like '%ternidade%' \n" +
-                    "       group by 1,2 order by 1 \n";
+                    "       group by 1,2,3 order by rt.report_order asc \n";
 
             ResultSet rs = st.executeQuery(query);
 
@@ -957,6 +958,7 @@ public class ConexaoJDBC {
             String query = " SELECT distinct\n" +
                     "   regimen.regimeesquema,\n" +
                     "   regimen.codigoregime,\n" +
+                    "   regimen.report_order,\n" +
                     "   count(distinct regimen.contagem) totalpacientes,\n" +
                     "   count(distinct regimen.uscontagem) totalpacientesus,\n" +
                     "   count(distinct regimen.dccontagem) totalpacientesdc,\n" +
@@ -967,6 +969,7 @@ public class ConexaoJDBC {
                     " pack.regimeesquema,\n" +
                     " pack.codigoregime,\n" +
                     " pack.linhanome,\n" +
+                    " pack.report_order,\n" +
                     " CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount <> 0 ) THEN pack.id END contagem,\n" +
                     " CASE WHEN ( pack.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,\n" +
                     " CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount = 0 ) THEN pack.id END dccontagem,\n" +
@@ -979,7 +982,7 @@ public class ConexaoJDBC {
                     "\t   c.id as patclinic\n" +
                     " FROM   (\n" +
                     "\t select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,\n" +
-                    "\t pat.id, pdit.flagidentifier, rt.regimeesquema, rt.codigoregime, l.linhanome\n" +
+                    "\t pat.id, pdit.flagidentifier, rt.regimeesquema, rt.report_order, rt.codigoregime, l.linhanome\n" +
                     "\t from package pa\n" +
                     "\t inner join packageddrugs pds on pds.parentpackage = pa.id\n" +
                     "\t inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id\n" +
@@ -990,7 +993,7 @@ public class ConexaoJDBC {
                     "\t where pg_catalog.date(pa.pickupdate) >= '" + startDate + "'::date\n" +
                     "\t and pg_catalog.date(pa.pickupdate) <=  '" + endDate + "'::date\n" +
                     "\t and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')\n" +
-                    "\t GROUP BY 5,6,7,8,9 order by 5) pack\n" +
+                    "\t GROUP BY 5,6,7,8,9,10 order by rt.report_order) pack\n" +
                     "\t inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id\n" +
                     "\t inner join patient pat on pat.id = pack.id\n" +
                     "\t inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate\n" +
@@ -1000,12 +1003,14 @@ public class ConexaoJDBC {
                     "\t\t\t GROUP BY 2,3,4,5) ep on ep.patient = pat.id and ep.episodedate < pack.predate\n" +
                     "\t inner join clinic c on c.id = ep.clinic\n" +
                     "\t where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(p.tipodoenca like '%ARV%' OR p.tipodoenca = 'PREP')\n" +
+                    "\t order by pack.report_order asc" +
                     "\t    ) regimen\n" +
                     "group by\n" +
                     "   1,\n" +
-                    "   2\n" +
+                    "   2,\n" +
+                    "   3\n" +
                     "order by\n" +
-                    "   1";
+                    " regimen.report_order asc ";
 
 
             ResultSet rs = st.executeQuery(query);

@@ -793,6 +793,87 @@ public class RestFarmac {
             }
     }
 
+    public static void restPostMissedPickupPatients(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        Clinic mainClinic = AdministrationManager.getMainClinic(sess);
+        List<SyncTempPatient> syncTempPatients = AdministrationManager.getAllSyncTempMissedPickupPatientReadyToSend(sess);
+        String result = "";
+        String startUpresult = "";
+        String startUPutpresult = "";
+        String endUpresult = "";
+        String resultPut = "";
+        boolean confirmed = false;
+        if (syncTempPatients.isEmpty()) {
+            log.trace(new Date() + " [FARMAC] INFO - Nenhumm paciente Faltoso foi encontrado para referir");
+            log.info(new Date() + " [FARMAC] INFO - Nenhumm paciente Faltoso foi encontrado para referir");
+        } else {
+            log.info("");
+            log.info("*********************");
+            log.info("Open Faltosos DC Thread ");
+            startUpresult = restPostLoadingCheck(url, mainClinic,pool);
+            if (startUpresult.contains("Falha")) {
+                log.error(new Date() + ": Ocorreu um erro ao Inicializar o carregamento de pacientes Faltosos - Erro: " + startUpresult);
+            } else {
+                if (startUpresult.contains("409")) {
+                    startUPutpresult = restPutLoadingCheck(url, mainClinic,pool);
+                    if (startUPutpresult.contains("Falha")) {
+                        log.error(new Date() + ": Ocorreu um erro ao Inicializar o carregamento de pacientes Faltosos - Erro: " + startUPutpresult);
+                    }
+                }
+                for (SyncTempPatient patientSync : syncTempPatients) {
+                    Session session = HibernateUtil.getNewSession();
+                    confirmed = false;
+                    try {
+                        session.beginTransaction();
+                        result = restPostPatient(url, patientSync, pool);
+                        if (result.contains("409")) {
+                            resultPut = restPutPatient(url, patientSync, pool);
+                            if (resultPut.contains("Falha")) {
+                                log.error(new Date() + ": Ocorreu um erro ao gravar paciente Faltoso com nid " + patientSync.getPatientid() + " Erro: " + resultPut);
+                            } else {
+                                confirmed = true;
+                                log.info(new Date() + ": Actualizou paciente Faltoso com nid " + patientSync.getPatientid() + " - Resultado: " + resultPut);
+                            }
+                        } else {
+                            if (result.contains("Falha")) {
+                                log.error(new Date() + ": Ocorreu um erro ao gravar paciente Faltoso com nid " + patientSync.getPatientid() + " Erro: " + result);
+                            } else {
+                                confirmed = true;
+                                log.info(new Date() + ":Paciente Faltoso com nid " + patientSync.getPatientid() + " enviado com sucesso (" + result + ")");
+                            }
+                        }
+
+                        if (confirmed) {
+                            patientSync.setSyncstatus('E');
+                            AdministrationManager.saveSyncTempPatient(sess, patientSync);
+                            session.getTransaction().commit();
+                            session.flush();
+                            session.clear();
+                            session.close();
+                        }
+                        break;
+                    } catch (Exception e) {
+                        session.getTransaction().rollback();
+                        session.close();
+                        log.error(e);
+                    } finally {
+                        continue;
+                    }
+                }
+                endUpresult = restPatchLoadingCheck(url, mainClinic, pool);
+
+                if (endUpresult.contains("Falha")) {
+                    log.error(new Date() + ": Ocorreu um erro ao Finalizar o carregamento de pacientes Faltosos - Erro: " + startUpresult);
+                } else {
+                    log.info(new Date() + ": Carregamento de pacientes Faltosos efectuado com sucesso");
+                }
+
+            }
+            log.info("*********************");
+            log.info("Close Faltosos DC Thread ");
+        }
+    }
+
     public static void restPostEpisodes(Session sess, String url, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
 
         List<SyncEpisode> syncTempEpisodes = EpisodeManager.getAllSyncTempEpiReadyToSend(sess);
@@ -1540,6 +1621,101 @@ public class RestFarmac {
         }
         return result;
     }
+
+    public static String restPostLoadingCheck(String url, Clinic clinic, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        String path = url + "/sync_temp_check_loading";
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        String clinicJSONObject = "{\"id\":\"" + clinic.getUuid() + "\",\"isloading\": " + true + ", \"mainclinicuuid\": \"" + clinic.getUuid() + "\", "
+                + "\"mainclinicname\": \"" + clinic.getClinicName() + "\", "
+                + "\"startdate\":\"" + new Date() + "\", \"enddate\":\"" +null + "\"}";
+
+        StringEntity inputAddDispense = new StringEntity(clinicJSONObject, "UTF-8");
+        inputAddDispense.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPost(path, inputAddDispense, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST POST - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST POST efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public static String restPatchLoadingCheck(String url, Clinic clinic, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        String path = url + "/sync_temp_check_loading?id=eq." + clinic.getUuid();
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        String restObject = "{\"isloading\": \"" + false + "\", \"enddate\":\"" + new Date() + "\"}";
+
+        StringEntity inputAddPatient = new StringEntity(restObject, "UTF-8");
+        inputAddPatient.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddPatient, token, pool);
+
+            if (httpResponse != null) {
+                if (httpResponse.getStatusLine().getStatusCode() != 200)
+                    if (httpResponse.getStatusLine().getStatusCode() != 200)
+                        response = "Falha no POSTGREST PATCH - Code:" + httpResponse.getStatusLine().getStatusCode();
+                    else
+                        response = " POSTGREST PATCH efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+
+    }
+
+    public static String restPutLoadingCheck(String url, Clinic clinic, PoolingHttpClientConnectionManager pool) throws UnsupportedEncodingException {
+
+        String path = url + "/sync_temp_check_loading?id=eq."+clinic.getUuid();
+        HttpResponse httpResponse = null;
+        String response = null;
+
+        String clinicJSONObject = "{\"isloading\": " + true + ", \"mainclinicuuid\": \"" + clinic.getUuid() + "\", "
+                + "\"mainclinicname\": \"" + clinic.getClinicName() + "\", "
+                + "\"startdate\":\"" + new Date() + "\", \"enddate\":\"" +null + "\"}";
+
+        StringEntity inputAddPatient = new StringEntity(clinicJSONObject, "UTF-8");
+        inputAddPatient.setContentType("application/json");
+
+        try {
+            String token = restGetpermission(url, CentralizationProperties.rest_access_username, CentralizationProperties.rest_access_password, pool);
+
+            httpResponse = ApiAuthRest.postgrestRequestPatch(path, inputAddPatient, token, pool);
+
+            if (httpResponse != null) {
+                if (((float) httpResponse.getStatusLine().getStatusCode() / 200) >= 1.5)
+                    response = "Falha no POSTGREST PUT - Code:" + httpResponse.getStatusLine().getStatusCode();
+                else
+                    response = "POSTGREST PUT efectiado com sucesso - Code:" + httpResponse.getStatusLine().getStatusCode();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+
+    }
+
 
 }
 
