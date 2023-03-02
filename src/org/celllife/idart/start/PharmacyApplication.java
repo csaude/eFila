@@ -308,9 +308,6 @@ public class PharmacyApplication {
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
-                log.info("");
-                log.info("*********************");
-                log.info("Open DDD Thread ");
 
                 Session sess = HibernateUtil.getNewSession();
                 Transaction tx = sess.beginTransaction();
@@ -327,12 +324,18 @@ public class PharmacyApplication {
                         } else {
 
                             if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                                RestFarmac.restPostMissedPickupPatients(sess, url, pool);
+                                log.info("");
+                                log.info("*********************");
+                                log.info("Open DDD Thread ");
                                 RestFarmac.restPostPatients(sess, url, pool);
                                 RestFarmac.restPostLocalDispenses(sess, url, pool, CentralizationProperties.last_dispense_before_reference);
                                 RestFarmac.restGeAllDispenses(url, mainClinic, pool);
                                 RestFarmac.restPostEpisodes(sess, url, pool);
                                 RestFarmac.restGeAllEpisodes(url, mainClinic, pool);
                                 RestFarmac.restGetAllPatientsModified(url, mainClinic, pool);
+                                log.info("*********************");
+                                log.info("Close DDD Thread");
                             } else if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
                                 RestFarmac.restGeAllPatients(url, mainClinic, pool);
                                 RestFarmac.restPostDispenses(sess, url, pool);
@@ -358,8 +361,6 @@ public class PharmacyApplication {
                     log.trace(new Date() + " : [FARMAC REST] Erro " + e.getMessage());
                     log.info(new Date() + " : [FARMAC REST] Erro " + e.getMessage());
                 }
-                log.info("*********************");
-                log.info("Close DDD Thread");
             }
 
         }, 0, synctime, TimeUnit.SECONDS);
