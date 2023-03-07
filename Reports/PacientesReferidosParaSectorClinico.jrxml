@@ -62,7 +62,11 @@ JOIN (
 		SELECT sectorname, clinicsectortype, clinicuuid
 		FROM clinicsector
 	 ) cls ON c.uuid::text = cls.clinicuuid::text
-	 JOIN clinic_sector_type clst ON clst.id::integer = cls.clinicsectortype::integer
+JOIN (
+		SELECT id, code
+		FROM clinic_sector_type
+		WHERE code <> 'PROVEDOR'
+	 ) clst ON clst.id::integer = cls.clinicsectortype::integer
 inner join prescription pr on pr.patient = p.id
 inner join regimeterapeutico rt on rt.regimeid = pr.regimeid
 inner join linhat lt on lt.linhaid = pr.linhaid
