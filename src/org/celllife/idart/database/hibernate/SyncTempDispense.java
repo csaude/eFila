@@ -153,6 +153,10 @@ public class SyncTempDispense implements Serializable {
     private String syncuuid ;
     @Column(name = "uuidopenmrs", length = 255)
     private String uuidopenmrs ;
+    @Column(name = "clinicuuid", length = 255)
+    private String clinicuuid ;
+    @Column(name = "username", length = 255)
+    private String username ;
 
     public SyncTempDispense() {
     }
@@ -666,6 +670,20 @@ public class SyncTempDispense implements Serializable {
 
     public void setUuidopenmrs(String uuidopenmrs) {
         this.uuidopenmrs = uuidopenmrs;
+    }
+
+    public String getClinicUuid() {
+        return clinicuuid;
+    }
+    public void setClinicUuid(String clinicuuid) {
+        this.clinicuuid = clinicuuid;
+    }
+
+    public String getUserName() {
+        return username;
+    }
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getMainclinicuuid() {

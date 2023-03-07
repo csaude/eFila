@@ -26,6 +26,8 @@ import java.util.Map;
 import model.manager.reports.MiaReport;
 import model.manager.reports.OpenmrsErrorLog;
 import model.manager.reports.PatientHistoryReport;
+
+import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.celllife.idart.commonobjects.CentralizationProperties;
 import org.celllife.idart.database.hibernate.Prescription;
@@ -462,6 +464,9 @@ public class NewReports extends GenericAdminGui {
         if (!CentralizationProperties.pharmacy_type.equalsIgnoreCase("F")) {
             reportGUIs.put(GenericReportGuiInterface.REPORT_PACIENTES_REFERIDOS,
                     new PacientesReferidos(getShell(), false));
+
+            reportGUIs.put(GenericReportGuiInterface.REPORT_PACIENTES_REFERIDOS_SECTOR_CLINICO,
+                    new PacientesReferidosSectorClinic(getShell(), false));
 
             reportGUIs.put(GenericReportGuiInterface.REPORT_PACIENTES_REFERIDOSDEVOLTA,
                     new PacientesReferidosDeVolta(getShell(), false));
