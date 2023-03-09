@@ -110,6 +110,6 @@ update drug set report_order = 40 where atccode_id like '%08S30ZZ';
 update drug set report_order = 41 where atccode_id like '%08S39';
 update drug set report_order = 42 where atccode_id like '%08S22';
 
-
-
+alter table sync_temp_dispense add column username text default '' ;
+alter table sync_temp_dispense add column clinicuuid text default '';
 
