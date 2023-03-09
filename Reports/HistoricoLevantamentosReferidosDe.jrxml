@@ -653,7 +653,7 @@ order by 8,6 asc]]>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="858" y="0" width="1" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="859" y="0" width="1" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
@@ -665,8 +665,8 @@ order by 8,6 asc]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{dispensesyncstatus}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="784" y="0" width="73" height="19"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="784" y="0" width="72" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
