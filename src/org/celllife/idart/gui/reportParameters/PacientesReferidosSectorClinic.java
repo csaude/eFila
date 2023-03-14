@@ -219,7 +219,7 @@ public class PacientesReferidosSectorClinic extends GenericReportGui {
 
             String reportNameFile = "Reports/ReferidosParaSectorClinic.xls";
             try {
-                PacientesReferidosExcel op = new PacientesReferidosExcel(parent, reportNameFile, theStartDate, theEndDate);
+                PacientesReferidosSectorClinicoExcel op = new PacientesReferidosSectorClinicoExcel(parent, reportNameFile, theStartDate, theEndDate);
                 new ProgressMonitorDialog(parent).run(true, true, op);
 
                 if (op.getList() == null ||
