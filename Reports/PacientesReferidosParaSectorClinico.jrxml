@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6963904734899635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -71,7 +71,7 @@ inner join prescription pr on pr.patient = p.id
 inner join regimeterapeutico rt on rt.regimeid = pr.regimeid
 inner join linhat lt on lt.linhaid = pr.linhaid
 inner join episode e on e.patient = p.id
-inner join nationalclinics nc on nc.id = c.clinicdetails_id
+left join nationalclinics nc on nc.id = c.clinicdetails_id
 inner join (
 select distinct pat.id patient, Max(pg_catalog.date(to_date(pdit.dateexpectedstring,'DD Mon YYYY'))) proxLev,
 Max(p.date) prescriptiondate
