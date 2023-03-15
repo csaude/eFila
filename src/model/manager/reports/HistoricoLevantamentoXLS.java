@@ -32,12 +32,22 @@ public class HistoricoLevantamentoXLS {
 
 	private String dispenseSyncStatus;
 
+	private String userName;
+
 	public String getPatientIdentifier() {
 		return patientIdentifier;
 	}
 	
 	public void setPatientIdentifier(String patientIdentifier) {
 		this.patientIdentifier = patientIdentifier;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getNome() {
