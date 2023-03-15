@@ -81,7 +81,7 @@ public class HistoricoLevantamentoReferidosExcel implements IRunnableWithProgres
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(11);
-                HSSFCell reportYearCell = reportYear.createCell(9);
+                HSSFCell reportYearCell = reportYear.createCell(10);
                 reportYearCell.setCellValue(sdfYear.format(theStartDate));
                 reportYearCell.setCellStyle(cellStyle);
 
