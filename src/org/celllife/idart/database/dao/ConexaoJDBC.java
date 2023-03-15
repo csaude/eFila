@@ -4808,8 +4808,8 @@ public class ConexaoJDBC {
                 "pg_catalog.date(spt.pickupdate) as dataLevantamento, "+
                 "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, "+
                 "CASE "+
-                    "WHEN (spt.syncstatus = 'I') THEN c.clinicname "+
-                    "WHEN spt.syncstatus = 'N' OR spt.syncstatus = 'M' THEN spt.mainclinicname "+
+                "WHEN (spt.clinicuuid IS NULL OR trim(spt.clinicuuid) = '') AND (spt.syncstatus = 'N' OR spt.syncstatus = 'M') THEN spt.mainclinicname "+
+                "ELSE c.clinicname "+
                 "END AS referencia, "+
                 "CASE "+
                     "WHEN (spt.syncstatus = 'I') THEN 'Importado' "+
@@ -4820,6 +4820,10 @@ public class ConexaoJDBC {
         "from sync_temp_dispense spt "+
         "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs "+
         "inner join clinic c on c.uuid = spt.clinicuuid "+
+        "LEFT JOIN ( "+
+		"SELECT sectorname, clinicsectortype, clinicuuid "+
+		"FROM clinicsector "+
+	    ") cls ON c.uuid::text = cls.clinicuuid::text "+
         "where pg_catalog.date(spt.pickupdate) >= '" + startDate + "'::date AND pg_catalog.date(spt.pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') "+
         "GROUP BY 1,2,3,4,5,6,7,8,9,10"+
         "order by 8,6 asc";
