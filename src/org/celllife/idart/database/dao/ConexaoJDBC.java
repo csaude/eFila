@@ -4809,7 +4809,11 @@ public class ConexaoJDBC {
                 "to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev, "+
                 "CASE "+
                 "WHEN (spt.clinicuuid IS NULL OR trim(spt.clinicuuid) = '') AND (spt.syncstatus = 'N' OR spt.syncstatus = 'M') THEN spt.mainclinicname "+
-                "ELSE c.clinicname "+
+                "ELSE  "+
+                    "CASE  "+
+                        "WHEN cls.sectorname IS NOT NULL THEN cls.sectorname "+
+                        "ELSE c.clinicname "+
+                    "END "+
                 "END AS referencia, "+
                 "CASE "+
                     "WHEN (spt.syncstatus = 'I') THEN 'Importado' "+
