@@ -8,22 +8,22 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="table">
+	<style name="table" isDefault="false">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+	<style name="table_TH" isDefault="false" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+	<style name="table_CH" isDefault="false" mode="Opaque" backcolor="#BFE1FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+	<style name="table_TD" isDefault="false" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
@@ -69,8 +69,8 @@
 		to_date(spt.dateexpectedstring, 'DD-Mon-YYYY') as dataProximoLev,
 		CASE
 			WHEN (spt.clinicuuid IS NULL OR trim(spt.clinicuuid) = '') AND (spt.syncstatus = 'N' OR spt.syncstatus = 'M') THEN spt.mainclinicname
-		ELSE 
-			CASE 
+		ELSE
+			CASE
 				WHEN cls.sectorname IS NOT NULL THEN cls.sectorname
 				ELSE c.clinicname
 			END
@@ -87,7 +87,7 @@ left join clinic c on c.uuid = spt.clinicuuid
 LEFT JOIN (
 		SELECT sectorname, clinicsectortype, uuid as sectoruuid
 		FROM clinicsector
-	 ) cls ON c.uuid::text = cls.sectoruuid::text
+	 ) cls ON cls.sectoruuid = spt.clinicuuid
 where pg_catalog.date(spt.pickupdate) >= $P{date}::date AND pg_catalog.date(spt.pickupdate) < ($P{dateEnd}::date + INTERVAL '1 day')
 GROUP BY 1,2,3,4,5,6,7,8,9,10
 order by 8,6 asc]]>
@@ -646,7 +646,7 @@ order by 8,6 asc]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dataproximolev})]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="625" y="1" width="73" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>

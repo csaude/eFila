@@ -4827,7 +4827,7 @@ public class ConexaoJDBC {
         "LEFT JOIN ( "+
 		"SELECT sectorname, clinicsectortype, uuid as sectoruuid "+
 		"FROM clinicsector "+
-	    ") cls ON c.uuid::text = cls.sectoruuid::text "+
+	    ") cls ON cls.sectoruuid = spt.clinicuuid "+
         "where pg_catalog.date(spt.pickupdate) >= '" + startDate + "'::date AND pg_catalog.date(spt.pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') "+
         "GROUP BY 1,2,3,4,5,6,7,8,9,10"+
         "order by 8,6 asc";
@@ -7362,12 +7362,13 @@ public class ConexaoJDBC {
                     "Max(e.startdate) as dataReferencia, "+
                     "Max(pr.date) as ultimaPrescricao "+
                     "from Patient as p "+
-                    "inner join clinic c on c.id = p.clinic "+
-                    "JOIN ( "+
+                    "inner join sync_temp_patients stp on stp.uuidopenmrs = p.uuidopenmrs "+
+                    "inner join clinic c on c.uuid = stp.mainclinicuuid "+
+                    "inner join ( "+
                            " SELECT sectorname, clinicsectortype, clinicuuid "+
                             "FROM clinicsector "+
-                         ") cls ON c.uuid::text = cls.clinicuuid::text "+
-                    "JOIN ( "+
+                         ") cls ON cls.clinicuuid = c.uuid "+
+                    "inner join ( "+
                             "SELECT id, code "+
                             "FROM clinic_sector_type "+
                             "WHERE code <> 'PROVEDOR' "+
@@ -7384,15 +7385,15 @@ public class ConexaoJDBC {
                     "inner join packageddrugs pds on pds.parentpackage = pa.id "+
                     "inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id "+
                     "inner join prescription p on p.id = pa.prescription "+
-                   "inner join patient pat on pat.id = p.patient "+
-                       "where pg_catalog.date(p.date) < ( '" + dataFim + "'::date + INTERVAL '1 day') " +
+                    "inner join patient pat on pat.id = p.patient "+
+                    "inner join clinic c on c.id = pat.clinic "+
+                       "where c.mainclinic = true AND pg_catalog.date(p.date) < ( '" + dataFim + "'::date + INTERVAL '1 day') " +
                     "group by 1 "+
                     ") pack on pack.patient = p.id and pack.prescriptiondate = pr.date "+
                    "where  e.startdate >= '" + dataInicio + "'::date "+
-                    "AND e.startdate < '" + dataFim + "'::date + INTERVAL '1 day') "+
-                    "AND pg_catalog.date(pr.date) < '" + dataFim + "'::date + INTERVAL '1 day') "+
+                    "AND e.startdate < '" + dataFim + "'::date + INTERVAL '1 day' "+
+                    "AND pg_catalog.date(pr.date) < '" + dataFim + "'::date + INTERVAL '1 day' "+
                    "AND startreason like '%eferido%' "+
-                    "AND c.mainclinic <> true "+
                     "group by 1,2,3,4,5,6,7,8,9 "+
                     "order by p.patientid asc"                    
                     ;
