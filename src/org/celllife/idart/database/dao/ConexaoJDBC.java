@@ -4823,11 +4823,11 @@ public class ConexaoJDBC {
                 "spt.username "+
         "from sync_temp_dispense spt "+
         "inner join patient p on p.uuidopenmrs = spt.uuidopenmrs "+
-        "inner join clinic c on c.uuid = spt.clinicuuid "+
+        "left join clinic c on c.uuid = spt.clinicuuid "+
         "LEFT JOIN ( "+
-		"SELECT sectorname, clinicsectortype, clinicuuid "+
+		"SELECT sectorname, clinicsectortype, uuid as sectoruuid "+
 		"FROM clinicsector "+
-	    ") cls ON c.uuid::text = cls.clinicuuid::text "+
+	    ") cls ON c.uuid::text = cls.sectoruuid::text "+
         "where pg_catalog.date(spt.pickupdate) >= '" + startDate + "'::date AND pg_catalog.date(spt.pickupdate) < ('" + endDate + "'::date + INTERVAL '1 day') "+
         "GROUP BY 1,2,3,4,5,6,7,8,9,10"+
         "order by 8,6 asc";
