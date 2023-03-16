@@ -33,11 +33,10 @@
 	<parameter name="totallinhasDDUS3" class="java.lang.String"/>
 	<parameter name="totallinhasDDUS" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[
-
-SELECT distinct
+		<![CDATA[SELECT distinct
    regimen.regimeesquema,
    regimen.codigoregime,
+   regimen.report_order,
    count(distinct regimen.contagem) contagem,
    count(distinct regimen.uscontagem) uscontagem,
    count(distinct regimen.dccontagem) dccontagem
@@ -47,6 +46,7 @@ FROM
  pack.regimeesquema,
  pack.codigoregime,
  pack.linhanome,
+ pack.report_order,
  CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount <> 0 ) THEN pack.id END contagem,
  CASE WHEN ( pack.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,
  CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount = 0 ) THEN pack.id END dccontagem,
@@ -58,7 +58,7 @@ FROM
 	   c.id as patclinic
  FROM   (
 	 select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,
-	 pat.id, pdit.flagidentifier, rt.regimeesquema, rt.codigoregime, l.linhanome
+	 pat.id, pdit.flagidentifier, rt.regimeesquema, rt.report_order, rt.codigoregime, l.linhanome
 	 from package pa
 	 inner join packageddrugs pds on pds.parentpackage = pa.id
 	 inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
@@ -69,7 +69,7 @@ FROM
 	 where pg_catalog.date(pa.pickupdate) >= $P{date}::date
 	 and pg_catalog.date(pa.pickupdate) <=  $P{dateEnd}::date
 	 and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')
-	 GROUP BY 5,6,7,8,9 order by 5) pack
+	 GROUP BY 5,6,7,8,9,10 order by rt.report_order) pack
 	 inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id
 	 inner join patient pat on pat.id = pack.id
 	 inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
@@ -82,9 +82,10 @@ FROM
 	    ) regimen
 group by
    1,
-   2
+   2,
+   3
 order by
-   1]]>
+ regimen.report_order asc]]>
 	</queryString>
 	<field name="regimeesquema" class="java.lang.String"/>
 	<field name="codigoregime" class="java.lang.String"/>
