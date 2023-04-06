@@ -1493,7 +1493,7 @@ public class  AddPrescription extends GenericFormGui implements
 
         Episode episode = PatientManager.getLastEpisode(getHSession(), patient.getPatientId());
 
-        if (episode.getStartReason().contains("nsito") || episode.getStartReason().contains("aternidade") || episode.getStartReason().contains("CCR")) {
+        if (episode.getStartReason().contains("nsito") || episode.getStartReason().contains("aternidade") || episode.getStartReason().contains("CCR") || episode.getStartReason().contains("PPE")) {
             checkOpenmrs = false;
         }
 

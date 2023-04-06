@@ -188,10 +188,10 @@ public class DownReferDialog extends GenericOthersGui {
             Clinic clinic = null;
             ClinicSector clinicSector = null;
 
-            if(rdBtnDownReferredDDD.getSelection())
+            if (rdBtnDownReferredDDD.getSelection())
                 clinicName = cmbClinic.getText();
 
-            if(rdBtnDownReferredDC.getSelection())
+            if (rdBtnDownReferredDC.getSelection())
                 clinicName = cmbClinicSector.getText();
 
             episode.setStopNotes("Para " + clinicName);
@@ -209,17 +209,17 @@ public class DownReferDialog extends GenericOthersGui {
             newEpisode.setStartReason(startReason);
             patient.getEpisodes().add(newEpisode);
 
-            if(rdBtnDownReferredDDD.getSelection()) {
-                clinic = AdministrationManager.getClinic(getHSession(),clinicName);
+            if (rdBtnDownReferredDDD.getSelection()) {
+                clinic = AdministrationManager.getClinic(getHSession(), clinicName);
                 patient.setClinic(clinic);
                 newEpisode.setClinic(clinic);
                 msgTxt = " Referido para outra Farmacia " + clinicName;
             }
 
-            if(rdBtnDownReferredDC.getSelection()){
-                clinicSector =  AdministrationManager.getSectorByName(getHSession(), clinicName);
+            if (rdBtnDownReferredDC.getSelection()) {
+                clinicSector = AdministrationManager.getSectorByName(getHSession(), clinicName);
                 newEpisode.setClinic(mainClinic);
-                msgTxt = " Referido para Sector Clinico "+ clinicName;
+                msgTxt = " Referido para Sector Clinico " + clinicName;
             }
 
             saveReferredPatient(patient, clinic, clinicSector, mainClinic, getHSession(), "Activo");
@@ -307,15 +307,15 @@ public class DownReferDialog extends GenericOthersGui {
         cmbClinicSectorType.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
 
-                if(cmbClinicSectorType.getText().contains("provedor")){
+                if (cmbClinicSectorType.getText().contains("provedor")) {
                     labelSector.setText("Provedor de Referência:");
-                }else{
+                } else {
                     labelSector.setText("Sector Clínico de Referência:");
                 }
 
                 String newItems[] = {};
                 cmbClinicSector.setItems(newItems);
-                CommonObjects.populateClinicSectorBySectorType(getHSession(),cmbClinicSectorType.getText(), cmbClinicSector);
+                CommonObjects.populateClinicSectorBySectorType(getHSession(), cmbClinicSectorType.getText(), cmbClinicSector);
             }
         });
 
@@ -404,10 +404,10 @@ public class DownReferDialog extends GenericOthersGui {
         String clinicOrSectorName = "";
         int clinicOrSectorId = 0;
 
-        if(clinic != null) {
-             clinicOrSectorUuid = clinic.getUuid();
-             clinicOrSectorName = clinic.getClinicName();
-             clinicOrSectorId = clinic.getId();
+        if (clinic != null) {
+            clinicOrSectorUuid = clinic.getUuid();
+            clinicOrSectorName = clinic.getClinicName();
+            clinicOrSectorId = clinic.getId();
         } else {
             clinicOrSectorUuid = clinicSector.getUuid();
             clinicOrSectorName = clinicSector.getSectorname();
@@ -493,21 +493,21 @@ public class DownReferDialog extends GenericOthersGui {
                     pacienteReferido.setDatainiciotarv(patient.getAttributeByName("ARV Start Date").getValue());
                 pacienteReferido.setSyncstatus('P');
 
-                if(pacienteReferidoTemp.getPrescriptiondate() != null && estadoPaciente.equalsIgnoreCase("Faltoso")){
-                    if(!pacienteReferido.getPrescriptiondate().after(pacienteReferidoTemp.getPrescriptiondate())){
+                if (pacienteReferidoTemp.getPrescriptiondate() != null && estadoPaciente.equalsIgnoreCase("Faltoso")) {
+                    if (!pacienteReferido.getPrescriptiondate().after(pacienteReferidoTemp.getPrescriptiondate())) {
                         pacienteReferido = pacienteReferidoTemp;
-                        if(pacienteReferidoTemp.getSyncstatus() != 'P')
-                        pacienteReferido.setSyncstatus('E');
-                        log.trace("Paciente com nid ["+patient.getPatientId()+"] Ja foi referido. A data da prescrição actual é a mesma que a última usada.");
+                        if (pacienteReferidoTemp.getSyncstatus() != 'P')
+                            pacienteReferido.setSyncstatus('E');
+                        log.trace("Paciente com nid [" + patient.getPatientId() + "] Ja foi referido. A data da prescrição actual é a mesma que a última usada.");
                     }
                 }
 
                 AdministrationManager.saveSyncTempPatient(session, pacienteReferido);
-                log.trace("Paciente com nid ["+patient.getPatientId()+"] Gravado com sucesso");
+                log.trace("Paciente com nid [" + patient.getPatientId() + "] Gravado com sucesso");
 
             } else {
-                if(estadoPaciente.equalsIgnoreCase("Faltoso")){
-                    log.trace("Paciente com nid ["+patient.getPatientId()+"] não contém uma prescrição sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
+                if (estadoPaciente.equalsIgnoreCase("Faltoso")) {
+                    log.trace("Paciente com nid [" + patient.getPatientId() + "] não contém uma prescrição sem dispensa. Por favor, remova a prescrição ou efectue a dispensa");
                 } else {
                     MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
                             | SWT.OK);
@@ -518,8 +518,8 @@ public class DownReferDialog extends GenericOthersGui {
                 }
             }
         } else {
-            if(estadoPaciente.equalsIgnoreCase("Faltoso")){
-                log.trace("Paciente com nid ["+patient.getPatientId()+"] não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
+            if (estadoPaciente.equalsIgnoreCase("Faltoso")) {
+                log.trace("Paciente com nid [" + patient.getPatientId() + "] não contém uma prescrição. Por favor, queira criar a prescrição e efectue a respetiva dispensa");
             } else {
                 MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
                         | SWT.OK);
@@ -535,20 +535,22 @@ public class DownReferDialog extends GenericOthersGui {
 
         Prescription prescription = patient.getMostRecentPrescription(iDartProperties.SERVICOTARV);
         Packages aPackage = PackageManager.getLastPackageOnScript(prescription);
-
-        java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
-        // Last dispense status L
-        for (PackageDrugInfo pdi : packagedDrugsList) {
-            if (pdi.getId() != 0) {
-                //Para farmac Insere dispensas para US
-                if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
-                    savePackageDrugInfosFarmac(pdi, 'L');
+        if (aPackage != null) {
+            java.util.List<PackageDrugInfo> packagedDrugsList = PackageManager.getPackageDrugInfoForPatient(session, patient.getPatientId(), aPackage.getPackageId());
+            // Last dispense status L
+            for (PackageDrugInfo pdi : packagedDrugsList) {
+                if (pdi.getId() != 0) {
+                    //Para farmac Insere dispensas para US
+                    if (CentralizationProperties.pharmacy_type.equalsIgnoreCase("U")) {
+                        savePackageDrugInfosFarmac(pdi, 'L');
+                    }
                 }
             }
         }
+
     }
 
-    public void cleanFields () {
+    public void cleanFields() {
         String newItems[] = {};
         cmbClinic.select(0);
         cmbClinicSectorType.select(0);
