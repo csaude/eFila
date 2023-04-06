@@ -2942,7 +2942,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             }
         }
 
-        if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || patientEpisode.getStartReason().contains("CCR") || !checkOpenmrs) {
+        if (patientEpisode.getStartReason().contains("nsito") || patientEpisode.getStartReason().contains("ternidade") || patientEpisode.getStartReason().contains("CCR") || patientEpisode.getStartReason().contains("PPE") || !checkOpenmrs) {
 
             PackageManager.savePackage(getHSession(), newPack);
             aviado = true;

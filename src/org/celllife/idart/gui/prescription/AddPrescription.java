@@ -1699,7 +1699,7 @@ public class  AddPrescription extends GenericFormGui implements
                         String strFacility = null;
 
                         if (StringUtils.isEmpty(patient.getUuidopenmrs()) && !episode.getStartReason().contains("nsito")
-                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR")
+                                && !episode.getStartReason().contains("aternidade") && !episode.getStartReason().contains("CCR") && !episode.getStartReason().contains("PPE")
                                 && !episode.getStartReason().contains("CRAM")) {
                             MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                             m.setText("Informação sobre estado do programa");

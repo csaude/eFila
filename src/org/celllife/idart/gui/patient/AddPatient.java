@@ -1837,6 +1837,20 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                     }
                 }
 
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().getName().contains("CRAM")) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
+                        break;
+                    }
+                }
+
+                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
+                    if (identifier.getType().getName().contains("PPE")) {
+                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
+                        break;
+                    }
+                }
+
                 // myPrescription.addDisposeListener(new DisposeListener() {
                 // public void widgetDisposed(DisposeEvent e1) {
                 cmdCancelWidgetSelected();

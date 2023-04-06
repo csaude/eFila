@@ -122,4 +122,16 @@ public class PatientIdentifier {
 	public boolean isPREP(){
 		return this.type.getName().equalsIgnoreCase("PREP");
 	}
+
+	public boolean isPPE(){
+		return this.type.getName().equalsIgnoreCase("PPE");
+	}
+
+	public boolean isCRAM(){
+		return this.type.getName().equalsIgnoreCase("CRAM");
+	}
+
+	public boolean isCCR(){
+		return this.type.getName().equalsIgnoreCase("NID CCR");
+	}
 }
