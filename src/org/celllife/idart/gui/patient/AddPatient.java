@@ -1817,7 +1817,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             if (localPatient.getId() != -1) {
 
                 for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
-                    if (identifier.getType().isNID()) {
+                    if (identifier.getType().isNID() ||
+                            identifier.getType().getName().contains("PPE") ||
+                            identifier.getType().getName().contains("CRAM")) {
                         new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
                         break;
                     }
@@ -1832,20 +1834,6 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
                 for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
                     if (identifier.getType().getName().contains("CCR")) {
-                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
-                        break;
-                    }
-                }
-
-                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
-                    if (identifier.getType().getName().contains("CRAM")) {
-                        new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
-                        break;
-                    }
-                }
-
-                for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
-                    if (identifier.getType().getName().contains("PPE")) {
                         new AddPrescription(localPatient, getParent(), false, iDartProperties.PNCT);
                         break;
                     }
