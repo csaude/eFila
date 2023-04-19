@@ -39,6 +39,35 @@ update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M10
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M11','Nov') where substr(dateexpectedstring,4,3)='M11';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M12','Dec') where substr(dateexpectedstring,4,3)='M12';
 
+
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M01','Jan') where substr(dateexpectedstring,4,3)='M01';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M02','Feb') where substr(dateexpectedstring,4,3)='M02';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M03','Mar') where substr(dateexpectedstring,4,3)='M03';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M04','Apr') where substr(dateexpectedstring,4,3)='M04';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M05','May') where substr(dateexpectedstring,4,3)='M05';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M06','Jun') where substr(dateexpectedstring,4,3)='M06';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M07','Jul') where substr(dateexpectedstring,4,3)='M07';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M08','Aug') where substr(dateexpectedstring,4,3)='M08';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M09','Sep') where substr(dateexpectedstring,4,3)='M09';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M10','Oct') where substr(dateexpectedstring,4,3)='M10';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M11','Nov') where substr(dateexpectedstring,4,3)='M11';
+update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'M12','Dec') where substr(dateexpectedstring,4,3)='M12';
+
+
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M01','Jan') where substr(dateexpectedstring,4,3)='M01';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M02','Feb') where substr(dateexpectedstring,4,3)='M02';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M03','Mar') where substr(dateexpectedstring,4,3)='M03';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M04','Apr') where substr(dateexpectedstring,4,3)='M04';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M05','May') where substr(dateexpectedstring,4,3)='M05';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M06','Jun') where substr(dateexpectedstring,4,3)='M06';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M07','Jul') where substr(dateexpectedstring,4,3)='M07';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M08','Aug') where substr(dateexpectedstring,4,3)='M08';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M09','Sep') where substr(dateexpectedstring,4,3)='M09';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M10','Oct') where substr(dateexpectedstring,4,3)='M10';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M11','Nov') where substr(dateexpectedstring,4,3)='M11';
+update sync_temp_dispense set dateexpectedstring=replace(dateexpectedstring,'M12','Dec') where substr(dateexpectedstring,4,3)='M12';
+
+
 ALTER TABLE drug ADD COLUMN IF NOT EXISTS report_order integer NOT NULL DEFAULT 300;
 ALTER TABLE regimeterapeutico ADD COLUMN IF NOT EXISTS report_order integer NOT NULL DEFAULT 300;
 
