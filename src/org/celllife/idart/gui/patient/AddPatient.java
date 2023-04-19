@@ -996,7 +996,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             currentPrescription = localPatient.getCurrentPrescription(iDartProperties.SERVICOTARV);
         }
 
-        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE"))
             if (checkOpenmrs && isAddnotUpdate) {
                 try {
                     if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
@@ -1183,7 +1183,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         }
 
         if (result) {
-            if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+            if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE"))
                 if (checkOpenmrs) {
                     try {
                         if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
@@ -1287,7 +1287,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
 
                 txtPatientId.setText(localPatient.getPatientId());
 
-                if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+                if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE"))
 
                     if (checkOpenmrs) {
                         try {
@@ -1653,7 +1653,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         localPatient.setCellphone(txtCellphone.getText().trim());
 
 
-        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE"))
             if (checkOpenmrs && isAddnotUpdate) {
                 try {
                     if (getServerStatus(JdbcProperties.urlBase).contains("Red")) {
@@ -1817,7 +1817,9 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             if (localPatient.getId() != -1) {
 
                 for (PatientIdentifier identifier : localPatient.getPatientIdentifiers()) {
-                    if (identifier.getType().isNID()) {
+                    if (identifier.getType().isNID() ||
+                            identifier.getType().getName().contains("PPE") ||
+                            identifier.getType().getName().contains("CRAM")) {
                         new AddPrescription(localPatient, getParent(), false, iDartProperties.SERVICOTARV);
                         break;
                     }
@@ -2593,7 +2595,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
         if (!isSaveRequired())
             return true;
 
-        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade"))
+        if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE"))
             if (checkOpenmrs && isAddnotUpdate) {
                 //Verificar se o NID existe no OpenMRS
                 try {
@@ -2650,7 +2652,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                             TemporaryRecordsManager.updateOpenmrsUnsubmittedPackageDrugInfos(getHSession(), pdiList, localPatient);
                     }
 
-                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
+                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE")) {
                         if (!oldPatient.getUuidopenmrs().trim().isEmpty()) {
                             if (oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs()) || oldPatient.getPatientId().equalsIgnoreCase(localPatient.getPatientId())) {
 
@@ -2701,7 +2703,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
                         }
                     }
 
-//                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade")) {
+//                    if (!cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !cmbEpisodeStartReason.getText().contains("CCR") && !cmbEpisodeStartReason.getText().contains("PPE")) {
 //
 //                        if (!oldPatient.getUuidopenmrs().equalsIgnoreCase(localPatient.getUuidopenmrs())) {
 //                            // update Packagedruginfos : Unsubmitted  records m  to openmrs  due to patientid mismatch

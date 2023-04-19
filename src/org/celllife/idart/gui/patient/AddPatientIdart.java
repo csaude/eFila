@@ -2422,7 +2422,7 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
 
         if ((cmbEpisodeStartReason.getText().contains("nsito") || cmbEpisodeStartReason.getText().contains("nidade") || cmbEpisodeStartReason.getText().contains("CCR") || (cmbEpisodeStartReason.getText().contains("PPE")) && localPatient.getIsPatientEmTransito()))
             confirmationSave = true;
-        else if (!(cmbEpisodeStartReason.getText().contains("PPE")) && !cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !localPatient.getIsPatientEmTransito())
+        else if (!(cmbEpisodeStartReason.getText().contains("CCR")) && !(cmbEpisodeStartReason.getText().contains("PPE")) && !cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !localPatient.getIsPatientEmTransito())
             confirmationSave = true;
 
         if (fieldsOk()) {

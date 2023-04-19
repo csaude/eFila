@@ -17,5 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="hibernate-commons-annotations" level="project" />
+    <orderEntry type="library" name="ant-antlr-1.6.5" level="project" />
   </component>
 </module>
