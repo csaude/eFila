@@ -5,7 +5,9 @@ public class AbsenteeForSupportCall {
 	private String patientIdentifier;
 	
 	private String nome;
-	
+
+	private Integer age;
+
 	private String dataQueFaltouLevantamento;
 	
 	private String dataIdentificouAbandonoTarv;
@@ -34,6 +36,14 @@ public class AbsenteeForSupportCall {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 
 	public String getDataQueFaltouLevantamento() {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="defaultersReport_sub" pageWidth="623" pageHeight="595" orientation="Landscape" columnWidth="623" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="defaultersReport_sub" pageWidth="671" pageHeight="595" orientation="Landscape" columnWidth="671" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.4641000000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -152,74 +152,87 @@ order by patID asc]]>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-12" stretchType="RelativeToBandHeight" mode="Opaque" x="623" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-12" stretchType="RelativeToBandHeight" mode="Opaque" x="669" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-13" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="19" width="622" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-13" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="19" width="669" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-15" stretchType="RelativeToBandHeight" mode="Opaque" x="408" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-15" stretchType="RelativeToBandHeight" mode="Opaque" x="454" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-16" stretchType="RelativeToBandHeight" mode="Opaque" x="380" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-16" stretchType="RelativeToBandHeight" mode="Opaque" x="426" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-29" stretchType="RelativeToBandHeight" mode="Opaque" x="502" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-29" stretchType="RelativeToBandHeight" mode="Opaque" x="548" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-32" stretchType="RelativeToBandHeight" mode="Opaque" x="288" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-32" stretchType="RelativeToBandHeight" mode="Opaque" x="334" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement x="196" y="0" width="91" height="19"/>
+				<reportElement x="242" y="0" width="91" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateexpected})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="0" width="90" height="19"/>
+				<reportElement x="336" y="0" width="90" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datelostfollowup})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="411" y="0" width="90" height="19"/>
+				<reportElement x="457" y="0" width="90" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datereturn})]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="388" y="4" width="11" height="13"/>
+				<reportElement x="434" y="4" width="11" height="13"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{path}+ java.io.File.separator +"checkbox.jpg"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="509" y="4" width="12" height="12"/>
+				<reportElement x="555" y="4" width="12" height="12"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{path}+ java.io.File.separator +"checkbox.jpg"]]></imageExpression>
 			</image>
 			<line>
-				<reportElement key="line-29" stretchType="RelativeToBandHeight" mode="Opaque" x="531" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-29" stretchType="RelativeToBandHeight" mode="Opaque" x="577" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="535" y="0" width="85" height="19"/>
+				<reportElement x="581" y="0" width="85" height="19"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cellno}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-9" stretchType="RelativeToBandHeight" mode="Opaque" x="239" y="0" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="197" y="1" width="41" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{age}.intValue()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

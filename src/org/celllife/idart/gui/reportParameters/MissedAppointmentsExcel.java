@@ -77,12 +77,12 @@ public class MissedAppointmentsExcel  implements IRunnableWithProgress {
                 healthFacilityCell.setCellStyle(cellStyle);
 
                 HSSFRow reportPeriod = sheet.getRow(10);
-                HSSFCell reportPeriodCell = reportPeriod.createCell(9);
+                HSSFCell reportPeriodCell = reportPeriod.createCell(10);
                 reportPeriodCell.setCellValue(sdf.format(swtCal.getCalendar().getTime()));
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(11);
-                HSSFCell reportYearCell = reportYear.createCell(9);
+                HSSFCell reportYearCell = reportYear.createCell(10);
                 reportYearCell.setCellValue(sdfYear.format(swtCal.getCalendar().getTime()));
                 reportYearCell.setCellStyle(cellStyle);
 
@@ -113,31 +113,35 @@ public class MissedAppointmentsExcel  implements IRunnableWithProgress {
                     createCellNome.setCellValue(xls.getNome());
                     createCellNome.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(3);
+                    HSSFCell createCellAge = row.createCell(3);
+                    createCellAge.setCellValue(xls.getAge());
+                    createCellAge.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(4);
                     createCellDataQueFaltouLevantamento.setCellValue(xls.getDataQueFaltouLevantamento());
                     createCellDataQueFaltouLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(4);
+                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(5);
                     createCellDataIdentificouAbandonoTarv.setCellValue(xls.getDataIdentificouAbandonoTarv());
                     createCellDataIdentificouAbandonoTarv.setCellStyle(cellStyle);
 
-                    HSSFCell createCellEfectuouLigacao = row.createCell(5);
+                    HSSFCell createCellEfectuouLigacao = row.createCell(6);
                     createCellEfectuouLigacao.setCellValue("");
                     createCellEfectuouLigacao.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataRegressoUnidadeSanitaria = row.createCell(6);
+                    HSSFCell createCellDataRegressoUnidadeSanitaria = row.createCell(7);
                     createCellDataRegressoUnidadeSanitaria.setCellValue(xls.getDataRegressoUnidadeSanitaria());
                     createCellDataRegressoUnidadeSanitaria.setCellStyle(cellStyle);
 
-                    HSSFCell createCellChamadaEfectuada = row.createCell(7);
+                    HSSFCell createCellChamadaEfectuada = row.createCell(8);
                     createCellChamadaEfectuada.setCellValue("");
                     createCellChamadaEfectuada.setCellStyle(cellStyle);
 
-                    HSSFCell createCellContacto = row.createCell(8);
+                    HSSFCell createCellContacto = row.createCell(9);
                     createCellContacto.setCellValue(xls.getContacto());
                     createCellContacto.setCellStyle(cellStyle);
 
-                    HSSFCell createCellFaltososSemana = row.createCell(9);
+                    HSSFCell createCellFaltososSemana = row.createCell(10);
                     createCellFaltososSemana.setCellValue("");
                     createCellFaltososSemana.setCellStyle(cellStyle);
 

@@ -73,7 +73,6 @@ public class TemporaryRecordsManager {
             if(dispenseFarmac == null)
              dispenseFarmac = new SyncTempDispense();
 
-
             dispenseFarmac.setId(pdi.getId());
             dispenseFarmac.setDate(pdi.getPackagedDrug().getParentPackage().getPrescription().getDate());
             dispenseFarmac.setClinicalstage(pdi.getPackagedDrug().getParentPackage().getPrescription().getClinicalStage());
@@ -131,6 +130,7 @@ public class TemporaryRecordsManager {
             dispenseFarmac.setCpn(pdi.getPackagedDrug().getParentPackage().getPrescription().getCpn());
             dispenseFarmac.setPrescricaoespecial(pdi.getPackagedDrug().getParentPackage().getPrescription().getPrescricaoespecial());
             dispenseFarmac.setMotivocriacaoespecial(pdi.getPackagedDrug().getParentPackage().getPrescription().getMotivocriacaoespecial());
+            dispenseFarmac.setTipoDoenca(pdi.getPackagedDrug().getParentPackage().getPrescription().getTipoDoenca());
             dispenseFarmac.setUuidopenmrs(patient.getUuid());
 
             sess.save(dispenseFarmac);

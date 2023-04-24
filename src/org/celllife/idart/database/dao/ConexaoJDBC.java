@@ -5855,6 +5855,7 @@ public class ConexaoJDBC {
                     FollowupFaulty faultyQuartelyLayOff = new FollowupFaulty();
                     faultyQuartelyLayOff.setPatientIdentifier(rs.getString("patID"));
                     faultyQuartelyLayOff.setNome(rs.getString("name"));
+                    faultyQuartelyLayOff.setAge(rs.getInt("age"));
                     faultyQuartelyLayOff.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     faultyQuartelyLayOff.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     faultyQuartelyLayOff.setDataRegressouUnidadeSanitaria(rs.getString("datereturn"));
@@ -5950,6 +5951,7 @@ public class ConexaoJDBC {
                     FollowupFaulty lostToFollowupFaultySemiAnnual = new FollowupFaulty();
                     lostToFollowupFaultySemiAnnual.setPatientIdentifier(rs.getString("patID"));
                     lostToFollowupFaultySemiAnnual.setNome(rs.getString("name"));
+                    lostToFollowupFaultySemiAnnual.setAge(rs.getInt("age"));
                     lostToFollowupFaultySemiAnnual.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     lostToFollowupFaultySemiAnnual.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     lostToFollowupFaultySemiAnnual.setDataRegressouUnidadeSanitaria(rs.getString("datereturn"));
@@ -6533,6 +6535,7 @@ public class ConexaoJDBC {
                     AbsenteeForSupportCall absentee = new AbsenteeForSupportCall();
                     absentee.setPatientIdentifier(rs.getString("patID"));
                     absentee.setNome(rs.getString("name"));
+                    absentee.setAge(rs.getInt("age"));
                     absentee.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     absentee.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     absentee.setDataRegressoUnidadeSanitaria(rs.getString("datereturn"));
@@ -7631,6 +7634,7 @@ public class ConexaoJDBC {
                     AbsenteeForSupportCall lostTofallowUp = new AbsenteeForSupportCall();
                     lostTofallowUp.setPatientIdentifier(rs.getString("patID"));
                     lostTofallowUp.setNome(rs.getString("name"));
+                    lostTofallowUp.setAge(rs.getInt("age"));
                     lostTofallowUp.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     lostTofallowUp.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     lostTofallowUp.setDataRegressoUnidadeSanitaria(rs.getString("datereturn"));
@@ -7734,7 +7738,7 @@ public class ConexaoJDBC {
                 "order by 1 " +
                 " )pp on pp.id = pe.patient " +
                 " inner join patient pt on pt.id = pe.patient " +
-                " where pe.date between '" + startDate + "' and '" + endDate + "' ";
+                " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca = 'TARV'";
 
         List<PrescricoesDuplicadasXLS> prescricoesDuplicadasXLSList = new ArrayList<PrescricoesDuplicadasXLS>();
         ResultSet rs = st.executeQuery(query);
