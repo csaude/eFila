@@ -187,7 +187,7 @@ public class iDartProperties {
 
 	public static int logoutTime = -1;
 
-	public static String idartVersionNumber = "3.1.0";
+	public static String idartVersionNumber = "3.2.0_SNAPSHOT";
 
 	public static boolean nextAppointmentDateOnLabels = true;
 

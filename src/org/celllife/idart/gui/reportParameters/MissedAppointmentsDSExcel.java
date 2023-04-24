@@ -82,12 +82,12 @@ public class MissedAppointmentsDSExcel  implements IRunnableWithProgress {
                 healthFacilityCell.setCellStyle(cellStyle);
 
                 HSSFRow reportPeriod = sheet.getRow(10);
-                HSSFCell reportPeriodCell = reportPeriod.createCell(7);
+                HSSFCell reportPeriodCell = reportPeriod.createCell(8);
                 reportPeriodCell.setCellValue(sdf.format(swtCal.getCalendar().getTime()));
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(11);
-                HSSFCell reportYearCell = reportYear.createCell(7);
+                HSSFCell reportYearCell = reportYear.createCell(8);
                 reportYearCell.setCellValue(sdfYear.format(swtCal.getCalendar().getTime()));
                 reportYearCell.setCellStyle(cellStyle);
 
@@ -119,23 +119,27 @@ public class MissedAppointmentsDSExcel  implements IRunnableWithProgress {
                     createCellNome.setCellValue(xls.getNome());
                     createCellNome.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(3);
+                    HSSFCell createCellAge = row.createCell(3);
+                    createCellAge.setCellValue(xls.getAge());
+                    createCellAge.setCellStyle(cellStyle);
+
+                    HSSFCell createCellDataQueFaltouLevantamento = row.createCell(4);
                     createCellDataQueFaltouLevantamento.setCellValue(xls.getDataQueFaltouLevantamento());
                     createCellDataQueFaltouLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(4);
+                    HSSFCell createCellDataIdentificouAbandonoTarv = row.createCell(5);
                     createCellDataIdentificouAbandonoTarv.setCellValue(xls.getDataIdentificouAbandonoTarv());
                     createCellDataIdentificouAbandonoTarv.setCellStyle(cellStyle);
 
-                    HSSFCell emptyCell_1 = row.createCell(5);
+                    HSSFCell emptyCell_1 = row.createCell(6);
                     emptyCell_1.setCellValue("");
                     emptyCell_1.setCellStyle(cellStyle);
 
-                    HSSFCell createCellEfectuouLigacao = row.createCell(6);
+                    HSSFCell createCellEfectuouLigacao = row.createCell(7);
                     createCellEfectuouLigacao.setCellValue(xls.getDataRegressouUnidadeSanitaria());
                     createCellEfectuouLigacao.setCellStyle(cellStyle);
 
-                    HSSFCell emptyCell_2 = row.createCell(7);
+                    HSSFCell emptyCell_2 = row.createCell(8);
                     emptyCell_2.setCellValue("");
                     emptyCell_2.setCellStyle(cellStyle);
 

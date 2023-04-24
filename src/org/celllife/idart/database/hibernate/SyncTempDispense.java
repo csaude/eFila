@@ -5,6 +5,8 @@
  */
 package org.celllife.idart.database.hibernate;
 
+import org.celllife.idart.commonobjects.iDartProperties;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -157,6 +159,8 @@ public class SyncTempDispense implements Serializable {
     private String clinicuuid ;
     @Column(name = "username", length = 255)
     private String username ;
+    @Column(name = "tipodoenca", length = 255)
+    private String tipoDoenca;
 
     public SyncTempDispense() {
     }
@@ -692,5 +696,34 @@ public class SyncTempDispense implements Serializable {
 
     public void setMainclinicuuid(String mainclinicuuid) {
         this.mainclinicuuid = mainclinicuuid;
+    }
+
+    public String getTipoDoenca() {
+        return tipoDoenca;
+    }
+
+    public void setTipoDoenca(String tipoDoenca) {
+        this.tipoDoenca = tipoDoenca;
+    }
+
+    public boolean isTARV() {
+        return this.tipoDoenca.equalsIgnoreCase("TARV");
+    }
+
+    public boolean isTPT() {
+        return this.tipoDoenca.equalsIgnoreCase("TPT");
+    }
+
+    public boolean isPREP() {
+        return this.tipoDoenca.equalsIgnoreCase("PREP");
+    }
+
+    public String tipoDoenca(){
+        if(isPREP())
+            return iDartProperties.PREP;
+        if (isTPT())
+                return iDartProperties.PNCT;
+
+        return iDartProperties.SERVICOTARV;
     }
 }

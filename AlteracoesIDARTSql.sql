@@ -1,5 +1,5 @@
+ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS tipodoenca varchar(255) NOT NULL DEFAULT 'TARV';
 
--- Alter database structure for iDARt v3.7.0
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'mar','Mar') where substr(dateexpectedstring,4,3)='mar';
