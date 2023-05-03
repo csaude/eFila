@@ -623,7 +623,7 @@ public class RestClient {
 
         try {
 
-            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                 postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(dispense.getStrPickUp(), uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
                         strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID, iDartProperties.FILT_DISPENSED_TYPE_UUID,
                         iDartProperties.FILT_TPT_FOLLOW_UP_UUID, dispense.getRegimenAnswer(), dispense.getPrescription().getPrescribedDrugs(), iDartProperties.FILT_NEXT_APOINTMENT_UUID,

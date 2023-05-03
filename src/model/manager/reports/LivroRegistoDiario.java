@@ -122,7 +122,7 @@ public class LivroRegistoDiario extends AbstractJasperReport {
 
 		String reportFile = "LivroRegistoDiarioARV";
 
-		if(this.diseaseType.equalsIgnoreCase(iDartProperties.PNCT))
+		if(this.diseaseType.equalsIgnoreCase(iDartProperties.PNCT) || this.diseaseType.equalsIgnoreCase("TPT"))
 			reportFile = "LivroRegistoDiarioTB";
 		else
 		if(this.diseaseType.equalsIgnoreCase(iDartProperties.PREP))
