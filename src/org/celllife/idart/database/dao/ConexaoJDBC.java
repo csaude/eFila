@@ -5511,7 +5511,7 @@ public class ConexaoJDBC {
             ResultSet rs = st.executeQuery(query);
 
             while (rs.next()) {
-                if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
                     if (rs.getString("currentprescription").equals("T"))
                         jatemFilaInicio = true;
                     break;

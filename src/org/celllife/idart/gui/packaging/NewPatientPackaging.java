@@ -733,7 +733,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             PatientHistoryReport report = null;
             if (tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV))
                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILA);
-            else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT))
+            else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT"))
                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_FILT);
             else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))
                 report = new PatientHistoryReport(getShell(), localPatient, PatientHistoryReport.PATIENT_HISTORY_PREP);
@@ -1747,7 +1747,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
 //        //Se tiver ja dispensado INICIO nao pode dispensar mais inicio
 //        if (newPack.getPrescription().getReasonForUpdate().contains("nici") && conn.jaTemFilaInicio(localPatient.getPatientId(),tipoPaciente)) { //$NON-NLS-1$
 //
-//            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)){
+//            if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")){
 //                showMessage(MessageDialog.ERROR, "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH) ",
 //                        "Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH).");
 //            }else {
@@ -2144,7 +2144,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
             rdBtnTARVPrescription.setSelection(false);
             rdBtnTBPrescription.setSelection(false);
             rdBtnPREPPrescription.setSelection(true);
-        } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+        } else if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
             rdBtnTARVPrescription.setSelection(false);
             rdBtnTBPrescription.setSelection(true);
             rdBtnPREPPrescription.setSelection(false);
@@ -2990,7 +2990,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                 aviado = true;
                 log.trace("Servidor Rest offline, o aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms a posterior");
 
-                if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                     saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                             facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                             iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3034,7 +3034,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
 
-                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                                     facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3067,7 +3067,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                             aviado = true;
                             log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificação do erro");
 
-                            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                            if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                                 saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                                         facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                         iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3106,7 +3106,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
 
-                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                                     facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3146,7 +3146,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
 
-                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                                     facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3179,7 +3179,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         aviado = true;
                         log.trace(" O aviamento do paciente [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
 
-                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                             saveOpenmrsPatientFila(newPack.getPrescription(), nid, strPickUp, localPatient.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
                                     facility, iDartProperties.FORM_FILT_UUID, providerWithNoAccents, iDartProperties.REGIME_TPT_UUID, saveLocalDispensedQty, regimenAnswer,
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.FILT_VISIT_UUID, strNextPickUp, dispenseModeAnswer);
@@ -3202,7 +3202,7 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                         providerUuid = response.substring(21, 57);
                     }
                     try {
-                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (newPack.getPrescription().getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || newPack.getPrescription().getTipoDoenca().equalsIgnoreCase("TPT")) {
                             postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
                                     strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID, iDartProperties.FILT_DISPENSED_TYPE_UUID, iDartProperties.FILT_TPT_FOLLOW_UP_UUID,
                                     regimenAnswer, prescribedDrugs, iDartProperties.FILT_NEXT_APOINTMENT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);

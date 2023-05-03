@@ -1,13 +1,16 @@
 package model.manager;
 
+import migracao.entidades.Users;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.celllife.idart.commonobjects.CentralizationProperties;
+import org.celllife.idart.commonobjects.LocalObjects;
 import org.celllife.idart.database.hibernate.*;
 import org.celllife.idart.database.hibernate.tmp.AdherenceRecord;
 import org.celllife.idart.database.hibernate.tmp.DeletedItem;
 import org.celllife.idart.database.hibernate.tmp.PackageDrugInfo;
 import org.celllife.idart.database.hibernate.util.HibernateUtil;
+import org.celllife.idart.gui.user.ManagePharmUsers;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -60,7 +63,7 @@ public class TemporaryRecordsManager {
         SyncTempPatient patient = null;
 
         try {
-
+            User currentUser = LocalObjects.getUser(HibernateUtil.getNewSession());
             if (!pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs().isEmpty()
                     && pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs() != null)
                 patient = AdministrationManager.getSyncTempPatienByUuid(sess, pdi.getPackagedDrug().getParentPackage().getPrescription().getPatient().getUuidopenmrs());
@@ -119,6 +122,8 @@ public class TemporaryRecordsManager {
             dispenseFarmac.setMainclinic(patient.getMainclinic());
             dispenseFarmac.setMainclinicname(patient.getMainclinicname());
             dispenseFarmac.setMainclinicuuid(patient.getMainclinicuuid());
+            dispenseFarmac.setClinicUuid(patient.getClinicuuid());
+            dispenseFarmac.setUserName(currentUser.getUsername());
             dispenseFarmac.setSyncstatus(syncStatus);
             dispenseFarmac.setPrescriptionid(pdi.getPackagedDrug().getParentPackage().getPrescription().getPrescriptionId());
             dispenseFarmac.setTipods(pdi.getPackagedDrug().getParentPackage().getPrescription().getTipoDS());

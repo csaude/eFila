@@ -263,7 +263,7 @@ public class  AddPrescription extends GenericFormGui implements
         localPrescription = new Prescription();
         tipoPaciente = tPaciente;
 
-        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
             rdBtnTBPrescription.setSelection(true);
             rdBtnTARVPrescription.setSelection(false);
             rdBtnPrEPPrescription.setSelection(false);
@@ -332,7 +332,7 @@ public class  AddPrescription extends GenericFormGui implements
                     Prescription script = thePatient.getMostRecentPrescription(tipoPaciente);
                     if (script != null) {
 
-                        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                        if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
                             if (script.getReasonForUpdate().contains("Fim")) {
                                 setFormToInitialPrescription();
                             }
@@ -1584,7 +1584,7 @@ public class  AddPrescription extends GenericFormGui implements
                 float daysBetween =  (difference / (1000*60*60*24));
 
                 if(daysBetween > 28) {
-                    if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                    if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
                         MessageBox dataNoutroServico = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
                         dataNoutroServico.setText("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
                         dataNoutroServico.setMessage("Por favor actualize a prescricao do paciente para CONTINUA (C) PROFILAXIA (INH)");
@@ -1831,7 +1831,10 @@ public class  AddPrescription extends GenericFormGui implements
          * setCaptureDateRestrictions(); } catch (DateException e) {
          * e.printStackTrace(); }
          */
-        cmbUpdateReason.setText(localPrescription.getReasonForUpdate());
+
+        if (localPrescription.getReasonForUpdate() != null)
+            cmbUpdateReason.setText(localPrescription.getReasonForUpdate());
+        else cmbUpdateReason.setText("");
         String tempAmtPerTime = "";
         cmbDoctor.setText("" + AdministrationManager.getDoctor(getHSession(), localPrescription.getDoctor().getFullname()).getFullname());
 
@@ -2407,7 +2410,7 @@ public class  AddPrescription extends GenericFormGui implements
                 btnDispenseDrugs.setEnabled(true);
                 lblPicDispenseDrugs.setEnabled(true);
 
-                if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT)) {
+                if (tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT")) {
                     if (localPrescription.getReasonForUpdate().contains("Fim")) {
                         setFormToInitialPrescription();
                     }
@@ -2653,15 +2656,15 @@ public class  AddPrescription extends GenericFormGui implements
                     .concat(txtPatientId.getText())
                     : "Registar Nova Prescrição do paciente "
                     .concat(txtPatientId.getText()), null, isInitialPrescription ? "ATENÇÃO: SELECCIONOU " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || localPrescription.getTipoDoenca().equalsIgnoreCase("TPT") ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
                     "INICIAL\nTEM A CERTEZA "
                     + ("DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || localPrescription.getTipoDoenca().equalsIgnoreCase("TPT") ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat("?")
                     : ("ATENÇÃO: SELECCIONOU " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || localPrescription.getTipoDoenca().equalsIgnoreCase("TPT") ? " A PROFILAXIA TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " A PROFILAXIA PrEP ": " O TIPO TARV ")) +
                     "INICIAL\nTEM A CERTEZA DE QUE ESTE PACIENTE ESTÁ A INICIAR O " +
-                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
+                    (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PNCT) || localPrescription.getTipoDoenca().equalsIgnoreCase("TPT") ? " TPT " : (localPrescription.getTipoDoenca().equalsIgnoreCase(iDartProperties.PREP) ? " PrEP ": " TARV ")) + "? \n NID:  ")
                     .concat(txtPatientId.getText()).concat(""), MessageDialog.QUESTION, new String[]{"Sim", "Não"}, 0);
 
             if (cmbUpdateReason.getText().trim().equals("Inicia") || cmbUpdateReason.getText().trim().equals("Inicio (I)")) {
@@ -3491,7 +3494,7 @@ public class  AddPrescription extends GenericFormGui implements
             PatientHistoryReport report = null;
             if(tipoPaciente.equalsIgnoreCase(iDartProperties.SERVICOTARV))
                 report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILA);
-            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT))
+            else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PNCT) || tipoPaciente.equalsIgnoreCase("TPT"))
                 report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_FILT);
             else if(tipoPaciente.equalsIgnoreCase(iDartProperties.PREP))
                 report = new PatientHistoryReport(getShell(), localPrescription.getPatient(), PatientHistoryReport.PATIENT_HISTORY_PREP);

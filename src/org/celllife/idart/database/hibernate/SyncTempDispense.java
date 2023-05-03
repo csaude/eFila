@@ -160,7 +160,7 @@ public class SyncTempDispense implements Serializable {
     @Column(name = "username", length = 255)
     private String username ;
     @Column(name = "tipodoenca", length = 255)
-    private String tipoDoenca;
+    private String tipodoenca;
 
     public SyncTempDispense() {
     }
@@ -699,23 +699,23 @@ public class SyncTempDispense implements Serializable {
     }
 
     public String getTipoDoenca() {
-        return tipoDoenca;
+        return tipodoenca;
     }
 
     public void setTipoDoenca(String tipoDoenca) {
-        this.tipoDoenca = tipoDoenca;
+        this.tipodoenca = tipoDoenca;
     }
 
     public boolean isTARV() {
-        return this.tipoDoenca.equalsIgnoreCase("TARV");
+        return this.tipodoenca.equalsIgnoreCase("TARV");
     }
 
     public boolean isTPT() {
-        return this.tipoDoenca.equalsIgnoreCase("TPT");
+        return this.tipodoenca.equalsIgnoreCase("TPT");
     }
 
     public boolean isPREP() {
-        return this.tipoDoenca.equalsIgnoreCase("PREP");
+        return this.tipodoenca.equalsIgnoreCase("PREP");
     }
 
     public String tipoDoenca(){
