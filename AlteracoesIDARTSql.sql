@@ -1,4 +1,5 @@
 ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS tipodoenca varchar(255) NOT NULL DEFAULT 'TARV';
+ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS flagidentifier character varying(255) COLLATE pg_catalog."default" DEFAULT 'Nao';
 
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';

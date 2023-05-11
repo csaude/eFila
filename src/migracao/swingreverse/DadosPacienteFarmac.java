@@ -167,8 +167,8 @@ public class DadosPacienteFarmac {
 
             prescription = PackageManager.getPrescriptionFromPatient(sess, patient, syncTempDispense.getDate());
 
-            if(prescription == null)
-                prescription = PackageManager.getPrescription(sess,syncTempDispense.getPrescriptionid());
+            if (prescription == null)
+                prescription = PackageManager.getPrescription(sess, syncTempDispense.getPrescriptionid());
 
             if (patient.getMostRecentEpisode() == null) {
                 Episode episode = new Episode();
@@ -184,76 +184,76 @@ public class DadosPacienteFarmac {
             }
 
 
-            if (prescription == null) {
+            if (prescription == null)
                 prescription = new Prescription();
 
-                SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
-                Doctor doctorProvider = AdministrationManager.getMostUsedDoctor(sess);
+            SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
+            Doctor doctorProvider = AdministrationManager.getMostUsedDoctor(sess);
 
-                if (doctorProvider == null)
-                    doctorProvider = PrescriptionManager.getProvider(sess);
+            if (doctorProvider == null)
+                doctorProvider = PrescriptionManager.getProvider(sess);
 
-                LinhaT linhat = AdministrationManager.getLinha(sess, syncTempDispense.getLinhanome());
-                RegimeTerapeutico regimeTerapeutico = AdministrationManager.getRegimeTerapeutico(sess, syncTempDispense.getRegimenome());
+            LinhaT linhat = AdministrationManager.getLinha(sess, syncTempDispense.getLinhanome());
+            RegimeTerapeutico regimeTerapeutico = AdministrationManager.getRegimeTerapeutico(sess, syncTempDispense.getRegimenome());
 
-                if (!regimeTerapeutico.getRegimeesquema().equalsIgnoreCase(syncTempDispense.getRegimenome()))
-                    regimeTerapeutico = AdministrationManager.getRegimeTerapeuticoRest(sess, syncTempDispense.getRegimenome());
+            if (!regimeTerapeutico.getRegimeesquema().equalsIgnoreCase(syncTempDispense.getRegimenome()))
+                regimeTerapeutico = AdministrationManager.getRegimeTerapeuticoRest(sess, syncTempDispense.getRegimenome());
 
-                prescription.setClinicalStage(0);
-                prescription.setCurrent('T');
-                prescription.setDate(syncTempDispense.getDate());
-                prescription.setEndDate(syncTempDispense.getEnddate());
-                prescription.setDoctor(doctorProvider);
-                prescription.setDuration(syncTempDispense.getDuration());
-                prescription.setModified(syncTempDispense.getModified());
-                prescription.setPatient(patient);
-                prescription.setPrescriptionId(patient.getPatientId() + "-" + df.format(syncTempDispense.getDate()) + " - Farmac ");
-                prescription.setReasonForUpdate(syncTempDispense.getReasonforupdate());
-                prescription.setNotes("FARMAC: " + syncTempDispense.getNotes());
-                prescription.setRegimeTerapeutico(regimeTerapeutico);
-                prescription.setLinha(linhat);
-                prescription.setDatainicionoutroservico(syncTempDispense.getDatainicionoutroservico());
-                prescription.setMotivoMudanca(syncTempDispense.getMotivomudanca());
-                prescription.setPpe(syncTempDispense.getPpe());
-                prescription.setPtv(syncTempDispense.getPtv());
-                prescription.setTb(syncTempDispense.getTb());
-                prescription.setGaac(syncTempDispense.getGaac());
-                prescription.setAf(syncTempDispense.getAf());
-                prescription.setFr(syncTempDispense.getFr());
-                prescription.setCa(syncTempDispense.getCa());
-                prescription.setSaaj(syncTempDispense.getSaaj());
-                prescription.setCcr(syncTempDispense.getCcr());
-                prescription.setDc(syncTempDispense.getDc());
-                prescription.setPrep(syncTempDispense.getPrep());
-                prescription.setCe(syncTempDispense.getCe());
-                prescription.setCpn(syncTempDispense.getCpn());
-                prescription.setPrescricaoespecial(syncTempDispense.getPrescricaoespecial());
-                prescription.setMotivocriacaoespecial(syncTempDispense.getMotivocriacaoespecial());
-                prescription.setTpc(syncTempDispense.getTpc());
-                prescription.setTpi(syncTempDispense.getTpi());
-                prescription.setDrugTypes(syncTempDispense.getDrugtypes());
-                prescription.setTipoDS(syncTempDispense.getTipods());
-                prescription.setDispensaSemestral(syncTempDispense.getDispensasemestral());
-                prescription.setTipoDT(syncTempDispense.getTipodt());
-                prescription.setDispensaTrimestral(syncTempDispense.getDispensatrimestral());
-                prescription.setDurationSentence(syncTempDispense.getDurationsentence());
-                prescription.setTipoDoenca(syncTempDispense.tipoDoenca());
+            prescription.setClinicalStage(0);
+            prescription.setCurrent('T');
+            prescription.setDate(syncTempDispense.getDate());
+            prescription.setEndDate(syncTempDispense.getEnddate());
+            prescription.setDoctor(doctorProvider);
+            prescription.setDuration(syncTempDispense.getDuration());
+            prescription.setModified(syncTempDispense.getModified());
+            prescription.setPatient(patient);
+            prescription.setPrescriptionId(patient.getPatientId() + "-" + df.format(syncTempDispense.getDate()) + " - Farmac ");
+            prescription.setReasonForUpdate(syncTempDispense.getReasonforupdate());
+            prescription.setNotes("FARMAC: " + syncTempDispense.getNotes());
+            prescription.setRegimeTerapeutico(regimeTerapeutico);
+            prescription.setLinha(linhat);
+            prescription.setDatainicionoutroservico(syncTempDispense.getDatainicionoutroservico());
+            prescription.setMotivoMudanca(syncTempDispense.getMotivomudanca());
+            prescription.setPpe(syncTempDispense.getPpe());
+            prescription.setPtv(syncTempDispense.getPtv());
+            prescription.setTb(syncTempDispense.getTb());
+            prescription.setGaac(syncTempDispense.getGaac());
+            prescription.setAf(syncTempDispense.getAf());
+            prescription.setFr(syncTempDispense.getFr());
+            prescription.setCa(syncTempDispense.getCa());
+            prescription.setSaaj(syncTempDispense.getSaaj());
+            prescription.setCcr(syncTempDispense.getCcr());
+            prescription.setDc(syncTempDispense.getDc());
+            prescription.setPrep(syncTempDispense.getPrep());
+            prescription.setCe(syncTempDispense.getCe());
+            prescription.setCpn(syncTempDispense.getCpn());
+            prescription.setPrescricaoespecial(syncTempDispense.getPrescricaoespecial());
+            prescription.setMotivocriacaoespecial(syncTempDispense.getMotivocriacaoespecial());
+            prescription.setTpc(syncTempDispense.getTpc());
+            prescription.setTpi(syncTempDispense.getTpi());
+            prescription.setDrugTypes(syncTempDispense.getDrugtypes());
+            prescription.setTipoDS(syncTempDispense.getTipods());
+            prescription.setDispensaSemestral(syncTempDispense.getDispensasemestral());
+            prescription.setTipoDT(syncTempDispense.getTipodt());
+            prescription.setDispensaTrimestral(syncTempDispense.getDispensatrimestral());
+            prescription.setDurationSentence(syncTempDispense.getDurationsentence());
+            prescription.setTipoDoenca(syncTempDispense.tipoDoenca());
 
-                List<PrescribedDrugs> prescribedDrugsList = new ArrayList<PrescribedDrugs>();
+            List<PrescribedDrugs> prescribedDrugsList = new ArrayList<PrescribedDrugs>();
 
-                // Save the Prescription Drugs
+            // Save the Prescription Drugs
 
-                Drug drug = DrugManager.getDrug(sess, syncTempDispense.getDrugname());
+            Drug drug = DrugManager.getDrug(sess, syncTempDispense.getDrugname());
 
-                if (drug == null)
-                    drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10));
+            if (drug == null)
+                drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10));
 
-                if (drug == null)
-                    drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10).replace("/", "+"));
+            if (drug == null)
+                drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10).replace("/", "+"));
 
-                if (drug != null) {
-                    PrescribedDrugs newPD = new PrescribedDrugs();
-
+            if (drug != null) {
+                PrescribedDrugs newPD = new PrescribedDrugs();
+                if (prescription.getPrescribedDrugs().isEmpty()) {
                     if (drug.getPackSize() > 30) {
                         newPD.setAmtPerTime(2);
                     } else {
@@ -268,15 +268,19 @@ public class DadosPacienteFarmac {
 
                     prescription.setPrescribedDrugs(prescribedDrugsList);
 
-                    PackageManager.saveNewPrescription(sess, prescription, true,iDartProperties.SERVICOTARV);
-                    tx.commit();
-                    sess.flush();
-                } else {
-                    log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
-                    log.info("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
                 }
-                sess.close();
+
+                if(prescription.getPackages().isEmpty())
+                    prescription.setPackages(null);
+
+                PackageManager.saveNewPrescription(sess, prescription, true, prescription.getTipoDoenca());
+                tx.commit();
+                sess.flush();
+            } else {
+                log.trace("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
+                log.info("O medicamento prescrito para o paciente " + syncTempDispense.getPatientid() + " nao foi encontrado: " + syncTempDispense.getDrugname());
             }
+            sess.close();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -304,7 +308,7 @@ public class DadosPacienteFarmac {
 
         User user = AdministrationManager.getUserByName(sess, "admin");
 
-        if(user == null)
+        if (user == null)
             user = LocalObjects.getUser(HibernateUtil.getNewSession());
 
         try {
@@ -318,7 +322,7 @@ public class DadosPacienteFarmac {
             List<Stock> stockList = null;
             Stock stock = null;
             String dispenseModeAnswer = "";
-            int dipensedQty= 0;
+            int dipensedQty = 0;
 
             if (drug == null)
                 drug = DrugManager.getDrugFromString(sess, syncTempDispense.getDrugname().replace("[", "").substring(0, 10));
@@ -340,7 +344,7 @@ public class DadosPacienteFarmac {
                 }
             }
 
-            if( patient.getCurrentClinic().getId() == clinic.getId()) {
+            if (patient.getCurrentClinic().getId() == clinic.getId()) {
                 String dipensedQtyString = syncTempDispense.getQtyinhand().replace("(", "").replace(")", "").trim();
                 if (!dipensedQtyString.isEmpty()) {
                     int dipensedQtyAux = Integer.parseInt(dipensedQtyString);
@@ -354,18 +358,18 @@ public class DadosPacienteFarmac {
 
             //   String dispenseModeAnswer =  AdministrationManager.dispenseModUUID(sess, syncTempDispense.get);
 
-            if(tempPatient != null){
-                if(!clinic.getUuid().equalsIgnoreCase(tempPatient.getClinicuuid())){
+            if (tempPatient != null) {
+                if (!clinic.getUuid().equalsIgnoreCase(tempPatient.getClinicuuid())) {
                     ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, tempPatient.getClinicuuid());
 
-                    if(clinicSector != null){
-                        if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
+                    if (clinicSector != null) {
+                        if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
                             dispenseModeAnswer = getDispenseModeDescription(sess, "Provedor");
-                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
+                        else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
                             dispenseModeAnswer = getDispenseModeDescription(sess, "APE");
-                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
+                        else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
                             dispenseModeAnswer = getDispenseModeDescription(sess, "nica M");
-                        else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
+                        else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
                             dispenseModeAnswer = getDispenseModeDescription(sess, "Brigada");
                     }
                 }
@@ -502,7 +506,7 @@ public class DadosPacienteFarmac {
 
         if (patientClinicSector.size() > 0 || prescription.getPatient().getCurrentClinic().getId() == maiClinic.getId()) {
             PackageManager.savePackage(sess, newPack);
-        }else{
+        } else {
             PackageManager.savePackageQty0(newPack);
         }
     }
@@ -520,20 +524,20 @@ public class DadosPacienteFarmac {
         else
             dispenseModeAnswer = getDispenseMode(sess, "Privada");
 
-        if(patient != null){
+        if (patient != null) {
             ClinicSector clinicSector = AdministrationManager.getClinicSectorFromUUID(sess, patient.getClinicuuid());
-            if(clinicSector != null){
-                if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
+            if (clinicSector != null) {
+                if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("PROVEDOR"))
                     dispenseModeAnswer = getDispenseMode(sess, "Provedor");
-                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
+                else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("APE"))
                     dispenseModeAnswer = getDispenseMode(sess, "APE");
-                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
+                else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("CLINICA_MOVEL"))
                     dispenseModeAnswer = getDispenseMode(sess, "Clínica");
-                    else if(clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
+                else if (clinicSector.getClinicSectorType().getCode().equalsIgnoreCase("BRIGADA_MOVEL"))
                     dispenseModeAnswer = getDispenseMode(sess, "Brigada");
             }
 
-            if(patient.getEstadopaciente().equalsIgnoreCase("Faltoso") || patient.getEstadopaciente().equalsIgnoreCase("Abandono")){
+            if (patient.getEstadopaciente().equalsIgnoreCase("Faltoso") || patient.getEstadopaciente().equalsIgnoreCase("Abandono")) {
                 dispenseModeAnswer = getDispenseMode(sess, "Provedor");
             }
 
@@ -578,25 +582,25 @@ public class DadosPacienteFarmac {
 
         String dispensedQty = "";
         int qtyValue = 0;
-        if(!syncTempDispense.getQtyinhand().isEmpty()){
-            try{
-                String realInHand = syncTempDispense.getQtyinhand().replace('(',' ').replace(')',' ').trim();
+        if (!syncTempDispense.getQtyinhand().isEmpty()) {
+            try {
+                String realInHand = syncTempDispense.getQtyinhand().replace('(', ' ').replace(')', ' ').trim();
                 qtyValue = Integer.parseInt(realInHand);
-            }catch (Exception e){
-                log.trace("Erro ao calcular a quantidade dispensada "+ e.getMessage());
+            } catch (Exception e) {
+                log.trace("Erro ao calcular a quantidade dispensada " + e.getMessage());
             }
 
         }
 
-        if(qtyValue > 0){
-            try{
+        if (qtyValue > 0) {
+            try {
                 int val = prescribedDrugs.get(0).getDrug().getPackSize() * qtyValue;
                 dispensedQty = Integer.toString(val);
 
-            }catch (Exception e){
-                log.trace("Erro ao converter a quantidade dispensada "+ e.getMessage());
+            } catch (Exception e) {
+                log.trace("Erro ao converter a quantidade dispensada " + e.getMessage());
             }
-        }else{
+        } else {
             dispensedQty = "0";
         }
 
@@ -605,7 +609,7 @@ public class DadosPacienteFarmac {
 
                 log.trace("Servidor Rest offline, o aviamento do paciente [" + syncTempDispense.getPatientid() + " ] será armazenada para envio ao Openrms a posterior");
 
-                saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
                 return false;
             } else {
@@ -632,7 +636,7 @@ public class DadosPacienteFarmac {
                     if (uuid != null && !uuid.isEmpty()) {
                         uuid = prescription.getPatient().getUuidopenmrs();
                     } else {
-                        saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                        saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
                         saveErroLog(newPack, dtNextPickUp, "O NID deste paciente [" + nid + " ] foi alterado no OpenMRS ou não possui UUID."
                                 + " Por favor actualize o NID na Administração do Paciente usando a opção Atualizar um Paciente Existente.");
@@ -644,7 +648,7 @@ public class DadosPacienteFarmac {
                         if (!nidUuid.equals(uuid)) {
 
                             log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificação do erro");
-                            saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                            saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
                             saveErroLog(newPack, dtNextPickUp, "O paciente [" + nid + " ] "
                                     + " Tem um UUID [" + uuid + "] diferente ou inactivo no OpenMRS " + nidUuid + "]. Por favor actualize o UUID correspondente .");
@@ -660,13 +664,13 @@ public class DadosPacienteFarmac {
 
                     if (jsonReportingRestArray.length() < 1) {
                         log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                        saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                        saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
                         saveErroLog(newPack, dtNextPickUp, "NID [" + nid + "com o uuid ( " + syncTempDispense.getUuidopenmrs() + " )] inserido não se encontra no estado ACTIVO NO PROGRAMA/TRANSFERIDO DE. Actualize primeiro o estado do paciente no OpenMRS.");
 
                         return false;
                     }
-                    if(providerWithNoAccents.trim().isEmpty())
+                    if (providerWithNoAccents.trim().isEmpty())
                         providerWithNoAccents = "Provedor Desconhecido";
 
                     String response = restClient.getOpenMRSResource(iDartProperties.REST_GET_PROVIDER + StringUtils.replace(providerWithNoAccents, " ", "%20"));
@@ -674,15 +678,16 @@ public class DadosPacienteFarmac {
                     // Location
                     String strFacility = restClient.getOpenMRSResource(iDartProperties.REST_GET_LOCATION + StringUtils.replace(facility, " ", "%20"));
 
-                    if (strFacility.length() < 50) {
+                    if (strFacility.length() < 50 && newPack.getPrescription().getPatient().getUuidlocationopenmrs() == null) {
 
                         log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                        saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                        saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
-                        saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + nid + " ].");
+                        saveErroLog(newPack, dtNextPickUp, " A UNIDADE SANITARIA (UUID) NAO EXISTE OU NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + nid + " ].");
                         return false;
-                    } {
-                        if(newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
+                    }
+                    {
+                        if (newPack.getPrescription().getPatient().getUuidlocationopenmrs() != null)
                             strFacilityUuid = prescription.getPatient().getUuidlocationopenmrs();
                         else
                             strFacilityUuid = strFacility.substring(21, 57);
@@ -691,21 +696,21 @@ public class DadosPacienteFarmac {
                     if (response.length() < 50) {
 
                         log.trace(" O aviamento do paciente [" + nid + " ] será armazenada para envio ao Openrms apos a verificacao do erro");
-                        saveOpenmrsDispense(syncTempDispense, prescription,nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
+                        saveOpenmrsDispense(syncTempDispense, prescription, nid, strPickUp, facility, providerWithNoAccents, dispensedQty, regimenAnswer, strNextPickUp, dispenseModeAnswer);
 
                         saveErroLog(newPack, dtNextPickUp, " O UUID DO PROVEDOR NAO CONTEM O PADRAO RECOMENDADO OU NAO EXISTE NO OPENMRS PARA O NID [" + nid + " ].");
 
                         return false;
                     } else providerUuid = response.substring(21, 57);
 
-                        postOpenmrsDispense(syncTempDispense, postOpenMrsEncounterStatus, dtNextPickUp, restClient,
-                                strPickUp, prescription, uuid, strFacilityUuid, providerUuid, regimenAnswer,
-                                prescribedDrugs, strNextPickUp, dispenseModeAnswer, dispensedQty, packagedDrugs, newPack);
+                    postOpenmrsDispense(syncTempDispense, postOpenMrsEncounterStatus, dtNextPickUp, restClient,
+                            strPickUp, prescription, uuid, strFacilityUuid, providerUuid, regimenAnswer,
+                            prescribedDrugs, strNextPickUp, dispenseModeAnswer, dispensedQty, packagedDrugs, newPack);
 
-                        result = true;
+                    result = true;
 
-                }else {
-                    log.error("O Utilizador "+currentUser.getUsername()+" não se encontra no OpenMRS ou serviço rest no OpenMRS não se encontra em funcionamento.");
+                } else {
+                    log.error("O Utilizador " + currentUser.getUsername() + " não se encontra no OpenMRS ou serviço rest no OpenMRS não se encontra em funcionamento.");
                 }
             }
         } catch (IOException e) {
@@ -783,21 +788,21 @@ public class DadosPacienteFarmac {
 
     }
 
-    static String getDispenseMode(Session sess, String description){
+    static String getDispenseMode(Session sess, String description) {
 
         List<SimpleDomain> simpleDomainList = AdministrationManager.getAllModoDispensaByDescriptionLike(sess, description);
 
-        if(simpleDomainList.isEmpty())
+        if (simpleDomainList.isEmpty())
             return "d2eaec39-9c48-443b-a8d5-b2b163d42c53";
         else
             return simpleDomainList.get(0).getName();
     }
 
-    static String getDispenseModeDescription(Session sess, String description){
+    static String getDispenseModeDescription(Session sess, String description) {
 
         List<SimpleDomain> simpleDomainList = AdministrationManager.getAllModoDispensaByDescriptionLike(sess, description);
 
-        if(simpleDomainList.isEmpty())
+        if (simpleDomainList.isEmpty())
             return "";
         else
             return simpleDomainList.get(0).getValue();
@@ -805,8 +810,8 @@ public class DadosPacienteFarmac {
 
 
     public static void saveOpenmrsDispense(SyncTempDispense syncTempDispense, Prescription prescription,
-                                    String nid, String strPickUp, String facility, String providerWithNoAccents,
-                                    String dispensedQty, String regimenAnswer, String strNextPickUp, String dispenseModeAnswer){
+                                           String nid, String strPickUp, String facility, String providerWithNoAccents,
+                                           String dispensedQty, String regimenAnswer, String strNextPickUp, String dispenseModeAnswer) {
 
         if (syncTempDispense.isTPT()) {
             saveOpenmrsPatientFila(prescription, nid, strPickUp, syncTempDispense.getUuidopenmrs(), iDartProperties.ENCOUNTER_TYPE_FILT,
@@ -827,10 +832,10 @@ public class DadosPacienteFarmac {
                                            RestClient restClient, String strPickUp, Prescription prescription,
                                            String uuid, String strFacilityUuid, String providerUuid, String regimenAnswer,
                                            List<PrescribedDrugs> prescribedDrugs, String strNextPickUp, String dispenseModeAnswer,
-                                           String dispensedQty, List<PackagedDrugs> packagedDrugs, Packages newPack){
+                                           String dispensedQty, List<PackagedDrugs> packagedDrugs, Packages newPack) {
         try {
 
-        if(syncTempDispense.isTPT()) {
+            if (syncTempDispense.isTPT()) {
 
                 postOpenMrsEncounterStatus = restClient.postOpenMRSEncounterFILT(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_FILT,
                         strFacilityUuid, iDartProperties.FORM_FILT_UUID, providerUuid, iDartProperties.REGIME_TPT_UUID,
@@ -838,17 +843,17 @@ public class DadosPacienteFarmac {
                         regimenAnswer, prescribedDrugs, iDartProperties.FILT_NEXT_APOINTMENT_UUID, strNextPickUp,
                         iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
 
-            log.trace("Criou o filt no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
-        }else if(syncTempDispense.isPREP()){
-            // to be added
-        } else {
-            postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
-                    strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispensedQty, regimenAnswer,
-                    iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
-                    iDartProperties.VISIT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
+                log.trace("Criou o filt no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
+            } else if (syncTempDispense.isPREP()) {
+                // to be added
+            } else {
+                postOpenMrsEncounterStatus = restClient.postOpenMRSEncounter(strPickUp, uuid, iDartProperties.ENCOUNTER_TYPE_PHARMACY,
+                        strFacilityUuid, iDartProperties.FORM_FILA, providerUuid, iDartProperties.REGIME, dispensedQty, regimenAnswer,
+                        iDartProperties.DISPENSED_AMOUNT, prescribedDrugs, packagedDrugs, iDartProperties.DOSAGE,
+                        iDartProperties.VISIT_UUID, strNextPickUp, iDartProperties.DISPENSEMODE_UUID, dispenseModeAnswer);
 
-            log.trace("Criou o fila no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
-        }
+                log.trace("Criou o fila no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + postOpenMrsEncounterStatus);
+            }
         } catch (Exception e) {
             log.error("Nao foi criado o fila no openmrs para o paciente " + syncTempDispense.getPatientid() + ": " + postOpenMrsEncounterStatus);
             saveErroLog(newPack, dtNextPickUp, "Nao foi criado o fila no openmrs para o paciente " + prescription.getPatient().getPatientId() + ": " + e.getMessage());
