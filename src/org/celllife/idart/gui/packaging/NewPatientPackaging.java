@@ -3158,10 +3158,10 @@ public class NewPatientPackaging extends GenericFormGui implements iDARTChangeLi
                                     iDartProperties.DISPENSED_AMOUNT, iDartProperties.DOSAGE, iDartProperties.VISIT_UUID, strNextPickUp, dispenseModeAnswer);
                         }
 
-                        saveErroLog(newPack, dtNextPickUp, " O UUID DA UNIDADE SANITARIA NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
+                        saveErroLog(newPack, dtNextPickUp, " A UNIDADE SANITARIA (UUID) NAO EXISTE OU NAO CONTEM O PADRAO RECOMENDADO PARA O NID [" + localPatient.getPatientId() + " - " + localPatient.getFirstNames() + " " + localPatient.getLastname() + " ].");
                         MessageBox m = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
                         m.setText("Informação sobre estado da Unidade Sanitaria");
-                        m.setMessage("O UUID da Unidade Sanitaria nao contem o pradrao recomendado." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
+                        m.setMessage("A Unidade Sanitaria (UUID) nao existe ou nao contem o pradrao recomendado." + "\nEste aviamento será enviado ao Openrms após a verificacao do erro.");
                         m.open();
 
                         return;
