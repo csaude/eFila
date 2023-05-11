@@ -18,5 +18,6 @@
     </orderEntry>
     <orderEntry type="library" name="hibernate-commons-annotations" level="project" />
     <orderEntry type="library" name="ant-antlr-1.6.5" level="project" />
+    <orderEntry type="library" name="org.celllife.mobilisr.client-2.4-SNAPSHOT" level="project" />
   </component>
 </module>
