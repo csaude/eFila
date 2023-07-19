@@ -875,7 +875,7 @@ public class AddDrugGroup extends GenericFormGui {
 		{
 			return true;
 		}
-		return false;
+		return true;
 		
 	}
 	

@@ -1,6 +1,9 @@
 ALTER TABLE sync_temp_dispense ADD COLUMN IF NOT EXISTS tipodoenca varchar(255) NOT NULL DEFAULT 'TARV';
 ALTER TABLE packagedruginfotmp ADD COLUMN IF NOT EXISTS flagidentifier character varying(255) COLLATE pg_catalog."default" DEFAULT 'Nao';
 
+update regimeterapeutico set regimenomeespecificado = 'c3e11134-fac6-4577-9f99-a3d42cfbc5d1' where codigoregime like '%LFX%';
+update regimeterapeutico set regimenomeespecificado = 'af15246d-30b8-4aff-8391-ca2b58e2c88b' where codigoregime like '1alt1%' OR codigoregime like 'X6APed%' OR codigoregime like 'X7APed%';
+
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'jan','Jan') where substr(dateexpectedstring,4,3)='jan';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'fev','Feb') where substr(dateexpectedstring,4,3)='fev';
 update packagedruginfotmp set dateexpectedstring=replace(dateexpectedstring,'mar','Mar') where substr(dateexpectedstring,4,3)='mar';
@@ -140,6 +143,4 @@ update drug set report_order = 40 where atccode_id like '%08S30ZZ';
 update drug set report_order = 41 where atccode_id like '%08S39';
 update drug set report_order = 42 where atccode_id like '%08S22';
 
-alter table sync_temp_dispense add column username text default '' ;
-alter table sync_temp_dispense add column clinicuuid text default '';
 

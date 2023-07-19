@@ -6,7 +6,7 @@ public class FollowupFaulty {
 	
 	private String nome;
 
-	private Integer age;
+	private String age;
 	
 	private String dataQueFaltouLevantamento;
 	
@@ -30,11 +30,11 @@ public class FollowupFaulty {
 		this.nome = nome;
 	}
 
-	public Integer getAge() {
+	public String getAge() {
 		return age;
 	}
 
-	public void setAge(Integer age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
 

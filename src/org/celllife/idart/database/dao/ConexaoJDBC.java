@@ -5624,7 +5624,7 @@ public class ConexaoJDBC {
                     " pat.nextofkinname as supportername,  " +
                     "pat.nextofkinphone as supporterphone,  " +
                     "pat.cellphone as cellno,  " +
-                    "date_part('year',age(pat.dateofbirth)) as idade,  " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as idade, " +
                     "app.appointmentDate::date as dateexpected,  " +
                     "('" + dataInicial + "'::date - app.appointmentDate::date)::integer as dayssinceexpected,  " +
                     "CASE  " +
@@ -5709,7 +5709,7 @@ public class ConexaoJDBC {
                     " pat.nextofkinname as supportername,  " +
                     "pat.nextofkinphone as supporterphone,  " +
                     "pat.cellphone as cellno,  " +
-                    "date_part('year',age(pat.dateofbirth)) as idade,  " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as idade, " +
                     "app.appointmentDate::date as dateexpected,  " +
                     "('" + dataInicial + "'::date - app.appointmentDate::date)::integer as dayssinceexpected,  " +
                     "CASE  " +
@@ -5798,7 +5798,7 @@ public class ConexaoJDBC {
                     "pat.cellphone as cellno, " +
                     "pat.homephone as homeno, " +
                     "pat.workphone as workno, " +
-                    "date_part('year',age(pat.dateofbirth))::Integer as age, " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "app.appointmentDate::date as dateexpected, " +
                     "('" + date + "'::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
                     "CASE " +
@@ -5855,7 +5855,7 @@ public class ConexaoJDBC {
                     FollowupFaulty faultyQuartelyLayOff = new FollowupFaulty();
                     faultyQuartelyLayOff.setPatientIdentifier(rs.getString("patID"));
                     faultyQuartelyLayOff.setNome(rs.getString("name"));
-                    faultyQuartelyLayOff.setAge(rs.getInt("age"));
+                    faultyQuartelyLayOff.setAge(rs.getString("age"));
                     faultyQuartelyLayOff.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     faultyQuartelyLayOff.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     faultyQuartelyLayOff.setDataRegressouUnidadeSanitaria(rs.getString("datereturn"));
@@ -5894,7 +5894,7 @@ public class ConexaoJDBC {
                     "pat.cellphone as cellno, " +
                     "pat.homephone as homeno, " +
                     "pat.workphone as workno, " +
-                    "date_part('year',age(pat.dateofbirth))::Integer as age, " +
+                     "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "app.appointmentDate::date as dateexpected, " +
                     "('" + date + "'::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
                     "CASE " +
@@ -5951,7 +5951,7 @@ public class ConexaoJDBC {
                     FollowupFaulty lostToFollowupFaultySemiAnnual = new FollowupFaulty();
                     lostToFollowupFaultySemiAnnual.setPatientIdentifier(rs.getString("patID"));
                     lostToFollowupFaultySemiAnnual.setNome(rs.getString("name"));
-                    lostToFollowupFaultySemiAnnual.setAge(rs.getInt("age"));
+                    lostToFollowupFaultySemiAnnual.setAge(rs.getString("age"));
                     lostToFollowupFaultySemiAnnual.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     lostToFollowupFaultySemiAnnual.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     lostToFollowupFaultySemiAnnual.setDataRegressouUnidadeSanitaria(rs.getString("datereturn"));
@@ -6020,7 +6020,7 @@ public class ConexaoJDBC {
                     " pat.cellphone as cellno," +
                     " pat.homephone as homeno," +
                     " pat.workphone as workno," +
-                    " date_part('year',age(pat.dateofbirth))::Integer as age," +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     " app.appointmentDate::date as dateexpected," +
                     " ('" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected," +
                     " CASE" +
@@ -6137,7 +6137,7 @@ public class ConexaoJDBC {
                     "pat.cellphone as cellno, " +
                     "pat.homephone as homeno, " +
                     "pat.workphone as workno, " +
-                    "date_part('year',age(pat.dateofbirth))::Integer as age, " +
+                     "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "pack.pickupdate::timestamp::date as pickupdate, " +
                     "pack.dateexpectedstring as dateexpected, " +
                     "('" + data + "'::date-pack.dateexpectedstring)::integer as dayssinceexpected, " +
@@ -6256,7 +6256,7 @@ public class ConexaoJDBC {
                     " pat.cellphone as cellno," +
                     " pat.homephone as homeno," +
                     " pat.workphone as workno," +
-                    " date_part('year',age(pat.dateofbirth))::Integer as age," +
+                     "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     " app.appointmentDate::date as dateexpected," +
                     " ('" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected," +
                     " CASE" +
@@ -6376,7 +6376,7 @@ public class ConexaoJDBC {
                     " pat.cellphone as cellno," +
                     " pat.homephone as homeno," +
                     " pat.workphone as workno," +
-                    " date_part('year',age(pat.dateofbirth))::Integer as age," +
+                     "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     " app.appointmentDate::date as dateexpected," +
                     " ('" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected," +
                     " CASE" +
@@ -6488,7 +6488,7 @@ public class ConexaoJDBC {
                     " pat.nextofkinname as supportername, " +
                     "pat.nextofkinphone as supporterphone, " +
                     "pat.cellphone as cellno, " +
-                    "date_part('year',age(pat.dateofbirth)) as age, " +
+                     "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "app.appointmentDate::date as dateexpected, " +
                     "( '" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
                     "CASE " +
@@ -6535,7 +6535,7 @@ public class ConexaoJDBC {
                     AbsenteeForSupportCall absentee = new AbsenteeForSupportCall();
                     absentee.setPatientIdentifier(rs.getString("patID"));
                     absentee.setNome(rs.getString("name"));
-                    absentee.setAge(rs.getInt("age"));
+                    absentee.setAge(rs.getString("age"));
                     absentee.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     absentee.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     absentee.setDataRegressoUnidadeSanitaria(rs.getString("datereturn"));
@@ -6577,7 +6577,7 @@ public class ConexaoJDBC {
                     " pat.nextofkinname as supportername,  " +
                     "pat.nextofkinphone as supporterphone,  " +
                     "pat.cellphone as cellno,  " +
-                    "date_part('year',age(pat.dateofbirth)) as age,  " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "app.appointmentDate::date as dateexpected,  " +
                     "('" + data + "'::date-app.appointmentDate::date)::integer as dayssinceexpected,  " +
                     "CASE  " +
@@ -6675,7 +6675,7 @@ public class ConexaoJDBC {
                     "pat.cellphone as cellno, " +
                     "pat.homephone as homeno, " +
                     "pat.workphone as workno, " +
-                    "date_part('year',age(pat.dateofbirth))::Integer as age, " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "pack.pickupdate::timestamp::date as pickupdate, " +
                     "pack.dateexpectedstring as dateexpected, " +
                     "('" + data + "'::date-pack.dateexpectedstring)::integer as dayssinceexpected, " +
@@ -7587,7 +7587,7 @@ public class ConexaoJDBC {
                     " pat.nextofkinname as supportername, " +
                     "pat.nextofkinphone as supporterphone, " +
                     "pat.cellphone as cellno, " +
-                    "date_part('year',age(pat.dateofbirth)) as age, " +
+                    "CASE WHEN (pat.dateofbirth IS NOT NULL) THEN date_part('year',age(pat.dateofbirth))::text ELSE null END as age, " +
                     "app.appointmentDate::date as dateexpected, " +
                     "('" + startDate + "' ::date-app.appointmentDate::date)::integer as dayssinceexpected, " +
                     "CASE " +
@@ -7634,7 +7634,7 @@ public class ConexaoJDBC {
                     AbsenteeForSupportCall lostTofallowUp = new AbsenteeForSupportCall();
                     lostTofallowUp.setPatientIdentifier(rs.getString("patID"));
                     lostTofallowUp.setNome(rs.getString("name"));
-                    lostTofallowUp.setAge(rs.getInt("age"));
+                    lostTofallowUp.setAge(rs.getString("age"));
                     lostTofallowUp.setDataQueFaltouLevantamento(rs.getString("dateexpected"));
                     lostTofallowUp.setDataIdentificouAbandonoTarv(rs.getString("datelostfollowup"));
                     lostTofallowUp.setDataRegressoUnidadeSanitaria(rs.getString("datereturn"));

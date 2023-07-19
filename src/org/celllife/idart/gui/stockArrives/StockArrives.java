@@ -305,6 +305,7 @@ public class StockArrives extends GenericFormGui implements iDARTChangeListener{
 					Date today = new Date();
 					// hack to allow the table to be cleared without asking the user
 					clearAfterSave = true;
+                                        cmdCloseSelected();
 					StockReceiptReport report = new StockReceiptReport(getShell(), today, today);
 					viewReport(report);
 				} else {

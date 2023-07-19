@@ -104,7 +104,7 @@ public class HistoricoLevantamentoReferidosExcel implements IRunnableWithProgres
                     createCellNid.setCellStyle(cellStyle);
 
                     HSSFCell createCellNome = row.createCell(2);
-                    createCellNome.setCellValue(xls.getNome() + " " + xls.getApelido());
+                    createCellNome.setCellValue((xls.getNome() + " " + xls.getApelido()).replace("null", ""));
                     createCellNome.setCellStyle(cellStyle);
 
                     HSSFCell createCellTipoTarv = row.createCell(3);

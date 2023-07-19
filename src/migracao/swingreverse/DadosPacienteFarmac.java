@@ -154,6 +154,7 @@ public class DadosPacienteFarmac {
         Prescription prescription = null;
         Patient patient = null;
         Clinic clinic = null;
+        boolean addPrescribedDrugs = false;
         try {
 
             if (syncTempDispense.getUuidopenmrs() != null)
@@ -253,7 +254,15 @@ public class DadosPacienteFarmac {
 
             if (drug != null) {
                 PrescribedDrugs newPD = new PrescribedDrugs();
-                if (prescription.getPrescribedDrugs().isEmpty()) {
+
+                if (prescription.getPrescribedDrugs() != null) {
+                     if (prescription.getPrescribedDrugs().isEmpty())
+                         addPrescribedDrugs = true;
+                }else{
+                    addPrescribedDrugs = true;
+                }
+
+                if(addPrescribedDrugs){
                     if (drug.getPackSize() > 30) {
                         newPD.setAmtPerTime(2);
                     } else {

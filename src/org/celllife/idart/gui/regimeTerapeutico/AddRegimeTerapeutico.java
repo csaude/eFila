@@ -929,7 +929,7 @@ public class AddRegimeTerapeutico extends GenericFormGui {
                 return true;
             }
         }
-            return false;
+            return true;
 
     }
 

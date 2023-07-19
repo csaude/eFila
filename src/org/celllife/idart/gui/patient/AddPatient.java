@@ -2287,7 +2287,7 @@ public class AddPatient extends GenericFormGui implements iDARTChangeListener {
             } else
                 return true;
         }
-        return false;
+        return true;
     }
 
     /**
