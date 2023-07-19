@@ -20,6 +20,7 @@
 // PHARMACY //
 package org.celllife.idart.gui.login;
 
+import java.awt.Color;
 import model.manager.AdministrationManager;
 import model.nonPersistent.Autenticacao;
 import org.apache.log4j.Logger;
@@ -51,6 +52,7 @@ import java.io.*;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
+import javax.swing.JLabel;
 
 import static org.celllife.idart.rest.ApiAuthRest.getServerStatus;
 
@@ -96,6 +98,7 @@ public class Login implements GenericGuiInterface {
         populateClinics(null);
 
         postInitialize();
+        
     }
 
     public Login(Clinic clinic) {
@@ -114,6 +117,8 @@ public class Login implements GenericGuiInterface {
     }
 
     private void postInitialize() {
+        
+        
         cmbUsers.setFocus();
 
         if (!loginShell.isDisposed()) {
@@ -121,7 +126,10 @@ public class Login implements GenericGuiInterface {
             loginShell.open();
 
         }
-
+    MessageDialog.openWarning(loginShell, 
+                 Messages.getString("login.title.notice.confidentiality"), 
+                 Messages.getString("login.notice.confidentiality"));
+        
         while (!loginShell.isDisposed()) {
             if (!display.readAndDispatch()) {
                 display.sleep();
@@ -164,7 +172,7 @@ public class Login implements GenericGuiInterface {
 
         createCompLoginInfo();
         createCompButtons();
-
+       
         log.debug("Login Form Created"); //$NON-NLS-1$
     }
 
