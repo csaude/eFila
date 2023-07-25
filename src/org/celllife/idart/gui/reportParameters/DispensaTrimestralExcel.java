@@ -132,24 +132,28 @@ public class DispensaTrimestralExcel implements IRunnableWithProgress {
                     createCellNome.setCellValue(xls.getNome());
                     createCellNome.setCellStyle(cellStyle);
 
-                    HSSFCell createCellRegimeTerapeutico = row.createCell(3);
+                    HSSFCell createCellIdade = row.createCell(3);
+                    createCellIdade.setCellValue(xls.getIdade());
+                    createCellIdade.setCellStyle(cellStyle);
+
+                    HSSFCell createCellRegimeTerapeutico = row.createCell(4);
                     createCellRegimeTerapeutico.setCellValue(xls.getRegimeTerapeutico());
                     createCellRegimeTerapeutico.setCellStyle(cellStyle);
 
-                    HSSFCell createCellTipoTarv = row.createCell(4);
+                    HSSFCell createCellTipoTarv = row.createCell(5);
                     createCellTipoTarv.setCellValue(xls.getTipoPaciente());
                     createCellTipoTarv.setCellStyle(cellStyle);
 
 
-                    HSSFCell createCellDataPrescricao = row.createCell(5);
+                    HSSFCell createCellDataPrescricao = row.createCell(6);
                     createCellDataPrescricao.setCellValue(xls.getDataPrescricao());
                     createCellDataPrescricao.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataLevantamento = row.createCell(6);
+                    HSSFCell createCellDataLevantamento = row.createCell(7);
                     createCellDataLevantamento.setCellValue(xls.getDataLevantamento());
                     createCellDataLevantamento.setCellStyle(cellStyle);
 
-                    HSSFCell createCellDataProximoLevantamento = row.createCell(7);
+                    HSSFCell createCellDataProximoLevantamento = row.createCell(8);
                     createCellDataProximoLevantamento.setCellValue(xls.getDataProximoLevantamento());
                     createCellDataProximoLevantamento.setCellStyle(cellStyle);
 

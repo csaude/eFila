@@ -6,6 +6,8 @@ public class DispensaTrimestralSemestral {
 	
 	private String nome;
 
+	private String idade;
+
 	private String regimeTerapeutico;
 	
 	private String tipoPaciente;
@@ -30,6 +32,14 @@ public class DispensaTrimestralSemestral {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getIdade() {
+		return idade;
+	}
+
+	public void setIdade(String idade) {
+		this.idade = idade;
 	}
 
 	public String getRegimeTerapeutico() {
