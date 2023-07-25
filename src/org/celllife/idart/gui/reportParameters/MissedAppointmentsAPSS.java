@@ -75,6 +75,10 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
         
     private Button chkBtnTB;
     
+    private Button chkBtnCCR;
+    
+    private Button chkBtnSAAJ;
+    
     private List<RegistoChamadaTelefonicaXLS> chamadaTelefonicaXLSs;
     
     private final Shell parent;
@@ -167,6 +171,13 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
                 txtMaximumDaysLate.setEditable(true);
 		txtMaximumDaysLate.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
                 
+                chkBtnTB = new Button(grpClinicSelection, SWT.CHECK);
+                chkBtnTB.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
+                chkBtnTB.setBounds(new Rectangle(270, 56, 30, 21));
+                chkBtnTB.setText("TB");
+                chkBtnTB.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                chkBtnTB.setSelection(false);
+                
                 chkBtnALL = new Button(grpClinicSelection, SWT.CHECK);
                 chkBtnALL.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
                 chkBtnALL.setBounds(new Rectangle(320, 56, 135, 21));
@@ -176,17 +187,24 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
                 
                 chkBtnPTV = new Button(grpClinicSelection, SWT.CHECK);
                 chkBtnPTV.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
-                chkBtnPTV.setBounds(new Rectangle(270, 86, 150, 21));
-                chkBtnPTV.setText("SMI");
+                chkBtnPTV.setBounds(new Rectangle(270, 86, 40, 21));
+                chkBtnPTV.setText("CPN");
                 chkBtnPTV.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
                 chkBtnPTV.setSelection(false);
-
-                chkBtnTB = new Button(grpClinicSelection, SWT.CHECK);
-                chkBtnTB.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
-                chkBtnTB.setBounds(new Rectangle(270, 56, 150, 21));
-                chkBtnTB.setText("TB");
-                chkBtnTB.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
-                chkBtnTB.setSelection(false);
+                
+                chkBtnCCR = new Button(grpClinicSelection, SWT.CHECK);
+                chkBtnCCR.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
+                chkBtnCCR.setBounds(new Rectangle(320, 86, 40, 21));
+                chkBtnCCR.setText("CCR");
+                chkBtnCCR.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                chkBtnCCR.setSelection(false);
+                
+                chkBtnSAAJ = new Button(grpClinicSelection, SWT.CHECK);
+                chkBtnSAAJ.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
+                chkBtnSAAJ.setBounds(new Rectangle(370, 86, 50, 21));
+                chkBtnSAAJ.setText("SAAJ");
+                chkBtnSAAJ.setFont(ResourceUtils.getFont(iDartFont.VERASANS_8));
+                chkBtnSAAJ.setSelection(false);
                 
                 chkBtnALL.addSelectionListener(new SelectionListener() {
                 @Override
@@ -195,9 +213,13 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
                     if (chkBtnALL.getSelection()){ 
                         chkBtnPTV.setEnabled(false);
                         chkBtnTB.setEnabled(false);
+                        chkBtnCCR.setEnabled(false);
+                        chkBtnSAAJ.setEnabled(false);
                     }else{ 
                         chkBtnPTV.setEnabled(true); 
                         chkBtnTB.setEnabled(true);
+                         chkBtnCCR.setEnabled(true);
+                        chkBtnSAAJ.setEnabled(true);
                     }
                 }
                 @Override
@@ -211,9 +233,13 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
                     if (chkBtnTB.getSelection()){ 
                         chkBtnALL.setEnabled(false);
                         chkBtnPTV.setEnabled(false);
+                         chkBtnCCR.setEnabled(false);
+                        chkBtnSAAJ.setEnabled(false);
                     }else{ 
                         chkBtnALL.setEnabled(true);
                         chkBtnPTV.setEnabled(true);
+                         chkBtnCCR.setEnabled(true);
+                        chkBtnSAAJ.setEnabled(true);
                     }
                 }
                 @Override
@@ -228,16 +254,61 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
                     if (chkBtnPTV.getSelection()){ 
                         chkBtnALL.setEnabled(false);
                         chkBtnTB.setEnabled(false);
+                        chkBtnCCR.setEnabled(false);
+                        chkBtnSAAJ.setEnabled(false);
                     }else{ 
                         chkBtnALL.setEnabled(true);
                         chkBtnTB.setEnabled(true);
+                        chkBtnCCR.setEnabled(true);
+                        chkBtnSAAJ.setEnabled(true);
                     }
                 }
                 @Override
                 public void widgetDefaultSelected(SelectionEvent arg0) {
                 }
             });
-
+            
+            chkBtnCCR.addSelectionListener(new SelectionListener() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    // TODO Auto-generated method stub
+                    if (chkBtnCCR.getSelection()){ 
+                        chkBtnALL.setEnabled(false);
+                        chkBtnTB.setEnabled(false);
+                        chkBtnPTV.setEnabled(false);
+                        chkBtnSAAJ.setEnabled(false);
+                    }else{ 
+                        chkBtnALL.setEnabled(true);
+                        chkBtnTB.setEnabled(true);
+                        chkBtnPTV.setEnabled(true);
+                        chkBtnSAAJ.setEnabled(true);
+                    }
+                }
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                }
+            });
+            
+            chkBtnSAAJ.addSelectionListener(new SelectionListener() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    // TODO Auto-generated method stub
+                    if (chkBtnSAAJ.getSelection()){ 
+                        chkBtnALL.setEnabled(false);
+                        chkBtnTB.setEnabled(false);
+                        chkBtnPTV.setEnabled(false);
+                        chkBtnCCR.setEnabled(false);
+                    }else{ 
+                        chkBtnALL.setEnabled(true);
+                        chkBtnTB.setEnabled(true);
+                        chkBtnPTV.setEnabled(true);
+                        chkBtnCCR.setEnabled(true);
+                    }
+                }
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                }
+            });
 	}
 
 	/**
@@ -315,12 +386,12 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
 
 		}
 
-                  if(!chkBtnALL.getSelection() && !chkBtnPTV.getSelection() && !chkBtnTB.getSelection()){
+                  if(!chkBtnALL.getSelection() && !chkBtnPTV.getSelection() && !chkBtnTB.getSelection() && !chkBtnCCR.getSelection()  && !chkBtnSAAJ.getSelection()){
                     MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
 					| SWT.OK);
 			missing.setText("Nenhum tipo de relatorio foi seleccionado");
 			missing
-			.setMessage("Nenhum tipo de relatorio foi seleccionado. Por favor selecione ALL, TB ou PTV.");
+			.setMessage("Nenhum tipo de relatorio foi seleccionado. Por favor selecione ALL, TB, CPN, CCR ou SAAJ.");
 			missing.open();
 			viewReport = false;
                 }
@@ -386,7 +457,12 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
 			    MissedAppointmentsAPSSReport report = new MissedAppointmentsAPSSReport(getShell(),cmbClinic.getText(),
 					Integer.parseInt(txtMinimumDaysLate.getText()),
 					Integer.parseInt(txtMaximumDaysLate.getText()),
-					swtCal.getCalendar().getTime(),chkBtnALL.getSelection(),chkBtnPTV.getSelection(),chkBtnTB.getSelection());
+					swtCal.getCalendar().getTime(),
+                                        chkBtnALL.getSelection(),
+                                        chkBtnPTV.getSelection(),
+                                        chkBtnTB.getSelection(), 
+                                        chkBtnCCR.getSelection(), 
+                                        chkBtnSAAJ.getSelection());
 			viewReport(report);
 		}
 
@@ -411,12 +487,12 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
 
 		}
 
-                  if(!chkBtnALL.getSelection() && !chkBtnPTV.getSelection() && !chkBtnTB.getSelection()){
+                  if(!chkBtnALL.getSelection() && !chkBtnPTV.getSelection() && !chkBtnTB.getSelection()&& !chkBtnCCR.getSelection()  && !chkBtnSAAJ.getSelection()){
                     MessageBox missing = new MessageBox(getShell(), SWT.ICON_ERROR
 					| SWT.OK);
 			missing.setText("Nenhum tipo de relatorio foi seleccionado");
 			missing
-			.setMessage("Nenhum tipo de relatorio foi seleccionado. Por favor selecione ALL, TB ou PTV.");
+			.setMessage("Nenhum tipo de relatorio foi seleccionado. Por favor selecione ALL, TB, CPN, CCR ou SAAJ.");
 			missing.open();
 			viewReport = false;
                 }
@@ -483,7 +559,13 @@ public class MissedAppointmentsAPSS extends GenericReportGui {
 			String reportNameFile = "Reports/RegistoChamadaTelefonica.xls";
 			try {
 				MissedAppointmentsAPSSExcel op = new MissedAppointmentsAPSSExcel(swtCal, parent, reportNameFile, txtMinimumDaysLate.getText(),
-						txtMaximumDaysLate.getText(),chkBtnALL.getSelection(),chkBtnTB.getSelection());
+						txtMaximumDaysLate.getText(),
+                                                chkBtnALL.getSelection(),
+                                                chkBtnPTV.getSelection(),
+                                                chkBtnTB.getSelection(), 
+                                                chkBtnCCR.getSelection(), 
+                                                chkBtnSAAJ.getSelection()
+                                                );
 				new ProgressMonitorDialog(parent).run(true, true, op);
 
 				if (op.getList() == null ||

@@ -30,10 +30,12 @@ public class MissedAppointmentsAPSSReport extends AbstractJasperReport {
         private final boolean all;
         private final boolean ptv;
         private final boolean tb;
+        private final boolean ccr;
+        private final boolean saaj;
         
 
 	public MissedAppointmentsAPSSReport(Shell parent, String clinicName,
-			int minDays, int maxDays, Date theDate,boolean all, boolean ptv, boolean tb) {
+			int minDays, int maxDays, Date theDate,boolean all, boolean ptv, boolean tb, boolean ccr, boolean saaj) {
 		super(parent);
 		this.clinicName = clinicName;
 		this.minDays = minDays;
@@ -42,6 +44,8 @@ public class MissedAppointmentsAPSSReport extends AbstractJasperReport {
                 this.all = all;
                 this.ptv = ptv;
                 this.tb = tb;
+                this.ccr = ccr;
+                this.saaj = saaj;
 	}
 
 	@Override
@@ -71,12 +75,18 @@ public class MissedAppointmentsAPSSReport extends AbstractJasperReport {
 	protected String getReportFileName() {
             if(all)
 		return "missedAppointmentsReport";
-            else{
+            else
                 if(ptv)
                     return "missedAppointmentsReportGravidas";
                 else
-                    return "missedAppointmentsReportTB";
-            }
+                    if(tb)
+                        return "missedAppointmentsReportTB";
+                    else
+                        if(ccr)
+                            return "missedAppointmentsReportCCR";
+                        else
+                            if(saaj)
+                               return "missedAppointmentsReportSAAJ";  
+            return null;
 	}
-
 }

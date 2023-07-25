@@ -31,21 +31,27 @@ public class MissedAppointmentsAPSSExcel implements IRunnableWithProgress {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String txtMinimumDaysLate;
     String txtMaximumDaysLate;
-    private boolean chkBtnALL;
-    private boolean chkBtnTB;
+    private final boolean all;
+    private final boolean ptv;
+    private final boolean tb;
+    private final boolean ccr;
+    private final boolean saaj;
 
 
     SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
     public MissedAppointmentsAPSSExcel(SWTCalendar swtCal,
-                                     Shell parent, String reportFileName, String min, String max,boolean chkBtnALL,boolean chkBtnTB) {
+                                     Shell parent, String reportFileName, String min, String max,boolean all, boolean ptv, boolean tb, boolean ccr, boolean saaj) {
         this.parent = parent;
         this.swtCal = swtCal;
         this.reportFileName = reportFileName;
         this.txtMinimumDaysLate = min;
         this.txtMaximumDaysLate = max;
-        this.chkBtnALL = chkBtnALL;
-        this.chkBtnTB = chkBtnTB;
+        this.all = all;
+        this.ptv = ptv;
+        this.tb = tb;
+        this.ccr = ccr;
+        this.saaj = saaj;
     }
 
     @Override
@@ -56,21 +62,26 @@ public class MissedAppointmentsAPSSExcel implements IRunnableWithProgress {
 
             monitor.beginTask("Por Favor, aguarde ... ", 1);
 
-            if (chkBtnALL) {
-
-                chamadaTelefonicaXLSs = con.getMissedAppointmentsReport(txtMinimumDaysLate,txtMaximumDaysLate,
+            if(all)
+		chamadaTelefonicaXLSs = con.getMissedAppointmentsReport(txtMinimumDaysLate,txtMaximumDaysLate,
                         swtCal.getCalendar().getTime(),String.valueOf(LocalObjects.mainClinic.getId()));
-            } else if (chkBtnTB) {
-
-                chamadaTelefonicaXLSs = con.getMissedAppointmentsPTV(txtMinimumDaysLate,txtMaximumDaysLate,
+            else
+                if(ptv)
+                    chamadaTelefonicaXLSs = con.getMissedAppointmentsSMI(txtMinimumDaysLate,txtMaximumDaysLate,
                         swtCal.getCalendar().getTime(),String.valueOf(LocalObjects.mainClinic.getId()));
-            } else {
-
-                chamadaTelefonicaXLSs = con.getMissedAppointmentsSMI(txtMinimumDaysLate,txtMaximumDaysLate,
+                else
+                    if(tb)
+                        chamadaTelefonicaXLSs = con.getMissedAppointmentsTB(txtMinimumDaysLate,txtMaximumDaysLate,
                         swtCal.getCalendar().getTime(),String.valueOf(LocalObjects.mainClinic.getId()));
-            }
-
-
+                    else
+                        if(ccr)
+                            chamadaTelefonicaXLSs = con.getMissedAppointmentsCCR(txtMinimumDaysLate,txtMaximumDaysLate,
+                        swtCal.getCalendar().getTime(),String.valueOf(LocalObjects.mainClinic.getId()));
+                        else
+                            if(saaj)
+                               chamadaTelefonicaXLSs = con.getMissedAppointmentsSAAJ(txtMinimumDaysLate,txtMaximumDaysLate,
+                        swtCal.getCalendar().getTime(),String.valueOf(LocalObjects.mainClinic.getId())); 
+            
             if (chamadaTelefonicaXLSs.size() > 0) {
 
                 monitor.beginTask("Carregando a lista... ", chamadaTelefonicaXLSs.size());
@@ -95,19 +106,19 @@ public class MissedAppointmentsAPSSExcel implements IRunnableWithProgress {
                 healthFacilityCell.setCellStyle(cellStyle);
 
                 HSSFRow reportPeriod = sheet.getRow(10);
-                HSSFCell reportPeriodCell = reportPeriod.createCell(20);
+                HSSFCell reportPeriodCell = reportPeriod.createCell(22);
                 reportPeriodCell.setCellValue(sdf.format(DateUtils.addDays(swtCal.getCalendar().getTime(), -(Integer.parseInt(txtMaximumDaysLate)))) +" à "+
                         sdf.format(DateUtils.addDays(swtCal.getCalendar().getTime(), -(Integer.parseInt(txtMinimumDaysLate)))));
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow reportYear = sheet.getRow(11);
-                HSSFCell reportYearCell = reportYear.createCell(20);
+                HSSFCell reportYearCell = reportYear.createCell(22);
                 reportYearCell.setCellValue(sdfYear.format(swtCal.getCalendar().getTime()));
                 reportYearCell.setCellStyle(cellStyle);
 
                 HSSFRow daysPeriod = sheet.getRow(11);
                 HSSFCell daysCell = daysPeriod.createCell(5);
-                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate+ "dias de falta.");
+                daysCell.setCellValue("Este relatório mostra os pacientes que têm entre " + txtMinimumDaysLate + " e " + txtMaximumDaysLate+ " dias de falta.");
                 daysCell.setCellStyle(cellStyle);
 
                 for(int i=15; i<= sheet.getLastRowNum(); i++)
@@ -157,51 +168,60 @@ public class MissedAppointmentsAPSSExcel implements IRunnableWithProgress {
                     createCellSmi.setCellValue(xls.getSmi());
                     createCellSmi.setCellStyle(cellStyle);
 
-                    HSSFCell apoio = row.createCell(9);
+                    HSSFCell createCellCcr = row.createCell(9);
+                    createCellCcr.setCellValue(xls.getCcr());
+                    createCellCcr.setCellStyle(cellStyle);
+                    
+                    HSSFCell createCellSaaj = row.createCell(10);
+                    createCellSaaj.setCellValue(xls.getSaaj());
+                    createCellSaaj.setCellStyle(cellStyle);
+                                        
+                    
+                    HSSFCell apoio = row.createCell(11);
                     apoio.setCellValue("");
                     apoio.setCellStyle(cellStyle);
 
-                    HSSFCell reintegracao = row.createCell(10);
+                    HSSFCell reintegracao = row.createCell(12);
                     reintegracao.setCellValue("");
                     reintegracao.setCellStyle(cellStyle);
 
-                    HSSFCell incontactavel = row.createCell(11);
+                    HSSFCell incontactavel = row.createCell(13);
                     incontactavel.setCellValue("");
                     incontactavel.setCellStyle(cellStyle);
 
-                    HSSFCell esqueceuData = row.createCell(12);
+                    HSSFCell esqueceuData = row.createCell(14);
                     esqueceuData.setCellValue("");
                     esqueceuData.setCellStyle(cellStyle);
 
-                    HSSFCell estaDoente = row.createCell(13);
+                    HSSFCell estaDoente = row.createCell(15);
                     estaDoente.setCellValue("");
                     estaDoente.setCellStyle(cellStyle);
 
-                    HSSFCell transporte = row.createCell(14);
+                    HSSFCell transporte = row.createCell(16);
                     transporte.setCellValue("");
                     transporte.setCellStyle(cellStyle);
 
-                    HSSFCell viagem = row.createCell(15);
+                    HSSFCell viagem = row.createCell(17);
                     viagem.setCellValue("");
                     viagem.setCellStyle(cellStyle);
 
-                    HSSFCell obito = row.createCell(16);
+                    HSSFCell obito = row.createCell(18);
                     obito.setCellValue("");
                     obito.setCellStyle(cellStyle);
 
-                    HSSFCell retornou = row.createCell(17);
+                    HSSFCell retornou = row.createCell(19);
                     retornou.setCellValue("");
                     retornou.setCellStyle(cellStyle);
 
-                    HSSFCell visitado = row.createCell(18);
+                    HSSFCell visitado = row.createCell(20);
                     visitado.setCellValue("");
                     visitado.setCellStyle(cellStyle);
 
-                    HSSFCell observacao = row.createCell(19);
+                    HSSFCell observacao = row.createCell(21);
                     observacao.setCellValue("");
                     observacao.setCellStyle(cellStyle);
 
-                    HSSFCell responsavel = row.createCell(20);
+                    HSSFCell responsavel = row.createCell(22);
                     responsavel.setCellValue("");
                     responsavel.setCellStyle(cellStyle);
 
