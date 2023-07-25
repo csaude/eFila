@@ -1378,6 +1378,7 @@ public class ConexaoJDBC {
         Map<String, Object> map = new HashMap<String, Object>();
         String query = "SELECT 	distinct pat.patientid, pat.firstnames, "
                 + "		pat.lastname, "
+                + "extract(year FROM age(current_date, pat.dateofbirth))::integer as idade,  "
                 + "		pg_catalog.date(p.date) dataprescricao, "
                 + "		pg_catalog.date(pack.pickupdate::timestamp::date) dataLevantamento, "
                 + "		pack.dateexpectedstring proximoLevantamento , "
@@ -1423,7 +1424,8 @@ public class ConexaoJDBC {
             while (rs.next()) {
                 DispensaTrimestralSemestral lstDispensaTrimestral = new DispensaTrimestralSemestral();
                 lstDispensaTrimestral.setPatientIdentifier(rs.getString("patientid"));
-                lstDispensaTrimestral.setNome(rs.getString("firstnames") + rs.getString("lastname"));
+                lstDispensaTrimestral.setNome(rs.getString("firstnames") + " " + rs.getString("lastname"));
+                lstDispensaTrimestral.setIdade(rs.getString("idade"));
                 lstDispensaTrimestral.setRegimeTerapeutico(rs.getString("regimeesquema"));
                 lstDispensaTrimestral.setTipoPaciente(rs.getString("tipodt"));
                 lstDispensaTrimestral.setDataPrescricao(rs.getString("dataprescricao"));
@@ -1521,6 +1523,7 @@ public class ConexaoJDBC {
         map.put("totalpacientesmanter", totalpacientesmanter);
         map.put("totalpacienteManuntencaoTransporte", totalpacienteManuntencaoTransporte);
         map.put("totalpacienteCumulativo", totalpacienteCumulativo);
+        System.out.println(map);
         return map;
     }
 
@@ -1538,6 +1541,7 @@ public class ConexaoJDBC {
 
         String query = "SELECT 	distinct pat.patientid, pat.firstnames, "
                 + "		pat.lastname, "
+                + "extract(year FROM age(current_date, pat.dateofbirth))::integer as idade,  "
                 + "		pg_catalog.date(p.date) dataprescricao, "
                 + "		pg_catalog.date(pack.pickupdate::timestamp::date) dataLevantamento, "
                 + "		pack.dateexpectedstring proximoLevantamento , "
@@ -1579,15 +1583,19 @@ public class ConexaoJDBC {
 
         if (rs != null) {
 
+
+
             while (rs.next()) {
                 DispensaTrimestralSemestral lstDispensaSemestral = new DispensaTrimestralSemestral();
                 lstDispensaSemestral.setPatientIdentifier(rs.getString("patientid"));
-                lstDispensaSemestral.setNome(rs.getString("firstnames") + rs.getString("lastname"));
+                lstDispensaSemestral.setNome(rs.getString("firstnames") + " " + rs.getString("lastname"));
+                lstDispensaSemestral.setIdade(rs.getString("idade"));
                 lstDispensaSemestral.setRegimeTerapeutico(rs.getString("regimeesquema"));
                 lstDispensaSemestral.setTipoPaciente(rs.getString("tipods"));
                 lstDispensaSemestral.setDataPrescricao(rs.getString("dataprescricao"));
                 lstDispensaSemestral.setDataLevantamento(rs.getString("dataLevantamento"));
                 lstDispensaSemestral.setDataProximoLevantamento(rs.getString("proximoLevantamento"));
+
 
                 dispensaSemestralXLS.add(lstDispensaSemestral);
             }

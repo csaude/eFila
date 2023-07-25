@@ -53,6 +53,7 @@
 	<queryString>
 		<![CDATA[SELECT 	distinct pat.patientid, pat.firstnames,
 		pat.lastname,
+		extract(year FROM age(current_date, pat.dateofbirth))::integer as age,
 		pg_catalog.date(p.date) dataprescricao,
 		pg_catalog.date(pa.pickupdate) dataLevantamento,
 		pg_catalog.date(to_date(pack.dateexpectedstring,'DD Mon YYYY')) proximoLevantamento ,
@@ -95,6 +96,7 @@ order by 8]]>
 	<field name="proximolevantamento" class="java.sql.Date"/>
 	<field name="regimeesquema" class="java.lang.String"/>
 	<field name="tipodt" class="java.lang.String"/>
+	<field name="age" class="java.lang.Number"/>
 	<variable name="test" class="java.lang.String" resetType="None">
 		<variableExpression><![CDATA["test"]]></variableExpression>
 		<initialValueExpression><![CDATA["test"]]></initialValueExpression>
@@ -315,42 +317,42 @@ em Dispensa Trimestral]]></text>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="24" y="278" width="103" height="48"/>
+				<reportElement x="24" y="278" width="95" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="133" y="278" width="80" height="48"/>
+				<reportElement x="122" y="278" width="80" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="423" y="278" width="35" height="48"/>
+				<reportElement mode="Opaque" x="436" y="278" width="46" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<text><![CDATA[Data de Leva.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="216" y="278" width="67" height="48"/>
+				<reportElement x="267" y="278" width="55" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Regime T.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="287" y="278" width="69" height="48"/>
+				<reportElement x="327" y="278" width="55" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ Tipo de Paciente]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="359" y="278" width="52" height="48">
+				<reportElement x="386" y="278" width="46" height="48">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -438,7 +440,7 @@ em Dispensa Trimestral]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalpacienteCumulativo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="471" y="278" width="61" height="48"/>
+				<reportElement x="486" y="278" width="46" height="48"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -451,22 +453,22 @@ em Dispensa Trimestral]]></text>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="131" y="274" width="1" height="52"/>
+				<reportElement x="120" y="274" width="1" height="52"/>
 			</line>
 			<line>
-				<reportElement x="214" y="274" width="1" height="52"/>
+				<reportElement x="203" y="274" width="1" height="52"/>
 			</line>
 			<line>
-				<reportElement x="285" y="273" width="1" height="52"/>
+				<reportElement x="325" y="273" width="1" height="52"/>
 			</line>
 			<line>
-				<reportElement x="357" y="273" width="1" height="52"/>
+				<reportElement x="384" y="273" width="1" height="52"/>
 			</line>
 			<line>
-				<reportElement x="412" y="274" width="1" height="52"/>
+				<reportElement x="434" y="274" width="1" height="52"/>
 			</line>
 			<line>
-				<reportElement x="469" y="273" width="1" height="52"/>
+				<reportElement x="484" y="273" width="1" height="52"/>
 			</line>
 			<line>
 				<reportElement x="23" y="274" width="1" height="52"/>
@@ -478,6 +480,16 @@ em Dispensa Trimestral]]></text>
 				</textElement>
 				<text><![CDATA[Ordem]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="206" y="278" width="55" height="48"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Idade]]></text>
+			</staticText>
+			<line>
+				<reportElement x="263" y="274" width="1" height="52"/>
+			</line>
 		</band>
 	</title>
 	<pageHeader>
@@ -489,7 +501,7 @@ em Dispensa Trimestral]]></text>
 	<detail>
 		<band height="24">
 			<textField>
-				<reportElement x="24" y="3" width="106" height="16">
+				<reportElement x="24" y="3" width="95" height="16">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -499,7 +511,7 @@ em Dispensa Trimestral]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="133" y="4" width="80" height="16">
+				<reportElement x="122" y="4" width="80" height="16">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -508,7 +520,7 @@ em Dispensa Trimestral]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{firstnames} + " " + $F{lastname}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="217" y="4" width="66" height="16">
+				<reportElement x="268" y="4" width="55" height="16">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -533,22 +545,22 @@ em Dispensa Trimestral]]></text>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="357" y="0" width="1" height="23"/>
+				<reportElement x="384" y="0" width="1" height="23"/>
 			</line>
 			<line>
-				<reportElement x="131" y="0" width="1" height="23"/>
+				<reportElement x="120" y="0" width="1" height="23"/>
 			</line>
 			<line>
-				<reportElement x="214" y="0" width="1" height="23"/>
+				<reportElement x="203" y="0" width="1" height="23"/>
 			</line>
 			<line>
-				<reportElement x="285" y="0" width="1" height="23"/>
+				<reportElement x="325" y="0" width="1" height="23"/>
 			</line>
 			<line>
-				<reportElement x="412" y="0" width="1" height="23"/>
+				<reportElement x="434" y="0" width="1" height="23"/>
 			</line>
 			<textField>
-				<reportElement x="359" y="3" width="52" height="16">
+				<reportElement x="386" y="3" width="46" height="16">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -558,24 +570,24 @@ em Dispensa Trimestral]]></text>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dataprescricao})]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="469" y="0" width="1" height="23"/>
+				<reportElement x="484" y="0" width="1" height="23"/>
 			</line>
 			<textField>
-				<reportElement x="413" y="3" width="56" height="16"/>
+				<reportElement x="436" y="4" width="46" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{datalevantamento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="471" y="4" width="61" height="15"/>
+				<reportElement x="486" y="4" width="46" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{proximolevantamento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="287" y="4" width="69" height="15"/>
+				<reportElement x="327" y="4" width="55" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
@@ -590,6 +602,16 @@ em Dispensa Trimestral]]></text>
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="263" y="0" width="1" height="23"/>
+			</line>
+			<textField>
+				<reportElement x="206" y="4" width="55" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band/>
