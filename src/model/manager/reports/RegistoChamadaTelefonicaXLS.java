@@ -17,6 +17,10 @@ public class RegistoChamadaTelefonicaXLS {
 	private String tb;
 	
 	private String smi;
+        
+        private String ccr;
+	
+	private String saaj;
 
 	private String farmacia;
 
@@ -87,6 +91,23 @@ public class RegistoChamadaTelefonicaXLS {
 	public String getFarmacia() {
 		return farmacia;
 	}
+
+        public String getCcr() {
+            return ccr;
+        }
+
+        public void setCcr(String ccr) {
+            this.ccr = ccr;
+        }
+
+        public String getSaaj() {
+            return saaj;
+        }
+
+        public void setSaaj(String saaj) {
+            this.saaj = saaj;
+        }
+               
 
 	public void setFarmacia(String farmacia) {
 		this.farmacia = farmacia;

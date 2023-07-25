@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="missedAppointmentsReport" pageWidth="1010" pageHeight="595" orientation="Landscape" columnWidth="950" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="missedAppointmentsReport" pageWidth="1063" pageHeight="595" orientation="Landscape" columnWidth="1003" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="2.1435888100000016"/>
+	<property name="ireport.x" value="981"/>
+	<property name="ireport.y" value="409"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -245,7 +245,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[NID do Utente]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_stockOnHand" mode="Transparent" x="445" y="6" width="74" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_stockOnHand" mode="Transparent" x="448" y="5" width="119" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -258,7 +258,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Serviço que Serve]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="730" y="4" width="149" height="42" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="784" y="4" width="149" height="42" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -283,19 +283,19 @@ where id = $P{clinicid}]]>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-7" mode="Opaque" x="793" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-7" mode="Opaque" x="847" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-10" mode="Opaque" x="0" y="1" width="947" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-10" mode="Opaque" x="0" y="0" width="1003" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-22" mode="Opaque" x="520" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-22" mode="Opaque" x="574" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-23" mode="Opaque" x="546" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-23" mode="Opaque" x="600" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<staticText>
@@ -325,7 +325,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[TARV]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-25" mode="Opaque" x="573" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-25" mode="Opaque" x="627" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
@@ -367,11 +367,11 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[ENDEREÇO]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-29" mode="Opaque" x="824" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-29" mode="Opaque" x="878" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-30" mode="Opaque" x="1" y="200" width="947" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-30" mode="Opaque" x="1" y="200" width="1003" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
@@ -394,7 +394,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[NOME]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="731" y="51" width="62" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="785" y="51" width="62" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -407,7 +407,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Paciente retornou à US (Data em que veio)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="795" y="51" width="28" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="849" y="51" width="28" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +420,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Paciente foi referido a visita]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="826" y="51" width="53" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="880" y="51" width="53" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -433,7 +433,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Observação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="881" y="4" width="65" height="193" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="935" y="4" width="65" height="193" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -459,7 +459,7 @@ where id = $P{clinicid}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left" lineSpacing="Single">
 					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[SMI]]></text>
+				<text><![CDATA[CPN]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="st_stockOnHand-3" mode="Transparent" x="470" y="52" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -475,7 +475,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[TB]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="522" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="576" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -488,7 +488,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Chamada de Apoio]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="549" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="603" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -501,7 +501,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Chamada de Reintegração]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="576" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="630" y="53" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -514,7 +514,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Paciente Incontactavel]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="602" y="52" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="656" y="52" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -527,7 +527,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[O Paciente Esqueceu a data da Consulta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="628" y="51" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="682" y="51" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -540,7 +540,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[O Paciente está doente]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="654" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="708" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -553,7 +553,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[O Paciente não tem transporte]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="680" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="734" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -566,7 +566,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[O Paciente viajou]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_outstandingOrders" mode="Transparent" x="706" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_outstandingOrders" mode="Transparent" x="760" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -579,7 +579,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Óbito]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_stockOnHand" mode="Transparent" x="521" y="6" width="51" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_stockOnHand" mode="Transparent" x="575" y="6" width="51" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -592,7 +592,7 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Tipo de Chamada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="st_stockOnHand" mode="Transparent" x="575" y="5" width="154" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="st_stockOnHand" mode="Transparent" x="629" y="5" width="154" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -605,40 +605,74 @@ where id = $P{clinicid}]]>
 				<text><![CDATA[Relatório da Chamada]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="600" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="654" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="626" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="680" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="678" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="732" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="652" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="706" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="704" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="758" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="729" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="783" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="880" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="934" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
-				<reportElement key="line-26" mode="Opaque" x="948" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-26" mode="Opaque" x="1002" y="0" width="1" height="200" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid"/>
 			</line>
 			<line>
 				<reportElement x="442" y="48" width="438" height="1"/>
 			</line>
+			<line>
+				<reportElement key="line-4" mode="Opaque" x="520" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid"/>
+			</line>
+			<staticText>
+				<reportElement key="st_stockOnHand-3" mode="Transparent" x="522" y="51" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left" lineSpacing="Single">
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[CCR]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-4" mode="Opaque" x="547" y="49" width="1" height="151" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid"/>
+			</line>
+			<staticText>
+				<reportElement key="st_stockOnHand-3" mode="Transparent" x="549" y="50" width="23" height="147" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left" lineSpacing="Single">
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[SAAJ]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -647,12 +681,12 @@ where id = $P{clinicid}]]>
 	<detail>
 		<band height="21" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="950" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<subreportParameter name="showPatientNames">
-					<subreportParameterExpression><![CDATA[$P{showPatientNames}]]></subreportParameterExpression>
-				</subreportParameter>
+				<reportElement key="subreport-1" isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="1003" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<subreportParameter name="maxDays">
 					<subreportParameterExpression><![CDATA[$P{maxDays}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="showPatientNames">
+					<subreportParameterExpression><![CDATA[$P{showPatientNames}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="clinicid">
 					<subreportParameterExpression><![CDATA[$P{clinicid}]]></subreportParameterExpression>
