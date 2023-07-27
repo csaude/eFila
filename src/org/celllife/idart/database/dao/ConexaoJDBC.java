@@ -8053,7 +8053,7 @@ public class ConexaoJDBC {
                 "order by 1 " +
                 " )pp on pp.id = pe.patient " +
                 " inner join patient pt on pt.id = pe.patient " +
-                " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca = 'TARV'";
+                " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca  LIKE '%ARV%'";
 
         List<PrescricoesDuplicadasXLS> prescricoesDuplicadasXLSList = new ArrayList<PrescricoesDuplicadasXLS>();
         ResultSet rs = st.executeQuery(query);
