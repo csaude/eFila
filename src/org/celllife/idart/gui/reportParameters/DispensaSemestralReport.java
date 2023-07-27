@@ -248,6 +248,12 @@ public class DispensaSemestralReport extends GenericReportGui {
 
         calendarStart = new SWTCalendar(grpDateRange);
         calendarStart.setBounds(20, 55, 220, 140);
+        calendarStart.addSWTCalendarListener(new SWTCalendarListener() {
+            @Override
+            public void dateChanged(SWTCalendarEvent calendarEvent) {
+                Date date = calendarEvent.getCalendar().getTime();
+            }
+        });
 
         calendarEnd = new SWTCalendar(grpDateRange);
         calendarEnd.setBounds(280, 55, 220, 140);
@@ -255,7 +261,6 @@ public class DispensaSemestralReport extends GenericReportGui {
             @Override
             public void dateChanged(SWTCalendarEvent calendarEvent) {
                 Date date = calendarEvent.getCalendar().getTime();
-
             }
         });
     }
