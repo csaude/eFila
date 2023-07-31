@@ -1392,7 +1392,7 @@ public class ConexaoJDBC {
                     // Tipo de Pacinte
                     if (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff <= 15) {
                         totalpacientesnovos++;
-                    } else if (rs.getString("tipodt").contains("Manunte") || (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff > 15)) {
+                    } else if (rs.getString("tipodt").contains("Manunten") || (rs.getString("tipodt").contains("Novo") && daysPrescriptionDispensedDiff > 15)) {
                         totalpacientesmanter++;
                     } else if (rs.getString("tipodt").contains("Transporte")) {
                         totalpacienteManuntencaoTransporte++;
@@ -1553,7 +1553,7 @@ public class ConexaoJDBC {
 
                     if (rs.getString("tipods").contains("Novo")) {
                         totalpacientesnovos++;
-                    } else if ((rs.getString("tipods").contains("Manunte"))) {
+                    } else if ((rs.getString("tipods").contains("Manunten"))) {
                         totalpacientesmanter++;
                     } else if (rs.getString("tipods").contains("Transporte")) {
                         totalpacienteManuntencaoTransporte++;
@@ -8097,7 +8097,7 @@ public class ConexaoJDBC {
                 "order by 1 " +
                 " )pp on pp.id = pe.patient " +
                 " inner join patient pt on pt.id = pe.patient " +
-                " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca = 'TARV'";
+                " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca  LIKE '%ARV%'";
 
         List<PrescricoesDuplicadasXLS> prescricoesDuplicadasXLSList = new ArrayList<PrescricoesDuplicadasXLS>();
         ResultSet rs = st.executeQuery(query);

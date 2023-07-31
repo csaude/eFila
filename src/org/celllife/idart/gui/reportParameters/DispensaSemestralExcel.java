@@ -17,9 +17,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class DispensaSemestralExcel implements IRunnableWithProgress {
 
@@ -51,14 +50,25 @@ public class DispensaSemestralExcel implements IRunnableWithProgress {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            Map mapaDispensaTrimestral = con.DispensaTrimestral(dateFormat.format(calendarStart.getCalendar().getTime()),dateFormat.format(calendarEnd.getCalendar().getTime()));
+            Date theStartDate = calendarStart.getCalendar().getTime();
+
+            Calendar c = Calendar.getInstance(Locale.US);
+            c.setLenient(true);
+            c.setTime(theStartDate);
+
+            if(Calendar.MONDAY == c.get(Calendar.DAY_OF_WEEK)){
+                c.add(Calendar.DAY_OF_WEEK, -2);
+                theStartDate = c.getTime();
+            }
+
+            Map mapaDispensaTrimestral = con.DispensaSemestral(dateFormat.format(theStartDate),dateFormat.format(calendarEnd.getCalendar().getTime()));
 
             int totalpacientesManter = Integer.parseInt(mapaDispensaTrimestral.get("totalpacientesmanter").toString());
             int totalpacientesNovos = Integer.parseInt(mapaDispensaTrimestral.get("totalpacientesnovos").toString());
             int totalpacienteManuntencaoTransporte = Integer.parseInt(mapaDispensaTrimestral.get("totalpacienteManuntencaoTransporte").toString());
             int totalpacienteCumulativo = Integer.parseInt(mapaDispensaTrimestral.get("totalpacienteCumulativo").toString());
 
-            dispensaSemestralXLS = con.dispensaSemestral(dateFormat.format(calendarStart.getCalendar().getTime()), dateFormat.format(calendarEnd.getCalendar().getTime()));
+            dispensaSemestralXLS = con.dispensaSemestral(dateFormat.format(theStartDate), dateFormat.format(calendarEnd.getCalendar().getTime()));
 
             if (dispensaSemestralXLS.size() > 0) {
 
@@ -84,7 +94,7 @@ public class DispensaSemestralExcel implements IRunnableWithProgress {
 
                 HSSFRow reportPeriod = sheet.getRow(10);
                 HSSFCell reportPeriodCell = reportPeriod.createCell(2);
-                reportPeriodCell.setCellValue(dateFormat.format(calendarStart.getCalendar().getTime()) +" à "+ dateFormat.format(calendarEnd.getCalendar().getTime()));
+                reportPeriodCell.setCellValue(dateFormat.format(theStartDate) +" à "+ dateFormat.format(calendarEnd.getCalendar().getTime()));
                 reportPeriodCell.setCellStyle(cellStyle);
 
                 HSSFRow _totalpacientesNovos = sheet.getRow(14);
