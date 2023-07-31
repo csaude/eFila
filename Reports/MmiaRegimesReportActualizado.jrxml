@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MmiaRegimesReportNovaVersao" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Error" isIgnorePagination="true">
-	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="279"/>
+	<property name="ireport.zoom" value="1.6934217901613318"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="date" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -39,47 +39,60 @@
    regimen.report_order,
    count(distinct regimen.contagem) contagem,
    count(distinct regimen.uscontagem) uscontagem,
-   count(distinct regimen.dccontagem) dccontagem
+   count(distinct regimen.dccontagem) dccontagem,
+   count(distinct regimen.pacienteprep) totalpacientesprep
 FROM
    (
- SELECT  distinct p.patient, pat.patientid,
- pack.regimeesquema,
- pack.codigoregime,
- pack.linhanome,
- pack.report_order,
- CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount <> 0 ) THEN pack.id END contagem,
- CASE WHEN ( pack.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,
- CASE WHEN ( pack.flagidentifier = 'Nao' and pds.amount = 0 ) THEN pack.id END dccontagem,
- EXTRACT(year FROM age( $P{dateEnd}::date,pack.dateofbirth)) :: int dateofbirth,
+ SELECT  distinct p.patient,
+ pat.patientid,
+ rt.regimeesquema,
+ rt.codigoregime,
+ l.linhanome,
+ rt.report_order,
+ CASE WHEN ( pdit.flagidentifier = 'Nao' and pds.amount <> 0 and p.ppe = 'F' ) THEN pack.id END contagem,
+ CASE WHEN ( pdit.flagidentifier = 'Sim' and pds.amount <> 0) THEN pack.id END uscontagem,
+ CASE WHEN ( pdit.flagidentifier = 'Nao' and pds.amount = 0) THEN pack.id END dccontagem,
+ CASE WHEN ( p.tipodoenca = 'PREP') THEN p.id END pacienteprep,
  ep.startreason,
- ep.episodedate,
- COALESCE(pack.weekssupply,0) weekssupply,
-	   ep.clinic as clinicDispense,
-	   c.id as patclinic
+ ep.startdate
  FROM   (
-	 select max(pre.date) predate, max(pa.pickupdate) pickupdate, max(pat.dateofbirth) dateofbirth, max(pa.weekssupply) weekssupply,
-	 pat.id, pdit.flagidentifier, rt.regimeesquema, rt.report_order, rt.codigoregime, l.linhanome
+	 select distinct max(pre.date) predate,
+		max(pa.pickupdate) pickupdate,
+		max(pat.dateofbirth) dateofbirth,
+		max(pa.weekssupply) weekssupply,
+	 	pat.id,
+		visit.episodedate
 	 from package pa
 	 inner join packageddrugs pds on pds.parentpackage = pa.id
-	 inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
 	 inner join prescription pre on pre.id = pa.prescription
-	 inner join regimeterapeutico rt on rt.regimeid = pre.regimeid
-	 inner join linhat l on l.linhaid = pre.linhaid
-	 inner join patient pat ON pre.patient=pat.id
+     inner join patient pat ON pre.patient=pat.id
+	 INNER JOIN (
+  			SELECT MAX (startdate) episodedate,
+  				patient
+  			from episode
+  			WHERE startdate <= $P{dateEnd}::date
+  			GROUP BY 2) visit on visit.patient = pat.id
 	 where pg_catalog.date(pa.pickupdate) >= $P{date}::date
 	 and pg_catalog.date(pa.pickupdate) <=  $P{dateEnd}::date
-	 and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca = 'PREP')
-	 GROUP BY 5,6,7,8,9,10 order by rt.report_order) pack
+	 and (pre.tipodoenca like '%ARV%' OR pre.tipodoenca like '%PREP%')
+	 GROUP BY 5,6 order by 5
+	) pack
 	 inner join prescription p on p.date::date = pack.predate::date and p.patient=pack.id
 	 inner join patient pat on pat.id = pack.id
 	 inner join package pa on pa.prescription = p.id and pa.pickupdate = pack.pickupdate
 	 inner join packageddrugs pds on pds.parentpackage = pa.id
-	 INNER JOIN (SELECT MAX (startdate) episodedate, startreason, patient, id, clinic
-			 from episode WHERE startdate <=  $P{dateEnd}::date
-			 GROUP BY 2,3,4,5) ep on ep.patient = pat.id and ep.episodedate < pack.predate
-	 inner join clinic c on c.id = ep.clinic
-	 where ep.startreason not like '%nsito%'and ep.startreason not like '%ternidade%' and(p.tipodoenca like '%ARV%' OR p.tipodoenca = 'PREP')
-	    ) regimen
+	 inner join packagedruginfotmp pdit on pdit.packageddrug = pds.id
+	 INNER JOIN (
+  			SELECT Max(id) visitid, startdate,
+  				patient
+  			from episode
+  			WHERE startdate <= $P{dateEnd}::date
+  			GROUP BY 2,3) ep1 on ep1.patient = pat.id and ep1.startdate = pack.episodedate
+  	 inner join episode ep on ep.id = ep1.visitid
+	 inner join regimeterapeutico rt on rt.regimeid = p.regimeid
+	 inner join linhat l on l.linhaid = p.linhaid
+	 where (p.tipodoenca like '%ARV%' OR p.tipodoenca like '%PREP%') and ep.startreason not like '%nsito%' and ep.startreason not like '%ternidade%' and ep.startreason not like '%CCR%'
+	 ) regimen
 group by
    1,
    2,
@@ -89,10 +102,12 @@ order by
 	</queryString>
 	<field name="regimeesquema" class="java.lang.String"/>
 	<field name="codigoregime" class="java.lang.String"/>
+	<field name="report_order" class="java.lang.Integer"/>
 	<field name="contagem" class="java.lang.Long"/>
 	<field name="uscontagem" class="java.lang.Long"/>
 	<field name="dccontagem" class="java.lang.Long"/>
-	<variable name="total_paciente_dc" class="java.lang.Long" incrementType="Report" calculation="Sum">
+	<field name="totalpacientesprep" class="java.lang.Long"/>
+	<variable name="total_paciente_dc" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{dccontagem}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
@@ -100,7 +115,7 @@ order by
 		<variableExpression><![CDATA[$F{uscontagem}]]></variableExpression>
 	</variable>
 	<variable name="totalPacientesEmTARV" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{contagem}]]></variableExpression>
+		<variableExpression><![CDATA[$F{contagem} - $F{totalpacientesprep}]]></variableExpression>
 	</variable>
 	<group name="total_pacientes">
 		<groupExpression><![CDATA[null]]></groupExpression>
@@ -108,7 +123,7 @@ order by
 			<band/>
 		</groupHeader>
 		<groupFooter>
-			<band height="254">
+			<band height="103">
 				<staticText>
 					<reportElement mode="Opaque" x="158" y="0" width="54" height="23" backcolor="#D0D8FC"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
