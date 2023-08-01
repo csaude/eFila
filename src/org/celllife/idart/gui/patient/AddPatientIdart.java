@@ -2420,9 +2420,9 @@ public class AddPatientIdart extends GenericFormGui implements iDARTChangeListen
         //yes - update patient details
         setLocalPatient();
 
-        if ((cmbEpisodeStartReason.getText().contains("nsito") || cmbEpisodeStartReason.getText().contains("nidade") || cmbEpisodeStartReason.getText().contains("CCR") || (cmbEpisodeStartReason.getText().contains("PPE")) && localPatient.getIsPatientEmTransito()))
+        if ((cmbEpisodeStartReason.getText().contains("nsito") || cmbEpisodeStartReason.getText().contains("nidade") || cmbEpisodeStartReason.getText().contains("Outro") || cmbEpisodeStartReason.getText().contains("CCR") || (cmbEpisodeStartReason.getText().contains("PPE")) && localPatient.getIsPatientEmTransito()))
             confirmationSave = true;
-        else if (!(cmbEpisodeStartReason.getText().contains("CCR")) && !(cmbEpisodeStartReason.getText().contains("PPE")) && !cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !localPatient.getIsPatientEmTransito())
+        else if (!(cmbEpisodeStartReason.getText().contains("CCR")) && !cmbEpisodeStartReason.getText().contains("Outro") && !(cmbEpisodeStartReason.getText().contains("PPE")) && !cmbEpisodeStartReason.getText().contains("nsito") && !cmbEpisodeStartReason.getText().contains("nidade") && !localPatient.getIsPatientEmTransito())
             confirmationSave = true;
 
         if (fieldsOk()) {
