@@ -8040,17 +8040,16 @@ public class ConexaoJDBC {
                 "inner join regimeterapeutico rt on rt.regimeid = pe.regimeid " +
                 "inner join linhat lt on lt.linhaid = pe.linhaid " +
                 "inner join " +
-                "(select pat.id, pat.patientid from patient pat " +
+                "(select pat.id from patient pat " +
                 "inner join ( " +
-                " select p.patient, p.date from prescription p " +
+                " select p.patient, p.date, p.tipodoenca from prescription p " +
                 "  inner join package pack on p.id = pack.prescription " +
                 "  inner join packageddrugs pds on pds.parentpackage = pack.id " +
-                " where p.date::date between '" + startDate + "' and '" + endDate + "' and pds.amount <> 0 " +
-                " group by 1,2 " +
+                " where p.date::date between '" + startDate + "' and '" + endDate + "' and pds.amount <> 0 and p.tipodoenca LIKE '%ARV%'" +
+                " group by 1,2,3 " +
                 ") pr on pr.patient = pat.id " +
                 "group by 1 " +
                 "having count(pat.id) > 1 " +
-                "order by 1 " +
                 " )pp on pp.id = pe.patient " +
                 " inner join patient pt on pt.id = pe.patient " +
                 " where pe.date between '" + startDate + "' and '" + endDate + "' and pe.tipodoenca  LIKE '%ARV%'";
