@@ -205,11 +205,11 @@ order by d.report_order asc]]>
 					<subreportParameter name="totallinhasDC3">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC3}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="username">
-						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="pacientesEmTarv">
 						<subreportParameterExpression><![CDATA[$P{pacientesEmTarv}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="username">
+						<subreportParameterExpression><![CDATA[$P{username}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totallinhasDC1">
 						<subreportParameterExpression><![CDATA[$P{totallinhasDC1}]]></subreportParameterExpression>
