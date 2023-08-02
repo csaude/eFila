@@ -788,6 +788,7 @@ public class ConexaoJDBC {
                     "select sum(s.unitsreceived) as received " +
                     "from drug as d, stock as s " +
                     "where s.drug = d.id and d.id = " + drugId + " and s.stockCenter = " + stockCenterId + " and s.datereceived::timestamp::date < '" + startDate + "'::timestamp::date " +
+                    " and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as a, " +
                     " " +
@@ -799,6 +800,7 @@ public class ConexaoJDBC {
                     "and s.drug = d.id and pd.stock = s.id " +
                     "and pd.parentpackage = p.id " +
                     "and p.packdate::timestamp::date <   '" + startDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as b, " +
                     " " +
@@ -806,6 +808,7 @@ public class ConexaoJDBC {
                     "select sum(s.unitsreceived) as received from drug as d, stock as s " +
                     "where d.id =   " + drugId + " and s.stockCenter =   " + stockCenterId + " and s.drug = d.id " +
                     "and s.datereceived::timestamp::date  >=   '" + startDate + "'::timestamp::date AND s.datereceived::timestamp::date  <=   '" + endDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as c, " +
                     " " +
@@ -815,6 +818,7 @@ public class ConexaoJDBC {
                     "and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id " +
                     "and p.prescription = pre.id " +
                     "and p.packdate::timestamp::date >=   '" + startDate + "'::timestamp::date and p.packdate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as d, " +
                     " " +
@@ -824,6 +828,7 @@ public class ConexaoJDBC {
                     "and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id " +
                     "and p.prescription is null " +
                     "and p.packdate::timestamp::date  >=   '" + startDate + "'::timestamp::date AND  p.packdate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as e, " +
                     " " +
@@ -835,6 +840,7 @@ public class ConexaoJDBC {
                     "and s.drug = d.id " +
                     "and sa.stock = s.id " +
                     "and sa.captureDate::timestamp::date <   '" + startDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as f, " +
                     " " +
@@ -846,6 +852,7 @@ public class ConexaoJDBC {
                     "and s.drug = d.id " +
                     "and sa.stock = s.id " +
                     "and sa.captureDate::timestamp::date  >= '" + startDate + "'::timestamp::date AND sa.captureDate::timestamp::date <=   '" + endDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as g, " +
                     " " +
@@ -859,6 +866,7 @@ public class ConexaoJDBC {
                     "and p.stockReturned = true " +
                     "and p.packageReturned = true " +
                     "and p.dateReturned::timestamp::date <   '" + startDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as h, " +
                     " " +
@@ -872,6 +880,7 @@ public class ConexaoJDBC {
                     "and p.stockReturned = true " +
                     "and p.packageReturned = true " +
                     "and p.dateReturned::timestamp::date  >=   '" + startDate + "'::date AND p.dateReturned::timestamp::timestamp::date <=   '" + endDate + "'::timestamp::date " +
+                    "and s.expirydate::timestamp::date >= '" + startDate + "'::timestamp::date " +
                     " " +
                     ") as i ";
 
@@ -7500,59 +7509,62 @@ public class ConexaoJDBC {
                 long stock = 0;
                 long totalpills = 0;
 
-                if (rs.getString("tipomovimento").contains("Requis")) {
-                    recebidos = rs.getInt("quantidade");
+                if (rs.getString("tipomovimento") != null) {
+
+                    if (rs.getString("tipomovimento").contains("Requis")) {
+                        recebidos = rs.getInt("quantidade");
+                    }
+
+                    if (rs.getString("tipomovimento").contains("Dist")) {
+                        dispensados = rs.getInt("quantidade");
+                    }
+
+                    if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario")) {
+                        ajustados = rs.getInt("quantidade") / drug.getPackSize();
+                    }
+
+                    totalpills = rs.getInt("openingpills")
+                            + rs.getInt("returned") * drug.getPackSize()
+                            + rs.getInt("returnedpills")
+                            - rs.getInt("destroyed") * drug.getPackSize()
+                            - rs.getInt("destroyedpills")
+                            + somaUnidadesRecebidas * drug.getPackSize() + recebidos * drug.getPackSize()
+                            - somaUnidadesDispensadas * drug.getPackSize() - dispensados * drug.getPackSize()
+                            - somaUnidadesAjustadas - ajustados * drug.getPackSize();
+
+                    if (rs.getString("tipomovimento").contains("Requis")) {
+                        somaUnidadesRecebidas = somaUnidadesRecebidas + rs.getInt("quantidade");
+                    }
+
+                    if (rs.getString("tipomovimento").contains("Dist")) {
+                        somaUnidadesDispensadas = somaUnidadesDispensadas + rs.getInt("quantidade");
+                    }
+
+                    if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario")) {
+                        somaUnidadesAjustadas = somaUnidadesAjustadas + rs.getInt("quantidade");
+                    }
+                    somaUnidadesDevolvidas = somaUnidadesDevolvidas + rs.getInt("returned") * drug.getPackSize() + rs.getInt("returnedpills");
+                    somaUnidadesDestruidas = somaUnidadesDestruidas + rs.getInt("destroyed") * drug.getPackSize() + rs.getInt("destroyedpills");
+
+                    if (totalpills % drug.getPackSize() == 0)
+                        stock = totalpills / drug.getPackSize();
+                    else
+                        stock = totalpills / drug.getPackSize() + 1;
+
+
+                    FichaStockXLS fichaStockXLS = new FichaStockXLS();
+                    fichaStockXLS.setDataMovimento(rs.getString("datamovimento"));
+                    fichaStockXLS.setTipoMovimento(rs.getString("tipomovimento"));
+                    if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario"))
+                        fichaStockXLS.setQuantidade(String.valueOf(ajustados));
+                    else
+                        fichaStockXLS.setQuantidade(rs.getString("quantidade"));
+                    fichaStockXLS.setCliente(rs.getString("cliente"));
+                    fichaStockXLS.setStock(String.valueOf(stock));
+                    fichaStockXLS.setNotes(rs.getString("numeroguia"));
+
+                    listFichaStockXLS.add(fichaStockXLS);
                 }
-
-                if (rs.getString("tipomovimento").contains("Dist")) {
-                    dispensados = rs.getInt("quantidade");
-                }
-
-                if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario")) {
-                    ajustados = rs.getInt("quantidade") / drug.getPackSize();
-                }
-
-                totalpills = rs.getInt("openingpills")
-                        + rs.getInt("returned") * drug.getPackSize()
-                        + rs.getInt("returnedpills")
-                        - rs.getInt("destroyed") * drug.getPackSize()
-                        - rs.getInt("destroyedpills")
-                        + somaUnidadesRecebidas * drug.getPackSize() + recebidos * drug.getPackSize()
-                        - somaUnidadesDispensadas * drug.getPackSize() - dispensados * drug.getPackSize()
-                        - somaUnidadesAjustadas - ajustados * drug.getPackSize();
-
-                if (rs.getString("tipomovimento").contains("Requis")) {
-                    somaUnidadesRecebidas = somaUnidadesRecebidas + rs.getInt("quantidade");
-                }
-
-                if (rs.getString("tipomovimento").contains("Dist")) {
-                    somaUnidadesDispensadas = somaUnidadesDispensadas + rs.getInt("quantidade");
-                }
-
-                if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario")) {
-                    somaUnidadesAjustadas = somaUnidadesAjustadas + rs.getInt("quantidade");
-                }
-                somaUnidadesDevolvidas = somaUnidadesDevolvidas + rs.getInt("returned") * drug.getPackSize() + rs.getInt("returnedpills");
-                somaUnidadesDestruidas = somaUnidadesDestruidas + rs.getInt("destroyed") * drug.getPackSize() + rs.getInt("destroyedpills");
-
-                if (totalpills % drug.getPackSize() == 0)
-                    stock = totalpills / drug.getPackSize();
-                else
-                    stock = totalpills / drug.getPackSize() + 1;
-
-
-                FichaStockXLS fichaStockXLS = new FichaStockXLS();
-                fichaStockXLS.setDataMovimento(rs.getString("datamovimento"));
-                fichaStockXLS.setTipoMovimento(rs.getString("tipomovimento"));
-                if (rs.getString("tipomovimento").contains("Ajuste") || rs.getString("tipomovimento").contains("Inventario"))
-                    fichaStockXLS.setQuantidade(String.valueOf(ajustados));
-                else
-                    fichaStockXLS.setQuantidade(rs.getString("quantidade"));
-                fichaStockXLS.setCliente(rs.getString("cliente"));
-                fichaStockXLS.setStock(String.valueOf(stock));
-                fichaStockXLS.setNotes(rs.getString("numeroguia"));
-
-                listFichaStockXLS.add(fichaStockXLS);
             }
             rs.close();
         }

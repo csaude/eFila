@@ -422,7 +422,7 @@ public class MmiaReportExcel implements IRunnableWithProgress {
             createCellSaidas.setCellStyle(cellStyle);
 
             HSSFCell createCellAjuste = row.createCell(7);
-            createCellAjuste.setCellValue(xls.getPerdasAjustes());
+            createCellAjuste.setCellValue((-1)* Integer.valueOf(xls.getPerdasAjustes()));
             createCellAjuste.setCellStyle(cellStyle);
 
             HSSFCell createCellIventario = row.createCell(8);

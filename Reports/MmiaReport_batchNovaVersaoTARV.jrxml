@@ -54,24 +54,28 @@
 
 		drug_expire.mindate
 
-from 	(select sum(s.unitsreceived) as received
-		from drug as d, stock as s
-		where s.drug = d.id and d.id = $P{id} and s.stockCenter = $P{stockCenterId} and s.datereceived::timestamp::date < $P{monthStart}::timestamp::date and d.tipodoenca like '%ARV%'
+from 		(
+			select sum(s.unitsreceived) as received
+			from drug as d, stock as s
+			where s.drug = d.id and d.id = $P{id} and s.stockCenter = $P{stockCenterId} and s.datereceived::timestamp::date < $P{monthStart}::timestamp::date
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as a,
 
-		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued,  CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
+		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued,
+			CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
 		from drug as d, stock as s, packageddrugs as pd, package as p
 		where d.id = $P{id}
 			and s.stockCenter = $P{stockCenterId}
 			and s.drug = d.id and pd.stock = s.id
 			and pd.parentpackage = p.id
 			and p.packdate::timestamp::date < $P{monthStart}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as b,
 
 		(select sum(s.unitsreceived) as received from drug as d, stock as s
 		where d.id = $P{id} and s.stockCenter = $P{stockCenterId} and s.drug = d.id and d.tipodoenca like '%ARV%'
-			and s.datereceived::timestamp::date  >= $P{monthStart}::timestamp::date AND s.datereceived::timestamp::date  <= $P{monthEnd}::timestamp::date
+		and s.datereceived::timestamp::date  >= $P{monthStart}::timestamp::date AND s.datereceived::timestamp::date  <= $P{monthEnd}::timestamp::date
+		and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as c,
 
 		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -79,9 +83,8 @@ from 	(select sum(s.unitsreceived) as received
 		where d.id = $P{id} and s.stockCenter = $P{stockCenterId}
 			and s.drug = d.id and pd.stock = s.id and pd.parentpackage = p.id
 			and p.prescription = pre.id
-			and pre.tipodoenca like '%ARV%'
 			and p.packdate::timestamp::date >= $P{monthStart}::timestamp::date and p.packdate::timestamp::date <= $P{monthEnd}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as d,
 
 		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as issued, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -91,6 +94,7 @@ from 	(select sum(s.unitsreceived) as received
 			and p.prescription is null
 			and p.packdate::timestamp::date  >= $P{monthStart}::timestamp::date AND  p.packdate::timestamp::date <= $P{monthEnd}::timestamp::date
 			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as e,
 
 		(select round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -100,7 +104,7 @@ from 	(select sum(s.unitsreceived) as received
 			and s.drug = d.id
 			and sa.stock = s.id
 			and sa.captureDate::timestamp::date < $P{monthStart}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as f,
 
 		(select round(floor(sum(sa.adjustedvalue::real)/$P{packsize})::numeric,0) as adjusted, CASE WHEN MOD(sum(sa.adjustedvalue),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -110,7 +114,7 @@ from 	(select sum(s.unitsreceived) as received
 			and s.drug = d.id
 			and sa.stock = s.id
 			and sa.captureDate::timestamp::date  >= $P{monthStart}::timestamp::date AND sa.captureDate::timestamp::date <= $P{monthEnd}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as g,
 
 		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -122,7 +126,7 @@ from 	(select sum(s.unitsreceived) as received
 			and p.stockReturned = true
 			and p.packageReturned = true
 			and p.dateReturned::timestamp::date < $P{monthStart}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as h,
 
 		(select round(floor(sum(pd.amount::real)/$P{packsize})::numeric,0) as returned, CASE WHEN MOD(sum(pd.amount),$P{packsize}) > 0 THEN 1 ELSE 0 END as pills
@@ -134,7 +138,7 @@ from 	(select sum(s.unitsreceived) as received
 			and p.stockReturned = true
 			and p.packageReturned = true
 			and p.dateReturned::timestamp::date  >= $P{monthStart}::date AND p.dateReturned::timestamp::timestamp::date <= $P{monthEnd}::timestamp::date
-			and d.tipodoenca like '%ARV%'
+			and s.expirydate::timestamp::date >= $P{monthStart}::timestamp::date
 		) as i,
 		(SELECT
 			distinct
@@ -149,7 +153,7 @@ from 	(select sum(s.unitsreceived) as received
 				drug.id = $P{id}
 			and
 				drug.id=stock.drug
-			and drug.tipodoenca like '%ARV%' and stock.expirydate::date >= $P{monthStart}::date
+			and stock.expirydate::date >= $P{monthStart}::date
 
 		GROUP BY   drug.id, drug.name
 		 ) as drug_expire]]>
